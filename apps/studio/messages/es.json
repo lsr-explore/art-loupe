@@ -1,0 +1,26 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Estudio del artista"
+  },
+  "landing": {
+    "description": "Inicia sesión para recibir una crítica estructurada de tu obra, estudios de paleta y valor, y un plan para tu próxima sesión.",
+    "identifierLabel": "ID de artista",
+    "passwordLabel": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "signIn": "Iniciar sesión",
+    "errorInvalid": "No se reconocieron esas credenciales. Inténtalo de nuevo."
+  },
+  "home": {
+    "title": "Estudio",
+    "description": "Tu espacio de trabajo. Sube una obra para comenzar una crítica o inicia un plan de sesión."
+  },
+  "nav": {
+    "label": "Secciones del estudio"
+  },
+  "metadata": {
+    "title": "Estudio del artista — Art Loupe",
+    "description": "Compañero de crítica y planificación de estudio para artistas: análisis formal estructurado basado en colecciones de dominio público, nunca en imágenes generadas."
+  }
+}

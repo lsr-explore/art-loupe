@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" width="760" height="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<style>
+  :root {
+    --bg: #fcfcfb; --ink: #0b0b0b; --muted: #52514e; --grid: #e0e0dd;
+    --s1: #2a78d6; --s2: #008300; --s3: #e87ba4; --s4: #eda100; --s5: #1baf7a;
+    --s6: #eb6834;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a19; --ink: #f5f5f2; --muted: #a8a79d; --grid: #33322f;
+      --s1: #3987e5; --s2: #008300; --s3: #d55181; --s4: #c98500; --s5: #199e70;
+      --s6: #d95926;
+    }
+  }
+  .surface { fill: var(--bg); }
+  .grid { stroke: var(--grid); stroke-width: 1; }
+  .title { fill: var(--ink); font-size: 13px; font-weight: 600; }
+  .panel { fill: var(--ink); font-size: 11px; font-weight: 600; }
+  .sub, .tick { fill: var(--muted); }
+  .sub { font-size: 11px; }
+  .tick { font-size: 10px; }
+  .s1 { fill: var(--s1); } .s2 { fill: var(--s2); } .s3 { fill: var(--s3); }
+  .s4 { fill: var(--s4); } .s5 { fill: var(--s5); } .s6 { fill: var(--s6); }
+  .l1 { stroke: var(--s1); } .l2 { stroke: var(--s2); } .l3 { stroke: var(--s3); }
+  .line { fill: none; stroke-width: 2; }
+</style>
+<rect class="surface" x="0" y="0" width="760" height="240" rx="6"/>
+<text class="title" x="20" y="22">Where attention went</text>
+<text class="sub" x="20" y="38">One dot per theme touched that day; a day can span several.</text>
+<line class="grid" x1="72" y1="59.333333333333336" x2="744" y2="59.333333333333336"/><text class="sub" x="62" y="63.333333333333336" text-anchor="end">agent</text><line class="grid" x1="72" y1="86" x2="744" y2="86"/><text class="sub" x="62" y="90" text-anchor="end">app</text><line class="grid" x1="72" y1="112.66666666666667" x2="744" y2="112.66666666666667"/><text class="sub" x="62" y="116.66666666666667" text-anchor="end">evals</text><line class="grid" x1="72" y1="139.33333333333334" x2="744" y2="139.33333333333334"/><text class="sub" x="62" y="143.33333333333334" text-anchor="end">data</text><line class="grid" x1="72" y1="166.00000000000003" x2="744" y2="166.00000000000003"/><text class="sub" x="62" y="170.00000000000003" text-anchor="end">ops</text><line class="grid" x1="72" y1="192.66666666666669" x2="744" y2="192.66666666666669"/><text class="sub" x="62" y="196.66666666666669" text-anchor="end">devex</text><circle class="s6" cx="408" cy="192.66666666666669" r="7"/><circle class="s5" cx="408" cy="166.00000000000003" r="7"/><circle class="s2" cx="408" cy="86" r="7"/><text class="tick" x="408" y="220" text-anchor="middle">08-30</text>
+</svg>

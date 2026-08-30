@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="164" height="164">
+  <style>
+    .dark-only { display: none }
+    @media (prefers-color-scheme: dark) {
+      .light-only { display: none }
+      .dark-only { display: inline }
+    }
+  </style>
+  <g class="light-only"><defs>
+    <!-- objectBoundingBox, NOT userSpaceOnUse: the artwork sits inside a scaled
+         group, and userSpaceOnUse would resolve these stops in the group's
+         coordinate system rather than across the shape. -->
+    <linearGradient id="brand-mark-beam-light" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0" stop-color="#e11d48"/>
+      <stop offset="0.5" stop-color="#ea7317"/>
+      <stop offset="1" stop-color="#0369a1"/>
+    </linearGradient>
+    <!-- White keeps, black cuts: the thumb hole is knocked OUT of the filled body,
+         so it stays a hole on any ground instead of a painted-on dot. Coordinates
+         are in the path's own space, which is why the mask lives inside the group. -->
+    <mask id="brand-mark-knockout-light" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="180">
+      <rect x="0" y="0" width="220" height="180" fill="#fff"/>
+      <circle cx="96" cy="122" r="26" fill="#000"/>
+    </mask>
+  </defs>
+  <g transform="translate(8, 16) scale(0.3818)">
+    <path d="M 120,0 C 180,0 220,30 220,80 C 220,130 180,180 120,180 C 70,180 40,160 40,140 C 40,120 60,110 60,90 C 60,70 0,60 0,30 C 0,10 50,0 120,0 Z" fill="url(#brand-mark-beam-light)" mask="url(#brand-mark-knockout-light)"/>
+  </g></g>
+  <g class="dark-only"><defs>
+    <!-- objectBoundingBox, NOT userSpaceOnUse: the artwork sits inside a scaled
+         group, and userSpaceOnUse would resolve these stops in the group's
+         coordinate system rather than across the shape. -->
+    <linearGradient id="brand-mark-beam-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0" stop-color="#ff5e62"/>
+      <stop offset="0.5" stop-color="#ff9966"/>
+      <stop offset="1" stop-color="#4facfe"/>
+    </linearGradient>
+    <!-- White keeps, black cuts: the thumb hole is knocked OUT of the filled body,
+         so it stays a hole on any ground instead of a painted-on dot. Coordinates
+         are in the path's own space, which is why the mask lives inside the group. -->
+    <mask id="brand-mark-knockout-dark" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="180">
+      <rect x="0" y="0" width="220" height="180" fill="#fff"/>
+      <circle cx="96" cy="122" r="26" fill="#000"/>
+    </mask>
+  </defs>
+  <g transform="translate(8, 16) scale(0.3818)">
+    <path d="M 120,0 C 180,0 220,30 220,80 C 220,130 180,180 120,180 C 70,180 40,160 40,140 C 40,120 60,110 60,90 C 60,70 0,60 0,30 C 0,10 50,0 120,0 Z" fill="url(#brand-mark-beam-dark)" mask="url(#brand-mark-knockout-dark)"/>
+  </g></g>
+</svg>

@@ -1,0 +1,50 @@
+{
+  "common": {
+    "goHome": "Go home",
+    "logIn": "Log In",
+    "tryAgain": "Try again",
+    "cancel": "Cancel",
+    "dismissAlert": "Dismiss alert"
+  },
+  "session": {
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "shell": {
+    "banner": "Demonstration only — not a valuation, authentication, or legal opinion.",
+    "skipToContent": "Skip to main content",
+    "sidebarLabel": "Sections",
+    "openSidebar": "Open sections menu",
+    "closeSidebar": "Close sections menu"
+  },
+  "footer": {
+    "label": "Site information",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy Policy",
+    "reportIssue": "Report an Issue",
+    "opensInNewTab": "(opens in a new tab)",
+    "copyright": "© {year} Laurie Reynolds. All rights reserved."
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Page not found"
+  },
+  "standalone": {
+    "notFoundTitle": "We couldn't find that page",
+    "notFoundMessage": "The link may be out of date, or the page may not exist on this surface. You can start again from the Art Loupe entry point.",
+    "backToEntry": "Go to Art Loupe"
+  }
+}

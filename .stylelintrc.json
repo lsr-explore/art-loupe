@@ -1,0 +1,40 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "custom-variant",
+          "layer",
+          "apply",
+          "import",
+          "tailwind",
+          "config",
+          "utility",
+          "variant",
+          "source"
+        ]
+      }
+    ],
+    "function-no-unknown": [
+      true,
+      {
+        "ignoreFunctions": ["theme", "oklch"]
+      }
+    ],
+    "import-notation": null
+  },
+  "ignoreFiles": [
+    "**/.next/**",
+    "**/out/**",
+    "**/dist/**",
+    "**/storybook-static/**",
+    "**/coverage/**",
+    "**/htmlcov/**",
+    "**/node_modules/**",
+    "**/src/stories/**",
+    "**/playwright-report/**"
+  ]
+}

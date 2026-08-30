@@ -1,0 +1,50 @@
+{
+  "date": "2026-08-30",
+  "label": "Repo reset prep, static-check repair, and a 92 kB client-bundle fix",
+  "confidence": "measured",
+  "cost_usd": 35.12,
+  "api_minutes": 39.5,
+  "wall_minutes": 264.7,
+  "context_over_150k_pct": 79,
+  "parallel_agents": 1,
+  "themes": ["devex", "ops", "app"],
+  "effort_split": {
+    "build": 10,
+    "setup": 25,
+    "design": 8,
+    "docs": 31,
+    "verify_ops": 22,
+    "churn": 4
+  },
+  "churn_attribution": {
+    "claude_error": 70,
+    "genuine_discovery": 30,
+    "under_specified": 0
+  },
+  "ratings": {
+    "scoping_clarity": 4,
+    "decision_stability": 5,
+    "tooling_leverage": 4
+  },
+  "rework_of": [],
+  "delivered": { "prs": [], "adrs": [] },
+  "review": { "coderabbit_findings": 0, "fixed": 0, "deferred": 0, "declined": 0 },
+  "decisions": [
+    "docs/design renamed to docs/contrast-report — the folder holds only generated output, so it is named for the report it produces",
+    "Vale stays advisory and outside check:all; the package set is still under evaluation and the prose cleanup is unfinished",
+    "Third-party agent skills stay pinned in skills-lock.json and never vendored — committing them means redistributing them",
+    "Node pinned in .nvmrc (24); all five CI setup-node steps switched to node-version-file so there is one source of truth",
+    "Git history reset rather than carried forward — fresh init, old history bundled outside the repo",
+    "ui-shell-spec Q-numbers and predecessor issue numbers stripped repo-wide: the explanations stay, the dangling pointers go",
+    "DISABLE_HTTPS_UPGRADE belongs on the Playwright build, not the served process — next build bakes headers() into routes-manifest.json",
+    "LAUNCH_TARGETS split into an import-free module so a client component cannot pull env validation, and Zod, across the boundary",
+    "docs/backlog.md is the interim deferral home until the GitHub project board exists; GitHub becomes the source of truth after that",
+    "Optional CLI tools (tree, graphviz, gh) documented in the README rather than vendored as devDependencies"
+  ],
+  "retro": {
+    "went_well": "The static checks earned their cost within an hour of being wired up: they surfaced a WebKit e2e run where no CSS loaded at all, a dependency graph that had been rendering empty, a `circular` check that had never once executed, and a 92 kB gzipped Zod leak on the simplest page in the repo. Root causes came from measurement rather than guesswork — per-browser geometry, gzipped chunk inventories, and reading routes-manifest.json — which is what turned 'entry is over budget' into a one-module fix instead of a threshold bump. Reading the code path rather than running the generator also caught an unguarded readdirSync that would have thrown on a fresh clone.",
+    "improve": "The Q-number strip was done with regexes first, which broke prose at six sites that then needed hand repair; the explicit per-site replacement list used later for the issue numbers landed clean on the first pass and should have been the approach from the start. The options offered for that same question missed what was actually wanted — four alternatives, none chosen — costing a round trip that a plainer question would not have. Three factual claims about the report generators were also drafted from a plausible model and only then verified.",
+    "tooling_suggestion": "`check:all` covers neither `circular`, `size`, `depcruise` nor `depcruise:graph`, which is exactly how two of them rotted unnoticed — one had never run, another rendered an empty page. A static check outside the gate is a check nobody runs. Fold the cheap ones in, or accept that they are advisory and say so where they are defined."
+  },
+  "note": "No PRs or issues: the GitHub repo does not exist yet, so gh had nothing to query. Cost and durations are the full CLI session, amended after a second /usage read. context_over_150k_pct is /usage's last-24h figure across all local sessions, not this session alone; the skills panel still reports no attribution data. Total code changes reads 0 lines because edits were made through shell heredocs rather than the file-edit tool."
+}

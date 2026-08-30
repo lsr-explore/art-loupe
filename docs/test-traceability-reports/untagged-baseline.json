@@ -1,0 +1,4 @@
+{
+  "$comment": "Ratchet, not a target. Each entry is the number of untagged tests a package is currently allowed. The check FAILS when a package exceeds its entry, so a newly written test without a `@trace` annotation breaks the build; it does not fail on the debt already here. Raising a number is a deliberate, reviewable act. `pnpm traceability:fix` lowers numbers automatically once tests get tagged, so the ratchet only ever tightens.",
+  "packages": {}
+}

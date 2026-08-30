@@ -1,0 +1,23 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Operations Control"
+  },
+  "landing": {
+    "description": "Sign in to monitor agent activity, evaluation health, guardrails, and cost across the studio.",
+    "identifierLabel": "Operator ID",
+    "accessKeyLabel": "Access Key",
+    "showAccessKey": "Show access key",
+    "hideAccessKey": "Hide access key",
+    "signIn": "Sign in",
+    "errorInvalid": "Those credentials weren't recognized. Please try again."
+  },
+  "home": {
+    "title": "Operations",
+    "description": "Operational view of the multi-agent studio — critique and retrieval activity, evaluation health, guardrails, and cost."
+  },
+  "metadata": {
+    "title": "Operations Control — Art Loupe",
+    "description": "Operational dashboard for the multi-agent studio: critique and retrieval activity, evaluation health, guardrails, and cost."
+  }
+}

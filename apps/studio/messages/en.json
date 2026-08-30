@@ -1,0 +1,26 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Artist Studio"
+  },
+  "landing": {
+    "description": "Sign in to get structured critique of your work, palette and value studies, and a plan for your next session.",
+    "identifierLabel": "Artist ID",
+    "passwordLabel": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "signIn": "Sign in",
+    "errorInvalid": "Those credentials weren't recognized. Please try again."
+  },
+  "home": {
+    "title": "Studio",
+    "description": "Your workspace. Upload a piece to begin a critique, or start a session plan."
+  },
+  "nav": {
+    "label": "Studio sections"
+  },
+  "metadata": {
+    "title": "Artist Studio — Art Loupe",
+    "description": "Artist-facing critique and studio-planning companion: structured formal analysis grounded in public-domain collections, never generated imagery."
+  }
+}

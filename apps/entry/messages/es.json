@@ -1,0 +1,32 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Entrada"
+  },
+  "entry": {
+    "about": "Acerca de",
+    "title": "Dos superficies, un estudio",
+    "description": "Un estudio para artistas y una vista de operaciones de los agentes que lo sostienen.",
+    "gate": {
+      "label": "Entiendo que esta es una demostración con datos sintéticos y colecciones de dominio público, no una tasación, autenticación ni opinión legal. <info>Cómo se generan los datos</info>",
+      "error": "Confirma el aviso sobre datos sintéticos antes de abrir una aplicación."
+    },
+    "panels": {
+      "studio": {
+        "title": "Estudio del artista",
+        "description": "Crítica estructurada de tu propia obra, estudios de paleta y valor, y planificación de sesiones, fundamentados en fuentes de historia del arte y nunca en imágenes generadas.",
+        "cta": "Abrir aplicación"
+      },
+      "operations": {
+        "title": "Control de operaciones",
+        "description": "Coste y latencia del modelo, estado del corpus de recuperación y resultados de evaluación de los agentes que sostienen el estudio.",
+        "cta": "Ir al inicio de sesión",
+        "badge": "Solo acceso autorizado"
+      }
+    }
+  },
+  "metadata": {
+    "title": "Art Loupe",
+    "description": "Punto de entrada de la demostración de Art Loupe: el estudio del artista y el control de operaciones de un sistema multiagente de crítica y planificación de estudio."
+  }
+}

@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # TS 7 (native-port rewrite) breaks typescript-eslint (no release
+      # supports it yet). Hold at 6.x until the lint stack catches up.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    groups:
+      production-dependencies:
+        dependency-type: production
+      development-dependencies:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

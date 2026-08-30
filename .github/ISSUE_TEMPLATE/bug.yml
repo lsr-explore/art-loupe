@@ -1,0 +1,61 @@
+name: Bug
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Title:** prefix with the app/package scope (e.g. `studio:`, `operations:`,
+        `agent:`) — the type is set by the **bug** label, not the title.
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Enter …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data to reproduce
+      description: Inputs / fixtures / seed state needed to walk the flow. **No secrets or credentials.**
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Where applicable — drag images in.
+    validations:
+      required: false
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who/what is affected and how badly (blocked flow, safety, a11y, cosmetic…).
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety notes
+      description: Optional — grounding and authorship implications. A claim that could go out uncited or unsupported, a fabricated attribution, or any path that would have the system generate imagery rather than reason about work the artist supplied.
+    validations:
+      required: false
+  - type: textarea
+    id: tech-notes
+    attributes:
+      label: Tech notes
+      description: Optional — suspected cause, relevant files, links.
+    validations:
+      required: false
+  - type: textarea
+    id: a11y-notes
+    attributes:
+      label: A11y notes
+      description: Optional — WCAG criterion, AT/keyboard behavior, affected users.
+    validations:
+      required: false

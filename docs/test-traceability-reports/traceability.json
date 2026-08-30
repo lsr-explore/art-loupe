@@ -1,0 +1,1878 @@
+{
+  "generated_by": "scripts/reports/traceability-report.mjs",
+  "totals": {
+    "tagged": {
+      "pytest": 12,
+      "vitest": 198,
+      "playwright": 24,
+      "all": 234
+    },
+    "untagged": {
+      "pytest": 0,
+      "vitest": 0,
+      "playwright": 0,
+      "all": 0
+    },
+    "all": {
+      "pytest": 12,
+      "vitest": 198,
+      "playwright": 24,
+      "all": 234
+    }
+  },
+  "by_flow": {
+    "critique.no-generation": {
+      "severity": "P0",
+      "title": "The system refuses to generate imagery",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "retrieval.grounding": {
+      "severity": "P0",
+      "title": "Art-historical context is carried back to a real citation",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "critique.alignment": {
+      "severity": "P1",
+      "title": "Critique of execution against the artist's stated goal",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "critique.formal-analysis": {
+      "severity": "P1",
+      "title": "Structural analysis of a supplied work",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "platform.auth": {
+      "severity": "P1",
+      "title": "Acknowledgement gate, sign-in, and the route guard",
+      "counts": {
+        "a11y": 5,
+        "security": 74,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 13
+      },
+      "runners": {
+        "pytest": 12,
+        "vitest": 63,
+        "playwright": 17
+      },
+      "total": 92,
+      "parametrized": 0
+    },
+    "canvas.session-plan": {
+      "severity": "P2",
+      "title": "Canvas match, compositional grids, and the studio prep kit",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "ops.observability": {
+      "severity": "P2",
+      "title": "Cost, latency, evaluation health, and corpus ingestion",
+      "counts": {
+        "a11y": 2,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 3
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 5,
+        "playwright": 0
+      },
+      "total": 5,
+      "parametrized": 0
+    },
+    "palette.extraction": {
+      "severity": "P2",
+      "title": "Palette, value study, and edge-map extraction",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "platform.contracts": {
+      "severity": "P2",
+      "title": "Shared schemas and the TS/Python contract boundary",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "platform.shell": {
+      "severity": "P2",
+      "title": "App shell, navigation, theming, and localization",
+      "counts": {
+        "a11y": 31,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 106
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 130,
+        "playwright": 7
+      },
+      "total": 137,
+      "parametrized": 7
+    }
+  },
+  "by_test": [
+    {
+      "id": "apps/entry/e2e/entry.spec.ts:15",
+      "name": "serves the landing page and negotiates a locale",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/e2e/entry.spec.ts:23",
+      "name": "serves the Spanish locale",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/e2e/entry.spec.ts:34",
+      "name": "does not gate the landing page behind a login",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/e2e/entry.spec.ts:41",
+      "name": "has no detectable accessibility violations",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/entry/e2e/metadata-routes.spec.ts:28",
+      "name": "${route} is served directly",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:107",
+      "name": "does not launch or set the cookie when the box is unticked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:112",
+      "name": "does not launch for a target that is not a known surface",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:63",
+      "name": "launches the studio when the studio panel is clicked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:67",
+      "name": "launches operations when the operations panel is clicked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:71",
+      "name": "records the acknowledgement before launching",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:77",
+      "name": "resumes a deep link that points at the clicked surface",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:91",
+      "name": "prefers the clicked panel over a deep link to a different surface",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/actions.test.ts:97",
+      "name": "ignores a deep link to a surface we do not own",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:106",
+      "name": "scopes the operations panel to its app palette",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:114",
+      "name": "leaves the studio panel on the ambient skin",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:120",
+      "name": "badges only Operations as authorized-access",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:126",
+      "name": "keeps the launch buttons enabled while unacknowledged",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:139",
+      "name": "shows no error before the user acts",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:146",
+      "name": "blocks launch, announces, and moves focus when unacknowledged",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:163",
+      "name": "clears the error once the box is ticked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:175",
+      "name": "posts the acknowledgement once the box is ticked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:186",
+      "name": "pre-ticks the box when the acknowledgement cookie is already set",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:193",
+      "name": "leaves the box unticked when the cookie is absent",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:200",
+      "name": "links the notice into the About site synthetic-data section",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:212",
+      "name": "forwards an allowed resume URL as a hidden field",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:222",
+      "name": "drops an off-origin resume URL rather than rendering it",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:67",
+      "name": "renders the headline and supporting copy",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:75",
+      "name": "renders the logo decoratively",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:83",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/entry/src/app/[locale]/page.test.tsx:92",
+      "name": "renders both surfaces with their own headings",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:16",
+      "name": "falls back to the dev ports when the env vars are unset",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:32",
+      "name": "accepts a URL on an allowed app origin and preserves its path",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:36",
+      "name": "returns null for %s",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:44",
+      "name": "rejects an unrelated origin",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:53",
+      "name": "rejects a host that only prefixes an allowed origin",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:57",
+      "name": "rejects an allowed origin appearing later in the URL",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:61",
+      "name": "rejects a protocol-relative URL",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:67",
+      "name": "rejects a javascript: scheme",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:72",
+      "name": "rejects a relative path",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/entry/src/lib/app-origins.test.ts:78",
+      "name": "rejects the right host on the wrong port",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:11",
+      "name": "the authenticated header reflows at 320 CSS px",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:25",
+      "name": "renders the public landing with no accessibility violations",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:34",
+      "name": "redirects the gated home to the landing when unauthenticated",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:39",
+      "name": "labels the console credentials for an operator and carries no secondary links",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:55",
+      "name": "signs in and reaches the gated operations home",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/e2e/auth.spec.ts:63",
+      "name": "the authenticated operations home has no accessibility violations",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/e2e/metadata-routes.spec.ts:28",
+      "name": "${route} is served directly",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:108",
+      "name": "still restricts roles when the demo provider is in use",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:118",
+      "name": "fails closed when Supabase is not configured",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:61",
+      "name": "authenticates against Supabase by default",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:75",
+      "name": "restricts sign-in to operator roles",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:83",
+      "name": "surfaces an error when the credentials or role are refused",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:89",
+      "name": "redirects to the gated home on success",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/actions.test.ts:98",
+      "name": "uses the demo provider only when AUTH_PROVIDER asks for it",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:20",
+      "name": "renders the page heading",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:27",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/page.test.tsx:29",
+      "name": "renders the heading and the login section",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/page.test.tsx:38",
+      "name": "renders a decorative gradient backdrop and no photographic asset",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/page.test.tsx:49",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/ui/error-boundary.test.tsx:14",
+      "name": "renders children when no error occurs",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/ui/error-boundary.test.tsx:24",
+      "name": "renders default fallback when a child throws",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/ui/error-boundary.test.tsx:41",
+      "name": "renders static fallback ReactNode when provided",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/ui/error-boundary.test.tsx:55",
+      "name": "renders fallback render function with error and reset",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/ui/error-boundary.test.tsx:79",
+      "name": "resets error state when reset is called",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:108",
+      "name": "shows the signed-in identity in the header on every gated page",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:123",
+      "name": "the authenticated header reflows at 320 CSS px",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:139",
+      "name": "the authenticated home has no accessibility violations",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:171",
+      "name": "redirects an unacknowledged visitor to the entry point with a resume link",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:185",
+      "name": "gates the public landing as well, not just authenticated routes",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:28",
+      "name": "renders the public landing with no accessibility violations",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:37",
+      "name": "redirects the gated home to the landing when unauthenticated",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:49",
+      "name": "carries no acknowledgement checkbox and enables sign-in immediately",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:56",
+      "name": "labels the identifier for an artist and carries no secondary links",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:68",
+      "name": "serves the backdrop through the optimizer in a modern format",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/auth.spec.ts:92",
+      "name": "signs in, reaches the gated home, and bounces an authed user off the landing",
+      "runner": "playwright",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/e2e/metadata-routes.spec.ts:28",
+      "name": "${route} is served directly",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:20",
+      "name": "renders the page heading",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:27",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/page.test.tsx:29",
+      "name": "renders the heading and the login section",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/page.test.tsx:36",
+      "name": "renders the backdrop as a decorative image, not an announced one",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/page.test.tsx:49",
+      "name": "applies the 0.75 to the image itself rather than as a scrim over it",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/page.test.tsx:59",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/ui/error-boundary.test.tsx:14",
+      "name": "renders children when no error occurs",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/ui/error-boundary.test.tsx:24",
+      "name": "renders default fallback when a child throws",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/ui/error-boundary.test.tsx:41",
+      "name": "renders static fallback ReactNode when provided",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/ui/error-boundary.test.tsx:55",
+      "name": "renders fallback render function with error and reset",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/ui/error-boundary.test.tsx:79",
+      "name": "resets error state when reset is called",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:139",
+      "name": "matches the committed route × visitor gate matrix",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:170",
+      "name": "admits no anonymous visitor to any route but the landing",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:187",
+      "name": "applies the acknowledgement gate before the auth gate",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:199",
+      "name": "refuses an operator session rather than treating it as authorized",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:16",
+      "name": "is true when the cookie is present",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:20",
+      "name": "is false when it is absent",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:24",
+      "name": "does not accept the session cookie in its place",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:31",
+      "name": "sends the visitor to the entry point carrying an absolute next=",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:42",
+      "name": "preserves the deep link query string",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:55",
+      "name": "prefers the configured public origin over the request origin",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/ack.test.ts:74",
+      "name": "is the name the entry point writes and the apps read",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:12",
+      "name": "returns options with the cookie name and provided password",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:23",
+      "name": "throws when the password is missing",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:29",
+      "name": "throws when the password is too short",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:34",
+      "name": "defaults to an eight-hour session rather than iron-session",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:41",
+      "name": "lets an app shorten the session via AUTH_SESSION_TTL",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:48",
+      "name": "refuses a zero TTL, which iron-session reads as ",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/options.test.ts:55",
+      "name": "refuses a non-numeric TTL rather than silently falling back",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:108",
+      "name": "falls back to artist for an unrecognised role",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:125",
+      "name": "returns null when Supabase rejects the credentials",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:139",
+      "name": "returns null when no user is returned even without an error",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:150",
+      "name": "returns null when a user comes back without a session",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:174",
+      "name": "exchanges a refresh token for a fresh pair",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:192",
+      "name": "returns null for a spent or revoked refresh token",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:202",
+      "name": "treats a session with no expiry as already expired",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:29",
+      "name": "resolves an artist session for valid credentials",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:47",
+      "name": "relays Supabase",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:65",
+      "name": "reads the role from app_metadata",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider-supabase.test.ts:85",
+      "name": "ignores a role claimed in user_metadata",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:17",
+      "name": "resolves a super-user session for matching credentials",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:26",
+      "name": "issues no tokens, so a demo session cannot reach the Python services",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:35",
+      "name": "returns null for a wrong password",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:44",
+      "name": "returns null for an unknown username",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:53",
+      "name": "rejects a password sharing a long prefix with the real one",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/provider.test.ts:65",
+      "name": "throws when the demo credentials are not configured",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:105",
+      "name": "reports a refused role identically to a bad password",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:121",
+      "name": "accepts any authenticated role when no allow list is given",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:43",
+      "name": "persists the session for an accepted principal",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:54",
+      "name": "refuses invalid credentials without writing a session",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:64",
+      "name": "admits a principal whose role is on the allow list",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:80",
+      "name": "refuses a valid principal whose role is not on the allow list",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:90",
+      "name": "writes no session at all for a refused role",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:114",
+      "name": "renders children inside the main landmark",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:120",
+      "name": "orders the header controls: leading, theme, language, user",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:147",
+      "name": "omits the user chip when signed out",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:154",
+      "name": "renders no sidebar when the slot is omitted",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:161",
+      "name": "renders the sidebar and its mobile trigger when the slot is filled",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:169",
+      "name": "points the footer links at the About site and the repo issues",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:188",
+      "name": "links the About site same-origin when no base href is supplied",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:197",
+      "name": "renders the copyright the app formatted",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:204",
+      "name": "has no accessibility violations when signed in with a sidebar",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:48",
+      "name": "renders the org name and the app name after a separator",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:55",
+      "name": "omits the app name when the surface has none",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:64",
+      "name": "sends the org lockup to the entry point and the app name to this surface",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:75",
+      "name": "falls the org lockup back to homeHref when no entry origin is supplied",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:83",
+      "name": "carries the demo disclaimer as a permanent note, not an alert",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:93",
+      "name": "keeps the disclaimer inside the banner landmark",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-shell.test.tsx:99",
+      "name": "puts the skip link ahead of the banner and points it at main",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:100",
+      "name": "stays open when a non-link part of the drawer is clicked",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:110",
+      "name": "has no accessibility violations with the overlay open",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:42",
+      "name": "names the persistent rail as a navigation landmark",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:49",
+      "name": "keeps the overlay closed until the trigger is used",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:56",
+      "name": "opens a dialog carrying the same links",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:66",
+      "name": "closes on Escape — a menu covering the page must be dismissible",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:74",
+      "name": "closes from its own close control",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/app-sidebar.test.tsx:90",
+      "name": "closes when a link inside it is activated",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:103",
+      "name": "fills the palette outline and the loupe glass from gradients, not flat colour",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:112",
+      "name": "gives each variant distinct gradient ids so neither repaints the other",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:120",
+      "name": "keeps gradient ids unique across two logos on one page",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:133",
+      "name": "emits identical defs for two default instances, so a shared id is benign",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:153",
+      "name": "ships a filled compact %s mark for icon sizes",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:163",
+      "name": "is decorative by default, because the wordmark names the brand beside it",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:169",
+      "name": "takes an accessible name when it stands alone",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:176",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:51",
+      "name": "renders both variants so CSS, not JS, picks one",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:63",
+      "name": "draws the same shapes, in order, as brand-logo-%s.svg",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/brand-logo.test.tsx:75",
+      "name": "carries the %s variant palette through to the rendered strokes",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:109",
+      "name": "renders a single-word org name on one line",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:115",
+      "name": "omits the lockup entirely when no org name is given",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:121",
+      "name": "applies an extra className to the root",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:128",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:14",
+      "name": "renders the title as the page h1",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:20",
+      "name": "renders the description and the form slot",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:27",
+      "name": "omits the description paragraph when none is given",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:33",
+      "name": "paints the backdrop behind the card, not inside it",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:49",
+      "name": "keeps the card surface solid so no text sits on the backdrop",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:59",
+      "name": "renders the org lockup above the card, not inside it",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:71",
+      "name": "prefixes the app name to the single h1",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:80",
+      "name": "omits the separator when no app name is given",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:87",
+      "name": "keeps the organisation name out of the heading outline",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/login-card.test.tsx:97",
+      "name": "stacks the wordmark visually while keeping the accessible name intact",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/nav-link.test.tsx:23",
+      "name": "marks the current page for assistive tech",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/nav-link.test.tsx:27",
+      "name": "sets aria-current only on the active link",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/nav-link.test.tsx:38",
+      "name": "draws the sidebar variant from the sidebar token family",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/nav-link.test.tsx:46",
+      "name": "tints the sidebar hover state rather than greying it",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/nav-link.test.tsx:54",
+      "name": "keeps the inline variant on the page muted family",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/standalone-message.test.tsx:15",
+      "name": "renders the message as the page h1 with a way out",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/standalone-message.test.tsx:32",
+      "name": "uses a plain anchor rather than a router-bound link",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/standalone-message.test.tsx:40",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:15",
+      "name": "renders the signed-in username",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:21",
+      "name": "prefixes the username with an assistive-tech-only ",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:29",
+      "name": "renders sign-out as a submit button inside a form",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:38",
+      "name": "invokes the supplied action when signed out",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:49",
+      "name": "applies an extra className to the root",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/user-chip.test.tsx:56",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:10",
+      "name": "ships a catalog for every locale the apps route",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:16",
+      "name": "supplies shared chrome the app never defines",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:23",
+      "name": "returns the requested locale, not the default",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:31",
+      "name": "merges into a namespace rather than replacing it",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:40",
+      "name": "lets the app win on a key both define",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:48",
+      "name": "falls back to English for an unknown locale rather than throwing",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:57",
+      "name": "warns when it falls back, naming the locale and the fix",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/i18n/messages.test.ts:66",
+      "name": "stays quiet for a locale it does ship",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:102",
+      "name": "warns rather than errors on an advisory pairing below its bar",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:106",
+      "name": "leaves an unbarred decorative pairing as a pass at any ratio",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:115",
+      "name": "defines both a light and a dark block",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:125",
+      "name": "keeps every token inside the sRGB gamut",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:136",
+      "name": "meets WCAG 2.2 AA on every asserted pairing",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:153",
+      "name": "keeps --input distinct from the decorative --border",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:171",
+      "name": "keeps every app pair above the separation floor",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:182",
+      "name": "measures entry as a deliberate copy of studio, not a third identity",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:210",
+      "name": "copies $app light values verbatim",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:223",
+      "name": "copies $app dark values verbatim",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:242",
+      "name": "has no redundant studio block",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:262",
+      "name": "uses cyan as the dark chart lead",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:267",
+      "name": "never assigns cyan to a text-bearing token",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:31",
+      "name": "converts %s to %s",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:41",
+      "name": "gives black on white the maximum ratio of 21:1",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:47",
+      "name": "matches the published ratio for the AA boundary grey #767676",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:53",
+      "name": "reproduces the ~4.1:1 that retired the theme.md studio primary",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:60",
+      "name": "rejects a value that is not the authored oklch form",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:70",
+      "name": "does not round before comparing against a bar",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:83",
+      "name": "warns on an asserted pairing that only just clears its bar",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:88",
+      "name": "passes once the pairing clears the bar by the full margin",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/theme/contrast.test.ts:93",
+      "name": "errors on an asserted pairing below its bar",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:105",
+      "name": "test_rejects_a_token_from_another_issuer",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:116",
+      "name": "test_rejects_a_token_with_the_wrong_audience",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:131",
+      "name": "test_rejects_algorithm_confusion",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:172",
+      "name": "test_rejects_an_unknown_signing_key",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:187",
+      "name": "test_unreachable_keys_are_an_outage_not_a_rejection",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:197",
+      "name": "test_role_defaults_to_artist_without_app_metadata",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:208",
+      "name": "test_ignores_a_role_claimed_in_user_metadata",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:224",
+      "name": "test_reuses_the_cached_key_set",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:235",
+      "name": "test_rejects_an_empty_token",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:242",
+      "name": "test_asymmetric_mode_excludes_hmac",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:83",
+      "name": "test_accepts_a_well_formed_token",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/auth/tests/test_tokens.py:95",
+      "name": "test_rejects_an_expired_token",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    }
+  ],
+  "gaps": {
+    "uncovered": [
+      "critique.no-generation",
+      "retrieval.grounding",
+      "critique.alignment",
+      "critique.formal-analysis",
+      "canvas.session-plan",
+      "palette.extraction",
+      "platform.contracts"
+    ],
+    "missingExpected": []
+  },
+  "untagged": {}
+}

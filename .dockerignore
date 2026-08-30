@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+dist
+coverage
+test-results
+test-output
+playwright-report
+storybook-static
+.git
+*.lcov

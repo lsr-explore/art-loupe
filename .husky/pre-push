@@ -1,0 +1,12 @@
+# Refuse to push to main. The remote ruleset allows a bypass for the repo owner, so this
+# local guard is the real protection against an accidental push to main.
+# Override intentionally with: git push --no-verify
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main)
+      echo "✋ Refusing to push to main — open a PR instead." >&2
+      echo "   Override intentionally with: git push --no-verify" >&2
+      exit 1
+      ;;
+  esac
+done

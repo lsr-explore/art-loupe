@@ -1,0 +1,82 @@
+# CodeRabbit configuration — https://docs.coderabbit.ai/reference/configuration
+# Reviews run on pull requests. Profile `assertive` — style/naming/docs/test
+# commentary alongside bugs; drop to `chill` if the volume gets noisy.
+language: en-US
+
+reviews:
+  profile: assertive
+  request_changes_workflow: false # solo repo — reviews inform, don't gate merges
+  high_level_summary: true
+  poem: false
+  review_status: false
+  sequence_diagrams: true
+  auto_review:
+    # PAUSED 2026-07-31 — Greptile is the review tool now (greptile.json). The app stays
+    # installed and everything below is preserved, so the *mechanical* switch back is this
+    # one flag.
+    #
+    # Before switching back, diff the rules: greptile.json and the `path_instructions` below
+    # are meant to say the same things, and whichever tool is off tends to drift. Re-enabling
+    # without reconciling them makes a green check imply coverage a path no longer has.
+    #
+    # Not a merge risk either way: review bots are deliberately not among the required status
+    # checks, so a PR without a bot review still merges.
+    enabled: false
+    drafts: false
+    # Off because the review loop pushes fixes on nearly every PR, and each push was
+    # triggering a fresh review — two or three per PR against a per-developer limit.
+    # Request a re-review explicitly with `@coderabbitai review` when a fix warrants one.
+    auto_incremental_review: false
+    # Narrow on purpose. Dependabot PRs are pure volume, and session-wrap PRs are
+    # generated records already excluded by path_filters. Do NOT broaden this to `docs`:
+    # a docs-titled PR in the predecessor repo carried a real data-loss bug, and the
+    # review is what caught it.
+    ignore_title_keywords:
+      - "build(deps)"
+      - "wrap"
+  # "Finishing touches" — CodeRabbit-authored additions on top of the review.
+  finishing_touches:
+    # Docstrings off: not an SDK, docs aren't published, and the codebase already
+    # hand-authors intent/rationale docstrings in a house style auto-gen dilutes.
+    docstrings:
+      enabled: false
+    # Unit-test generation left on to trial in a throwaway PR — easy to not merge
+    # if it doesn't buy anything over our existing convention-following tests.
+    unit_tests:
+      enabled: true
+  # Exclude generated / vendored / lock artifacts from review.
+  path_filters:
+    - "!**/*.lock"
+    - "!**/pnpm-lock.yaml"
+    - "!**/node_modules/**"
+    - "!**/.next/**"
+    - "!**/dist/**"
+    - "!**/.venv/**"
+    - "!supabase/**/generated/**"
+    - "!docs/session-metrics-reports/**"
+    - "!docs/current-state.md"
+  # Context CodeRabbit can't infer from the diff alone.
+  path_instructions:
+    - path: "python/services/agent/**"
+      instructions: |
+        Grounding and authorship guardrails. Flag any change that could drop a
+        required per-fact citation, surface an art-historical claim not grounded
+        in a retrieved source (confabulation), or introduce a path that generates
+        system appear to diagnose.
+    - path: "packages/schemas/**"
+      instructions: |
+        Zod contracts must stay in sync with the Python Pydantic models in
+        artloupe-schemas. Flag drift between the two.
+    - path: "{apps/*/src/**,packages/fascia/src/**}"
+      instructions: |
+        Accessibility must meet WCAG 2.2 AA and ARIA authoring practices. Flag:
+        missing/incorrect semantic HTML, non-text controls without accessible
+        names, keyboard traps or unreachable interactive elements, focus not
+        managed on dynamic UI (dialogs, route changes, live regions), color
+        used as the only signal or insufficient contrast, images/icons without
+        text alternatives, form fields without associated labels or error
+        messaging, and hard-coded user-facing copy that bypasses next-intl.
+
+knowledge_base:
+  learnings:
+    scope: auto

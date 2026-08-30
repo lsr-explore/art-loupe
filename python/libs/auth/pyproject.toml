@@ -1,0 +1,38 @@
+# Art Loupe shared auth — access-token verification for every Python service.
+#
+# A library, not a service. Under the settled design the Next.js apps talk to Supabase Auth
+# directly and Python never handles a credential; it only *verifies* the access token the
+# apps forward. Verification therefore has no business being a network hop of its own —
+# it is a function every service calls in-process. See ADR 0002.
+[project]
+name = "artloupe-auth"
+version = "0.1.0"
+description = "Verification of Supabase-issued access tokens, and FastAPI guards built on it."
+requires-python = ">=3.12"
+dependencies = [
+  # `[crypto]` pulls `cryptography`, required for the asymmetric (ES256/RS256) path.
+  # Without it PyJWT can only verify HMAC.
+  "pyjwt[crypto]>=2.10",
+  # Fetches the project's JWKS. Deliberately not `supabase-py`: that would drag postgrest,
+  # storage3, and realtime into every service just to read a public key document.
+  "httpx>=0.28",
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  # Only `artloupe.auth.dependencies` imports FastAPI; a non-HTTP consumer can use
+  # `verify_access_token` without touching it.
+  "fastapi>=0.115",
+]
+
+[dependency-groups]
+dev = [
+  "pytest-asyncio>=1.4.0",
+  "respx>=0.22",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
+packages = ["src/artloupe"]

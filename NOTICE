@@ -1,0 +1,37 @@
+Art Loupe — Artist's Studio Director
+Copyright 2026 Laurie Reynolds
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this software except in compliance with the License. A copy of the License is in
+the LICENSE file, or at http://www.apache.org/licenses/LICENSE-2.0.
+
+==============================================================================
+EDUCATIONAL DEMONSTRATION ONLY
+==============================================================================
+
+Art Loupe is a portfolio / capstone demonstration of multi-agent reasoning
+patterns applied to art critique and studio planning. It is NOT a valuation,
+authentication, provenance, or legal service, and MUST NOT be relied on for any
+appraisal, attribution, sale, insurance, or licensing decision.
+
+  - Critique output is machine-generated analysis, not the opinion of a
+    qualified art historian, appraiser, or conservator.
+  - Art-historical context is drawn from public-domain and open-access museum
+    collections and may be incomplete, out of date, or wrongly matched.
+  - The system does NOT generate imagery. It analyses work the artist supplies
+    and returns text, deterministic colour and edge analysis, and citations.
+  - Uploaded work is the artist's own. Art Loupe claims no rights in it and does
+    not use it to train models.
+  - The software is provided "AS IS", without warranty of any kind. The authors
+    accept no liability for any use — see the disclaimer of warranty and
+    limitation of liability in the LICENSE.
+
+==============================================================================
+ACKNOWLEDGMENTS
+==============================================================================
+
+Art-historical reference data is drawn from open-access museum programs,
+including The Metropolitan Museum of Art Open Access, the Smithsonian Open
+Access initiative, the Art Institute of Chicago's public API, and Europeana.
+Each is used under its own published terms; no collection materials are
+redistributed as part of this repository.

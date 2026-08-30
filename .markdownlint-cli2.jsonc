@@ -1,0 +1,33 @@
+{
+  // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+  "config": {
+    "default": true,
+    "MD004": { "style": "dash" },
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD033": false,
+    "MD040": false,
+    "MD060": false
+  },
+  "ignores": [
+    "**/node_modules/**",
+    "**/.VSCodeCounter/**",
+    "**/.venv/**",
+    "**/.next/**",
+    "**/storybook-static/**",
+    "**/coverage/**",
+    "**/test-results/**",
+    "**/playwright-report/**",
+    "**/CHANGELOG.md",
+    "**/.github/pull_request_template.md",
+    "docs/capstone/source_notes/**",
+    "**/.claude/**",
+    // Downloaded vale styles — third-party, reinstalled by `vale sync`, not our prose.
+    "**/.vale/**",
+    "**/.agents/skills/**",
+    // Per-app agent config, not prose: a one-line `@AGENTS.md` import has no heading
+    // to give it. The root CLAUDE.md is a real document and stays linted.
+    "apps/*/CLAUDE.md",
+    "packages/*/CLAUDE.md"
+  ]
+}

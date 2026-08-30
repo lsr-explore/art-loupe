@@ -1,0 +1,23 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Control de Operaciones"
+  },
+  "landing": {
+    "description": "Inicia sesión para supervisar la actividad de los agentes, la salud de las evaluaciones, los guardarraíles y el coste del estudio.",
+    "identifierLabel": "ID de operador",
+    "accessKeyLabel": "Clave de acceso",
+    "showAccessKey": "Mostrar clave de acceso",
+    "hideAccessKey": "Ocultar clave de acceso",
+    "signIn": "Iniciar sesión",
+    "errorInvalid": "No se reconocieron esas credenciales. Inténtalo de nuevo."
+  },
+  "home": {
+    "title": "Operaciones",
+    "description": "Vista operativa del estudio multiagente: actividad de crítica y recuperación, salud de las evaluaciones, guardarraíles y coste."
+  },
+  "metadata": {
+    "title": "Control de Operaciones — Art Loupe",
+    "description": "Panel operativo del estudio multiagente: actividad de crítica y recuperación, salud de las evaluaciones, guardarraíles y coste."
+  }
+}

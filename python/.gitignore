@@ -1,0 +1,16 @@
+# Local secrets/config — never commit. The committed template is .env.example.
+.env
+.env.local
+!.env.example
+
+# Local dev AI response cache (ARTLOUPE_AI_CACHE) — never commit.
+.cache/
+
+# Timestamped eval report artifacts (poe eval / eval-live) — local run output.
+eval-reports/
+
+# Coverage artifacts (pytest-cov / coverage.py)
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml

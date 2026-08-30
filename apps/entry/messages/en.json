@@ -1,0 +1,32 @@
+{
+  "common": {
+    "orgName": "Art Loupe",
+    "appName": "Entry"
+  },
+  "entry": {
+    "about": "About",
+    "title": "Two surfaces, one studio",
+    "description": "An artist studio and an operations view of the agents behind it.",
+    "gate": {
+      "label": "I understand this is a demonstration using synthetic data and public-domain collections — not a valuation, authentication, or legal opinion. <info>How the data is generated</info>",
+      "error": "Please acknowledge the synthetic-data notice before launching an app."
+    },
+    "panels": {
+      "studio": {
+        "title": "Artist Studio",
+        "description": "Structured critique of your own work, palette and value studies, and session planning — grounded in art-historical sources, never generated imagery.",
+        "cta": "Launch App"
+      },
+      "operations": {
+        "title": "Operations Control",
+        "description": "Model cost and latency, retrieval-corpus health, and evaluation results for the agents behind the studio.",
+        "cta": "Go to Login",
+        "badge": "Authorized access only"
+      }
+    }
+  },
+  "metadata": {
+    "title": "Art Loupe",
+    "description": "Entry point for the Art Loupe demonstration — the artist studio and operations control surfaces of a multi-agent critique and studio-planning system."
+  }
+}

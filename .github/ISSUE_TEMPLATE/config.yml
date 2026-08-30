@@ -1,0 +1,2 @@
+# Keep the "Open a blank issue" escape hatch for quick throwaway tickets.
+blank_issues_enabled: true

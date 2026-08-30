@@ -1,0 +1,150 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Scan the shared UI library — it's symlinked under node_modules, which Tailwind
+   skips by default, so its component classes wouldn't otherwise be generated. */
+@source "../../../../packages/fascia/src";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ============================================================================
+   Artist Studio — the artist-facing critique and planning surface.
+   Warm studio palette: SKY-family blues on WARM SAND neutrals — the softest,
+   warmest, roundest of the skins. The sand hue is what keeps this app
+   distinct from operations' cool grey; the primary carries the sky.
+   fascia owns the token CONTRACT; this file owns the VALUES.
+   Contrast is measured, not asserted by hand: see docs/contrast-report/contrast.md
+   (regenerate with `pnpm contrast:report`) and the gate in
+   packages/fascia/src/theme/contrast.test.ts.
+   ========================================================================= */
+:root {
+  color-scheme: light;
+
+  --background: oklch(96% 0.024 88deg);
+  --foreground: oklch(30.4% 0.0237 233.61deg);
+  --card: oklch(100% 0 0deg);
+  --card-foreground: oklch(30.4% 0.0237 233.61deg);
+  --popover: oklch(100% 0 0deg);
+  --popover-foreground: oklch(30.4% 0.0237 233.61deg);
+  --primary: oklch(52.5% 0.088 228deg);
+  --primary-foreground: oklch(100% 0 0deg);
+  --secondary: oklch(92.5% 0.0312 88deg);
+  --secondary-foreground: oklch(30.4% 0.0237 233.61deg);
+  --muted: oklch(93.2% 0.0276 88deg);
+  --muted-foreground: oklch(51% 0.02 88deg);
+  --accent: oklch(92.8% 0.026 228deg);
+  --accent-foreground: oklch(30.4% 0.0237 233.61deg);
+  --destructive: oklch(50.4% 0.147 29.39deg);
+  --border: oklch(89.9% 0.0312 88deg);
+  --input: oklch(62.5% 0.0312 88deg);
+  --ring: oklch(52.5% 0.088 228deg);
+  --chart-1: oklch(55.76% 0.0992 236.21deg);
+  --chart-2: oklch(62% 0.098 182.1deg);
+  --chart-3: oklch(65% 0.125 68.3deg);
+  --chart-4: oklch(58.2% 0.1224 31.3deg);
+  --chart-5: oklch(59% 0.0761 279.13deg);
+  --radius: 0.875rem;
+  --sidebar: oklch(100% 0 0deg);
+  --sidebar-foreground: oklch(30.4% 0.0237 233.61deg);
+  --sidebar-primary: oklch(52.5% 0.088 228deg);
+  --sidebar-primary-foreground: oklch(100% 0 0deg);
+  --sidebar-accent: oklch(92.8% 0.026 228deg);
+  --sidebar-accent-foreground: oklch(30.4% 0.0237 233.61deg);
+  --sidebar-border: oklch(89.9% 0.0312 88deg);
+  --sidebar-ring: oklch(52.5% 0.088 228deg);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(24% 0.03 215deg);
+  --foreground: oklch(94.5% 0.011 215deg);
+  --card: oklch(28.2% 0.0336 215deg);
+  --card-foreground: oklch(94.5% 0.011 215deg);
+  --popover: oklch(28.2% 0.0336 215deg);
+  --popover-foreground: oklch(94.5% 0.011 215deg);
+  --primary: oklch(74% 0.105 228deg);
+  --primary-foreground: oklch(24.5% 0.027 215deg);
+  --secondary: oklch(32% 0.0345 215deg);
+  --secondary-foreground: oklch(94.5% 0.011 215deg);
+  --muted: oklch(32% 0.0345 215deg);
+  --muted-foreground: oklch(73% 0.024 215deg);
+  --accent: oklch(35% 0.0375 215deg);
+  --accent-foreground: oklch(94.5% 0.011 215deg);
+  --destructive: oklch(71.85% 0.1254 28.95deg);
+  --border: oklch(38.5% 0.036 215deg);
+  --input: oklch(56.5% 0.036 215deg);
+  --ring: oklch(74% 0.105 228deg);
+  --chart-1: oklch(55.76% 0.0992 236.21deg);
+  --chart-2: oklch(62% 0.098 182.1deg);
+  --chart-3: oklch(65% 0.125 68.3deg);
+  --chart-4: oklch(58.2% 0.1224 31.3deg);
+  --chart-5: oklch(59% 0.0761 279.13deg);
+  --sidebar: oklch(28.2% 0.0336 215deg);
+  --sidebar-foreground: oklch(94.5% 0.011 215deg);
+  --sidebar-primary: oklch(74% 0.105 228deg);
+  --sidebar-primary-foreground: oklch(24.5% 0.027 215deg);
+  --sidebar-accent: oklch(35% 0.0375 215deg);
+  --sidebar-accent-foreground: oklch(94.5% 0.011 215deg);
+  --sidebar-border: oklch(38.5% 0.036 215deg);
+  --sidebar-ring: oklch(74% 0.105 228deg);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}

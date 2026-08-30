@@ -1,0 +1,109 @@
+{
+  "$comment": "Hand-authored source of truth for test traceability. See docs/test-traceability-reports/README.md. The generator and the pytest collection hook both validate against this file; an unknown flow or category is a hard error, never a silently dropped row.",
+  "categories": ["a11y", "security", "privacy", "safety", "data", "performance", "functionality"],
+  "aliases": {
+    "accessibility": "a11y",
+    "ally": "a11y",
+    "func": "functionality",
+    "functional": "functionality",
+    "perf": "performance",
+    "sec": "security"
+  },
+  "$expectations": "Categories a flow is expected to carry, by severity and by surface. Reported as gaps, never failed \u2014 a missing safety test is a conversation, not a broken build.",
+  "expect": {
+    "bySeverity": {
+      "P0": ["safety"]
+    },
+    "whenSurfaceMatches": [
+      {
+        "pattern": "^apps/",
+        "categories": ["a11y"]
+      }
+    ]
+  },
+  "severities": {
+    "P0": "A failure here fabricates an attribution or citation, or makes the system produce imagery it must never produce.",
+    "P1": "A failure here gives the artist wrong analysis, but the artist is looking at their own work and can see it.",
+    "P2": "A failure here degrades the experience without misinforming anyone.",
+    "P3": "Cosmetic."
+  },
+  "flows": [
+    {
+      "id": "platform.auth",
+      "title": "Acknowledgement gate, sign-in, and the route guard",
+      "severity": "P1",
+      "rationale": "Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently \u2014 the gate chain is snapshot-tested for exactly that reason.",
+      "surfaces": [
+        "apps/entry",
+        "apps/studio",
+        "apps/operations",
+        "packages/auth",
+        "packages/fascia",
+        "python/libs/auth"
+      ]
+    },
+    {
+      "id": "platform.shell",
+      "title": "App shell, navigation, theming, and localization",
+      "severity": "P2",
+      "rationale": "The chrome every surface renders identically. Regressions here are wide but shallow, and a11y lives here.",
+      "surfaces": ["apps/entry", "apps/studio", "apps/operations", "packages/fascia"]
+    },
+    {
+      "id": "platform.contracts",
+      "title": "Shared schemas and the TS/Python contract boundary",
+      "severity": "P2",
+      "rationale": "A drifted contract fails at the seam between the apps and the agent layer, where neither side's tests look.",
+      "surfaces": ["packages/schemas", "python/libs/schemas"]
+    },
+    {
+      "id": "critique.formal-analysis",
+      "title": "Structural analysis of a supplied work",
+      "severity": "P1",
+      "rationale": "The vision pass. Generic praise instead of compositional geometry, tonal distribution, and colour relationships is the failure mode the prompt constraints exist to prevent.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "critique.alignment",
+      "title": "Critique of execution against the artist's stated goal",
+      "severity": "P1",
+      "rationale": "The judgement that makes the critique worth reading. It must engage the artist's actual intent, not substitute a generic ideal.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "critique.no-generation",
+      "title": "The system refuses to generate imagery",
+      "severity": "P0",
+      "rationale": "The authorship and copyright commitment the whole design rests on. A regression here is silent by construction and would not look like a bug.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "retrieval.grounding",
+      "title": "Art-historical context is carried back to a real citation",
+      "severity": "P0",
+      "rationale": "A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "palette.extraction",
+      "title": "Palette, value study, and edge-map extraction",
+      "severity": "P2",
+      "rationale": "Deterministic CV, not model output. It either reproduces exactly or it has broken.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "canvas.session-plan",
+      "title": "Canvas match, compositional grids, and the studio prep kit",
+      "severity": "P2",
+      "rationale": "Geometry the artist acts on physically. A wrong aspect ratio wastes a real canvas.",
+      "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "ops.observability",
+      "title": "Cost, latency, evaluation health, and corpus ingestion",
+      "severity": "P2",
+      "rationale": "An internal surface. A wrong number here misleads the operator, not the artist.",
+      "surfaces": ["apps/operations", "python/services/agent", "packages/schemas"]
+    }
+  ]
+}

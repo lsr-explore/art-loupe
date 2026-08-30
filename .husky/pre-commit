@@ -1,0 +1,15 @@
+# Refuse to commit directly on main. The remote ruleset allows a bypass for the repo owner
+# (and pushes use those credentials), so this local guard is the real protection against an
+# accidental commit landing on main. Override intentionally with: git commit --no-verify
+# `git branch --show-current`, not `rev-parse --abbrev-ref HEAD`: on an unborn branch
+# (a repo with no commits yet) rev-parse exits 128, so the very first commit failed
+# here before any check ran. This form prints the branch name and exits 0, and is
+# empty on a detached HEAD, which correctly does not match "main".
+branch="$(git branch --show-current)"
+if [ "$branch" = "main" ]; then
+  echo "✋ Refusing to commit directly on main — create a branch first (git checkout -b …)." >&2
+  echo "   Override intentionally with: git commit --no-verify" >&2
+  exit 1
+fi
+
+pnpm exec lint-staged && pnpm lint && pnpm typecheck

@@ -1,0 +1,55 @@
+/* ============================================================================
+   Print rules shared by every surface.
+
+   A printable document has no second rendering path: "Download PDF" calls
+   `window.print()`, so the on-screen render IS the artifact and these rules are
+   what make it read as a document rather than a screenshot of an app.
+
+   What lives here is only what a Tailwind utility cannot express at all: the
+   page box, orphans/widows, and the forced light ground. Hiding chrome and
+   avoiding breaks are `print:hidden` / `break-inside-avoid` utilities on the
+   components that own them (`app-header`, `app-footer`, `app-sidebar`), so they
+   stay next to the markup they affect.
+
+   That split was worth checking rather than assuming: `<aside>` carries both
+   `lg:block` and `print:hidden`, and utilities of equal specificity are decided
+   by their order in the emitted sheet, not the order written in the class list.
+   Measured in the built CSS, Tailwind emits `print:` after `lg:`, so the rail
+   does hide. If a future Tailwind reorders its variants, that stops being true
+   silently. An e2e assertion under `emulateMedia({media: 'print'})` is what turns
+   that back into a failure; add one when a printable surface lands.
+
+   Imported by each app's globals.css, not auto-applied: `@artloupe/fascia` ships
+   no global stylesheet of its own and this is the one exception, kept explicit.
+   ========================================================================= */
+
+@media print {
+  @page {
+    /* Roughly a 0.7in margin — enough for a hole-punch or a staple on a document
+       the reader is expected to keep. */
+    margin: 18mm;
+  }
+
+  html,
+  body {
+    /* Dark mode is a screen preference. A page printed from it wastes toner and
+       reads worse, so the printed copy is always the light one. */
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body {
+    /* The screen shell is a flex column sized to the viewport; on paper that
+       constraint only prevents the content flowing across pages. */
+    display: block !important;
+    min-height: 0 !important;
+  }
+
+  /* Never strand a single line of a paragraph on its own page. */
+  p,
+  li,
+  dd {
+    orphans: 3;
+    widows: 3;
+  }
+}

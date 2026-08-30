@@ -1,0 +1,57 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # PRs run chromium only (fast feedback); main runs the full matrix. Install
+      # only the browsers we'll run. @playwright/test is an app-level dep (not
+      # hoisted to the root .bin), so resolve the CLI via a filtered exec; browsers
+      # go to a shared cache, so one app covers all three (same pinned version).
+      - name: Install Playwright browsers
+        run: pnpm --filter @artloupe/studio exec playwright install --with-deps ${{ github.event_name == 'pull_request' && 'chromium' || '' }}
+
+      # Per-app so args forward reliably to `playwright test`. PROJECT_FLAG is empty
+      # on main (all three browsers) and --project=chromium on PRs. The studio app's
+      # server is pinned to the canned agent client (ARTLOUPE_AGENT_URL="") in its
+      # playwright.config, so no live agent is needed.
+      - name: Run Playwright tests
+        env:
+          PROJECT_FLAG: ${{ github.event_name == 'pull_request' && '--project=chromium' || '' }}
+        run: |
+          pnpm --filter @artloupe/studio e2e $PROJECT_FLAG
+          pnpm --filter @artloupe/operations e2e $PROJECT_FLAG
+          pnpm --filter @artloupe/entry e2e $PROJECT_FLAG
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: apps/*/playwright-report/
+          retention-days: 30

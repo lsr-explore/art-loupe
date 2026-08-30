@@ -1,0 +1,74 @@
+name: Epic
+description: A vertical slice of related work tracked across several child issues
+labels: [epic]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Title:** prefix with the app/package scope (e.g. `studio:`, `operations:`,
+        `agent:`) — the type is set by the **epic** label, not the title.
+
+
+        **Children:** link feature/bug issues to this epic from the *child* side using
+        the **Parent** field (native sub-issues). Don't keep a hand-written checklist
+        here — the tracked sub-issue list and its progress bar stay authoritative.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal / why now
+      description: The outcome this epic delivers and why it's worth doing now.
+      placeholder: |
+        One or two sentences: the capability that lands and the reason it's next.
+    validations:
+      required: true
+  - type: textarea
+    id: in-scope
+    attributes:
+      label: In scope
+      description: The vertical cut this epic covers — the work that must ship for it to close.
+      placeholder: |
+        - …
+        - …
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: >
+        Explicitly deferred or excluded work. Cross-link backlog issues here (e.g. `#NN`)
+        so this epic's "done" line stays clean and its progress bar isn't gated by work it
+        never owned.
+      placeholder: |
+        - … (#NN)
+        - … (#NN)
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance / done-when
+      description: What must be true across the children for this epic to be complete.
+      placeholder: |
+        - [ ] …
+        - [ ] …
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: ADR & docs links
+      description: Optional — ADRs, design notes, or specs this epic implements.
+    validations:
+      required: false
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety notes
+      description: >
+        Optional — grounding and authorship implications spanning the child issues. A claim
+        that could go out uncited or unsupported, a fabricated attribution, or any path that
+        would have the system generate imagery rather than reason about work the artist
+        supplied.
+    validations:
+      required: false

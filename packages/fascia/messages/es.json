@@ -1,0 +1,50 @@
+{
+  "common": {
+    "goHome": "Ir al inicio",
+    "logIn": "Iniciar sesión",
+    "tryAgain": "Intentar de nuevo",
+    "cancel": "Cancelar",
+    "dismissAlert": "Descartar alerta"
+  },
+  "session": {
+    "signedInAs": "Sesión iniciada como",
+    "signOut": "Cerrar sesión"
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "shell": {
+    "banner": "Solo demostración — no es una tasación, autenticación ni opinión legal.",
+    "skipToContent": "Saltar al contenido principal",
+    "sidebarLabel": "Secciones",
+    "openSidebar": "Abrir el menú de secciones",
+    "closeSidebar": "Cerrar el menú de secciones"
+  },
+  "footer": {
+    "label": "Información del sitio",
+    "accessibility": "Accesibilidad",
+    "privacy": "Política de privacidad",
+    "reportIssue": "Informar de un problema",
+    "opensInNewTab": "(se abre en una pestaña nueva)",
+    "copyright": "© {year} Laurie Reynolds. Todos los derechos reservados."
+  },
+  "errors": {
+    "somethingWentWrong": "Algo salió mal",
+    "unexpectedError": "Ocurrió un error inesperado."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Página no encontrada"
+  },
+  "standalone": {
+    "notFoundTitle": "No pudimos encontrar esa página",
+    "notFoundMessage": "Es posible que el enlace esté desactualizado o que la página no exista en esta superficie. Puede empezar de nuevo desde el punto de entrada de Art Loupe.",
+    "backToEntry": "Ir a Art Loupe"
+  }
+}
