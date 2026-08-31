@@ -7,3 +7,4 @@ Full per-session detail. Summary and charts: [report.md](report.md).
 | Date | Label | Cost | API | Wall | Effort split | Themes | Delivered |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-08-30 | Repo reset prep, static-check repair, and a 92 kB client-bundle fix | $35.12 | 0.7h | 4.4h | Build 10%<br>Setup 25%<br>Design 8%<br>Docs 31%<br>Verify/Ops 22%<br>Churn 4% | devex, ops, app | — |
+| 2026-08-30 | Art Loupe scope proposal — reference-to-plan, artwork critique cut | $5.93 | — | 1.6h | Design 55%<br>Docs 35%<br>Verify/Ops 5%<br>Churn 5% | agent, app, evals | — |

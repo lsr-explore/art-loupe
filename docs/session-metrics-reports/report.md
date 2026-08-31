@@ -5,16 +5,16 @@
 
 2026-08-30 → 2026-08-30
 
-- Sessions: **1**
-- Cost, LLM (API-equivalent): **$35.12**
+- Sessions: **2**
+- Cost, LLM (API-equivalent): **$41.05**
 - Time (API): **0.7h**
-- Time (wall): **4.4h**
+- Time (wall): **6.0h**
 - PRs: **0**
 - CodeRabbit findings fixed: **0/0**
 
 ## Effort, cost and time
 
-Average churn **4.0%** · average docs maintenance **31.0%**.
+Average churn **4.5%** · average docs maintenance **33.0%**.
 Docs is tracked apart from design deliberately: design is the work, doc upkeep is
 overhead and a candidate for automation.
 
@@ -28,16 +28,16 @@ improvement curve; `genuine_discovery` is the irreducible floor.
 | Cause | Share of all churn |
 | --- | --- |
 | `under_specified` | 0% |
-| `claude_error` | 70% |
-| `genuine_discovery` | 30% |
+| `claude_error` | 76% |
+| `genuine_discovery` | 24% |
 
 ## Rework
 
 Two kinds, tracked separately:
 
-- **Within a session** — the `churn` band above. Averaging **4.0%**.
+- **Within a session** — the `churn` band above. Averaging **4.5%**.
 - **Across sessions** — work a *later* session had to redo. **0 of
-  1** sessions redid earlier work.
+  2** sessions redid earlier work.
 
 Cross-session rework is the more expensive kind: it means a decision didn't hold, so
 everything built on it has to be revisited. Watch it against `decision_stability`.
@@ -51,6 +51,21 @@ everything built on it has to be revisited. Watch it against `decision_stability
 ![Dot plot of themes touched per day over time](charts/themes.svg)
 
 ## Recent retrospectives
+
+### 2026-08-30 — Art Loupe scope proposal — reference-to-plan, artwork critique cut
+
+- **Went well:** The reference corpus was binary — .docx and .xlsx — and was read directly by unzipping and stripping the XML rather than asking for conversions, so nothing in the brief went unread. The Explore agent's repo inventory changed the proposal materially rather than confirming it: it surfaced that flows.json still encodes the now-dead critique scope across three P0-adjacent flow names, that settled-decisions.md defines Art Loupe as including critique, and that no LLM dependency exists anywhere in the repo yet. Reading veloce-trace next door established what is actually portable instead of guessing. The proposal pushes back on Codex at the one place Codex's own evaluation flags a risk it does not then resolve — a fixed Director-to-Critic route is a workflow, not an agent system.
+- **Improve:** ExitPlanMode was called without first saying plainly what approving would do. Laurie rejected it — 'I wasn't quite sure what I was approving' — and the repair was a single sentence that should have preceded the call: approving writes one gitignored markdown file and nothing else. Putting a 387-line deliverable document inside a plan file is exactly the case where 'approve the plan' reads as 'approve building this.' Separately, the first draft asserted that docs/temp-references was in-tree without running git check-ignore; it is gitignored, and the claim needed correcting after the fact. That is the same verify-late pattern the previous session's retro already flagged.
+- **Tooling:** markdownlint walks docs/temp-references/ even though .gitignore excludes it, so pnpm check:all fails locally while CI stays green. A gate that disagrees with CI teaches people to ignore the gate. Either markdownlint should honour .gitignore or its ignore list should mirror it — the specific folder is disposable here, but the class of drift is not.
+- **Decisions:**
+  - Art Loupe is the final capstone pivot — the discharge app was left for personal defensibility, not because it was weaker
+  - Scope is two feature-bearing apps (studio, operations); apps/entry stays as the built public shell and never grows a workflow
+  - In-progress artwork critique is cut; its value folds into reference assessment at intake, a hand-applied self-check card, and the Plan Critic
+  - The Plan Critic survives the cut and must be named as such — it critiques the plan, not the artwork
+  - Proposed wedge: every plan claim is measured, cited, or chosen — the anti-confabulation spine, and the eval spine
+  - Proposed that the graph must branch on tool results (complexity threshold, confidence interrupt, defect-driven re-retrieval), not only on intake answers
+  - docs/temp-references is transient and gitignored; its markdownlint failures will not be fixed because the folder goes away with the design docs
+  - Pending Laurie's answers: showcase vision tool, the Week 9 fine-tuning story, and whether voice is in scope
 
 ### 2026-08-30 — Repo reset prep, static-check repair, and a 92 kB client-bundle fix
 

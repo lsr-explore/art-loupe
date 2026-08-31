@@ -1,0 +1,48 @@
+{
+  "date": "2026-08-30",
+  "label": "Art Loupe scope proposal — reference-to-plan, artwork critique cut",
+  "confidence": "measured",
+  "cost_usd": 5.93,
+  "api_minutes": null,
+  "wall_minutes": 97.7,
+  "context_over_150k_pct": 86,
+  "parallel_agents": 1,
+  "themes": ["agent", "app", "evals"],
+  "effort_split": {
+    "build": 0,
+    "setup": 0,
+    "design": 55,
+    "docs": 35,
+    "verify_ops": 5,
+    "churn": 5
+  },
+  "churn_attribution": {
+    "claude_error": 80,
+    "genuine_discovery": 20,
+    "under_specified": 0
+  },
+  "ratings": {
+    "scoping_clarity": 5,
+    "decision_stability": 4,
+    "tooling_leverage": 4
+  },
+  "rework_of": [],
+  "delivered": { "prs": [], "adrs": [] },
+  "review": { "coderabbit_findings": 0, "fixed": 0, "deferred": 0, "declined": 0 },
+  "decisions": [
+    "Art Loupe is the final capstone pivot — the discharge app was left for personal defensibility, not because it was weaker",
+    "Scope is two feature-bearing apps (studio, operations); apps/entry stays as the built public shell and never grows a workflow",
+    "In-progress artwork critique is cut; its value folds into reference assessment at intake, a hand-applied self-check card, and the Plan Critic",
+    "The Plan Critic survives the cut and must be named as such — it critiques the plan, not the artwork",
+    "Proposed wedge: every plan claim is measured, cited, or chosen — the anti-confabulation spine, and the eval spine",
+    "Proposed that the graph must branch on tool results (complexity threshold, confidence interrupt, defect-driven re-retrieval), not only on intake answers",
+    "docs/temp-references is transient and gitignored; its markdownlint failures will not be fixed because the folder goes away with the design docs",
+    "Pending Laurie's answers: showcase vision tool, the Week 9 fine-tuning story, and whether voice is in scope"
+  ],
+  "retro": {
+    "went_well": "The reference corpus was binary — .docx and .xlsx — and was read directly by unzipping and stripping the XML rather than asking for conversions, so nothing in the brief went unread. The Explore agent's repo inventory changed the proposal materially rather than confirming it: it surfaced that flows.json still encodes the now-dead critique scope across three P0-adjacent flow names, that settled-decisions.md defines Art Loupe as including critique, and that no LLM dependency exists anywhere in the repo yet. Reading veloce-trace next door established what is actually portable instead of guessing. The proposal pushes back on Codex at the one place Codex's own evaluation flags a risk it does not then resolve — a fixed Director-to-Critic route is a workflow, not an agent system.",
+    "improve": "ExitPlanMode was called without first saying plainly what approving would do. Laurie rejected it — 'I wasn't quite sure what I was approving' — and the repair was a single sentence that should have preceded the call: approving writes one gitignored markdown file and nothing else. Putting a 387-line deliverable document inside a plan file is exactly the case where 'approve the plan' reads as 'approve building this.' Separately, the first draft asserted that docs/temp-references was in-tree without running git check-ignore; it is gitignored, and the claim needed correcting after the fact. That is the same verify-late pattern the previous session's retro already flagged.",
+    "tooling_suggestion": "markdownlint walks docs/temp-references/ even though .gitignore excludes it, so pnpm check:all fails locally while CI stays green. A gate that disagrees with CI teaches people to ignore the gate. Either markdownlint should honour .gitignore or its ignore list should mirror it — the specific folder is disposable here, but the class of drift is not."
+  },
+  "note": "A pure design session: no product code, no PRs, no issues. The PRs (#1-4) and issues (#5-12) that gh returns for 2026-08-30 belong to the earlier session that day, which recorded delivered.prs as empty because it was written before the push. The only artifact is docs/temp-references/art-loupe-proposal.md, which is gitignored and will be deleted once docs/design/ is written. api_minutes is null because the /usage panel read for this session reported wall duration only. context_over_150k_pct and the skills panel are /usage's last-24h figures across all local sessions, not this session alone. Renamed the day's earlier record to the -a- infix per the multi-session convention."
+}
