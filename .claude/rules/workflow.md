@@ -37,7 +37,7 @@ decide whether it earns an issue once the board is up.
 - Ask before running destructive, network-heavy, or environment-altering commands.
 - **Don't `cd` into the repo** — the shell's working directory persists across commands and starts at the repo root.
 - **Prefer the repo's package.json scripts** over ad-hoc tool invocations, and pass extra args *through* the script (`pnpm --filter @artloupe/studio e2e --project=chromium`), not via `pnpm … exec …` (which runs arbitrary binaries and stays off the allowlist).
-- The committed `.claude/settings.json` allowlists scoped `pnpm --filter * <script>` patterns so verification scripts don't prompt; `exec` / `add` / `dlx` / `install` deliberately still prompt.
+- The committed `.claude/settings.json` allowlists `pnpm --filter @artloupe/<pkg> <script>:*` per package — named explicitly, never globbed, since a `*` before the script name would also approve injected flags. A new workspace package needs its own entries. `exec` / `add` / `dlx` / `install` deliberately still prompt.
 - Per-app interactive Playwright runner: `pnpm e2e:ui:<app>` (or `pnpm --filter @artloupe/<app> e2e:ui`) — interactive/blocking, so run it in its own terminal, not via the agent.
 
 ## Change strategy
