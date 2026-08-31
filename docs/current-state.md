@@ -4,11 +4,15 @@
 
 ## 1. Snapshot
 
-Art Loupe is at its **initial scaffold**, and the repository's git history was reset on
-2026-08-30: the inherited history is gone, `.git` was re-initialised, and everything is
-staged as one initial commit that has **not yet been made or pushed**. The prior history is
-bundled outside the repo. The scaffold itself was seeded from prior monorepo infrastructure
-and stripped — see [ADR 0001](./decision-records/0001-scaffolded-from-existing-monorepo.md).
+Art Loupe is at its **initial scaffold**, now live at
+[`lsr-explore/art-loupe`](https://github.com/lsr-explore/art-loupe) — **public**, three
+commits deep. History starts at the 2026-08-30 reset: the inherited history was dropped, the
+repo re-initialised, and the prior history bundled outside it. The scaffold itself was seeded
+from prior monorepo infrastructure and stripped — see
+[ADR 0001](./decision-records/0001-scaffolded-from-existing-monorepo.md).
+
+**No product code exists yet.** Every workflow in the build plan is unbuilt; what exists
+is three running shells, the shared UI package, and the tooling around them.
 
 ### What works today
 
@@ -19,32 +23,20 @@ and stripped — see [ADR 0001](./decision-records/0001-scaffolded-from-existing
   contrast, typecheck, unit tests, dependency rules, and the Python toolchain (ruff +
   12 pytest), each enforced in CI.
 
-### Changed this session
+### Protections on `main`
 
-- **`docs/design/` is now `docs/contrast-report/`** and carries a hand-written `README.md`.
-  The folder holds only generated output. `media-assets.md` moved up to `docs/`.
-- **`README.md` gained five sections** — Prerequisites, Optional command-line tools,
-  Generated reports, Prose (Vale), and Agent skills.
-- **Node is pinned in `.nvmrc` (24)** and all five CI `setup-node` steps read it via
-  `node-version-file`, so the version lives in exactly one place.
-- **Vale prose linting** (`pnpm lint:prose`) is wired but **advisory** — deliberately outside
-  `check:all`. The cleanup is unfinished and the package set is still being evaluated.
-- **Dangling citations removed repo-wide.** `ui-shell-spec` Q-numbers (71 sites) and
-  predecessor issue numbers (41 sites) are gone; the explanations they annotated stay.
-- **WebKit e2e was failing on a real defect.** `next build` bakes `headers()` into
-  `routes-manifest.json`, so `DISABLE_HTTPS_UPGRADE` on the served process did nothing —
-  WebKit upgraded every asset to `https://localhost` and rendered the page unstyled, which
-  axe correctly reported as a target-size failure. Fixed in all three Playwright configs.
-- **`apps/entry` shipped Zod to the browser.** A client component imported one const from
-  `app-origins.ts`, which imports `@/env`. Splitting the constants into an import-free
-  `launch-targets.ts` cut the bundle 334 kB → 248 kB.
-- **New static checks repaired** — `circular` (madge) had never run, `depcruise:graph`
-  rendered empty, `size` aggregated all three apps into one figure, and
-  `i18n:check:unused` aborted the whole run on its first failure.
-- **Demo credentials standardised.** The seed script now defaults to `demo-artist-pass`
-  (artist) and `demo-operator-pass` (operator) as two separate values, and the README
-  documents both. Existing local accounts were deleted and re-seeded to match.
-- **Session metrics restart from zero.** Every prior record went with the strip.
+A ruleset is active, scripted at [`scripts/github/apply-ruleset.sh`](../scripts/github/apply-ruleset.sh)
+— **edit that file, not the GitHub UI**, or the next run silently reverts the change.
+
+- No deletion, no force-push, every commit signed.
+- Changes arrive by PR, squash-merge only, review threads resolved.
+- Six required checks: Quality Checks, Unit Tests, Build, Static Analysis, Python Checks,
+  Playwright E2E. All green; CodeQL also runs and passes.
+- `required_approving_review_count` is **0** on purpose: GitHub forbids approving your own
+  PR, so any higher number makes a solo repo's PRs unmergeable. Raise it to 1 the day a
+  second collaborator gains write access.
+- The repo owner holds an admin bypass. The ruleset constrains everyone else absolutely —
+  an outside contributor can open a PR but can never merge, since merging needs write access.
 
 ### What is deliberately empty
 
@@ -59,9 +51,10 @@ and stripped — see [ADR 0001](./decision-records/0001-scaffolded-from-existing
 
 ### Pending
 
-- **Backlog = GitHub issues.** `backlog-report.mjs`, the `backlog` skill, and
-  `.github/ISSUE_TEMPLATE/` are in place. **Not live yet** — it needs the repo pushed and a
-  user-owned Project created, so until then a deferral gets raised in conversation.
+- **Backlog = GitHub issues.** The repo now exists, but the **user-owned Project board does
+  not** — that is the one remaining blocker on the `backlog` skill. `backlog-report.mjs` also
+  hardcodes `PROJECT_NUMBER = '2'` from the predecessor and must be re-pointed once a board
+  exists. Until then, deferrals live in [`backlog.md`](./backlog.md).
 
 ### Open questions
 
@@ -73,6 +66,11 @@ and stripped — see [ADR 0001](./decision-records/0001-scaffolded-from-existing
   they were drafted ahead of the features and should be corrected as the real shape emerges.
 - **Should the three Art Loupe session records deleted in the strip be restored** from the
   bundle? Cleaner before the initial commit than after.
+- **Should CodeQL gate merges?** Neither the `Analyze (…)` checks nor the "require code
+  scanning results" rule are enabled, because `codeql.yml` carries
+  `paths-ignore: ['docs/**', '*.md', '.husky/**']` — a docs-only PR never triggers it, and a
+  required check that never reports blocks the merge with no visible reason. Delete that
+  block first, then enable both in one PR.
 - **Should the 300 kB JS budget tighten to ~260 kB?** All three apps now sit at 242–248 kB,
   so a 92 kB leak fits inside the current slack. See [`backlog.md`](./backlog.md).
 
@@ -87,9 +85,9 @@ and stripped — see [ADR 0001](./decision-records/0001-scaffolded-from-existing
 
 ## 2. Agent pickup notes
 
-**State:** scaffold only, no product features. Fresh `git init` on `main`, **zero commits**,
-~334 files staged, no remote. History reset deliberate; old history bundled outside the repo.
-Deferred work that has no board to live on yet is in [`docs/backlog.md`](./backlog.md).
+**State:** scaffold only, no product features. Public at `lsr-explore/art-loupe`, `main`
+protected by a ruleset, CI + Playwright + CodeQL all green. Deferred work that has no board
+to live on yet is in [`docs/backlog.md`](./backlog.md).
 
 **Stack:** pnpm workspaces (`apps/*`, `packages/*`) + uv workspace (`python/`). Next 16 /
 React 19 — read `node_modules/next/dist/docs/` before writing app code, conventions differ
@@ -109,11 +107,12 @@ Without Docker, set `AUTH_PROVIDER=demo` in `apps/studio/.env.local`.
 **Verify:** `pnpm check:all`, `pnpm build`, `pnpm depcruise`, `pnpm e2e`,
 `uv run --directory python poe check`.
 
-**Next step:** commit the staged tree, reinstall husky (`pnpm exec husky` — `rm -rf .git`
-destroyed the local `core.hooksPath`, so hooks are silent until it runs), then
-`gh repo create lsr-explore/art-loupe --private --source=. --remote=origin --push`. Create
-the project board after, which unblocks the `backlog` skill. Then decide the first workflow
-to build — critique studio is the obvious anchor.
+**Next step: define the application.** The scaffold is finished and the tooling is done
+being interesting — the repo has ~340 files and zero product features. Pick the first
+workflow (critique studio is the obvious anchor: it is what the reference material is most
+specific about), then design its contract in `packages/schemas` and a new
+`python/libs/schemas` *together*, since the codegen parity plan assumes they mirror. Only
+`python/libs/auth` exists today, and `packages/schemas` is an empty shell.
 
 **Third-party skills:** seven `vercel-labs/agent-skills` skills are pinned in
 `skills-lock.json` and installed as **copies** under `.claude/skills/` (gitignored). They are
