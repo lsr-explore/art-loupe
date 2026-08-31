@@ -51,13 +51,15 @@ A ruleset is active, scripted at [`scripts/github/apply-ruleset.sh`](../scripts/
 
 ### Pending
 
-- **Backlog = GitHub issues — now live.** The board is
+- **Backlog = GitHub issues — live.** The board is
   [`art-loupe-backlog`](https://github.com/users/lsr-explore/projects/3) (user-scoped project
-  **3**, which `backlog-report.mjs` points at). Its `Priority` field is single-select
-  `P0`–`P3`; `Status` is `Todo` / `In Progress` / `Done`. The `epic` label exists, which is
-  what `backlog-report.mjs` keys epic grouping off. Area grouping comes from a `prefix:` on
-  the issue **title**, not a label — untitled-prefix issues land in `unfiled`.
-  The items still in [`backlog.md`](./backlog.md) can now become real issues.
+  **3**). Seven open issues: one epic, `#5 quality: static-analysis and prose-tooling
+  follow-ups`, with six children. `docs/backlog.md` — the interim file used before the board
+  existed — has been removed; its contents are those issues.
+- **Label convention:** `enhancement` is reserved for **product features**. Chores use
+  `tooling`, defects `bug`, docs-only `documentation`, parents `epic`. Priority and Status are
+  project fields (`P0`–`P3`, `Todo`/`In Progress`/`Done`/`Backlog`/`Future`) — there are no
+  priority labels. Area grouping comes from a `prefix:` on the issue **title**, not a label.
 
 ### Open questions
 
