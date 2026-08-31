@@ -11,7 +11,7 @@
 # Uses the GoTrue admin API (`POST /auth/v1/admin/users`) with `email_confirm: true`
 # so each account is usable immediately with NO email round-trip — the emails are just
 # login identifiers, nothing is ever sent. That is the whole point of the password
-# route: a deployed demo needs no mail provider (see docs/backlog/tech-debt.md for the
+# route: a deployed demo needs no mail provider (see [issue #12](https://github.com/lsr-explore/art-loupe/issues/12) for the
 # magic-link follow-up).
 #
 # Requires the service-role key (admin scope). It is read at runtime, never committed:
