@@ -51,10 +51,13 @@ A ruleset is active, scripted at [`scripts/github/apply-ruleset.sh`](../scripts/
 
 ### Pending
 
-- **Backlog = GitHub issues.** The repo now exists, but the **user-owned Project board does
-  not** — that is the one remaining blocker on the `backlog` skill. `backlog-report.mjs` also
-  hardcodes `PROJECT_NUMBER = '2'` from the predecessor and must be re-pointed once a board
-  exists. Until then, deferrals live in [`backlog.md`](./backlog.md).
+- **Backlog = GitHub issues — now live.** The board is
+  [`art-loupe-backlog`](https://github.com/users/lsr-explore/projects/3) (user-scoped project
+  **3**, which `backlog-report.mjs` points at). Its `Priority` field is single-select
+  `P0`–`P3`; `Status` is `Todo` / `In Progress` / `Done`. The `epic` label exists, which is
+  what `backlog-report.mjs` keys epic grouping off. Area grouping comes from a `prefix:` on
+  the issue **title**, not a label — untitled-prefix issues land in `unfiled`.
+  The items still in [`backlog.md`](./backlog.md) can now become real issues.
 
 ### Open questions
 
