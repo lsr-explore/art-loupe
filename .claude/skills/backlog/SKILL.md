@@ -22,18 +22,24 @@ project board has no Priority, and one without a parent link never appears under
 the generated report — it lands in "unparented" instead. Both failure modes were common in
 the predecessor repo, which is why steps 2 and 3 below are not optional.
 
-> **Not live yet.** This skill needs the GitHub repo to exist and a user-owned Project to be
-> created. Until then there is nowhere to file, so raise the deferral in conversation and let
-> Laurie decide whether it is worth an issue once the board exists. The ids in §2 are
-> placeholders — derive the real ones with the `gh project field-list` call below and record
-> them here in the same commit that first uses them.
+> **Live since 2026-08-30.** The board is
+> [`art-loupe-backlog`](https://github.com/users/lsr-explore/projects/3) — user-scoped project
+> **3**, not repo-scoped. The ids in §2 are the real ones. Re-derive them only if the board is
+> recreated; they are stable but not guaranteed, so re-look-up on a 404.
 
 ## 1. File the issue
 
 **Title:** `area: what it is` — `agent:` `data:` `deploy:` `docs:` `entry:` `fascia:`
 `observability:` `operations:` `packages:` `product:` `python:` `quality:` `repo:` `studio:`
-`supabase:` `test:` `ux:`. The prefix is the *area*; the **type is the label**
-(`enhancement` / `bug` / `documentation` / `epic`), never the prefix.
+`supabase:` `test:` `ux:`. The prefix is the *area*; the **type is the label**, never the prefix:
+
+| Label | For |
+| --- | --- |
+| `enhancement` | **product features only** — reserved deliberately, do not use it for chores |
+| `tooling` | build, lint, CI, scripts, developer experience |
+| `bug` | a defect in shipped behaviour |
+| `documentation` | docs-only work |
+| `epic` | a parent issue that groups sub-issues |
 
 Body should carry why it's deferred and what "done" looks like — enough that it's actionable
 months later without the session context. For an epic, follow the existing shape: Goal / why
@@ -55,12 +61,21 @@ gh project item-add <PROJECT-NUMBER> --owner lsr-explore --url <issue-url> --for
 Then set Priority. **Priority is a Project field, not a label** — the P0–P3 labels were
 deleted deliberately, one source of truth.
 
-Derive the project id, the Priority field id, and its P0–P3 option ids once, then record them
-here so the next session does not have to:
+The ids, already derived — no need to look them up again:
+
+| Thing | Id |
+| --- | --- |
+| project `art-loupe-backlog` (number `3`) | `PVT_kwHOAb_3T84Bh8ju` |
+| **Priority** field | `PVTSSF_lAHOAb_3T84Bh8juzhg2vXk` |
+| Priority options | P0 `3d167325` · P1 `85632362` · P2 `bcd4baf0` · P3 `97dfc1ad` |
+| **Status** field | `PVTSSF_lAHOAb_3T84Bh8juzhg2U8k` |
+| Status options | Todo `f75ad846` · In Progress `47fc9ee4` · Done `98236657` · Backlog `df6781b9` · Future `4d051809` |
+
+Re-derive with these if the board is ever recreated:
 
 ```sh
 gh project list --owner lsr-explore --format json --jq '.projects[] | {number, id, title}'
-gh project field-list <PROJECT-NUMBER> --owner lsr-explore --format json \
+gh project field-list 3 --owner lsr-explore --format json \
   --jq '.fields[] | select(.name == "Priority" or .name == "Status")'
 ```
 

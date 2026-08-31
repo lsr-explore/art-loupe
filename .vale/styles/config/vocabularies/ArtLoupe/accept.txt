@@ -24,6 +24,7 @@ firefox
 gitignored
 graphviz
 gzipped
+hardcodes
 inlines
 inpainting
 Kostas
@@ -55,6 +56,8 @@ reinstallable
 relitigate
 repo
 RLS
+ruleset
+rulesets
 scaffolded
 Stylelint
 Supabase
@@ -62,6 +65,8 @@ swappable
 toolchain
 tsconfig
 typecheck
+unbuilt
+unmergeable
 unstyled
 untrusted
 uv

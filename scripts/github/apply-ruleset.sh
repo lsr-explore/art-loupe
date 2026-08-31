@@ -38,10 +38,16 @@
 #     from a real run before editing:
 #       gh api repos/OWNER/REPO/commits/main/check-runs --jq '.check_runs[].name'
 #
-#     CodeQL's `Analyze (…)` checks are deliberately ABSENT. codeql.yml carries
-#     `paths-ignore: ['docs/**', '*.md', '.husky/**']`, so a docs-only PR never triggers it,
-#     the check never reports, and a required-but-absent check blocks the merge forever with
-#     no visible reason. To require CodeQL, first delete that paths-ignore block.
+#     The `Analyze (…)` names include the matrix build-mode — `Analyze (python, none)`, not
+#     `Analyze (python)`. Requiring them is only safe because codeql.yml has NO paths-ignore:
+#     a path filter would skip the jobs on a docs-only PR, and a required check that never
+#     reports blocks the merge forever with nothing on screen to explain why. If a filter is
+#     ever added back, drop these two from the required list in the same commit.
+#
+#   code_scanning
+#     Stronger than the status check above. The status check asks "did the job pass?"; this
+#     asks "are there open alerts at or above a severity?" — so a high-severity finding blocks
+#     the merge even when the job itself is green.
 #
 #   bypass_actors: RepositoryRole 5 (admin)
 #     The repo owner can push directly when a situation genuinely calls for it. The husky
@@ -87,7 +93,21 @@ payload="$(cat <<'JSON'
           { "context": "Build" },
           { "context": "Static Analysis" },
           { "context": "Python Checks" },
-          { "context": "Playwright E2E" }
+          { "context": "Playwright E2E" },
+          { "context": "Analyze (javascript-typescript, none)" },
+          { "context": "Analyze (python, none)" }
+        ]
+      }
+    },
+    {
+      "type": "code_scanning",
+      "parameters": {
+        "code_scanning_tools": [
+          {
+            "tool": "CodeQL",
+            "security_alerts_threshold": "high_or_higher",
+            "alerts_threshold": "errors"
+          }
         ]
       }
     }

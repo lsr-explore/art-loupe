@@ -3,7 +3,7 @@
  * Regenerates docs/backlog/issues.md from the GitHub issue tracker.
  *
  * The output is GENERATED — never hand-edit it. It is a *descriptive snapshot*: epic →
- * sub-issue structure, the Project #2 Priority/Status fields, and area grouping, exactly
+ * sub-issue structure, the project's Priority/Status fields, and area grouping, exactly
  * as they stand in GitHub. It carries no sequencing opinion; the proposed order of attack
  * lives in docs/backlog/critical-path.md, which IS hand-written and may drift from this
  * file on purpose.
@@ -17,15 +17,16 @@
  * regenerated on demand, and the stable half (docs/backlog/README.md, which explains what
  * each epic is *for*) is written by hand.
  *
- * NOT YET LIVE. This needs a GitHub remote and a user-owned Project; art-loupe has
- * neither until the repo is pushed. Until then the script fails cleanly rather than
- * writing a misleading file, and PROJECT_NUMBER below must be re-pointed at the real
- * project once one exists.
+ * PROJECT_NUMBER is the user-owned project this reads Priority and Status from —
+ * `art-loupe-backlog` at github.com/users/lsr-explore/projects/3. It is a project number,
+ * not an id, and it is scoped to the USER, not the repo: re-point it if the board is ever
+ * recreated. Reading it needs a token with `project` scope; without one the script warns
+ * and degrades those two columns to "—" rather than failing.
  *
  * Sources of truth, in order of authority:
  *  - Epic → child comes from real GitHub **sub-issue** links (issue.parent / subIssues),
  *    not from prose in the epic body. Body prose goes stale; the link does not.
- *  - Priority + Status come from the user-owned Project #2 fields, never from labels.
+ *  - Priority + Status come from the user-owned project's fields, never from labels.
  *    Priority labels were deliberately deleted — one source of truth. If the project
  *    query fails (e.g. a token without `project` scope), those columns degrade to "—"
  *    rather than the script inventing a value.
@@ -34,7 +35,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 
-const PROJECT_NUMBER = '2'
+const PROJECT_NUMBER = '3'
 const OUT = 'docs/backlog/issues.md'
 const PRIORITY_ORDER = ['P0', 'P1', 'P2', 'P3', '—']
 
@@ -86,7 +87,7 @@ const fetchIssues = (owner, name) => {
 }
 
 /**
- * Project #2 field values, keyed by issue number. Returns an empty map (and warns) when
+ * Project field values, keyed by issue number. Returns an empty map (and warns) when
  * the project can't be read, so a missing scope degrades the report instead of failing it.
  */
 const fetchProjectFields = (owner) => {
