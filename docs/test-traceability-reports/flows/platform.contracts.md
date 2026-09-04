@@ -13,11 +13,39 @@ Shared schemas and the TS/Python contract boundary
 | **Severity** | P2 |
 | **Why** | A drifted contract fails at the seam between the apps and the agent layer, where neither side's tests look. |
 | **Surfaces** | `packages/schemas` · `python/libs/schemas` |
-| **Tests** | 0 |
-| **Covered** | nothing yet |
-| **Not covered** | a11y · security · privacy · safety · data · performance · functionality |
+| **Tests** | 20 (7 parametrized) |
+| **Covered** | data 20 |
+| **Not covered** | a11y · security · privacy · safety · performance · functionality |
 
-No test currently claims this flow.
+## pytest — 10
+
+| Category | Test | Location |
+| --- | --- | --- |
+| data | test_accepts_every_evidence_class | `python/libs/schemas/tests/test_parity.py:74` |
+| data | test_fixture_covers_the_whole_taxonomy | `python/libs/schemas/tests/test_parity.py:78` |
+| data | test_accepts_image_refs | `python/libs/schemas/tests/test_parity.py:84` |
+| data | test_project_intent_defaults_match_the_mirror | `python/libs/schemas/tests/test_parity.py:91` |
+| data | test_accepts_tool_manifests | `python/libs/schemas/tests/test_parity.py:98` |
+| data | test_accepts_artifact_metadata | `python/libs/schemas/tests/test_parity.py:103` |
+| data | test_null_confidence_is_not_collapsed_to_zero | `python/libs/schemas/tests/test_parity.py:107` |
+| data | test_accepts_budget_ledgers | `python/libs/schemas/tests/test_parity.py:117` |
+| data | test_rejects | `python/libs/schemas/tests/test_parity.py:122` |
+| data | test_reject_entries_name_only_known_schemas | `python/libs/schemas/tests/test_parity.py:129` |
+
+## Vitest — 10
+
+| Category | Test | Location |
+| --- | --- | --- |
+| data | parses a ${claim.evidence.kind} claim | `packages/schemas/src/contract-parity.test.ts:67` |
+| data | covers every evidence class the taxonomy defines | `packages/schemas/src/contract-parity.test.ts:72` |
+| data | parses image ref ${index} | `packages/schemas/src/contract-parity.test.ts:78` |
+| data | parses the ${name} project intent and fills the documented defaults | `packages/schemas/src/contract-parity.test.ts:84` |
+| data | parses tool manifest ${index} | `packages/schemas/src/contract-parity.test.ts:90` |
+| data | parses ${metadata.tool} artifact metadata | `packages/schemas/src/contract-parity.test.ts:96` |
+| data | keeps a null confidence distinct from a zero one | `packages/schemas/src/contract-parity.test.ts:101` |
+| data | parses a ledger with stopped=${ledger.stopped} | `packages/schemas/src/contract-parity.test.ts:107` |
+| data | rejects ${name} | `packages/schemas/src/contract-parity.test.ts:116` |
+| data | names only schemas this suite knows how to validate | `packages/schemas/src/contract-parity.test.ts:123` |
 
 ---
 

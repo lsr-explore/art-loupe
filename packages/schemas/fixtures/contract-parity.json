@@ -1,0 +1,285 @@
+{
+  "$comment": "Shared parity fixture. BOTH the TypeScript suite (packages/schemas/src/*.test.ts) and the Python suite (python/libs/schemas/tests/test_parity.py) load this file and assert the same things about it. The Zod mirror and the Pydantic models are hand-authored, so this file is what stops them drifting: a field added on one side and forgotten on the other fails here, in the suite that did not change. Owned by neither side. When codegen lands, this becomes the codegen's own conformance suite rather than going away.",
+  "accepts": {
+    "claims": [
+      {
+        "text": "the darkest 12% of pixels sit in the lower-left quadrant",
+        "evidence": {
+          "kind": "measured",
+          "tool": "three_value",
+          "tool_version": "0.1.0",
+          "parameters": {
+            "levels": 3,
+            "clip_percent": 0.5
+          },
+          "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+          "units": "normalized"
+        }
+      },
+      {
+        "text": "grisaille establishes value before hue",
+        "evidence": {
+          "kind": "cited",
+          "chunk_id": "met-oil-sketch-0042",
+          "institution": "The Metropolitan Museum of Art",
+          "url": "https://www.metmuseum.org/toah/hd/osketch/hd_osketch.htm",
+          "licence": "CC0-1.0",
+          "retrieved_at": "2026-09-04T14:22:31+00:00",
+          "passage_span": {
+            "start": 1180,
+            "end": 1264
+          }
+        }
+      },
+      {
+        "text": "crop to 4:5 to strengthen the diagonal",
+        "evidence": {
+          "kind": "chosen",
+          "reason": "the diagonal is the strongest line in the frame and a 4:5 crop puts it corner to corner",
+          "rejected_alternative": "keep the full 3:2 frame, which leaves dead space along the right edge"
+        }
+      }
+    ],
+    "image_refs": [
+      {
+        "checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+        "storage_key": "projects/018f3a2c/reference.jpg",
+        "mime_type": "image/jpeg",
+        "width_px": 5040,
+        "height_px": 3360,
+        "byte_size": 8412677
+      }
+    ],
+    "project_intents": {
+      "full": {
+        "input": {
+          "medium": "watercolour",
+          "time_budget_minutes": 90,
+          "support": {
+            "width": 300,
+            "height": 200,
+            "units": "mm"
+          },
+          "skill_level": "advanced",
+          "goal": "loosen up; stop over-rendering the mid-distance"
+        },
+        "expected": {
+          "medium": "watercolour",
+          "time_budget_minutes": 90,
+          "support": {
+            "width": 300,
+            "height": 200,
+            "units": "mm"
+          },
+          "skill_level": "advanced",
+          "goal": "loosen up; stop over-rendering the mid-distance"
+        }
+      },
+      "minimal": {
+        "$comment": "Only the two required fields. Pins that Zod and Pydantic fill the same defaults — the most likely place for a silent mirror drift.",
+        "input": {
+          "medium": "graphite",
+          "time_budget_minutes": 180
+        },
+        "expected": {
+          "medium": "graphite",
+          "time_budget_minutes": 180,
+          "support": null,
+          "skill_level": "intermediate",
+          "goal": null
+        }
+      }
+    },
+    "tool_manifests": [
+      {
+        "$comment": "A portrait run declines perspective and says why (FR-307). The refusal being visible is the point.",
+        "selected": [
+          {
+            "tool": "grayscale",
+            "reason": null
+          },
+          {
+            "tool": "three_value",
+            "reason": "low-key reference; the value design is the whole problem"
+          },
+          {
+            "tool": "outline",
+            "reason": null
+          },
+          {
+            "tool": "head_construction",
+            "reason": "single face detected"
+          }
+        ],
+        "declined": [
+          {
+            "tool": "perspective",
+            "reason": "no architectural or ground-plane structure in frame; a horizon line here would be invented"
+          }
+        ]
+      }
+    ],
+    "artifact_metadata": [
+      {
+        "$comment": "Confidence null: a grayscale conversion either ran or it did not.",
+        "tool": "grayscale",
+        "tool_version": "0.1.0",
+        "parameters": {
+          "weights": "rec709"
+        },
+        "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+        "duration_ms": 41,
+        "confidence": null,
+        "limitations": []
+      },
+      {
+        "$comment": "Confidence present and low: this is what raises the interrupt rather than being asserted with a caveat (FR-401/402).",
+        "tool": "perspective",
+        "tool_version": "0.1.0",
+        "parameters": {
+          "hough_threshold": 120,
+          "min_line_length": 80
+        },
+        "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+        "duration_ms": 380,
+        "confidence": 0.41,
+        "limitations": [
+          "the right-hand vanishing point is estimated from four segments, two of which are partly occluded"
+        ]
+      }
+    ],
+    "budget_ledgers": [
+      {
+        "input_tokens": 4821,
+        "output_tokens": 913,
+        "tool_calls": 4,
+        "cache_hits": 2,
+        "token_ceiling": 120000,
+        "stopped": false,
+        "stop_reason": null
+      },
+      {
+        "input_tokens": 119400,
+        "output_tokens": 640,
+        "tool_calls": 9,
+        "cache_hits": 0,
+        "token_ceiling": 120000,
+        "stopped": true,
+        "stop_reason": "token ceiling reached before the plan was synthesised"
+      }
+    ]
+  },
+  "rejects": {
+    "$comment": "Each entry MUST fail validation on both sides. These pin the refinements, which are the parts a hand-written mirror forgets first.",
+    "measured_with_real_world_units": {
+      "$comment": "FR-306 made structural: there is no field to put millimetres in.",
+      "schema": "claim",
+      "value": {
+        "text": "the head is 240mm tall",
+        "evidence": {
+          "kind": "measured",
+          "tool": "head_construction",
+          "tool_version": "0.1.0",
+          "parameters": {},
+          "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+          "units": "mm"
+        }
+      }
+    },
+    "evidence_with_unknown_kind": {
+      "$comment": "The union is closed. An unclassified claim is a schema failure, not a critic finding.",
+      "schema": "claim",
+      "value": {
+        "text": "this reference is a bit flat",
+        "evidence": {
+          "kind": "asserted",
+          "reason": "the artist said so"
+        }
+      }
+    },
+    "image_ref_long_edge_too_small": {
+      "schema": "image_ref",
+      "value": {
+        "checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+        "storage_key": "projects/018f3a2c/reference.jpg",
+        "mime_type": "image/jpeg",
+        "width_px": 640,
+        "height_px": 480,
+        "byte_size": 51200
+      }
+    },
+    "image_ref_uppercase_checksum": {
+      "schema": "image_ref",
+      "value": {
+        "checksum": "9F2C4A1B7E6D5038C9B2A1F4E7D60359A8B1C2D3E4F5061728394A5B6C7D8E9F",
+        "storage_key": "projects/018f3a2c/reference.jpg",
+        "mime_type": "image/jpeg",
+        "width_px": 5040,
+        "height_px": 3360,
+        "byte_size": 8412677
+      }
+    },
+    "declination_without_reason": {
+      "$comment": "FR-307: a silent decline is indistinguishable from a bug.",
+      "schema": "tool_manifest",
+      "value": {
+        "selected": [],
+        "declined": [
+          {
+            "tool": "perspective",
+            "reason": ""
+          }
+        ]
+      }
+    },
+    "tool_both_selected_and_declined": {
+      "schema": "tool_manifest",
+      "value": {
+        "selected": [
+          {
+            "tool": "outline",
+            "reason": null
+          }
+        ],
+        "declined": [
+          {
+            "tool": "outline",
+            "reason": "too much texture"
+          }
+        ]
+      }
+    },
+    "stopped_ledger_without_reason": {
+      "schema": "budget_ledger",
+      "value": {
+        "input_tokens": 10,
+        "output_tokens": 10,
+        "tool_calls": 0,
+        "cache_hits": 0,
+        "token_ceiling": 100,
+        "stopped": true,
+        "stop_reason": null
+      }
+    },
+    "artifact_confidence_out_of_range": {
+      "schema": "artifact_metadata",
+      "value": {
+        "tool": "perspective",
+        "tool_version": "0.1.0",
+        "parameters": {},
+        "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+        "duration_ms": 10,
+        "confidence": 1.4,
+        "limitations": []
+      }
+    },
+    "intent_with_unsupported_medium": {
+      "$comment": "pastel, gouache and digital are deliberately out of scope for the first version — accepted-and-planned-badly is worse than refused.",
+      "schema": "project_intent",
+      "value": {
+        "medium": "digital",
+        "time_budget_minutes": 60
+      }
+    }
+  }
+}

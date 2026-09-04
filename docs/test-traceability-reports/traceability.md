@@ -19,27 +19,31 @@ exists, the detail tells you what it covers.
 
 | Flow | Sev | a11y | sec | priv | safety | data | perf | func | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `analysis.geometry` | P1 | – | – | – | – | – | – | – | **none** |
+| **analysis** | | – | – | – | – | – | – | – | **0** |
 | `canvas.session-plan` | P2 | – | – | – | – | – | – | – | **none** |
 | **canvas** | | – | – | – | – | – | – | – | **0** |
 | `critique.no-generation` | P0 | – | – | – | – | – | – | – | **none** |
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
+| `intake.project-intent` | P2 | – | – | – | – | – | – | – | **none** |
+| **intake** | | – | – | – | – | – | – | – | **0** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 2 | – | – | – | – | – | 3 | 5 |
 | **ops** | | 2 | – | – | – | – | – | 3 | **5** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 74 | – | – | – | – | 13 | 92 |
-| `platform.contracts` | P2 | – | – | – | – | – | – | – | **none** |
+| [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 106 | 137 |
-| **platform** | | 36 | 74 | – | – | – | – | 119 | **229** |
+| **platform** | | 36 | 74 | – | – | 20 | – | 119 | **249** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **38** | **74** | **–** | **–** | **–** | **–** | **122** | **234** |
+| **all flows** | | **38** | **74** | **–** | **–** | **20** | **–** | **122** | **254** |
 
 ## Gaps
 
-- **7 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`, `platform.contracts`
+- **8 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `analysis.geometry`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `intake.project-intent`, `palette.extraction`
 
 ## Untagged
 
@@ -70,7 +74,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 12 | 0 | 12 |
-| Vitest | 198 | 0 | 198 |
+| pytest | 22 | 0 | 22 |
+| Vitest | 208 | 0 | 208 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **234** | **0** | **234** |
+| **All** | **254** | **0** | **254** |
