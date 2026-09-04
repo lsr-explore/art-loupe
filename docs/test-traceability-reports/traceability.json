@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 22,
+      "pytest": 32,
       "vitest": 208,
       "playwright": 24,
-      "all": 254
+      "all": 264
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 22,
+      "pytest": 32,
       "vitest": 208,
       "playwright": 24,
-      "all": 254
+      "all": 264
     }
   },
   "by_flow": {
@@ -121,12 +121,32 @@
       "total": 0,
       "parametrized": 0
     },
+    "platform.agent-runtime": {
+      "severity": "P1",
+      "title": "Agent service transport, auth guard, and graph execution",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 8
+      },
+      "runners": {
+        "pytest": 8,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 8,
+      "parametrized": 0
+    },
     "platform.auth": {
       "severity": "P1",
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 74,
+        "security": 76,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -134,11 +154,11 @@
         "functionality": 13
       },
       "runners": {
-        "pytest": 12,
+        "pytest": 14,
         "vitest": 63,
         "playwright": 17
       },
-      "total": 92,
+      "total": 94,
       "parametrized": 0
     },
     "canvas.session-plan": {
@@ -2040,6 +2060,76 @@
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:15",
+      "name": "test_graph_compiles_with_the_expected_nodes",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:20",
+      "name": "test_graph_accepts_an_injected_checkpointer_slot",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:25",
+      "name": "test_running_the_graph_records_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:32",
+      "name": "test_node_trail_accumulates_rather_than_replaces",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:44",
+      "name": "test_seed_returns_a_partial_update_not_whole_state",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:102",
+      "name": "test_owner_comes_from_the_token_not_the_request_body",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:118",
+      "name": "test_health_leaks_no_internal_detail",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:76",
+      "name": "test_health_needs_no_token",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:84",
+      "name": "test_creating_a_run_without_a_token_is_refused",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:90",
+      "name": "test_creating_a_run_returns_the_graph_result",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
     }
   ],
   "gaps": {
