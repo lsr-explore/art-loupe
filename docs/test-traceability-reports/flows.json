@@ -9,7 +9,7 @@
     "perf": "performance",
     "sec": "security"
   },
-  "$expectations": "Categories a flow is expected to carry, by severity and by surface. Reported as gaps, never failed \u2014 a missing safety test is a conversation, not a broken build.",
+  "$expectations": "Categories a flow is expected to carry, by severity and by surface. Reported as gaps, never failed — a missing safety test is a conversation, not a broken build.",
   "expect": {
     "bySeverity": {
       "P0": ["safety"]
@@ -32,7 +32,7 @@
       "id": "platform.auth",
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "severity": "P1",
-      "rationale": "Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently \u2014 the gate chain is snapshot-tested for exactly that reason.",
+      "rationale": "Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason.",
       "surfaces": [
         "apps/entry",
         "apps/studio",
@@ -55,6 +55,31 @@
       "severity": "P2",
       "rationale": "A drifted contract fails at the seam between the apps and the agent layer, where neither side's tests look.",
       "surfaces": ["packages/schemas", "python/libs/schemas"]
+    },
+    {
+      "id": "intake.project-intent",
+      "title": "Upload, intake, and the typed ProjectIntent",
+      "severity": "P2",
+      "rationale": "Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106).",
+      "surfaces": [
+        "apps/studio",
+        "packages/schemas",
+        "python/libs/schemas",
+        "python/services/agent"
+      ]
+    },
+    {
+      "id": "analysis.geometry",
+      "title": "Head construction, perspective, confidence, and artist correction",
+      "severity": "P1",
+      "rationale": "The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404).",
+      "surfaces": [
+        "apps/studio",
+        "packages/fascia",
+        "packages/schemas",
+        "python/libs/schemas",
+        "python/services/agent"
+      ]
     },
     {
       "id": "critique.formal-analysis",

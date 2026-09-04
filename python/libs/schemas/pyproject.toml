@@ -1,0 +1,23 @@
+# Art Loupe shared contracts — the Pydantic side of the TS/Python boundary.
+#
+# A library, not a service: every Python service imports these models and validates at its
+# own seam. The mirror in `packages/schemas` is hand-authored Zod, and neither side owns the
+# contract — `packages/schemas/fixtures/contract-parity.json` is the shared conformance
+# fixture both suites run against, and it is what makes a hand-written mirror safe enough to
+# ship before codegen lands.
+[project]
+name = "artloupe-schemas"
+version = "0.1.0"
+description = "Shared Pydantic contracts mirrored by the @artloupe/schemas Zod package."
+requires-python = ">=3.12"
+dependencies = [
+  "pydantic>=2.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
+packages = ["src/artloupe"]

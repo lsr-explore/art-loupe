@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 12,
-      "vitest": 198,
+      "pytest": 22,
+      "vitest": 208,
       "playwright": 24,
-      "all": 234
+      "all": 254
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 12,
-      "vitest": 198,
+      "pytest": 22,
+      "vitest": 208,
       "playwright": 24,
-      "all": 234
+      "all": 254
     }
   },
   "by_flow": {
@@ -44,6 +44,26 @@
     "retrieval.grounding": {
       "severity": "P0",
       "title": "Art-historical context is carried back to a real citation",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
+    "analysis.geometry": {
+      "severity": "P1",
+      "title": "Head construction, perspective, confidence, and artist correction",
       "counts": {
         "a11y": 0,
         "security": 0,
@@ -141,6 +161,26 @@
       "total": 0,
       "parametrized": 0
     },
+    "intake.project-intent": {
+      "severity": "P2",
+      "title": "Upload, intake, and the typed ProjectIntent",
+      "counts": {
+        "a11y": 0,
+        "security": 0,
+        "privacy": 0,
+        "safety": 0,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 0,
+        "vitest": 0,
+        "playwright": 0
+      },
+      "total": 0,
+      "parametrized": 0
+    },
     "ops.observability": {
       "severity": "P2",
       "title": "Cost, latency, evaluation health, and corpus ingestion",
@@ -189,17 +229,17 @@
         "security": 0,
         "privacy": 0,
         "safety": 0,
-        "data": 0,
+        "data": 20,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 0,
-        "vitest": 0,
+        "pytest": 10,
+        "vitest": 10,
         "playwright": 0
       },
-      "total": 0,
-      "parametrized": 0
+      "total": 20,
+      "parametrized": 7
     },
     "platform.shell": {
       "severity": "P2",
@@ -1778,6 +1818,76 @@
       "category": "a11y"
     },
     {
+      "id": "packages/schemas/src/contract-parity.test.ts:101",
+      "name": "keeps a null confidence distinct from a zero one",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:107",
+      "name": "parses a ledger with stopped=${ledger.stopped}",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:116",
+      "name": "rejects ${name}",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:123",
+      "name": "names only schemas this suite knows how to validate",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:67",
+      "name": "parses a ${claim.evidence.kind} claim",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:72",
+      "name": "covers every evidence class the taxonomy defines",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:78",
+      "name": "parses image ref ${index}",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:84",
+      "name": "parses the ${name} project intent and fills the documented defaults",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:90",
+      "name": "parses tool manifest ${index}",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:96",
+      "name": "parses ${metadata.tool} artifact metadata",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
       "id": "python/libs/auth/tests/test_tokens.py:105",
       "name": "test_rejects_a_token_from_another_issuer",
       "runner": "pytest",
@@ -1860,17 +1970,88 @@
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:103",
+      "name": "test_accepts_artifact_metadata",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:107",
+      "name": "test_null_confidence_is_not_collapsed_to_zero",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:117",
+      "name": "test_accepts_budget_ledgers",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:122",
+      "name": "test_rejects",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:129",
+      "name": "test_reject_entries_name_only_known_schemas",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:74",
+      "name": "test_accepts_every_evidence_class",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:78",
+      "name": "test_fixture_covers_the_whole_taxonomy",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:84",
+      "name": "test_accepts_image_refs",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:91",
+      "name": "test_project_intent_defaults_match_the_mirror",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:98",
+      "name": "test_accepts_tool_manifests",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
     }
   ],
   "gaps": {
     "uncovered": [
       "critique.no-generation",
       "retrieval.grounding",
+      "analysis.geometry",
       "critique.alignment",
       "critique.formal-analysis",
       "canvas.session-plan",
-      "palette.extraction",
-      "platform.contracts"
+      "intake.project-intent",
+      "palette.extraction"
     ],
     "missingExpected": []
   },
