@@ -12,12 +12,12 @@ Acknowledgement gate, sign-in, and the route guard
 | --- | --- |
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
-| **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` |
-| **Tests** | 92 |
-| **Covered** | a11y 5 · security 74 · functionality 13 |
+| **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
+| **Tests** | 94 |
+| **Covered** | a11y 5 · security 76 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
-## pytest — 12
+## pytest — 14
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -33,6 +33,8 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:224` |
 | security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:235` |
 | security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:242` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:84` |
+| security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:102` |
 
 ## Vitest — 63
 
