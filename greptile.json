@@ -6,7 +6,7 @@
 
   "_comment_strictness": "2 is the default. CodeRabbit ran on the `assertive` profile, but Greptile documents strictness only as a severity threshold without stating direction, so this starts neutral rather than guessing. Adjust after a few reviews.",
   "strictness": 2,
-  "commentTypes": ["logic", "syntax", "style", "info"],
+  "commentTypes": ["logic", "syntax", "style"],
 
   "_comment_triggers": "Both false for the same reason auto_incremental_review was off in CodeRabbit: the review loop pushes fixes on nearly every PR, and re-reviewing each push burns the quota two or three times per PR. Redundant while skipReview is AUTOMATIC, kept explicit so re-enabling automatic reviews does not silently also re-enable per-push ones.",
   "triggerOnUpdates": false,
@@ -16,7 +16,6 @@
   "statusCheck": false,
 
   "excludeAuthors": ["dependabot[bot]"],
-  "ignoreKeywords": "wrap",
 
   "_comment_ignorePatterns": "Generated, vendored and lock artifacts. docs/session-metrics-reports/** and docs/current-state.md are generated or overwritten each session by the /wrap skill. Do NOT add `docs/**`: a docs-titled PR in the predecessor repo turned out to carry a real data-loss bug, and the review is what caught it.",
   "ignorePatterns": "**/*.lock\npnpm-lock.yaml\nnode_modules/**\n.next/**\ndist/**\n.venv/**\nsupabase/**/generated/**\ndocs/session-metrics-reports/**\ndocs/current-state.md",
