@@ -51,6 +51,7 @@ boundary — that is a backstop, not the mechanism.
 """
 
 import inspect
+import asyncio
 from collections import Counter
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from contextlib import asynccontextmanager, contextmanager
@@ -226,10 +227,29 @@ class RunRecorder:
         except GuardTripped:
             status = "guard_stopped"
             raise
+        except asyncio.CancelledError:
+            # The run-level `asyncio.timeout` cancels the node from outside, and `execute_run`
+            # only turns that into `WallClockExceeded` after this block has unwound — so by
+            # the time the exception has its real name, the row is already written. Deciding
+            # here is the only place it can be recorded correctly.
+            #
+            # Attributed by the deadline rather than by the exception type, because a
+            # cancellation is indistinguishable from any other at this level. A node cancelled
+            # for some other reason before the deadline is still a genuine error.
+            if monotonic() > self._deadline:
+                status = "guard_stopped"
+                error = (
+                    f"WallClockExceeded: run exceeded its "
+                    f"{self.guards.wall_clock_seconds:g}s deadline during {name!r}"
+                )
+            else:
+                status = "error"
+                error = "CancelledError: node cancelled before the run deadline"
+            raise
         except BaseException as exc:
-            # `BaseException` so a cancelled node — which is what the run-level timeout
-            # backstop produces — still writes its row. The runs worth reading in operations
-            # are disproportionately the ones that did not finish.
+            # `BaseException` rather than `Exception` so a node killed by something outside the
+            # normal hierarchy still writes its row. The runs worth reading in operations are
+            # disproportionately the ones that did not finish.
             status = "error"
             error = f"{type(exc).__name__}: {exc}"
             raise

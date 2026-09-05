@@ -81,6 +81,44 @@ async def test_the_visit_limit_is_per_node_not_per_run() -> None:
 
 
 @pytest.mark.trace(flow="platform.agent-runtime", category="performance")
+async def test_a_node_cancelled_by_the_deadline_is_a_guard_stop_not_an_error() -> None:
+    """The wall-clock backstop cancels from *outside* the node.
+
+    `execute_run` only names that cancellation `WallClockExceeded` after the node context has
+    unwound, so by then the row is already written. Recorded as `error` it would inflate the
+    node error rate operations watches and lose the reason the run actually stopped.
+    """
+    run = recorder(wall_clock_seconds=0.01)
+
+    with pytest.raises(asyncio.CancelledError):
+        async with run.node("analyse"):
+            await asyncio.sleep(0.05)
+            raise asyncio.CancelledError
+
+    metric = run.metrics[-1]
+    assert metric.status == "guard_stopped", (
+        f"a node cancelled past the deadline recorded as {metric.status!r}"
+    )
+    assert "WallClockExceeded" in (metric.error or "")
+
+
+async def test_a_cancellation_before_the_deadline_is_still_an_error() -> None:
+    """The other half: attribution is by the deadline, not by the exception type.
+
+    A node cancelled for some other reason has not hit a ceiling, and calling it a guard stop
+    would hide a real fault inside the count of runs that stopped on purpose.
+    """
+    run = recorder(wall_clock_seconds=30.0)
+
+    with pytest.raises(asyncio.CancelledError):
+        async with run.node("analyse"):
+            raise asyncio.CancelledError
+
+    metric = run.metrics[-1]
+    assert metric.status == "error"
+    assert "CancelledError" in (metric.error or "")
+
+
 async def test_the_deadline_stops_the_next_node() -> None:
     """Bounding elapsed time, which neither the recursion nor the visit cap does.
 
