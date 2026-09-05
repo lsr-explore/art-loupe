@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` |
-| **Tests** | 17 |
-| **Covered** | security 3 · functionality 14 |
+| **Tests** | 21 |
+| **Covered** | security 7 · functionality 14 |
 | **Not covered** | a11y · privacy · safety · data · performance |
 
-## pytest — 17
+## pytest — 21
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -30,6 +30,10 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_resume_does_not_re_run_the_node_before_the_interrupt | `python/libs/persistence/tests/test_interrupt_resume.py:84` |
 | functionality | test_the_artist_correction_is_what_the_run_continues_with | `python/libs/persistence/tests/test_interrupt_resume.py:101` |
 | security | test_checkpoints_are_written_outside_the_api_exposed_schemas | `python/libs/persistence/tests/test_interrupt_resume.py:110` |
+| security | test_the_grants_this_schema_is_protected_from_are_live_here | `python/libs/persistence/tests/test_schema_privileges.py:75` |
+| security | test_api_roles_cannot_use_the_checkpoint_schema | `python/libs/persistence/tests/test_schema_privileges.py:102` |
+| security | test_api_roles_cannot_read_any_checkpoint_table | `python/libs/persistence/tests/test_schema_privileges.py:117` |
+| security | test_the_checkpoint_schema_is_absent_from_the_postgrest_surface | `python/libs/persistence/tests/test_schema_privileges.py:143` |
 | functionality | test_graph_compiles_with_the_expected_nodes | `python/services/agent/tests/test_graph.py:15` |
 | functionality | test_graph_accepts_an_injected_checkpointer_slot | `python/services/agent/tests/test_graph.py:20` |
 | functionality | test_running_the_graph_records_the_run | `python/services/agent/tests/test_graph.py:25` |

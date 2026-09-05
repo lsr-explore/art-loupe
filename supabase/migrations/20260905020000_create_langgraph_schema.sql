@@ -20,9 +20,19 @@ create schema if not exists langgraph;
 comment on schema langgraph is
     'LangGraph checkpoint storage. Tables are created and migrated by AsyncPostgresSaver.setup(), not by a migration. Never expose this schema through PostgREST -- see supabase/config.toml `schemas`.';
 
--- Defence in depth. The schema is already unreachable through PostgREST because it is absent
--- from config.toml's `schemas`, but that is one edit away from being wrong. These revokes
--- mean a future accidental exposure still yields nothing.
+-- Belt to the braces, and measured rather than assumed: as of this migration these revokes
+-- are **inert**. Supabase's default-privilege grants to `anon`/`authenticated` are
+-- schema-scoped -- `public`, `graphql`, `graphql_public`, `storage`, `supabase_functions` --
+-- with no wildcard reaching a schema created here, so each statement below revokes something
+-- that was never granted and `pg_default_acl` records nothing for `langgraph`. A schema
+-- created with none of this measures identically.
+--
+-- They stay because what makes them inert is a Supabase provisioning detail, not a promise:
+-- the day a platform upgrade grants into new schemas by default, these are what holds. The
+-- assertions that actually protect the tables are in
+-- `python/libs/persistence/tests/test_schema_privileges.py`, which tests the *outcome* --
+-- that neither role can read anything here -- against a control proving the grants it guards
+-- against are live in the same database.
 revoke all on schema langgraph from anon, authenticated;
 revoke all privileges on all tables in schema langgraph from anon, authenticated;
 

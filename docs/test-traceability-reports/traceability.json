@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 41,
+      "pytest": 45,
       "vitest": 208,
       "playwright": 24,
-      "all": 273
+      "all": 277
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 41,
+      "pytest": 45,
       "vitest": 208,
       "playwright": 24,
-      "all": 273
+      "all": 277
     }
   },
   "by_flow": {
@@ -126,7 +126,7 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 3,
+        "security": 7,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -134,11 +134,11 @@
         "functionality": 14
       },
       "runners": {
-        "pytest": 17,
+        "pytest": 21,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 17,
+      "total": 21,
       "parametrized": 0
     },
     "platform.auth": {
@@ -2053,6 +2053,34 @@
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_schema_privileges.py:102",
+      "name": "test_api_roles_cannot_use_the_checkpoint_schema",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_schema_privileges.py:117",
+      "name": "test_api_roles_cannot_read_any_checkpoint_table",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_schema_privileges.py:143",
+      "name": "test_the_checkpoint_schema_is_absent_from_the_postgrest_surface",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_schema_privileges.py:75",
+      "name": "test_the_grants_this_schema_is_protected_from_are_live_here",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
     },
     {
       "id": "python/libs/schemas/tests/test_parity.py:103",

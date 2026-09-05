@@ -125,28 +125,10 @@ jobs:
     defaults:
       run:
         working-directory: python
-    # A real Postgres, because the interrupt/resume test proves a run survives a *process
-    # restart* and an in-memory saver cannot demonstrate that. A bare container rather than
-    # the Supabase CLI stack: the test needs somewhere durable to write checkpoints, not
-    # PostgREST, GoTrue and Studio.
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        ports:
-          - 54322:5432
-        # Without this the job races the container and fails on connection, intermittently.
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
       # Turns "no database, skip the durability test" into a hard failure. Without it, a
-      # broken service container would look identical to a green run.
+      # database that failed to start would look identical to a green run.
       ARTLOUPE_REQUIRE_POSTGRES: "1"
     steps:
       - uses: actions/checkout@v7
@@ -158,6 +140,25 @@ jobs:
 
       - name: Sync workspace
         run: uv sync --all-packages --frozen
+
+      # Pinned to the version `pnpm-lock.yaml` resolves for the `supabase` devDependency, so
+      # CI applies migrations with the same CLI as a local `pnpm supabase start`. Bump both
+      # together.
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.116.0
+
+      # The same stack `pnpm supabase start` runs locally, minus every service the tests do
+      # not touch. A plain `postgres:` service container is lighter and was what this job used
+      # first, but it has no `anon` or `authenticated` roles and applies no migrations -- so
+      # `supabase/migrations/` was never executed in CI, and a privilege assertion written
+      # against it would pass against roles that do not exist. `test_schema_privileges.py`
+      # needs both to mean anything.
+      - name: Start Supabase (database only)
+        working-directory: .
+        run: >-
+          supabase start
+          -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 
       - name: Ruff format
         run: uv run ruff format --check
