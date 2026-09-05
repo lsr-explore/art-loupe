@@ -12,10 +12,40 @@ Cost, latency, evaluation health, and corpus ingestion
 | --- | --- |
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
-| **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 5 |
-| **Covered** | a11y 2 · functionality 3 |
-| **Not covered** | security · privacy · safety · data · performance |
+| **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
+| **Tests** | 30 |
+| **Covered** | a11y 2 · security 4 · data 1 · functionality 23 |
+| **Not covered** | privacy · safety · performance |
+
+## pytest — 25
+
+| Category | Test | Location |
+| --- | --- | --- |
+| security | test_the_grants_this_table_is_protected_from_are_live_here | `python/libs/metering/tests/test_metrics_table.py:63` |
+| security | test_row_level_security_is_on_and_no_policy_opens_it | `python/libs/metering/tests/test_metrics_table.py:89` |
+| security | test_the_api_roles_cannot_read_the_ledger | `python/libs/metering/tests/test_metrics_table.py:104` |
+| data | test_a_flushed_run_is_readable_afterwards | `python/libs/metering/tests/test_metrics_table.py:121` |
+| functionality | test_cost_is_decimal_not_float | `python/libs/metering/tests/test_pricing.py:24` |
+| functionality | test_input_and_output_are_priced_separately | `python/libs/metering/tests/test_pricing.py:35` |
+| functionality | test_cached_input_is_cheaper_and_writing_the_cache_is_dearer | `python/libs/metering/tests/test_pricing.py:40` |
+| functionality | test_a_node_with_no_model_costs_a_real_zero | `python/libs/metering/tests/test_pricing.py:49` |
+| functionality | test_an_unknown_model_is_unpriced_rather_than_free | `python/libs/metering/tests/test_pricing.py:54` |
+| functionality | test_model_ids_carry_no_date_suffix | `python/libs/metering/tests/test_pricing.py:66` |
+| functionality | test_a_node_that_reports_nothing_still_produces_a_row | `python/libs/metering/tests/test_recorder.py:29` |
+| functionality | test_latency_is_measured_not_declared | `python/libs/metering/tests/test_recorder.py:47` |
+| functionality | test_usage_reported_from_inside_the_node_lands_on_that_node | `python/libs/metering/tests/test_recorder.py:55` |
+| functionality | test_two_calls_in_one_node_accumulate | `python/libs/metering/tests/test_recorder.py:68` |
+| functionality | test_reporting_usage_outside_a_node_is_a_no_op | `python/libs/metering/tests/test_recorder.py:78` |
+| functionality | test_re_running_a_node_writes_a_second_row_rather_than_merging | `python/libs/metering/tests/test_recorder.py:86` |
+| functionality | test_cached_tokens_count_toward_the_ceiling_but_not_at_the_full_rate | `python/libs/metering/tests/test_recorder.py:101` |
+| functionality | test_a_failing_node_is_still_recorded_and_reraises | `python/libs/metering/tests/test_recorder.py:120` |
+| functionality | test_a_stopped_run_records_why_it_stopped | `python/libs/metering/tests/test_recorder.py:132` |
+| functionality | test_unpriced_nodes_are_counted_rather_than_blanking_the_run | `python/libs/metering/tests/test_recorder.py:144` |
+| functionality | test_defaults_to_memory_so_tests_stay_hermetic | `python/libs/metering/tests/test_sinks.py:36` |
+| functionality | test_postgres_mode_is_opt_in | `python/libs/metering/tests/test_sinks.py:41` |
+| functionality | test_flushing_nothing_opens_no_connection | `python/libs/metering/tests/test_sinks.py:46` |
+| security | test_the_ledger_table_is_denied_to_the_api_roles_by_construction | `python/libs/metering/tests/test_sinks.py:52` |
+| functionality | test_the_sink_writes_where_the_migration_creates | `python/libs/metering/tests/test_sinks.py:71` |
 
 ## Vitest — 5
 

@@ -12,6 +12,11 @@ Two endpoints, and the difference between them is the point of this module:
   public deployment should not be a reconnaissance surface.
 - `POST /runs` is **authenticated**, and takes its owner from the *verified token*, never
   from the request body. A caller cannot assert whose run this is.
+
+Every run goes through `artloupe.agent.runtime.execute_run`, never `graph.ainvoke` directly.
+That is what keeps the loop guards and the budget ceiling from being optional: an endpoint
+that invoked the graph itself would be unmetered and uncapped, and would look identical from
+the outside to one that is not.
 """
 
 from collections.abc import AsyncIterator
@@ -19,12 +24,19 @@ from contextlib import asynccontextmanager
 from typing import Any
 from uuid import uuid4
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from artloupe.agent.graph import build_graph
+from artloupe.agent.runtime import execute_run
 from artloupe.agent.state import RunState
 from artloupe.auth.dependencies import CurrentUser, auth_lifespan
+from artloupe.metering import (
+    BudgetExceeded,
+    GuardTripped,
+    WallClockExceeded,
+)
 
 SERVICE_NAME = "artloupe-agent"
 SERVICE_VERSION = "0.1.0"
@@ -47,6 +59,29 @@ app = FastAPI(title=SERVICE_NAME, version=SERVICE_VERSION, lifespan=lifespan)
 # Compiled once at import rather than per request. The graph is stateless and immutable;
 # rebuilding it per call would re-validate the topology on every request for no benefit.
 _graph = build_graph()
+
+
+# How a stopped run is reported. A ceiling being reached is not an internal error, and
+# collapsing every ceiling onto a 500 would make a budget working as designed
+# indistinguishable from a fault:
+#
+# - a plan budget exhausted is a quota, and 429 is what callers already retry-or-stop on;
+# - a run that ran out of time is a 504, which is what it is from the caller's side;
+# - a graph that looped is the unmapped default, 500, because a run that will not converge
+#   is our bug rather than the caller's and no change to the request fixes it.
+_GUARD_STATUS: dict[type[GuardTripped], int] = {
+    BudgetExceeded: 429,
+    WallClockExceeded: 504,
+}
+
+
+@app.exception_handler(GuardTripped)
+async def guard_tripped(_request: Request, error: GuardTripped) -> JSONResponse:
+    """Report a run stopped by one of its own ceilings, with the reason it was stopped."""
+    return JSONResponse(
+        status_code=_GUARD_STATUS.get(type(error), 500),
+        content={"detail": error.reason},
+    )
 
 
 class HealthResponse(BaseModel):
@@ -79,8 +114,10 @@ async def create_run(user: CurrentUser) -> RunResponse:
     Postgres RLS reads as `auth.uid()`. Taking it from anywhere else would let a caller
     create runs against another artist's identity.
     """
-    initial: RunState = {"run_id": str(uuid4()), "owner": user.subject, "node_trail": []}
-    result: dict[str, Any] = await _graph.ainvoke(initial)
+    run_id = str(uuid4())
+    initial: RunState = {"run_id": run_id, "owner": user.subject, "node_trail": []}
+    outcome = await execute_run(_graph, initial, run_id=run_id, owner=user.subject)
+    result: dict[str, Any] = outcome.state
     return RunResponse(
         run_id=result["run_id"],
         owner=result["owner"],

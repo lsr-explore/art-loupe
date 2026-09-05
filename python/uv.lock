@@ -12,6 +12,7 @@ resolution-markers = [
 members = [
     "artloupe-agent",
     "artloupe-auth",
+    "artloupe-metering",
     "artloupe-persistence",
     "artloupe-schemas",
 ]
@@ -62,6 +63,8 @@ version = "0.1.0"
 source = { editable = "services/agent" }
 dependencies = [
     { name = "artloupe-auth" },
+    { name = "artloupe-metering" },
+    { name = "artloupe-schemas" },
     { name = "fastapi" },
     { name = "langgraph" },
     { name = "uvicorn" },
@@ -75,6 +78,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "artloupe-auth", editable = "libs/auth" },
+    { name = "artloupe-metering", editable = "libs/metering" },
+    { name = "artloupe-schemas", editable = "libs/schemas" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "langgraph", specifier = ">=0.2" },
     { name = "uvicorn", specifier = ">=0.30" },
@@ -114,6 +119,25 @@ requires-dist = [
 dev = [
     { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "respx", specifier = ">=0.22" },
+]
+
+[[package]]
+name = "artloupe-metering"
+version = "0.1.0"
+source = { editable = "libs/metering" }
+dependencies = [
+    { name = "artloupe-schemas" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "artloupe-schemas", editable = "libs/schemas" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
+    { name = "pydantic", specifier = ">=2.9" },
+    { name = "pydantic-settings", specifier = ">=2.6" },
 ]
 
 [[package]]
