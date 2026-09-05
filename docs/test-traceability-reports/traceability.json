@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 45,
-      "vitest": 208,
+      "pytest": 81,
+      "vitest": 231,
       "playwright": 24,
-      "all": 277
+      "all": 336
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 45,
-      "vitest": 208,
+      "pytest": 81,
+      "vitest": 231,
       "playwright": 24,
-      "all": 277
+      "all": 336
     }
   },
   "by_flow": {
@@ -186,20 +186,20 @@
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
         "a11y": 0,
-        "security": 0,
+        "security": 34,
         "privacy": 0,
-        "safety": 0,
-        "data": 0,
+        "safety": 1,
+        "data": 24,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 0,
-        "vitest": 0,
+        "pytest": 36,
+        "vitest": 23,
         "playwright": 0
       },
-      "total": 0,
-      "parametrized": 0
+      "total": 59,
+      "parametrized": 7
     },
     "ops.observability": {
       "severity": "P2",
@@ -891,6 +891,167 @@
       "runner": "vitest",
       "flow": "platform.shell",
       "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:14",
+      "name": "matches the published SHA-256 of the empty input",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:22",
+      "name": "changes when a single byte changes",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:29",
+      "name": "is stable across calls, which is what makes it a cache key",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:35",
+      "name": "agrees with node:crypto over a payload larger than one hash block",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:44",
+      "name": "accepts a lowercase 64-character hex digest",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:48",
+      "name": "rejects uppercase hex, because the database constraint does",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:52",
+      "name": "rejects %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/checksum.test.ts:7",
+      "name": "produces the lowercase hex SHA-256 the database constraint accepts",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:109",
+      "name": "names the bucket the migration creates",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:113",
+      "name": "names the bucket every storage policy is scoped to",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:17",
+      "name": "puts the owner id first, which is the segment the storage policy matches on",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:28",
+      "name": "ends with the checksum, which is what the source_images constraint requires",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:38",
+      "name": "refuses %s as an owner id",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:49",
+      "name": "refuses a project id that would walk out of the owner prefix",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:55",
+      "name": "refuses a checksum that is not lowercase hex SHA-256",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:68",
+      "name": "round-trips a key it built",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/reference-images.test.ts:82",
+      "name": "returns null for %s rather than throwing",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:150",
+      "name": "reports a network failure as unavailable, not as a refusal",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:167",
+      "name": "refuses a success payload that carries no signed path",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:38",
+      "name": "signs with the artist",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:57",
+      "name": "posts to the sign endpoint for the reference-images bucket",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:73",
+      "name": "returns an absolute URL built from the relative path storage answers with",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/signed-url.test.ts:92",
+      "name": "never issues a request for a key that is not one of ours",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
     },
     {
       "id": "apps/studio/src/proxy.test.ts:139",
@@ -2055,6 +2216,258 @@
       "category": "functionality"
     },
     {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:118",
+      "name": "test_anon_holds_no_privilege_on_artist_tables",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:134",
+      "name": "test_anon_is_refused_outright_rather_than_shown_an_empty_table",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:146",
+      "name": "test_an_artist_sees_only_their_own_project",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:153",
+      "name": "test_an_artist_cannot_create_a_project_owned_by_someone_else",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:170",
+      "name": "test_an_artist_cannot_edit_another_artists_intent",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:186",
+      "name": "test_an_artist_cannot_hand_their_project_to_someone_else",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:196",
+      "name": "test_an_artist_cannot_delete_another_artists_project",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:211",
+      "name": "test_only_the_owning_artist_sees_the_uploaded_original",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:228",
+      "name": "test_an_artist_cannot_attach_an_upload_to_another_artists_project",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:243",
+      "name": "test_an_artist_can_delete_their_own_upload",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:257",
+      "name": "test_no_artist_holds_the_update_privilege_on_an_original",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:274",
+      "name": "test_there_is_no_update_policy_on_originals",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:298",
+      "name": "test_an_artist_sees_only_objects_under_their_own_prefix",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:334",
+      "name": "test_an_artist_cannot_write_an_object_into_another_artists_prefix",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:351",
+      "name": "test_the_reference_bucket_is_private",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:365",
+      "name": "test_every_storage_policy_is_scoped_to_our_bucket",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:53",
+      "name": "test_both_projects_are_readable_when_no_policy_is_deciding",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:71",
+      "name": "test_a_new_public_table_is_granted_to_the_api_roles_by_default",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:96",
+      "name": "test_authenticated_holds_the_privileges_the_policies_confine",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:102",
+      "name": "test_an_intent_missing_what_routing_needs_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:118",
+      "name": "test_an_unrecognised_medium_is_left_to_the_schema_packages",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:137",
+      "name": "test_a_project_holds_only_one_reference_photograph",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:147",
+      "name": "test_an_upload_within_bounds_is_accepted",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:164",
+      "name": "test_an_upload_outside_fr_101_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:171",
+      "name": "test_exactly_the_minimum_long_edge_is_accepted",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:190",
+      "name": "test_a_checksum_that_is_not_lowercase_sha256_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:198",
+      "name": "test_a_storage_key_that_does_not_end_in_its_own_checksum_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:212",
+      "name": "test_an_original_cannot_be_updated_even_with_rls_bypassed",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:226",
+      "name": "test_a_project_row_is_still_updatable",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:235",
+      "name": "test_updating_a_project_moves_its_updated_at",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:260",
+      "name": "test_hostile_provenance_text_is_stored_verbatim_as_data",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:305",
+      "name": "test_a_project_carries_a_retention_date",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:317",
+      "name": "test_deleting_a_project_takes_its_original_with_it",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:327",
+      "name": "test_deleting_the_artist_takes_their_projects_with_them",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:73",
+      "name": "test_a_project_starts_without_an_intent",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_schema.py:84",
+      "name": "test_a_resolved_intent_is_stored_as_given",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
       "id": "python/libs/persistence/tests/test_schema_privileges.py:102",
       "name": "test_api_roles_cannot_use_the_checkpoint_schema",
       "runner": "pytest",
@@ -2231,10 +2644,15 @@
       "critique.alignment",
       "critique.formal-analysis",
       "canvas.session-plan",
-      "intake.project-intent",
       "palette.extraction"
     ],
-    "missingExpected": []
+    "missingExpected": [
+      {
+        "id": "intake.project-intent",
+        "severity": "P2",
+        "missing": ["a11y"]
+      }
+    ]
   },
   "untagged": {}
 }

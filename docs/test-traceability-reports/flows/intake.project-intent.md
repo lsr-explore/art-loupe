@@ -12,12 +12,79 @@ Upload, intake, and the typed ProjectIntent
 | --- | --- |
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
-| **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 0 |
-| **Covered** | nothing yet |
-| **Not covered** | a11y · security · privacy · safety · data · performance · functionality |
+| **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
+| **Tests** | 59 (7 parametrized) |
+| **Covered** | security 34 · safety 1 · data 24 |
+| **Not covered** | a11y · privacy · performance · functionality |
 
-No test currently claims this flow.
+## pytest — 36
+
+| Category | Test | Location |
+| --- | --- | --- |
+| security | test_both_projects_are_readable_when_no_policy_is_deciding | `python/libs/persistence/tests/test_projects_rls.py:53` |
+| security | test_a_new_public_table_is_granted_to_the_api_roles_by_default | `python/libs/persistence/tests/test_projects_rls.py:71` |
+| security | test_authenticated_holds_the_privileges_the_policies_confine | `python/libs/persistence/tests/test_projects_rls.py:96` |
+| security | test_anon_holds_no_privilege_on_artist_tables | `python/libs/persistence/tests/test_projects_rls.py:118` |
+| security | test_anon_is_refused_outright_rather_than_shown_an_empty_table | `python/libs/persistence/tests/test_projects_rls.py:134` |
+| security | test_an_artist_sees_only_their_own_project | `python/libs/persistence/tests/test_projects_rls.py:146` |
+| security | test_an_artist_cannot_create_a_project_owned_by_someone_else | `python/libs/persistence/tests/test_projects_rls.py:153` |
+| security | test_an_artist_cannot_edit_another_artists_intent | `python/libs/persistence/tests/test_projects_rls.py:170` |
+| security | test_an_artist_cannot_hand_their_project_to_someone_else | `python/libs/persistence/tests/test_projects_rls.py:186` |
+| security | test_an_artist_cannot_delete_another_artists_project | `python/libs/persistence/tests/test_projects_rls.py:196` |
+| security | test_only_the_owning_artist_sees_the_uploaded_original | `python/libs/persistence/tests/test_projects_rls.py:211` |
+| security | test_an_artist_cannot_attach_an_upload_to_another_artists_project | `python/libs/persistence/tests/test_projects_rls.py:228` |
+| security | test_an_artist_can_delete_their_own_upload | `python/libs/persistence/tests/test_projects_rls.py:243` |
+| security | test_no_artist_holds_the_update_privilege_on_an_original | `python/libs/persistence/tests/test_projects_rls.py:257` |
+| security | test_there_is_no_update_policy_on_originals | `python/libs/persistence/tests/test_projects_rls.py:274` |
+| security | test_an_artist_sees_only_objects_under_their_own_prefix | `python/libs/persistence/tests/test_projects_rls.py:298` |
+| security | test_an_artist_cannot_write_an_object_into_another_artists_prefix | `python/libs/persistence/tests/test_projects_rls.py:334` |
+| security | test_the_reference_bucket_is_private | `python/libs/persistence/tests/test_projects_rls.py:351` |
+| security | test_every_storage_policy_is_scoped_to_our_bucket | `python/libs/persistence/tests/test_projects_rls.py:365` |
+| data | test_a_project_starts_without_an_intent | `python/libs/persistence/tests/test_projects_schema.py:73` |
+| data | test_a_resolved_intent_is_stored_as_given | `python/libs/persistence/tests/test_projects_schema.py:84` |
+| data | test_an_intent_missing_what_routing_needs_is_refused | `python/libs/persistence/tests/test_projects_schema.py:102` |
+| data | test_an_unrecognised_medium_is_left_to_the_schema_packages | `python/libs/persistence/tests/test_projects_schema.py:118` |
+| data | test_a_project_holds_only_one_reference_photograph | `python/libs/persistence/tests/test_projects_schema.py:137` |
+| data | test_an_upload_within_bounds_is_accepted | `python/libs/persistence/tests/test_projects_schema.py:147` |
+| data | test_an_upload_outside_fr_101_is_refused | `python/libs/persistence/tests/test_projects_schema.py:164` |
+| data | test_exactly_the_minimum_long_edge_is_accepted | `python/libs/persistence/tests/test_projects_schema.py:171` |
+| data | test_a_checksum_that_is_not_lowercase_sha256_is_refused | `python/libs/persistence/tests/test_projects_schema.py:190` |
+| data | test_a_storage_key_that_does_not_end_in_its_own_checksum_is_refused | `python/libs/persistence/tests/test_projects_schema.py:198` |
+| data | test_an_original_cannot_be_updated_even_with_rls_bypassed | `python/libs/persistence/tests/test_projects_schema.py:212` |
+| data | test_a_project_row_is_still_updatable | `python/libs/persistence/tests/test_projects_schema.py:226` |
+| data | test_updating_a_project_moves_its_updated_at | `python/libs/persistence/tests/test_projects_schema.py:235` |
+| safety | test_hostile_provenance_text_is_stored_verbatim_as_data | `python/libs/persistence/tests/test_projects_schema.py:260` |
+| data | test_a_project_carries_a_retention_date | `python/libs/persistence/tests/test_projects_schema.py:305` |
+| data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:317` |
+| data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:327` |
+
+## Vitest — 23
+
+| Category | Test | Location |
+| --- | --- | --- |
+| data | produces the lowercase hex SHA-256 the database constraint accepts | `apps/studio/src/lib/storage/checksum.test.ts:7` |
+| data | matches the published SHA-256 of the empty input | `apps/studio/src/lib/storage/checksum.test.ts:14` |
+| data | changes when a single byte changes | `apps/studio/src/lib/storage/checksum.test.ts:22` |
+| data | is stable across calls, which is what makes it a cache key | `apps/studio/src/lib/storage/checksum.test.ts:29` |
+| data | agrees with node:crypto over a payload larger than one hash block | `apps/studio/src/lib/storage/checksum.test.ts:35` |
+| data | accepts a lowercase 64-character hex digest | `apps/studio/src/lib/storage/checksum.test.ts:44` |
+| data | rejects uppercase hex, because the database constraint does | `apps/studio/src/lib/storage/checksum.test.ts:48` |
+| data | rejects %s | `apps/studio/src/lib/storage/checksum.test.ts:52` |
+| security | puts the owner id first, which is the segment the storage policy matches on | `apps/studio/src/lib/storage/reference-images.test.ts:17` |
+| security | ends with the checksum, which is what the source_images constraint requires | `apps/studio/src/lib/storage/reference-images.test.ts:28` |
+| security | refuses %s as an owner id | `apps/studio/src/lib/storage/reference-images.test.ts:38` |
+| security | refuses a project id that would walk out of the owner prefix | `apps/studio/src/lib/storage/reference-images.test.ts:49` |
+| security | refuses a checksum that is not lowercase hex SHA-256 | `apps/studio/src/lib/storage/reference-images.test.ts:55` |
+| security | round-trips a key it built | `apps/studio/src/lib/storage/reference-images.test.ts:68` |
+| security | returns null for %s rather than throwing | `apps/studio/src/lib/storage/reference-images.test.ts:82` |
+| security | names the bucket the migration creates | `apps/studio/src/lib/storage/reference-images.test.ts:109` |
+| security | names the bucket every storage policy is scoped to | `apps/studio/src/lib/storage/reference-images.test.ts:113` |
+| security | signs with the artist | `apps/studio/src/lib/storage/signed-url.test.ts:38` |
+| security | posts to the sign endpoint for the reference-images bucket | `apps/studio/src/lib/storage/signed-url.test.ts:57` |
+| security | returns an absolute URL built from the relative path storage answers with | `apps/studio/src/lib/storage/signed-url.test.ts:73` |
+| security | never issues a request for a key that is not one of ours | `apps/studio/src/lib/storage/signed-url.test.ts:92` |
+| security | reports a network failure as unavailable, not as a refusal | `apps/studio/src/lib/storage/signed-url.test.ts:150` |
+| security | refuses a success payload that carries no signed path | `apps/studio/src/lib/storage/signed-url.test.ts:167` |
 
 ---
 
