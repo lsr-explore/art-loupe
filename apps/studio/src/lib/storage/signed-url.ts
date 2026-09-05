@@ -123,7 +123,15 @@ export const createReferenceImageSignedUrl = async ({
     return { ok: false, reason: failureFor(response.status), status: response.status };
   }
 
-  const payload: unknown = await response.json();
+  // Parsed inside a catch: an empty or malformed body on a 200 would otherwise throw past
+  // `SignedUrlResult` entirely, handing callers a rejected promise the type never advertised.
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch {
+    return { ok: false, reason: 'unavailable', status: response.status };
+  }
+
   const signed =
     typeof payload === 'object' && payload !== null
       ? (payload as { signedURL?: unknown }).signedURL

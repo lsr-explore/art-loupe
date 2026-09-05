@@ -137,7 +137,19 @@ create table if not exists public.source_images (
     -- Content addressing, enforced. A key that does not end in its own row's checksum means the
     -- bytes in the bucket and the checksum every derivative cites have come apart, which is the
     -- one way FR-105 fails silently.
-    constraint source_images_key_ends_with_checksum check (storage_key like ('%/' || checksum))
+    --
+    -- The project segment is checked too, not only the checksum. Checking the suffix alone let
+    -- a row own project A while pointing at project B's object path: the RLS policy validates
+    -- that you own `project_id`, and this constraint validated the checksum, and neither
+    -- noticed the middle segment naming somebody else's project. Signed reads and derivatives
+    -- would then resolve the wrong bytes.
+    --
+    -- That leaves only the owner segment unchecked here, and it is closed elsewhere rather
+    -- than left open: the storage policies match `(storage.foldername(name))[1] = auth.uid()`,
+    -- so a client can only write under its own prefix, and the insert policy requires it to
+    -- own `project_id` — so the owner segment is necessarily the project's owner.
+    constraint source_images_key_matches_project_and_checksum
+        check (storage_key like ('%/' || project_id::text || '/' || checksum))
 );
 
 comment on table public.source_images is

@@ -53,7 +53,7 @@ def storage_key(owner_id: str, project_id: str, checksum: str) -> str:
     """The object key format the storage policies and the check constraint both depend on.
 
     Mirrors `buildReferenceImageKey` in `apps/studio/src/lib/storage/reference-images.ts`. The
-    arbiter of the format is neither copy but the `source_images_key_ends_with_checksum`
+    arbiter of the format is neither copy but the `source_images_key_matches_project_and_checksum`
     constraint, which the schema suite asserts against directly.
     """
     return f"{owner_id}/{project_id}/{checksum}"

@@ -209,6 +209,25 @@ def test_a_storage_key_that_does_not_end_in_its_own_checksum_is_refused(
         )
 
 
+def test_a_storage_key_naming_another_project_is_refused(
+    two_artists: psycopg.Connection,
+) -> None:
+    """The gap a checksum-only constraint left open.
+
+    The key is `{owner}/{project}/{checksum}`. Checking only the suffix let a row own project A
+    while pointing at project B's object path -- RLS validated that you own `project_id`, the
+    constraint validated the checksum, and neither looked at the middle segment. Signed reads
+    and derivatives would then resolve another project's bytes.
+    """
+    with refused(two_artists, psycopg.errors.CheckViolation):
+        _write_original(
+            two_artists,
+            project_id=PROJECT_A,
+            key=storage_key(ARTIST_A, PROJECT_B, CHECKSUM_B),
+            checksum=CHECKSUM_B,
+        )
+
+
 def test_an_original_cannot_be_updated_even_with_rls_bypassed(
     two_artists: psycopg.Connection,
 ) -> None:

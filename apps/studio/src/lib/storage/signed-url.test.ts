@@ -182,4 +182,26 @@ describe('createReferenceImageSignedUrl', () => {
 
     expect(result).toEqual({ ok: false, reason: 'unavailable', status: 200 });
   });
+
+  it('reports a malformed success body as unavailable rather than throwing', async () => {
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response('not json at all', {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
+
+    // `response.json()` throws on a body like this. Uncaught, it escapes `SignedUrlResult`
+    // entirely and hands the caller a rejected promise the return type never advertised —
+    // which is the one failure mode a caller written against the type would not handle.
+    const result = await createReferenceImageSignedUrl({
+      supabaseUrl: SUPABASE_URL,
+      accessToken: ACCESS_TOKEN,
+      storageKey: STORAGE_KEY,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    expect(result).toEqual({ ok: false, reason: 'unavailable', status: 200 });
+  });
 });
