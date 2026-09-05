@@ -1,15 +1,12 @@
 {
   "_comment": "Greptile review configuration. Ported from .coderabbit.yaml on 2026-07-31; CodeRabbit is paused (reviews.auto_review.enabled: false) but still installed, so switching back is one flag there and deleting this file here. NOTE: settings are read from the PR's SOURCE branch, so a change here takes effect on the PR that introduces it. If a .greptile/ directory ever appears it takes precedence and this file is ignored entirely.",
 
-  "_comment_skipReview": "The whole point of this config. AUTOMATIC skips reviews triggered automatically but still honours intentional triggers, so intermediate commits on a branch cost nothing and a review is spent only when explicitly asked for — `greptile review` locally, or an @greptileai comment on the PR.",
-  "skipReview": "AUTOMATIC",
-
   "_comment_strictness": "2 is the default. CodeRabbit ran on the `assertive` profile, but Greptile documents strictness only as a severity threshold without stating direction, so this starts neutral rather than guessing. Adjust after a few reviews.",
   "strictness": 2,
   "commentTypes": ["logic", "syntax", "style"],
 
   "_comment_triggers": "Both false for the same reason auto_incremental_review was off in CodeRabbit: the review loop pushes fixes on nearly every PR, and re-reviewing each push burns the quota two or three times per PR. Redundant while skipReview is AUTOMATIC, kept explicit so re-enabling automatic reviews does not silently also re-enable per-push ones.",
-  "triggerOnUpdates": false,
+  "triggerOnUpdates": true,
   "triggerOnDrafts": false,
 
   "_comment_statusCheck": "false — solo repo, reviews inform rather than gate merges (CodeRabbit's request_changes_workflow: false). Once a `main` ruleset exists it should require Quality Checks, Unit Tests, Python Checks, Build, Static Analysis and Playwright E2E; review bots are deliberately not among them.",
