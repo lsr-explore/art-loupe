@@ -125,6 +125,29 @@ jobs:
     defaults:
       run:
         working-directory: python
+    # A real Postgres, because the interrupt/resume test proves a run survives a *process
+    # restart* and an in-memory saver cannot demonstrate that. A bare container rather than
+    # the Supabase CLI stack: the test needs somewhere durable to write checkpoints, not
+    # PostgREST, GoTrue and Studio.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 54322:5432
+        # Without this the job races the container and fails on connection, intermittently.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      # Turns "no database, skip the durability test" into a hard failure. Without it, a
+      # broken service container would look identical to a green run.
+      ARTLOUPE_REQUIRE_POSTGRES: "1"
     steps:
       - uses: actions/checkout@v7
 

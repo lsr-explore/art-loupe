@@ -1,0 +1,28 @@
+# Art Loupe persistence — the checkpointer every graph resumes from.
+#
+# A library, not a service. It owns exactly one thing: constructing the LangGraph checkpoint
+# saver, as a process-wide singleton, so a run interrupted for artist correction can resume in
+# a *different process* than the one that started it (FR-402/403/404).
+#
+# That cross-process requirement is why an in-memory saver is not sufficient outside tests, and
+# it is the whole reason this package exists separately from `artloupe-agent`.
+[project]
+name = "artloupe-persistence"
+version = "0.1.0"
+description = "LangGraph checkpointing over Postgres, isolated in its own schema."
+requires-python = ">=3.12"
+dependencies = [
+  "langgraph-checkpoint-postgres>=2.0",
+  # psycopg 3. `binary` ships a wheel so no local libpq/compiler is needed; `pool` provides
+  # the AsyncConnectionPool the saver runs on.
+  "psycopg[binary,pool]>=3.2",
+  "pydantic-settings>=2.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
+packages = ["src/artloupe"]
