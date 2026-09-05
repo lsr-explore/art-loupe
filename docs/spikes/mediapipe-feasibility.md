@@ -91,10 +91,15 @@ What still works unchanged: the plan's deterministic portrait gate. "≥1 face" 
 reliable, and free, so FR-307's routing decision stays off the LLM as designed.
 
 What does not: any confidence *number* attached to the face path has to be **derived**, and
-that derivation is a design decision, not an implementation detail. Candidate signals, all
-available from what the detector does return — yaw/pitch/roll extracted from the 4×4
-transformation matrix, face bounding-box area as a fraction of the frame, landmark dispersion
-against expected Loomis proportions, blendshape extremity as a proxy for an unusual pose.
+that derivation is a design decision, not an implementation detail. The design landed in
+[`../design/geometry-confidence-plan.md`](../design/geometry-confidence-plan.md); this file
+records only that the detector supplies no such number.
+
+An earlier draft of this section listed *landmark dispersion against expected Loomis
+proportions* among the candidates. That signal has since been **withdrawn** — it measures a
+sitter's conformity to an idealized template rather than the detector's uncertainty, and would
+have fired the FR-402 interrupt more often the further a face sat from that ideal. See §3 of
+the plan for why, and do not reintroduce it from this file.
 
 ## Open
 

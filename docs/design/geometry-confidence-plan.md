@@ -127,7 +127,7 @@ score, so a signal that is wrong in some population is not diluted by the others
 ### Consequences for the claim taxonomy
 
 The resulting number is `measured` under §6's closed union — it is computed from pixels, with
-no real-world unit, so FR-306 is not at risk. Its provenance should name the three components
+no real-world unit, so FR-306 is not at risk. Its provenance should name the contributing components
 rather than presenting one opaque scalar, so a `chosen` threshold sitting on top of it stays
 auditable.
 
