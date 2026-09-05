@@ -47,7 +47,15 @@ Conventional commits: `feat:` `fix:` `chore:` `docs:` `refactor:` `test:` `ci:`.
 *why*, not to list files — the diff already lists files. Do not bypass husky with
 `--no-verify`; its lint-staged pass will reformat staged files, which is expected.
 
-End the message with the session trailers (`Co-Authored-By:` / `Claude-Session:`).
+End the message with the `Co-Authored-By:` trailer only.
+
+**Never include a `Claude-Session:` trailer or any `claude.ai/code/session_…` URL**, in a
+commit message or a PR body. This repo is public, so both are world-readable and a commit
+message is effectively permanent. The link does not expose the transcript — it is scoped to
+Laurie's account — but publishing a pointer to her sessions is not something a public
+portfolio repo should do. The harness supplies that trailer in its standing attribution
+instruction; this line deliberately overrides it, so drop it when composing the message rather
+than committing and amending afterwards.
 
 Intermediate commits are fine and cost nothing — nothing reviews them.
 
@@ -57,6 +65,9 @@ The PR body is the durable artifact — a reviewer reads it before the diff, and
 reads it instead of the diff. Cover: **why** the change exists, what it does, anything
 deliberately *not* done, and any decision a reviewer might otherwise re-litigate. Call out
 anything you decided that wasn't explicitly approved.
+
+Sign it off with the generic `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+line and **no session URL** — same rule as the commit trailer in §2, same reason.
 
 ## 4. Watch CI
 

@@ -1,0 +1,57 @@
+{
+  "date": "2026-08-31",
+  "label": "Design docs — scope decisions settled; chat, credits, materials, and retrieval designed",
+  "confidence": "measured",
+  "cost_usd": 8.96,
+  "api_minutes": 21.6,
+  "wall_minutes": 439.2,
+  "context_over_150k_pct": 38,
+  "parallel_agents": 1,
+  "themes": ["agent", "app", "evals", "data"],
+  "effort_split": {
+    "build": 0,
+    "setup": 0,
+    "design": 55,
+    "docs": 35,
+    "verify_ops": 3,
+    "churn": 7
+  },
+  "churn_attribution": {
+    "claude_error": 70,
+    "genuine_discovery": 20,
+    "under_specified": 10
+  },
+  "ratings": {
+    "scoping_clarity": 4,
+    "decision_stability": 3,
+    "tooling_leverage": 4
+  },
+  "rework_of": [],
+  "delivered": { "prs": [], "adrs": [] },
+  "review": { "coderabbit_findings": 0, "fixed": 0, "deferred": 0, "declined": 0 },
+  "decisions": [
+    "Showcase vision tools are BOTH head construction and perspective (proposal option B); a cut order is written into requirements.md §9 because two high-uncertainty tools now sit on the critical path",
+    "Week 9 fine-tuning is omitted; learning_mapping.md must name it as a gap rather than let hybrid retrieval imply coverage",
+    "Voice is out of scope entirely, not sequenced behind HITL",
+    "Agent runtime is LangGraph behind FastAPI in python/services/agent; browser → Next.js route handler → Cloud Run, never browser → Python",
+    "Supabase Auth stays server-side per ADR 0002 — direct-from-browser auth was raised and flagged as an ADR amendment rather than encoded",
+    "Studio chat is in scope as a second entry point into the same graph, not a sixth agent",
+    "Chat effect on the plan is propose-and-accept; an accepted amendment re-runs the Plan Critic",
+    "Chat is metered in per-artist daily credits, weighted by route, on a ledger fully separate from the plan budget — exhausted credits never block plan creation (FR-1017)",
+    "Materials guidance is brand-neutral: specifications, never products, prices, or retailer links",
+    "Every plan carries a materials list (FR-607), which puts the materials corpus on the plan critical path; list-versus-stage agreement is a new materials_mismatch critic defect",
+    "Region binding is propose-and-confirm, not a marquee: the agent outlines where it believes the artist means, and only confirmed or adjusted regions back a measured claim",
+    "The same propose → confirm → recompute pattern now covers landmarks, perspective, and chat regions — one HITL mechanism on three surfaces, stated as a design principle",
+    "retrieval.md was added as a ninth design doc; the proposal had folded retrieval into architecture.md, which understated the largest technical claim in the capstone",
+    "Postgres FTS ranks with ts_rank_cd, which is not BM25 — start there, measure, and do not call it BM25 in the submission",
+    "The corpus is public-read to any authenticated principal and is not artist data; ownership RLS belongs on projects and transcripts, never on corpus tables",
+    "No cross-encoder reranker: the fine-tune was its reason to exist, so RRF's fused order is final",
+    "flows.json restructure is proposed in requirements.md §7 but not applied — the names are Laurie's and the file is a CI gate"
+  ],
+  "retro": {
+    "went_well": "Four design docs landed with stable, cross-referenced requirement IDs, so agents.md and e2e-walkthrough.md cite requirements.md rather than restating it, and markdownlint was run after every pass instead of at the end. Grounding the walkthrough in the two worked examples already in temp-references kept it concrete — the beats name real artifacts from the Tim Diercks study pack rather than inventing a demo. Pushing back on the direct-from-browser Supabase reading was right: it contradicts a shipped ADR and two implemented packages, and encoding it silently would have been worse than raising it. The claude-api skill's grep gate was run before writing about embeddings, which correctly routed to skipping it, and model IDs were kept out of retrieval.md so the doc cannot go stale on a version bump.",
+    "improve": "The region-binding recommendation was wrong, and wrong in an avoidable way. Three options were offered — marquee, text-only, model-resolves — and model-resolves was steered away from because a silent mis-resolution produces a confident false measurement. But propose-and-confirm was already the established pattern in the very document being written, used twice for landmarks and perspective; synthesising it was the obvious fourth option and it was not offered. Laurie proposed it unprompted and it is strictly better. Separately, question 3 in that same AskUserQuestion was compressed to the point of being unclear — 'I don't understand what your question 3 is' — and the plain-language explanation given afterwards should have been the question. Two mechanical errors: the walkthrough beats were written in an order that put the plan after the chat that amends it and had to be reordered, and renumbering the FR-1000 block cascaded stale cross-references through three files that needed a mapped sweep to repair.",
+    "tooling_suggestion": "Stable requirement IDs across a doc set need a check. Renumbering one block silently broke cross-references in three files, and the only reason it was caught is that the numbers were re-grepped by hand. A trivial script that extracts every FR-NNN/NFR-NN definition from requirements.md and fails on a reference elsewhere in docs/design/ with no definition would have caught it instantly, and would keep catching it as the remaining five docs are written."
+  },
+  "note": "A design session: no product code, no PRs, no issues, nothing committed. Output is four new files under docs/design/ — requirements.md, agents.md, retrieval.md, e2e-walkthrough.md — totalling roughly 1,730 lines, all passing markdownlint. Cost and durations are from /usage. context_over_150k_pct is /usage's last-24h figure across all local sessions, not this session alone; the same panel attributes 43% of last-24h usage to subagent-heavy sessions and 4% to Explore, none of which belongs to this session — no subagent was spawned here. The /wrap skill's 8% is this session's wrap. Prompt cache held at 94% of input tokens across 49 requests with a single miss. The design set is now nine documents rather than the eight the proposal listed, with architecture.md, sla-targets.md, rubrics.md, learning_mapping.md and demos.md still to write, plus ADR 0003 and the settled-decisions.md amendment. Edits were made through shell heredocs and python rather than the file-edit tool, so line-change counts will read low."
+}
