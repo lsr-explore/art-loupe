@@ -150,10 +150,10 @@ describe('OverlayHandle', () => {
       fireEvent.pointerDown(handle, { pointerId: 1, clientX: 10, clientY: 10 });
     });
     act(() => {
-      fireEvent.pointerMove(handle, { pointerId: 1, clientX: 40, clientY: 40 });
+      fireEvent.pointerMove(handle, { pointerId: 1, clientX: 60, clientY: 60 });
     });
     act(() => {
-      fireEvent.pointerUp(handle, { pointerId: 1, clientX: 40, clientY: 40 });
+      fireEvent.pointerUp(handle, { pointerId: 1, clientX: 60, clientY: 60 });
     });
     act(() => {
       fireEvent.click(handle);
@@ -172,6 +172,54 @@ describe('OverlayHandle', () => {
     });
     act(() => {
       fireEvent.pointerUp(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.click(handle);
+    });
+
+    expect(handle).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('still arms when the pointer jitters below the drag threshold', () => {
+    const onMove = vi.fn();
+    render(<HandleHarness onMove={onMove} />);
+    const handle = screen.getByRole('button', { name: /^Jaw landmark,/ });
+
+    // Browsers emit `pointermove` for a pixel of hand tremor. Treating any movement as a drag
+    // makes the handle refuse to arm for exactly the people the non-dragging path exists for.
+    act(() => {
+      fireEvent.pointerDown(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.pointerMove(handle, { pointerId: 1, clientX: 11, clientY: 11 });
+    });
+    act(() => {
+      fireEvent.pointerUp(handle, { pointerId: 1, clientX: 11, clientY: 11 });
+    });
+    act(() => {
+      fireEvent.click(handle);
+    });
+
+    expect(handle).toHaveAttribute('aria-pressed', 'true');
+    // Sub-threshold movement must not nudge the guide either.
+    expect(onMove).not.toHaveBeenCalled();
+  });
+
+  it('does not let a cancelled drag swallow the next keyboard activation', () => {
+    render(<HandleHarness />);
+    const handle = screen.getByRole('button', { name: /^Jaw landmark,/ });
+
+    // `pointercancel` produces no click, so nothing downstream clears the suppression. The
+    // next Enter press arrives as a bare `click` with no `pointerdown` to reset it — so a
+    // stale flag would silently discard the keyboard path.
+    act(() => {
+      fireEvent.pointerDown(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.pointerMove(handle, { pointerId: 1, clientX: 60, clientY: 60 });
+    });
+    act(() => {
+      fireEvent.pointerCancel(handle, { pointerId: 1 });
     });
     act(() => {
       fireEvent.click(handle);

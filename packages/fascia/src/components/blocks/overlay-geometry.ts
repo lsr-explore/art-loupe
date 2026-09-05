@@ -46,6 +46,18 @@ export const NUDGE_COARSE = 0.02;
  */
 export const MIN_TARGET_PX = 24;
 
+/**
+ * How far the pointer must travel, in CSS pixels, before a press counts as a drag rather than
+ * a click.
+ *
+ * Without a threshold, *any* `pointermove` between press and release marks the gesture a drag —
+ * and browsers emit those for a pixel of hand tremor, or none at all. The handle would then
+ * refuse to arm for precisely the users the non-dragging path exists to serve. 4 px is the
+ * usual slop; large enough to absorb tremor, small enough that a deliberate drag is never
+ * mistaken for a click.
+ */
+export const DRAG_SLOP_PX = 4;
+
 /** Clamp to the unit square. A guide dragged past the edge stays on the photograph. */
 export const clampPoint = (point: OverlayPoint): OverlayPoint => ({
   x: Math.min(1, Math.max(0, point.x)),

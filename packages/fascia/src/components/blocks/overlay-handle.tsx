@@ -5,6 +5,7 @@ import { type KeyboardEvent, type PointerEvent, useCallback, useId, useRef } fro
 import { useOverlayCanvas } from './overlay-canvas';
 import {
   clampPoint,
+  DRAG_SLOP_PX,
   describePoint,
   MIN_TARGET_PX,
   NUDGE_COARSE,
@@ -106,11 +107,16 @@ export const OverlayHandle = ({
   // Captured once per drag. Re-reading the rect on every `pointermove` is both slower and
   // wrong the moment the page scrolls mid-drag.
   const dragRect = useRef<DOMRect | null>(null);
-  // Whether the pointer actually moved during the gesture. `dragRect` cannot answer this at
-  // click time: `pointerup` clears it, and the browser fires `click` afterwards, so a check
-  // against it always sees null and every completed drag would leave the handle armed —
-  // waiting to teleport on the user's next click anywhere on the photograph.
-  const draggedRef = useRef(false);
+  /**
+   * The in-flight press: where it started, and whether it has travelled far enough to be a
+   * drag. Survives to click time on purpose — `dragRect` cannot answer "was this a drag?"
+   * there, because `pointerup` clears it before the browser fires `click`.
+   *
+   * Cleared on `pointercancel`, which produces no click, so a cancelled gesture cannot leave
+   * suppression armed for the *next* one. That matters most on the keyboard path: Enter on a
+   * focused button fires `click` with no `pointerdown` to reset anything.
+   */
+  const gestureRef = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const isArmed = armedHandle?.id === id;
   const { xPercent, yPercent } = describePoint(point);
 
@@ -164,7 +170,7 @@ export const OverlayHandle = ({
       // Optional-called: jsdom implements no capture API, and an unguarded call would make
       // every drag test throw on a method the real browsers all have.
       event.currentTarget.setPointerCapture?.(event.pointerId);
-      draggedRef.current = false;
+      gestureRef.current = { x: event.clientX, y: event.clientY, moved: false };
       dragRect.current = canvasRef.current?.getBoundingClientRect() ?? null;
     },
     [canvasRef, disabled],
@@ -173,10 +179,19 @@ export const OverlayHandle = ({
   const handlePointerMove = useCallback(
     (event: PointerEvent<HTMLButtonElement>) => {
       const rect = dragRect.current;
-      if (rect === null || disabled) {
+      const gesture = gestureRef.current;
+      if (rect === null || gesture === null || disabled) {
         return;
       }
-      draggedRef.current = true;
+      if (!gesture.moved) {
+        const travelled = Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y);
+        if (travelled < DRAG_SLOP_PX) {
+          // Still a click as far as anyone is concerned. Reporting no movement is the point:
+          // a hand tremor must not nudge the guide *or* suppress the arming click.
+          return;
+        }
+        gesture.moved = true;
+      }
       onMove(pointFromClientPosition(event.clientX, event.clientY, rect));
     },
     [disabled, onMove],
@@ -191,6 +206,11 @@ export const OverlayHandle = ({
       if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
         event.currentTarget.releasePointerCapture?.(event.pointerId);
       }
+      // Only a gesture that actually moved has anything to announce. A press that never
+      // crossed the slop threshold changed nothing, and saying so would be noise.
+      if (gestureRef.current?.moved !== true) {
+        return;
+      }
       const described = describePoint(point);
       announce(
         labels.announceMove({
@@ -203,14 +223,23 @@ export const OverlayHandle = ({
     [announce, labels, point],
   );
 
+  const handlePointerCancel = useCallback(() => {
+    // A cancelled gesture is followed by no click, so nothing downstream will clear this.
+    // Left set, it would swallow the next genuine click — including an Enter press, which
+    // arrives with no pointer events at all.
+    dragRect.current = null;
+    gestureRef.current = null;
+  }, []);
+
   const handleClick = useCallback(() => {
     if (disabled) {
       return;
     }
-    // A click that concludes a drag must not also arm the handle. Checked against
-    // `draggedRef` rather than `dragRect`, which `pointerup` has already cleared by now.
-    if (draggedRef.current) {
-      draggedRef.current = false;
+    // A click that concludes a real drag must not also arm the handle. Read and cleared in
+    // one step, so no path can leave the suppression set for a later click.
+    const moved = gestureRef.current?.moved === true;
+    gestureRef.current = null;
+    if (moved) {
       return;
     }
     if (isArmed) {
@@ -247,6 +276,7 @@ export const OverlayHandle = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onLostPointerCapture={endDrag}
+      onPointerCancel={handlePointerCancel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
