@@ -50,8 +50,8 @@ the whole run in a hard timeout, because a single node that hangs forever never 
 boundary — that is a backstop, not the mechanism.
 """
 
-import inspect
 import asyncio
+import inspect
 from collections import Counter
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from contextlib import asynccontextmanager, contextmanager
