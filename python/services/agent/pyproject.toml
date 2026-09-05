@@ -13,6 +13,10 @@ description = "LangGraph orchestration service for the Art Loupe studio director
 requires-python = ">=3.12"
 dependencies = [
   "artloupe-auth",
+  # The ledger and the run guards. A hard dependency, not an optional one: an unmetered,
+  # uncapped run is the failure this service must not be able to produce.
+  "artloupe-metering",
+  "artloupe-schemas",
   # Pinned at the majors the workspace already resolves; FastAPI arrives via artloupe-auth
   # but is declared here too, because this package imports it directly.
   "fastapi>=0.115",
@@ -36,3 +40,5 @@ packages = ["src/artloupe"]
 
 [tool.uv.sources]
 artloupe-auth = { workspace = true }
+artloupe-metering = { workspace = true }
+artloupe-schemas = { workspace = true }

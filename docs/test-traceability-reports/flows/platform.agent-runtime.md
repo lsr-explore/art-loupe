@@ -12,15 +12,24 @@ Agent service transport, auth guard, and graph execution
 | --- | --- |
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
-| **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` |
-| **Tests** | 21 |
-| **Covered** | security 7 · functionality 14 |
-| **Not covered** | a11y · privacy · safety · data · performance |
+| **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` |
+| **Tests** | 39 (1 parametrized) |
+| **Covered** | security 7 · performance 1 · functionality 31 |
+| **Not covered** | a11y · privacy · safety · data |
 
-## pytest — 21
+## pytest — 39
 
 | Category | Test | Location |
 | --- | --- | --- |
+| functionality | test_the_token_ceiling_stops_the_run | `python/libs/metering/tests/test_guards.py:36` |
+| functionality | test_a_stopped_run_refuses_to_start_another_node | `python/libs/metering/tests/test_guards.py:44` |
+| functionality | test_one_node_may_not_run_more_times_than_the_limit | `python/libs/metering/tests/test_guards.py:60` |
+| functionality | test_the_visit_limit_is_per_node_not_per_run | `python/libs/metering/tests/test_guards.py:72` |
+| performance | test_the_deadline_stops_the_next_node | `python/libs/metering/tests/test_guards.py:84` |
+| functionality | test_a_guard_stop_is_recorded_distinctly_from_an_error | `python/libs/metering/tests/test_guards.py:99` |
+| functionality | test_every_guard_shares_one_catchable_family | `python/libs/metering/tests/test_guards.py:112` |
+| functionality | test_guards_come_from_configuration_not_constants | `python/libs/metering/tests/test_guards.py:118` |
+| functionality | test_the_defaults_would_not_fire_on_a_normal_run | `python/libs/metering/tests/test_guards.py:132` |
 | functionality | test_defaults_to_memory_so_tests_stay_hermetic | `python/libs/persistence/tests/test_checkpointer.py:29` |
 | functionality | test_memory_mode_is_not_persistence | `python/libs/persistence/tests/test_checkpointer.py:36` |
 | security | test_connection_puts_checkpoints_in_their_own_schema | `python/libs/persistence/tests/test_checkpointer.py:42` |
@@ -39,9 +48,18 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_running_the_graph_records_the_run | `python/services/agent/tests/test_graph.py:25` |
 | functionality | test_node_trail_accumulates_rather_than_replaces | `python/services/agent/tests/test_graph.py:32` |
 | functionality | test_seed_returns_a_partial_update_not_whole_state | `python/services/agent/tests/test_graph.py:44` |
-| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:76` |
-| functionality | test_creating_a_run_returns_the_graph_result | `python/services/agent/tests/test_service.py:90` |
-| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:118` |
+| functionality | test_a_run_produces_a_row_per_node_carrying_its_run_id | `python/services/agent/tests/test_runtime.py:73` |
+| functionality | test_a_deterministic_run_costs_a_measured_zero | `python/services/agent/tests/test_runtime.py:95` |
+| functionality | test_usage_recorded_inside_a_node_reaches_the_run_ledger | `python/services/agent/tests/test_runtime.py:111` |
+| functionality | test_langgraphs_recursion_error_joins_the_guard_family | `python/services/agent/tests/test_runtime.py:128` |
+| functionality | test_the_per_node_cap_fires_first_and_names_the_node | `python/services/agent/tests/test_runtime.py:148` |
+| functionality | test_the_ledger_is_written_even_when_the_run_fails | `python/services/agent/tests/test_runtime.py:165` |
+| functionality | test_a_sink_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_runtime.py:186` |
+| functionality | test_a_graph_invoked_without_a_recorder_still_runs | `python/services/agent/tests/test_runtime.py:204` |
+| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:82` |
+| functionality | test_creating_a_run_returns_the_graph_result | `python/services/agent/tests/test_service.py:96` |
+| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:124` |
+| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:138` |
 
 ---
 

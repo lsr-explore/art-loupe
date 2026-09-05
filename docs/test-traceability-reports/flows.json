@@ -66,7 +66,8 @@
         "python/services/agent",
         "python/libs/auth",
         "python/libs/schemas",
-        "python/libs/persistence"
+        "python/libs/persistence",
+        "python/libs/metering"
       ]
     },
     {
@@ -141,7 +142,12 @@
       "title": "Cost, latency, evaluation health, and corpus ingestion",
       "severity": "P2",
       "rationale": "An internal surface. A wrong number here misleads the operator, not the artist.",
-      "surfaces": ["apps/operations", "python/services/agent", "packages/schemas"]
+      "surfaces": [
+        "apps/operations",
+        "python/services/agent",
+        "packages/schemas",
+        "python/libs/metering"
+      ]
     }
   ]
 }

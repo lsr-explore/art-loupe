@@ -33,8 +33,8 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:224` |
 | security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:235` |
 | security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:242` |
-| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:84` |
-| security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:102` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:90` |
+| security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:108` |
 
 ## Vitest — 63
 

@@ -13,15 +13,20 @@ The shape that matters and will not change:
   The sibling repo `veloce-trace` settled on this same signature for the same reason.
 - Nodes return *partial* state. `RunState.node_trail` accumulates via its reducer; returning
   the whole state from a node would fight that.
+- Every node is registered through `instrumented(...)`. Wrapping at registration rather than
+  in the node bodies is what makes "unmetered node" a thing you can see in a diff: an
+  `add_node` call without the wrapper stands out, where a missing decorator inside a function
+  does not. A node that is not wrapped costs money nobody can attribute.
 
-Not here yet, and deliberately: `recursion_limit`, a wall-clock deadline, and the budget
-ledger's hard stop all land in PR 4. A single-node graph cannot loop, so there is nothing for
-them to bound today — but nothing here should grow a second edge before they exist.
+The guards themselves are not applied here. `recursion_limit` and the wall-clock deadline
+belong to the *invocation*, not the topology, so they live in `artloupe.agent.runtime` —
+which is the only thing that should ever call `ainvoke` on this graph.
 """
 
 from langgraph.graph import END, START, StateGraph
 
 from artloupe.agent.state import RunState
+from artloupe.metering import instrumented
 
 
 def seed(state: RunState) -> dict[str, list[str]]:
@@ -40,7 +45,7 @@ def build_graph(checkpointer=None):
     `AsyncPostgresSaver` so an interrupted run can resume in a different process.
     """
     builder = StateGraph(RunState)
-    builder.add_node("seed", seed)
+    builder.add_node("seed", instrumented("seed", seed))
     builder.add_edge(START, "seed")
     builder.add_edge("seed", END)
     return builder.compile(checkpointer=checkpointer)
