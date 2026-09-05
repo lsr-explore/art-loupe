@@ -27,8 +27,8 @@ exists, the detail tells you what it covers.
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
-| `intake.project-intent` | P2 | – | – | – | – | – | – | – | **none** |
-| **intake** | | – | – | – | – | – | – | – | **0** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 34 | – | 1 | 24 | – | – | 59 |
+| **intake** | | – | 34 | – | 1 | 24 | – | – | **59** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 2 | – | – | – | – | – | 3 | 5 |
 | **ops** | | 2 | – | – | – | – | – | 3 | **5** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
@@ -40,11 +40,12 @@ exists, the detail tells you what it covers.
 | **platform** | | 36 | 83 | – | – | 20 | – | 133 | **272** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **38** | **83** | **–** | **–** | **20** | **–** | **136** | **277** |
+| **all flows** | | **38** | **117** | **–** | **1** | **44** | **–** | **136** | **336** |
 
 ## Gaps
 
-- **8 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `analysis.geometry`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `intake.project-intent`, `palette.extraction`
+- **7 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `analysis.geometry`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **`intake.project-intent`** (P2) has tests but none categorised `a11y`.
 
 ## Untagged
 
@@ -75,7 +76,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 45 | 0 | 45 |
-| Vitest | 208 | 0 | 208 |
+| pytest | 81 | 0 | 81 |
+| Vitest | 231 | 0 | 231 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **277** | **0** | **277** |
+| **All** | **336** | **0** | **336** |
