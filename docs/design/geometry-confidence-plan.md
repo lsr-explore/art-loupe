@@ -3,9 +3,9 @@
 **Status:** proposed · **Date:** 2026-09-05 · **Supersedes nothing**
 
 Written from measured results in [`../spikes/mediapipe-feasibility.md`](../spikes/mediapipe-feasibility.md).
-`slice-1-build-plan.md` remains the ladder; this document changes *how* PRs 10-12 are built,
-not *whether* or *in what order*. Every recommendation below is a proposal — the naming call in
-§3 and the ordering call in §5 are Laurie's.
+`slice-1-build-plan.md` remains the ladder. This document proposes changes to *how* PRs 10-12
+are built and, in §5, to *the order* as well. Every recommendation below is a proposal — the
+naming call in §3 and the ordering call in §5 are Laurie's.
 
 ## 1. Dependency policy — three rules, all load-bearing
 
@@ -82,15 +82,47 @@ Each is a distinct failure mode, cheap, and explainable to an artist:
    the far-side landmarks are extrapolated rather than observed.
 2. **Scale** — face bounding-box height as a fraction of image height. On a small face,
    per-landmark pixel error dominates the proportions being measured.
-3. **Proportional plausibility** — measured ratios (inter-ocular distance to face height, eye
-   line to chin) against the Loomis proportions the overlay is about to assert. A large
-   deviation means the mesh fitted badly, whatever the pose.
+
+Both measure the **conditions the observation was made under**, not the face. That distinction
+is the constraint on adding a third.
+
+### The signal that was proposed here and has been withdrawn
+
+An earlier draft added *proportional plausibility* — measured ratios (inter-ocular distance to
+face height, eye line to chin) compared against the Loomis proportions the overlay is about to
+assert, with a large deviation read as a bad mesh fit.
+
+**That is wrong, and wrong in a way worth naming rather than quietly deleting.** Loomis
+proportions are an artistic idealization, not a description of how faces are. A face detected
+perfectly whose natural proportions sit far from that ideal would score low — so the signal
+does not measure fit quality at all, it measures *conformity to a norm*. Combined with `min`,
+which lets the weakest signal decide, it would have controlled the score outright.
+
+The consequence is concrete: the FR-402 interrupt would fire more often the further a sitter's
+anatomy sits from an idealized template, asking the artist to "correct" landmarks that were
+accurately observed. Proportion varies with ancestry, age and individual difference, so the
+faces flagged most often would not be a random sample. That is a fairness defect wearing a
+confidence score, and it sits directly against the commitment `requirements.md` §9 is being
+amended to make explicit about identity and sensitive-trait inference.
+
+Symmetry residual is **not** the fix either, for the same reason one layer down: facial
+asymmetry is ordinary, and `slice-1-build-plan.md` already records losing "the stubble, the
+mole, and the facial asymmetry" as what made generative plates unusable. A signal penalising
+asymmetry would discard exactly what the product exists to help an artist see.
+
+**So the recommendation is two signals, not three.** A third may be added later if one can be
+found that measures the *detector's* uncertainty rather than the *sitter's* face — internal
+mesh degeneracy is a candidate worth investigating. Until then, two honest signals beat three
+where one encodes a norm.
 
 **Combine with `min`.** These are independent ways for the guide to be wrong, so the weakest
 signal is what determines whether the artist should be asked. A mean lets two good signals
 mask one bad one, which is the exact case the interrupt exists to catch. `min` also stays
 explainable: the interrupt can say *which* signal fired, which FR-402's correction UI needs
 anyway.
+
+`min` is also why the bar for adding a signal is high. Whatever is weakest **controls** the
+score, so a signal that is wrong in some population is not diluted by the others — it decides.
 
 ### Consequences for the claim taxonomy
 
