@@ -106,6 +106,11 @@ export const OverlayHandle = ({
   // Captured once per drag. Re-reading the rect on every `pointermove` is both slower and
   // wrong the moment the page scrolls mid-drag.
   const dragRect = useRef<DOMRect | null>(null);
+  // Whether the pointer actually moved during the gesture. `dragRect` cannot answer this at
+  // click time: `pointerup` clears it, and the browser fires `click` afterwards, so a check
+  // against it always sees null and every completed drag would leave the handle armed —
+  // waiting to teleport on the user's next click anywhere on the photograph.
+  const draggedRef = useRef(false);
   const isArmed = armedHandle?.id === id;
   const { xPercent, yPercent } = describePoint(point);
 
@@ -159,6 +164,7 @@ export const OverlayHandle = ({
       // Optional-called: jsdom implements no capture API, and an unguarded call would make
       // every drag test throw on a method the real browsers all have.
       event.currentTarget.setPointerCapture?.(event.pointerId);
+      draggedRef.current = false;
       dragRect.current = canvasRef.current?.getBoundingClientRect() ?? null;
     },
     [canvasRef, disabled],
@@ -170,6 +176,7 @@ export const OverlayHandle = ({
       if (rect === null || disabled) {
         return;
       }
+      draggedRef.current = true;
       onMove(pointFromClientPosition(event.clientX, event.clientY, rect));
     },
     [disabled, onMove],
@@ -200,9 +207,10 @@ export const OverlayHandle = ({
     if (disabled) {
       return;
     }
-    // A click that concludes a drag must not also arm the handle, or every drag would leave it
-    // waiting to teleport on the user's next click anywhere on the photograph.
-    if (dragRect.current !== null) {
+    // A click that concludes a drag must not also arm the handle. Checked against
+    // `draggedRef` rather than `dragRect`, which `pointerup` has already cleared by now.
+    if (draggedRef.current) {
+      draggedRef.current = false;
       return;
     }
     if (isArmed) {
@@ -222,7 +230,7 @@ export const OverlayHandle = ({
       aria-pressed={isArmed}
       className={cn(
         'absolute flex items-center justify-center rounded-full border-2',
-        '-translate-x-1/2 -translate-y-1/2 touch-none',
+        '-translate-x-1/2 -translate-y-1/2 touch-none pointer-events-auto',
         // The ring sits outside the element so it is never clipped by the dot itself —
         // SC 2.4.11 (Focus Not Obscured) in the case where a guide sits at the image edge.
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',

@@ -28,8 +28,11 @@ const stubCanvasRect = () => {
   return canvas;
 };
 
-/** The guide handle, addressed by name so the placement target cannot be picked up instead. */
-const getHandle = () => screen.getByRole('button', { name: /Jaw landmark/ });
+/**
+ * The guide handle. Anchored to the start of the name because the placement target is
+ * "Place Jaw landmark on the photograph" — a loose /Jaw landmark/ matches both once armed.
+ */
+const getHandle = () => screen.getByRole('button', { name: /^Jaw landmark,/ });
 
 /** The placement target, which exists only while a handle is armed. */
 const getPlacementTarget = () =>
@@ -143,6 +146,22 @@ describe('OverlayCanvas', () => {
     consoleError.mockRestore();
   });
 
+  it('does not let the guide layer swallow the placement click', () => {
+    render(<CanvasHarness />);
+    act(() => {
+      fireEvent.click(getHandle());
+    });
+
+    // The layer spans the whole canvas *above* the placement button. jsdom does no
+    // hit-testing, so firing a click straight at the button — which every other test here
+    // does — cannot catch this; the invariant has to be asserted on the DOM instead.
+    // Without `pointer-events-none` the real browser routes the click to a div with no
+    // handler and the SC 2.5.7 path silently does nothing.
+    const layer = document.querySelector('[data-slot="overlay-layer"]');
+    expect(layer).toHaveClass('pointer-events-none');
+    expect(getHandle()).toHaveClass('pointer-events-auto');
+  });
+
   // @trace category=a11y
   it('announces a move through one polite live region', async () => {
     render(<CanvasHarness />);
@@ -178,7 +197,7 @@ describe('OverlayCanvas', () => {
 
     // Two canvases on one page must not both claim the same id, or every handle's
     // `aria-describedby` resolves to whichever rendered first.
-    const [first, second] = screen.getAllByRole('button', { name: /Jaw landmark/ });
+    const [first, second] = screen.getAllByRole('button', { name: /^Jaw landmark,/ });
     expect(first.getAttribute('aria-describedby')).not.toBe(
       second.getAttribute('aria-describedby'),
     );

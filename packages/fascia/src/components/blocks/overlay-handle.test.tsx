@@ -138,6 +138,48 @@ describe('OverlayHandle', () => {
     expect(handle).toHaveAttribute('data-armed', 'true');
   });
 
+  it('does not arm the handle when a drag ends on it', () => {
+    render(<HandleHarness />);
+    const handle = screen.getByRole('button', { name: /^Jaw landmark,/ });
+
+    // The real browser order is pointerdown -> pointermove -> pointerup -> click. `pointerup`
+    // clears the drag rect, so a click-time check against *that* always sees null and every
+    // completed drag would leave the handle armed — ready to teleport the guide on the user's
+    // next click anywhere on the photograph.
+    act(() => {
+      fireEvent.pointerDown(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.pointerMove(handle, { pointerId: 1, clientX: 40, clientY: 40 });
+    });
+    act(() => {
+      fireEvent.pointerUp(handle, { pointerId: 1, clientX: 40, clientY: 40 });
+    });
+    act(() => {
+      fireEvent.click(handle);
+    });
+
+    expect(handle).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('still arms on a click that involved no pointer movement', () => {
+    render(<HandleHarness />);
+    const handle = screen.getByRole('button', { name: /^Jaw landmark,/ });
+
+    // The other half of the guard: suppressing too eagerly would break the SC 2.5.7 path.
+    act(() => {
+      fireEvent.pointerDown(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.pointerUp(handle, { pointerId: 1, clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.click(handle);
+    });
+
+    expect(handle).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('disarms when the armed handle is clicked again', () => {
     render(<HandleHarness />);
     const handle = screen.getByRole('button');

@@ -171,9 +171,15 @@ export const OverlayCanvas = ({
             />
           )}
 
+          {/*
+            `pointer-events-none` is load-bearing, not tidiness. The layer spans the whole
+            canvas above the placement button, so without it every click aimed at the
+            photograph lands here — on a div with no handler — and the SC 2.5.7 path silently
+            does nothing. Handles re-enable pointer events on themselves.
+          */}
           <div
             aria-label={labels.groupLabel}
-            className="absolute inset-0 z-20"
+            className="pointer-events-none absolute inset-0 z-20"
             data-slot="overlay-layer"
             role="group"
           >
