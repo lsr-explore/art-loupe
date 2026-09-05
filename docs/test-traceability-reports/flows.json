@@ -39,7 +39,8 @@
         "apps/operations",
         "packages/auth",
         "packages/fascia",
-        "python/libs/auth"
+        "python/libs/auth",
+        "python/services/agent"
       ]
     },
     {
@@ -55,6 +56,13 @@
       "severity": "P2",
       "rationale": "A drifted contract fails at the seam between the apps and the agent layer, where neither side's tests look.",
       "surfaces": ["packages/schemas", "python/libs/schemas"]
+    },
+    {
+      "id": "platform.agent-runtime",
+      "title": "Agent service transport, auth guard, and graph execution",
+      "severity": "P1",
+      "rationale": "The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable.",
+      "surfaces": ["python/services/agent", "python/libs/auth", "python/libs/schemas"]
     },
     {
       "id": "intake.project-intent",
