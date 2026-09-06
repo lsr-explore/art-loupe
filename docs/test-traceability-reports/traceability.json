@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 45,
+      "pytest": 88,
       "vitest": 208,
       "playwright": 24,
-      "all": 277
+      "all": 320
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 45,
+      "pytest": 88,
       "vitest": 208,
       "playwright": 24,
-      "all": 277
+      "all": 320
     }
   },
   "by_flow": {
@@ -130,16 +130,16 @@
         "privacy": 0,
         "safety": 0,
         "data": 0,
-        "performance": 0,
-        "functionality": 14
+        "performance": 1,
+        "functionality": 31
       },
       "runners": {
-        "pytest": 21,
+        "pytest": 39,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 21,
-      "parametrized": 0
+      "total": 39,
+      "parametrized": 1
     },
     "platform.auth": {
       "severity": "P1",
@@ -206,19 +206,19 @@
       "title": "Cost, latency, evaluation health, and corpus ingestion",
       "counts": {
         "a11y": 2,
-        "security": 0,
+        "security": 4,
         "privacy": 0,
         "safety": 0,
-        "data": 0,
+        "data": 1,
         "performance": 0,
-        "functionality": 3
+        "functionality": 23
       },
       "runners": {
-        "pytest": 0,
+        "pytest": 25,
         "vitest": 5,
         "playwright": 0
       },
-      "total": 5,
+      "total": 30,
       "parametrized": 0
     },
     "palette.extraction": {
@@ -1992,6 +1992,244 @@
       "category": "security"
     },
     {
+      "id": "python/libs/metering/tests/test_guards.py:112",
+      "name": "test_every_guard_shares_one_catchable_family",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:118",
+      "name": "test_guards_come_from_configuration_not_constants",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:132",
+      "name": "test_the_defaults_would_not_fire_on_a_normal_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:36",
+      "name": "test_the_token_ceiling_stops_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:44",
+      "name": "test_a_stopped_run_refuses_to_start_another_node",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:60",
+      "name": "test_one_node_may_not_run_more_times_than_the_limit",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:72",
+      "name": "test_the_visit_limit_is_per_node_not_per_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:84",
+      "name": "test_the_deadline_stops_the_next_node",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "performance"
+    },
+    {
+      "id": "python/libs/metering/tests/test_guards.py:99",
+      "name": "test_a_guard_stop_is_recorded_distinctly_from_an_error",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_metrics_table.py:104",
+      "name": "test_the_api_roles_cannot_read_the_ledger",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/metering/tests/test_metrics_table.py:121",
+      "name": "test_a_flushed_run_is_readable_afterwards",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/metering/tests/test_metrics_table.py:63",
+      "name": "test_the_grants_this_table_is_protected_from_are_live_here",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/metering/tests/test_metrics_table.py:89",
+      "name": "test_row_level_security_is_on_and_no_policy_opens_it",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:24",
+      "name": "test_cost_is_decimal_not_float",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:35",
+      "name": "test_input_and_output_are_priced_separately",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:40",
+      "name": "test_cached_input_is_cheaper_and_writing_the_cache_is_dearer",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:49",
+      "name": "test_a_node_with_no_model_costs_a_real_zero",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:54",
+      "name": "test_an_unknown_model_is_unpriced_rather_than_free",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:66",
+      "name": "test_model_ids_carry_no_date_suffix",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:101",
+      "name": "test_cached_tokens_count_toward_the_ceiling_but_not_at_the_full_rate",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:120",
+      "name": "test_a_failing_node_is_still_recorded_and_reraises",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:132",
+      "name": "test_a_stopped_run_records_why_it_stopped",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:144",
+      "name": "test_unpriced_nodes_are_counted_rather_than_blanking_the_run",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:29",
+      "name": "test_a_node_that_reports_nothing_still_produces_a_row",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:47",
+      "name": "test_latency_is_measured_not_declared",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:55",
+      "name": "test_usage_reported_from_inside_the_node_lands_on_that_node",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:68",
+      "name": "test_two_calls_in_one_node_accumulate",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:78",
+      "name": "test_reporting_usage_outside_a_node_is_a_no_op",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_recorder.py:86",
+      "name": "test_re_running_a_node_writes_a_second_row_rather_than_merging",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_sinks.py:36",
+      "name": "test_defaults_to_memory_so_tests_stay_hermetic",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_sinks.py:41",
+      "name": "test_postgres_mode_is_opt_in",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_sinks.py:46",
+      "name": "test_flushing_nothing_opens_no_connection",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_sinks.py:52",
+      "name": "test_the_ledger_table_is_denied_to_the_api_roles_by_construction",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/metering/tests/test_sinks.py:71",
+      "name": "test_the_sink_writes_where_the_migration_creates",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
       "id": "python/libs/persistence/tests/test_checkpointer.py:29",
       "name": "test_defaults_to_memory_so_tests_stay_hermetic",
       "runner": "pytest",
@@ -2188,35 +2426,98 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:102",
+      "id": "python/services/agent/tests/test_runtime.py:111",
+      "name": "test_usage_recorded_inside_a_node_reaches_the_run_ledger",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:128",
+      "name": "test_langgraphs_recursion_error_joins_the_guard_family",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:148",
+      "name": "test_the_per_node_cap_fires_first_and_names_the_node",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:165",
+      "name": "test_the_ledger_is_written_even_when_the_run_fails",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:186",
+      "name": "test_a_sink_that_fails_does_not_fail_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:204",
+      "name": "test_a_graph_invoked_without_a_recorder_still_runs",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:73",
+      "name": "test_a_run_produces_a_row_per_node_carrying_its_run_id",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_runtime.py:95",
+      "name": "test_a_deterministic_run_costs_a_measured_zero",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:108",
       "name": "test_owner_comes_from_the_token_not_the_request_body",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:118",
+      "id": "python/services/agent/tests/test_service.py:124",
       "name": "test_health_leaks_no_internal_detail",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:76",
+      "id": "python/services/agent/tests/test_service.py:138",
+      "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:82",
       "name": "test_health_needs_no_token",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:84",
+      "id": "python/services/agent/tests/test_service.py:90",
       "name": "test_creating_a_run_without_a_token_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:90",
+      "id": "python/services/agent/tests/test_service.py:96",
       "name": "test_creating_a_run_returns_the_graph_result",
       "runner": "pytest",
       "flow": "platform.agent-runtime",

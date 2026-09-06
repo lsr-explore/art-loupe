@@ -29,18 +29,18 @@ exists, the detail tells you what it covers.
 | **critique** | | – | – | – | – | – | – | – | **0** |
 | `intake.project-intent` | P2 | – | – | – | – | – | – | – | **none** |
 | **intake** | | – | – | – | – | – | – | – | **0** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | – | – | – | – | – | 3 | 5 |
-| **ops** | | 2 | – | – | – | – | – | 3 | **5** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
+| **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | – | 14 | 21 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | 1 | 31 | 39 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 76 | – | – | – | – | 13 | 94 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 106 | 137 |
-| **platform** | | 36 | 83 | – | – | 20 | – | 133 | **272** |
+| **platform** | | 36 | 83 | – | – | 20 | 1 | 150 | **290** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **38** | **83** | **–** | **–** | **20** | **–** | **136** | **277** |
+| **all flows** | | **38** | **87** | **–** | **–** | **21** | **1** | **173** | **320** |
 
 ## Gaps
 
@@ -75,7 +75,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 45 | 0 | 45 |
+| pytest | 88 | 0 | 88 |
 | Vitest | 208 | 0 | 208 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **277** | **0** | **277** |
+| **All** | **320** | **0** | **320** |
