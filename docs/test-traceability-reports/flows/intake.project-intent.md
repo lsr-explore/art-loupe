@@ -13,11 +13,11 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 59 (7 parametrized) |
-| **Covered** | security 34 · safety 1 · data 24 |
+| **Tests** | 61 (7 parametrized) |
+| **Covered** | security 35 · safety 1 · data 25 |
 | **Not covered** | a11y · privacy · performance · functionality |
 
-## pytest — 36
+## pytest — 37
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -50,15 +50,16 @@ Upload, intake, and the typed ProjectIntent
 | data | test_exactly_the_minimum_long_edge_is_accepted | `python/libs/persistence/tests/test_projects_schema.py:171` |
 | data | test_a_checksum_that_is_not_lowercase_sha256_is_refused | `python/libs/persistence/tests/test_projects_schema.py:190` |
 | data | test_a_storage_key_that_does_not_end_in_its_own_checksum_is_refused | `python/libs/persistence/tests/test_projects_schema.py:198` |
-| data | test_an_original_cannot_be_updated_even_with_rls_bypassed | `python/libs/persistence/tests/test_projects_schema.py:212` |
-| data | test_a_project_row_is_still_updatable | `python/libs/persistence/tests/test_projects_schema.py:226` |
-| data | test_updating_a_project_moves_its_updated_at | `python/libs/persistence/tests/test_projects_schema.py:235` |
-| safety | test_hostile_provenance_text_is_stored_verbatim_as_data | `python/libs/persistence/tests/test_projects_schema.py:260` |
-| data | test_a_project_carries_a_retention_date | `python/libs/persistence/tests/test_projects_schema.py:305` |
-| data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:317` |
-| data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:327` |
+| data | test_a_storage_key_naming_another_project_is_refused | `python/libs/persistence/tests/test_projects_schema.py:212` |
+| data | test_an_original_cannot_be_updated_even_with_rls_bypassed | `python/libs/persistence/tests/test_projects_schema.py:231` |
+| data | test_a_project_row_is_still_updatable | `python/libs/persistence/tests/test_projects_schema.py:245` |
+| data | test_updating_a_project_moves_its_updated_at | `python/libs/persistence/tests/test_projects_schema.py:254` |
+| safety | test_hostile_provenance_text_is_stored_verbatim_as_data | `python/libs/persistence/tests/test_projects_schema.py:279` |
+| data | test_a_project_carries_a_retention_date | `python/libs/persistence/tests/test_projects_schema.py:324` |
+| data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
+| data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
 
-## Vitest — 23
+## Vitest — 24
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -70,21 +71,22 @@ Upload, intake, and the typed ProjectIntent
 | data | accepts a lowercase 64-character hex digest | `apps/studio/src/lib/storage/checksum.test.ts:44` |
 | data | rejects uppercase hex, because the database constraint does | `apps/studio/src/lib/storage/checksum.test.ts:48` |
 | data | rejects %s | `apps/studio/src/lib/storage/checksum.test.ts:52` |
-| security | puts the owner id first, which is the segment the storage policy matches on | `apps/studio/src/lib/storage/reference-images.test.ts:17` |
-| security | ends with the checksum, which is what the source_images constraint requires | `apps/studio/src/lib/storage/reference-images.test.ts:28` |
-| security | refuses %s as an owner id | `apps/studio/src/lib/storage/reference-images.test.ts:38` |
-| security | refuses a project id that would walk out of the owner prefix | `apps/studio/src/lib/storage/reference-images.test.ts:49` |
-| security | refuses a checksum that is not lowercase hex SHA-256 | `apps/studio/src/lib/storage/reference-images.test.ts:55` |
-| security | round-trips a key it built | `apps/studio/src/lib/storage/reference-images.test.ts:68` |
-| security | returns null for %s rather than throwing | `apps/studio/src/lib/storage/reference-images.test.ts:82` |
-| security | names the bucket the migration creates | `apps/studio/src/lib/storage/reference-images.test.ts:109` |
-| security | names the bucket every storage policy is scoped to | `apps/studio/src/lib/storage/reference-images.test.ts:113` |
+| security | puts the owner id first, which is the segment the storage policy matches on | `apps/studio/src/lib/storage/reference-images.test.ts:18` |
+| security | ends with the checksum, which is what the source_images constraint requires | `apps/studio/src/lib/storage/reference-images.test.ts:29` |
+| security | refuses %s as an owner id | `apps/studio/src/lib/storage/reference-images.test.ts:39` |
+| security | refuses a project id that would walk out of the owner prefix | `apps/studio/src/lib/storage/reference-images.test.ts:50` |
+| security | refuses a checksum that is not lowercase hex SHA-256 | `apps/studio/src/lib/storage/reference-images.test.ts:56` |
+| security | round-trips a key it built | `apps/studio/src/lib/storage/reference-images.test.ts:69` |
+| security | returns null for %s rather than throwing | `apps/studio/src/lib/storage/reference-images.test.ts:83` |
+| security | names the bucket the migration creates | `apps/studio/src/lib/storage/reference-images.test.ts:112` |
+| security | names the bucket every storage policy is scoped to | `apps/studio/src/lib/storage/reference-images.test.ts:116` |
 | security | signs with the artist | `apps/studio/src/lib/storage/signed-url.test.ts:38` |
 | security | posts to the sign endpoint for the reference-images bucket | `apps/studio/src/lib/storage/signed-url.test.ts:57` |
 | security | returns an absolute URL built from the relative path storage answers with | `apps/studio/src/lib/storage/signed-url.test.ts:73` |
 | security | never issues a request for a key that is not one of ours | `apps/studio/src/lib/storage/signed-url.test.ts:92` |
 | security | reports a network failure as unavailable, not as a refusal | `apps/studio/src/lib/storage/signed-url.test.ts:150` |
 | security | refuses a success payload that carries no signed path | `apps/studio/src/lib/storage/signed-url.test.ts:167` |
+| security | reports a malformed success body as unavailable rather than throwing | `apps/studio/src/lib/storage/signed-url.test.ts:186` |
 
 ---
 

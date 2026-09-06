@@ -1,0 +1,43 @@
+# Art Loupe metering — what a run spent, and the ceilings that stop it spending more.
+#
+# A library, not a service, and deliberately separate from `artloupe-agent`: it owns a durable
+# table and a database write, which the agent service otherwise has no reason to know about.
+# It is also the half of the design that has to exist BEFORE the first paid call — a ledger
+# added after the fact starts empty, and the operations dashboard (FR-905) reads an empty
+# table.
+#
+# Two things live here because neither is meaningful without the other:
+#
+# - **Metering** (NFR-04, FR-905): per-node tokens, latency, and cost, keyed by the one
+#   `run_id` that also identifies the run in studio and operations (NFR-09).
+# - **Guards**: recursion, per-node visits, wall clock, and the plan-budget token ceiling.
+#   A ceiling is only enforceable because the ledger is counting.
+#
+# It does NOT depend on langgraph. Executing a graph under these guards is the agent
+# service's job (`artloupe.agent.runtime`); this package knows about runs, not topologies.
+[project]
+name = "artloupe-metering"
+version = "0.1.0"
+description = "Per-node token/latency/cost metering and run guards for Art Loupe."
+requires-python = ">=3.12"
+dependencies = [
+  # `BudgetLedger` is a shared contract, mirrored in `packages/schemas`. Metering fills it;
+  # it does not get to redefine it.
+  "artloupe-schemas",
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  # psycopg 3, for the durable sink. `binary` ships a wheel so no local libpq is needed.
+  # No pool: a run flushes once, at the end, so a short-lived connection is the honest shape.
+  "psycopg[binary]>=3.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
+packages = ["src/artloupe"]
+
+[tool.uv.sources]
+artloupe-schemas = { workspace = true }

@@ -27,20 +27,20 @@ exists, the detail tells you what it covers.
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 34 | – | 1 | 24 | – | – | 59 |
-| **intake** | | – | 34 | – | 1 | 24 | – | – | **59** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | – | – | – | – | – | 3 | 5 |
-| **ops** | | 2 | – | – | – | – | – | 3 | **5** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 35 | – | 1 | 25 | – | – | 61 |
+| **intake** | | – | 35 | – | 1 | 25 | – | – | **61** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
+| **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | – | 14 | 21 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | 1 | 33 | 41 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 76 | – | – | – | – | 13 | 94 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 106 | 137 |
-| **platform** | | 36 | 83 | – | – | 20 | – | 133 | **272** |
+| **platform** | | 36 | 83 | – | – | 20 | 1 | 152 | **292** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **38** | **117** | **–** | **1** | **44** | **–** | **136** | **336** |
+| **all flows** | | **38** | **122** | **–** | **1** | **46** | **1** | **175** | **383** |
 
 ## Gaps
 
@@ -76,7 +76,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 81 | 0 | 81 |
-| Vitest | 231 | 0 | 231 |
+| pytest | 127 | 0 | 127 |
+| Vitest | 232 | 0 | 232 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **336** | **0** | **336** |
+| **All** | **383** | **0** | **383** |

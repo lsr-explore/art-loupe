@@ -15,6 +15,12 @@ from artloupe.agent.service import app
 from artloupe.auth.config import get_settings
 from artloupe.auth.dependencies import require_token
 from artloupe.auth.tokens import VerifiedToken
+from artloupe.metering import (
+    BudgetExceeded,
+    GuardTripped,
+    RecursionLimitExceeded,
+    WallClockExceeded,
+)
 
 pytestmark = pytest.mark.trace(flow="platform.agent-runtime", category="functionality")
 
@@ -119,3 +125,35 @@ async def test_health_leaks_no_internal_detail(client: httpx.AsyncClient) -> Non
     """An unauthenticated endpoint should not be a reconnaissance surface."""
     body = await client.get("/health")
     assert set(body.json()) == {"status", "service", "version"}
+
+
+@pytest.mark.parametrize(
+    ("failure", "status"),
+    [
+        (BudgetExceeded("plan budget exhausted"), 429),
+        (WallClockExceeded("run exceeded its deadline"), 504),
+        (RecursionLimitExceeded("run exceeded its supersteps"), 500),
+    ],
+)
+async def test_a_stopped_run_is_reported_as_what_stopped_it(
+    client: httpx.AsyncClient,
+    authenticated: None,
+    monkeypatch: pytest.MonkeyPatch,
+    failure: GuardTripped,
+    status: int,
+) -> None:
+    """A ceiling being reached is not an internal error, and must not read as one.
+
+    Collapsing all three onto a 500 would make a budget working exactly as designed
+    indistinguishable from a fault — which is the distinction `agents.md` §8 draws by giving
+    `BUDGET_STOPPED` its own terminal state.
+    """
+
+    async def stopped(*_args: object, **_kwargs: object) -> None:
+        raise failure
+
+    monkeypatch.setattr("artloupe.agent.service.execute_run", stopped)
+
+    response = await client.post("/runs")
+    assert response.status_code == status
+    assert response.json() == {"detail": failure.reason}
