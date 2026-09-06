@@ -235,7 +235,7 @@ revoke all on public.source_images from anon, authenticated;
 -- is on its way to defaulting false; when it flips, an inherited grant disappears and every
 -- authenticated query starts failing. Naming the verbs here makes that a no-op.
 grant select, insert, update, delete on public.projects to authenticated;
-grant select, insert, delete on public.source_images to authenticated;
+grant select, insert on public.source_images to authenticated;
 
 -- ---------------------------------------------------------------------------------------------
 -- Row-level security
@@ -301,17 +301,24 @@ with check (
     )
 );
 
+-- No DELETE policy, and no DELETE grant. Deliberate, and the reason is not obvious.
+--
+-- FR-105 immutability was enforced by the absence of an UPDATE path plus a trigger. That
+-- guarded the wrong verb on its own: `delete` then `insert` reaches the same end. The unique
+-- constraint on `project_id` is what makes one original per project, so deleting the row frees
+-- the slot, and the replacement carries different bytes and a different checksum while the
+-- project, its derivatives and every cache still cite the old content identity. The UPDATE
+-- trigger never fires, because no UPDATE ever happens.
+--
+-- Removing the row-level delete closes that without costing anything NFR-10 requires: an
+-- artist deletes the *project*, and `on delete cascade` removes this row. Measured, not
+-- assumed -- a cascade is performed internally and is not subject to this table's policies, so
+-- project deletion still works with nothing here. `test_projects_rls.py` asserts both halves.
+--
+-- Replacing a project's photograph is therefore not a database operation. If it is ever
+-- wanted, it is a server-side action that invalidates every derivative alongside the swap
+-- (FR-404), not an `insert` that silently orphans them.
 drop policy if exists source_images_delete_own on public.source_images;
-create policy source_images_delete_own on public.source_images
-for delete to authenticated
-using (
-    exists (
-        select 1
-        from public.projects as owning_project
-        where owning_project.id = source_images.project_id
-          and owning_project.owner_id = (select auth.uid())
-    )
-);
 
 -- Deliberately no UPDATE policy. See FR-105 and the trigger above.
 

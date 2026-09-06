@@ -240,18 +240,48 @@ def test_an_artist_cannot_attach_an_upload_to_another_artists_project(
         )
 
 
-def test_an_artist_can_delete_their_own_upload(two_artists: psycopg.Connection) -> None:
-    """NFR-10: the artist deletes their own work, and the deletion is real.
+def test_an_artist_cannot_delete_an_original_directly(two_artists: psycopg.Connection) -> None:
+    """FR-105, guarding the verb the trigger cannot see.
 
-    This is also the control for the refusal above -- the insert policy is not simply refusing
-    everything.
+    Immutability was enforced against UPDATE -- no policy, no grant, and a trigger. `delete`
+    then `insert` reaches the same place without ever issuing one: the unique constraint on
+    `project_id` is what makes an original singular, so removing the row frees the slot and the
+    replacement carries different bytes and a different checksum while every derivative still
+    cites the old one.
+    """
+    with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn, refused(conn):
+        conn.execute(f"delete from {SOURCE_IMAGES_TABLE} where checksum = %s", (CHECKSUM_A,))
+
+
+def test_deleting_the_project_still_removes_its_original(two_artists: psycopg.Connection) -> None:
+    """NFR-10, and the control for the refusal above.
+
+    Without this the previous test would be satisfied by an artist who simply cannot delete
+    anything, which would be a broken deletion story rather than an enforced one. A cascade is
+    performed internally and is not subject to this table's policies, which is what lets the
+    row-level delete go while the requirement still holds.
     """
     with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn:
-        removed = conn.execute(
-            f"delete from {SOURCE_IMAGES_TABLE} where checksum = %s", (CHECKSUM_A,)
-        ).rowcount
+        conn.execute(f"delete from {PROJECTS_TABLE} where id = %s", (PROJECT_A,))
 
-    assert removed == 1
+    remaining = two_artists.execute(
+        f"select count(*) from {SOURCE_IMAGES_TABLE} where project_id = %s", (PROJECT_A,)
+    ).fetchone()[0]
+    assert remaining == 0, "deleting a project must take its original with it (NFR-10)"
+
+
+def test_an_artist_cannot_replace_an_original_by_deleting_and_reinserting(
+    two_artists: psycopg.Connection,
+) -> None:
+    """The bypass stated end to end, so a future policy change cannot silently reopen it."""
+    with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn, refused(conn):
+        conn.execute(f"delete from {SOURCE_IMAGES_TABLE} where project_id = %s", (PROJECT_A,))
+        conn.execute(
+            f"insert into {SOURCE_IMAGES_TABLE} "
+            "(project_id, checksum, storage_key, mime_type, width_px, height_px, byte_size) "
+            "values (%s, %s, %s, 'image/jpeg', 1200, 900, 500000)",
+            (PROJECT_A, CHECKSUM_B, f"{ARTIST_A}/{PROJECT_A}/{CHECKSUM_B}"),
+        )
 
 
 def test_no_artist_holds_the_update_privilege_on_an_original(db: psycopg.Connection) -> None:
