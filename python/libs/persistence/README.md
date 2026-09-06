@@ -1,6 +1,7 @@
 # artloupe-persistence
 
-LangGraph checkpointing — the library that makes an interrupted run resumable.
+Art Loupe's database layer: LangGraph checkpointing, and the tables the artist's work
+lives in.
 
 When a geometry tool's confidence falls below threshold the graph stops and waits for the
 artist (FR-402). The checkpoint written here is what lets the run continue afterwards:
@@ -44,6 +45,23 @@ The default is `memory` so no unit test needs a database. Nothing silently upgra
 - **`autocommit=True` and `prepare_threshold=None` are correctness, not style.** `.setup()`
   issues DDL that must not sit in an open transaction, and pooled connections reject prepared
   statements. A tidy-up that drops either produces an intermittent startup failure.
+
+## The artist tables, and why they are the other half
+
+`tables` names the `public` tables holding projects and their originals, and this package's
+suite is where the policies protecting them are asserted. That is the same question the
+checkpoint schema answers, asked about data the studio genuinely has to reach — and the answers
+differ. Checkpoints are kept off the PostgREST surface entirely, which is a stronger guarantee
+than a policy that has to be written correctly. `public.projects` and `public.source_images`
+cannot be: the studio queries them as the signed-in artist, relaying that artist's JWT so
+`auth.uid()` resolves to a real person (ADR 0002). Row-level security is therefore their whole
+boundary.
+
+Which is why `tests/test_projects_rls.py` pairs every assertion with a control. "The query
+returned nothing" is the easiest green in security testing and the least meaningful: a missing
+grant, a typo, an absent role and an empty table all produce it. Each isolation test first
+shows the rows are readable with RLS bypassed, and each privilege test first shows the
+privilege being denied is one this database grants by default.
 
 ## Running the durability test
 

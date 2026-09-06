@@ -45,14 +45,28 @@ reused in any deployed env. Run `pnpm supabase status` to print the live set.
 
 > **Key boundary.** The **Secret** key bypasses Row Level Security and must live
 > **only** on the service boundary, never on a browser-reachable surface — so it stays
-> out of this committed file. Application tables enable RLS with no policies, so
-> anon/authenticated access is denied by default; only the service boundary reads or
-> writes. The anon/publishable key is what the studio app uses for Auth, and is safe
-> to commit.
+> out of this committed file. The anon/publishable key is what the studio app uses for
+> Auth, and is safe to commit — which is exactly why the artist tables revoke every
+> privilege from `anon` and confine `authenticated` with owner policies.
 
 ## Schema
 
-- `extensions.vector` — pgvector extension enabled.
+| Object | What it is |
+|---|---|
+| `extensions.vector` | pgvector, enabled for the art-historical retrieval corpus |
+| `langgraph` schema | LangGraph checkpoints. Tables are created by `AsyncPostgresSaver.setup()`, not by a migration, and the schema is deliberately absent from the PostgREST surface |
+| `public.projects` | One artist project: the typed `ProjectIntent` (FR-104) and its retention date (NFR-10) |
+| `public.source_images` | The immutable original (FR-105), one per project (FR-101), with untrusted EXIF and filename kept for provenance (FR-106) |
+| `reference-images` bucket | Private Supabase Storage bucket for the uploaded bytes |
 
-No application tables ship yet — the only migration enables the `vector` extension.
-Schema for the retrieval corpus lands with the ingestion pipeline.
+The two `public` tables are the ones the studio queries as the signed-in artist, so
+they are reachable through the Data API and row-level security is their only boundary.
+Both revoke everything from `anon` and grant `authenticated` exactly the verbs the
+artist needs — notably **no** `UPDATE` on `source_images`, which is one of three places
+FR-105 immutability is enforced. Storage objects are keyed
+`{owner_id}/{project_id}/{checksum}` and the policies match the leading segment against
+`auth.uid()`.
+
+Those policies are asserted against a live database, with controls, in
+`python/libs/persistence/tests/test_projects_rls.py`. Schema for the retrieval corpus
+lands with the ingestion pipeline.

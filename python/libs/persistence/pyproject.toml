@@ -1,11 +1,16 @@
 # Art Loupe persistence — the checkpointer every graph resumes from.
 #
-# A library, not a service. It owns exactly one thing: constructing the LangGraph checkpoint
+# A library, not a service. Its reason for existing is constructing the LangGraph checkpoint
 # saver, as a process-wide singleton, so a run interrupted for artist correction can resume in
 # a *different process* than the one that started it (FR-402/403/404).
 #
 # That cross-process requirement is why an in-memory saver is not sufficient outside tests, and
 # it is the whole reason this package exists separately from `artloupe-agent`.
+#
+# It also names the `public` tables holding projects and their originals, and carries the suite
+# that holds their row policies to account. Both halves answer one question -- what may reach
+# which rows -- and they answer it differently: checkpoints stay off the API surface, while
+# project rows must be on it and are confined by policies instead.
 [project]
 name = "artloupe-persistence"
 version = "0.1.0"
