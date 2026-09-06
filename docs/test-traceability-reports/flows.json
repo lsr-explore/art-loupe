@@ -78,6 +78,7 @@
       "surfaces": [
         "apps/studio",
         "packages/schemas",
+        "python/libs/persistence",
         "python/libs/schemas",
         "python/services/agent"
       ]

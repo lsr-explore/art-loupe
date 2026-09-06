@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` |
-| **Tests** | 39 (1 parametrized) |
-| **Covered** | security 7 · performance 1 · functionality 31 |
+| **Tests** | 41 (1 parametrized) |
+| **Covered** | security 7 · performance 1 · functionality 33 |
 | **Not covered** | a11y · privacy · safety · data |
 
-## pytest — 39
+## pytest — 41
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -25,11 +25,13 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_stopped_run_refuses_to_start_another_node | `python/libs/metering/tests/test_guards.py:44` |
 | functionality | test_one_node_may_not_run_more_times_than_the_limit | `python/libs/metering/tests/test_guards.py:60` |
 | functionality | test_the_visit_limit_is_per_node_not_per_run | `python/libs/metering/tests/test_guards.py:72` |
-| performance | test_the_deadline_stops_the_next_node | `python/libs/metering/tests/test_guards.py:84` |
-| functionality | test_a_guard_stop_is_recorded_distinctly_from_an_error | `python/libs/metering/tests/test_guards.py:99` |
-| functionality | test_every_guard_shares_one_catchable_family | `python/libs/metering/tests/test_guards.py:112` |
-| functionality | test_guards_come_from_configuration_not_constants | `python/libs/metering/tests/test_guards.py:118` |
-| functionality | test_the_defaults_would_not_fire_on_a_normal_run | `python/libs/metering/tests/test_guards.py:132` |
+| performance | test_a_node_cancelled_by_the_deadline_is_a_guard_stop_not_an_error | `python/libs/metering/tests/test_guards.py:84` |
+| functionality | test_a_cancellation_before_the_deadline_is_still_an_error | `python/libs/metering/tests/test_guards.py:105` |
+| functionality | test_the_deadline_stops_the_next_node | `python/libs/metering/tests/test_guards.py:122` |
+| functionality | test_a_guard_stop_is_recorded_distinctly_from_an_error | `python/libs/metering/tests/test_guards.py:137` |
+| functionality | test_every_guard_shares_one_catchable_family | `python/libs/metering/tests/test_guards.py:150` |
+| functionality | test_guards_come_from_configuration_not_constants | `python/libs/metering/tests/test_guards.py:156` |
+| functionality | test_the_defaults_would_not_fire_on_a_normal_run | `python/libs/metering/tests/test_guards.py:170` |
 | functionality | test_defaults_to_memory_so_tests_stay_hermetic | `python/libs/persistence/tests/test_checkpointer.py:29` |
 | functionality | test_memory_mode_is_not_persistence | `python/libs/persistence/tests/test_checkpointer.py:36` |
 | security | test_connection_puts_checkpoints_in_their_own_schema | `python/libs/persistence/tests/test_checkpointer.py:42` |
