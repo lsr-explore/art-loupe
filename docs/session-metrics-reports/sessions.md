@@ -9,3 +9,4 @@ Full per-session detail. Summary and charts: [report.md](report.md).
 | 2026-08-30 | Repo reset prep, static-check repair, and a 92 kB client-bundle fix | $35.12 | 0.7h | 4.4h | Build 10%<br>Setup 25%<br>Design 8%<br>Docs 31%<br>Verify/Ops 22%<br>Churn 4% | devex, ops, app | — |
 | 2026-08-30 | Art Loupe scope proposal — reference-to-plan, artwork critique cut | $5.93 | — | 1.6h | Design 55%<br>Docs 35%<br>Verify/Ops 5%<br>Churn 5% | agent, app, evals | — |
 | 2026-08-31 | Design docs — scope decisions settled; chat, credits, materials, and retrieval designed | $8.96 | 0.4h | 7.3h | Design 55%<br>Docs 35%<br>Verify/Ops 3%<br>Churn 7% | agent, app, evals, data | — |
+| 2026-09-05 | Slice 1 PRs 4/5/9 in parallel worktrees, a MediaPipe spike, and four review loops | $93.71 | 1.8h | 7.5h | Build 45%<br>Setup 8%<br>Design 8%<br>Docs 12%<br>Verify/Ops 15%<br>Churn 12% | agent, app, data, ops, devex | #18, #19, #20, #21 |
