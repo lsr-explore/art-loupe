@@ -48,6 +48,18 @@ labelled artistic call). It never generates or alters imagery.
   Loomis-conformity signal was **withdrawn** as a fairness defect, so it is two signals, not
   three. See the plan doc before implementing PR 10.
 
+### Decided, and not yet done
+
+- **[Issue #22](https://github.com/lsr-explore/art-loupe/issues/22) comes first — before any
+  further PR.** Cascade deletes reach rows, not storage objects, so a deleted photograph stays
+  retrievable. Laurie's call on 2026-09-05: fix it ahead of PR 6, rather than letting it ride
+  until the upload path makes it reachable.
+- **PR 11 runs before PR 10.** Approved 2026-09-05. The dependency risk that earned PR 10 its
+  place at the front is retired, PR 11's confidence is genuinely measured where PR 10's must be
+  derived, and PR 11 establishes the vision package — so it owns the `opencv-contrib-python`
+  dependency and the hygiene test that makes the two-`cv2` clash impossible rather than merely
+  documented.
+
 ### Open questions
 
 - **`flows.json` restructure is proposed, not applied.** The table is `requirements.md` §7. The
@@ -56,9 +68,6 @@ labelled artistic call). It never generates or alters imagery.
   still defines Art Loupe as including artwork critique, which is cut.
 - **The P0 severity definition needs a third clause** covering identity and sensitive-trait
   inference. The withdrawn confidence signal is exactly the failure it would name.
-- **[Issue #22](https://github.com/lsr-explore/art-loupe/issues/22) gates PR 7.** Cascade deletes
-  reach rows, not storage objects, so a deleted photograph stays retrievable. Unreachable today
-  because nothing can upload; it must close *before* the upload path exists, not after.
 - **The `.task` model's licence is unconfirmed.** The library is Apache 2.0; the model card is a
   scanned PDF stating no terms. Blocks merging PR 10, not starting it.
 - **Guard defaults and retention are placeholders** — 120 s wall clock, 250k tokens, 365-day
@@ -100,7 +109,7 @@ A ruleset is active, scripted at [`scripts/github/apply-ruleset.sh`](../scripts/
 ## 2. Agent pickup notes
 
 **State:** slice 1, PRs 1-5 and 9 of 14 merged. Design docs and the MediaPipe spike merged (#18).
-Backlog is GitHub issues on user project 3; **#22 gates PR 7**.
+Backlog is GitHub issues on user project 3; **#22 is the next piece of work, ahead of any PR**.
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Never generates
 imagery. Artwork critique is **cut**; the **Plan Critic** (evaluator over the plan) is **kept** —
@@ -152,10 +161,18 @@ Without Docker, set `AUTH_PROVIDER=demo` in `apps/studio/.env.local`.
 database, not a bare Postgres — they skip without one and fail hard under
 `ARTLOUPE_REQUIRE_POSTGRES=1`.
 
-**Next step: PR 6** — route-handler gating (`api` matcher policy, per-handler `getSession()`,
-`route-gate-matrix.md` rows, read-through image route). It and PR 5 are what gate PR 7, and the
-slice plan calls the `api` matcher gap "a real blocker": the first route handler in this repo's
-history is ungated by construction while carrying artist images.
+**Next step: issue #22, before any PR.** Storage objects outlive their rows, so artist deletion
+is not complete (FR-806/NFR-10). Needs a server-side path holding `service_role` that removes
+row, object and derivatives together. Decided 2026-09-05 to fix it first rather than let it ride
+until PR 7 makes it reachable.
+
+**Then PR 6** — route-handler gating (`api` matcher policy, per-handler `getSession()`,
+`route-gate-matrix.md` rows, read-through image route). The slice plan calls the `api` matcher
+gap "a real blocker": the first route handler in this repo's history is ungated by construction
+while carrying artist images.
+
+**Ladder order is amended: PR 11 before PR 10**, approved 2026-09-05. PR 11 also owns the
+`opencv-contrib-python` dependency and the one-`cv2`-provider hygiene test.
 
 **Requirement IDs are stable and cross-file.** **Add, never renumber** — renumbering the FR-1000
 block once broke references in three files. A grep of `FR-[0-9]+` against the definitions is the
