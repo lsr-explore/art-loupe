@@ -268,26 +268,43 @@ because of the comment.
 gh pr comment <N> --body-file <body-file>
 ```
 
-**Then read the bodies back, before reporting anything as posted — from both endpoints.**
+**Then read each body back and diff it against the file you posted, before reporting anything
+as posted.**
 
-Inline comments and top-level comments live in **different, disjoint collections**, and the two
-posting paths above write to one each. `gh api .../pulls/<N>/comments` returns *only* inline
-review comments; a `gh pr comment` fallback lands in `.../issues/<N>/comments` and does not
-appear there at all. Checking one endpoint leaves the other posting path unverified — and the
-fallback is the likelier of the two to carry a hand-built body.
+Compare the **whole stored body** to its source file, not a summary of it. Length and first
+line are a proxy, and this section exists because a proxy check is what let a wrong body
+through in the first place — a body whose opening survives while the rest does not would pass
+any spot-check, and there is no reason to spot-check when an exact comparison is one command.
+
+Capture the id **at post time**; it is the only thing tying a comment to the file it was meant
+to carry.
 
 ```sh
-# inline (the `gh api .../pulls/<N>/comments` path)
-gh api repos/{owner}/{repo}/pulls/<N>/comments \
-  -q '.[] | select(.user.login == "<you>") | "inline id=\(.id) len=\(.body|length)\n  \(.body | split("\n")[0])"'
+# inline — the id comes straight back
+id=$(gh api repos/{owner}/{repo}/pulls/<N>/comments \
+  -f commit_id=<reviewed-sha> -f path=<path> -F line=<endLine> -f side=RIGHT \
+  -F body=@<body-file> --jq '.id')
 
-# top-level (the `gh pr comment` fallback path)
-gh api repos/{owner}/{repo}/issues/<N>/comments \
-  -q '.[] | select(.user.login == "<you>") | "top   id=\(.id) len=\(.body|length)\n  \(.body | split("\n")[0])"'
+diff <(gh api repos/{owner}/{repo}/pulls/comments/"$id" --jq '.body') <body-file> \
+  && echo "inline $id verified" || echo "inline $id MISMATCH"
 ```
 
-Count what comes back against what you set out to post. One finding that produced no row in
-either collection is a finding whose disposition does not exist.
+```sh
+# top-level fallback — `gh pr comment` prints a URL ending in #issuecomment-<id>
+url=$(gh pr comment <N> --body-file <body-file>)
+id=${url##*issuecomment-}
+
+diff <(gh api repos/{owner}/{repo}/issues/comments/"$id" --jq '.body') <body-file> \
+  && echo "top-level $id verified" || echo "top-level $id MISMATCH"
+```
+
+Inline comments and top-level comments live in **different, disjoint collections**, and the two
+posting paths write to one each — `pulls/comments/<id>` and `issues/comments/<id>`. A read-back
+that queries only one leaves the other path unverified, and the fallback is the likelier of the
+two to carry a hand-built body, because it runs exactly when the inline post was refused.
+
+Finish by counting: every finding you set out to disposition should have produced exactly one
+verified id. A finding with no id is a disposition that does not exist.
 
 A 2xx with an `html_url` proves a comment object was *created*. It does not prove the comment
 says anything. Those are different claims, and for an outward-facing write only the second one
