@@ -128,6 +128,20 @@ describe('GET /api/images/[...key]', () => {
 
       expect((await callRoute()).status).toBe(502);
     });
+
+    it('answers 502 when the connection to storage is refused outright', async () => {
+      // A reset or timeout rejects the promise rather than resolving with a status. Unguarded,
+      // that throw escapes the handler as a generic 500 — reporting a server fault for a
+      // transient upstream failure, and losing the retryable answer this branch intends.
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => {
+          throw new TypeError('fetch failed');
+        }),
+      );
+
+      expect((await callRoute()).status).toBe(502);
+    });
   });
 
   describe('what the browser is told these bytes are', () => {

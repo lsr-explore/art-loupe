@@ -79,7 +79,18 @@ export const GET = async (
     return notFound();
   }
 
-  const upstream = await fetch(signed.url);
+  // Guarded, like every other network call on this path. An unwrapped `fetch` throws on a
+  // connection reset or timeout, and the throw escapes the handler as a generic 500 — which
+  // reports a server fault for what is a transient upstream failure, and loses the retryable
+  // 502 this branch already intends. `signed-url.ts` states the same rule for itself: a
+  // network failure is "we could not ask", never an outcome about the caller.
+  let upstream: Response;
+  try {
+    upstream = await fetch(signed.url);
+  } catch {
+    return new Response(null, { status: 502 });
+  }
+
   if (!upstream.ok || upstream.body === null) {
     return new Response(null, { status: 502 });
   }
