@@ -13,8 +13,8 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 94 |
-| **Covered** | a11y 5 · security 76 · functionality 13 |
+| **Tests** | 108 (2 parametrized) |
+| **Covered** | a11y 5 · security 90 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
 ## pytest — 14
@@ -36,7 +36,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:90` |
 | security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:108` |
 
-## Vitest — 63
+## Vitest — 77
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -47,10 +47,24 @@ Acknowledgement gate, sign-in, and the route guard
 | security | uses the demo provider only when AUTH_PROVIDER asks for it | `apps/operations/src/app/[locale]/actions.test.ts:98` |
 | security | still restricts roles when the demo provider is in use | `apps/operations/src/app/[locale]/actions.test.ts:108` |
 | security | fails closed when Supabase is not configured | `apps/operations/src/app/[locale]/actions.test.ts:118` |
-| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:139` |
-| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:170` |
-| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:187` |
-| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:199` |
+| security | refuses a traversal attempt without asking Storage | `apps/studio/src/app/api/images/[...key]/route.test.ts:54` |
+| security | refuses an uppercase UUID, which no key this system wrote ever carries | `apps/studio/src/app/api/images/[...key]/route.test.ts:63` |
+| security | answers 404 when the session carries no Supabase token | `apps/studio/src/app/api/images/[...key]/route.test.ts:72` |
+| security | answers 404 when signing fails as %s | `apps/studio/src/app/api/images/[...key]/route.test.ts:85` |
+| security | signs with the artist token, never a service key | `apps/studio/src/app/api/images/[...key]/route.test.ts:100` |
+| security | answers 502 when Storage could not be asked | `apps/studio/src/app/api/images/[...key]/route.test.ts:110` |
+| security | answers 502 when the signed URL does not resolve | `apps/studio/src/app/api/images/[...key]/route.test.ts:123` |
+| security | serves an accepted type through unchanged | `apps/studio/src/app/api/images/[...key]/route.test.ts:134` |
+| security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:142` |
+| security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:160` |
+| security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:169` |
+| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:206` |
+| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:246` |
+| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:271` |
+| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:283` |
+| security | never answers a route handler with a redirect | `apps/studio/src/proxy.test.ts:290` |
+| security | refuses an unauthenticated or cross-app caller at every route handler with 401 | `apps/studio/src/proxy.test.ts:313` |
+| security | lets an artist through to the handler without requiring the acknowledgement | `apps/studio/src/proxy.test.ts:328` |
 | security | is true when the cookie is present | `packages/auth/src/ack.test.ts:16` |
 | security | is false when it is absent | `packages/auth/src/ack.test.ts:20` |
 | security | does not accept the session cookie in its place | `packages/auth/src/ack.test.ts:24` |

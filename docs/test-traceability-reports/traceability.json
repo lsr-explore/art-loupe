@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 127,
-      "vitest": 232,
+      "pytest": 132,
+      "vitest": 296,
       "playwright": 24,
-      "all": 383
+      "all": 452
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 127,
-      "vitest": 232,
+      "pytest": 132,
+      "vitest": 296,
       "playwright": 24,
-      "all": 383
+      "all": 452
     }
   },
   "by_flow": {
@@ -65,20 +65,20 @@
       "severity": "P1",
       "title": "Head construction, perspective, confidence, and artist correction",
       "counts": {
-        "a11y": 0,
+        "a11y": 9,
         "security": 0,
         "privacy": 0,
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 0
+        "functionality": 34
       },
       "runners": {
         "pytest": 0,
-        "vitest": 0,
+        "vitest": 43,
         "playwright": 0
       },
-      "total": 0,
+      "total": 43,
       "parametrized": 0
     },
     "critique.alignment": {
@@ -146,7 +146,7 @@
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 76,
+        "security": 90,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -155,11 +155,11 @@
       },
       "runners": {
         "pytest": 14,
-        "vitest": 63,
+        "vitest": 77,
         "playwright": 17
       },
-      "total": 94,
-      "parametrized": 0
+      "total": 108,
+      "parametrized": 2
     },
     "canvas.session-plan": {
       "severity": "P2",
@@ -186,19 +186,19 @@
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
         "a11y": 0,
-        "security": 35,
+        "security": 40,
         "privacy": 0,
         "safety": 1,
-        "data": 25,
+        "data": 32,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 37,
-        "vitest": 24,
+        "pytest": 42,
+        "vitest": 31,
         "playwright": 0
       },
-      "total": 61,
+      "total": 73,
       "parametrized": 7
     },
     "ops.observability": {
@@ -858,6 +858,83 @@
       "category": "a11y"
     },
     {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:100",
+      "name": "signs with the artist token, never a service key",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:110",
+      "name": "answers 502 when Storage could not be asked",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:123",
+      "name": "answers 502 when the signed URL does not resolve",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:134",
+      "name": "serves an accepted type through unchanged",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:142",
+      "name": "clamps %s to opaque bytes rather than reflecting it",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:160",
+      "name": "clamps a missing content-type rather than leaving it unset",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:169",
+      "name": "forbids sniffing and keeps the response out of shared caches",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:54",
+      "name": "refuses a traversal attempt without asking Storage",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:63",
+      "name": "refuses an uppercase UUID, which no key this system wrote ever carries",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:72",
+      "name": "answers 404 when the session carries no Supabase token",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:85",
+      "name": "answers 404 when signing fails as %s",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
       "id": "apps/studio/src/components/ui/error-boundary.test.tsx:14",
       "name": "renders children when no error occurs",
       "runner": "vitest",
@@ -944,6 +1021,55 @@
     {
       "id": "apps/studio/src/lib/storage/checksum.test.ts:7",
       "name": "produces the lowercase hex SHA-256 the database constraint accepts",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:107",
+      "name": "sends the artist token and never a service key",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:120",
+      "name": "still deletes the row when no image rows exist",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:130",
+      "name": "reports unavailable when storage refuses, without touching rows",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:141",
+      "name": "reports unavailable when the row delete fails after storage succeeded",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:72",
+      "name": "removes storage objects before rows",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:82",
+      "name": "leaves the rows in place when storage deletes fewer objects than asked",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:99",
+      "name": "answers not-found for a project RLS does not show the caller",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
@@ -1061,29 +1187,50 @@
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:139",
+      "id": "apps/studio/src/proxy.test.ts:206",
       "name": "matches the committed route × visitor gate matrix",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:170",
+      "id": "apps/studio/src/proxy.test.ts:246",
       "name": "admits no anonymous visitor to any route but the landing",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:187",
+      "id": "apps/studio/src/proxy.test.ts:271",
       "name": "applies the acknowledgement gate before the auth gate",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:199",
+      "id": "apps/studio/src/proxy.test.ts:283",
       "name": "refuses an operator session rather than treating it as authorized",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:290",
+      "name": "never answers a route handler with a redirect",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:313",
+      "name": "refuses an unauthenticated or cross-app caller at every route handler with 401",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/proxy.test.ts:328",
+      "name": "lets an artist through to the handler without requiring the acknowledgement",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
@@ -1730,6 +1877,307 @@
       "name": "keeps the inline variant on the page muted family",
       "runner": "vitest",
       "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:108",
+      "name": "disarms after placing, so the target is gone before the next click",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:128",
+      "name": "throws a useful error when a handle is rendered outside a canvas",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:149",
+      "name": "does not let the guide layer swallow the placement click",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:166",
+      "name": "announces a move through one polite live region",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:183",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:190",
+      "name": "gives each canvas its own instructions id",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:68",
+      "name": "renders the photograph and groups the guides over it",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:75",
+      "name": "places an armed handle where the photograph is clicked, without a drag",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-canvas.test.tsx:92",
+      "name": "offers no placement target until a handle is armed",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:14",
+      "name": "clamps a point dragged past the edge back onto the photograph",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:18",
+      "name": "leaves a point inside the unit square untouched",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:22",
+      "name": "converts a pointer position to normalized coordinates",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:26",
+      "name": "clamps a pointer position that left the element mid-drag",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:30",
+      "name": "returns the origin rather than NaN for a zero-sized rect",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:39",
+      "name": "renders CSS percentages for positioning",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:43",
+      "name": "rounds to whole percentages for announcement",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-geometry.test.ts:48",
+      "name": "keeps the minimum target at the WCAG 2.2 SC 2.5.8 floor",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:10",
+      "name": "draws between two normalized points in the unit viewBox",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:24",
+      "name": "keeps the stroke width uniform under a non-uniform stretch",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:32",
+      "name": "dashes a proposal and solidifies a confirmed guide",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:42",
+      "name": "never intercepts pointer events aimed at the handles beneath it",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:53",
+      "name": "is hidden from assistive technology unless it is given a label",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:65",
+      "name": "exposes itself as a named image when it carries a label",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-guide.test.tsx:72",
+      "name": "has no accessibility violations in either exposure",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:104",
+      "name": "clamps at the edge rather than walking off the photograph",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:113",
+      "name": "ignores keys it does not handle",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:124",
+      "name": "offers a non-dragging pointer path: arm the handle, then click to place",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:141",
+      "name": "does not arm the handle when a drag ends on it",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:165",
+      "name": "still arms on a click that involved no pointer movement",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:183",
+      "name": "still arms when the pointer jitters below the drag threshold",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:208",
+      "name": "does not let a cancelled drag swallow the next keyboard activation",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:231",
+      "name": "disarms when the armed handle is clicked again",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:245",
+      "name": "carries a target at least 24 css px on both axes",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:255",
+      "name": "positions itself from normalized coordinates",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:263",
+      "name": "refuses every input path when disabled",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:278",
+      "name": "marks its status on the element so a proposal reads as provisional",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:287",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:294",
+      "name": "describes every handle with the shared operating instructions",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:305",
+      "name": "keeps the drawn dot out of the accessibility tree",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:60",
+      "name": "names itself with the guide, its position, and its status",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:70",
+      "name": "moves on arrow keys and updates its own accessible name",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:80",
+      "name": "takes a fine step by default and a coarse step with shift",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/blocks/overlay-handle.test.tsx:92",
+      "name": "moves up and left on the corresponding arrows",
+      "runner": "vitest",
+      "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
@@ -2539,48 +2987,83 @@
     },
     {
       "id": "python/libs/persistence/tests/test_projects_rls.py:243",
-      "name": "test_an_artist_can_delete_their_own_upload",
+      "name": "test_an_artist_cannot_delete_an_original_directly",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:257",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:256",
+      "name": "test_deleting_the_project_still_removes_its_original",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:273",
+      "name": "test_an_artist_cannot_replace_an_original_by_deleting_and_reinserting",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:287",
       "name": "test_no_artist_holds_the_update_privilege_on_an_original",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:274",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:304",
       "name": "test_there_is_no_update_policy_on_originals",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:298",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:328",
       "name": "test_an_artist_sees_only_objects_under_their_own_prefix",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:334",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:364",
       "name": "test_an_artist_cannot_write_an_object_into_another_artists_prefix",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:351",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:388",
+      "name": "test_an_artist_cannot_write_a_second_object_to_a_key_a_row_already_claims",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:426",
+      "name": "test_the_guard_does_not_refuse_the_upload_that_creates_the_pair",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:450",
+      "name": "test_storage_objects_cannot_be_deleted_from_sql_at_all",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_projects_rls.py:473",
       "name": "test_the_reference_bucket_is_private",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:365",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:487",
       "name": "test_every_storage_policy_is_scoped_to_our_bucket",
       "runner": "pytest",
       "flow": "intake.project-intent",
@@ -2969,7 +3452,6 @@
     "uncovered": [
       "critique.no-generation",
       "retrieval.grounding",
-      "analysis.geometry",
       "critique.alignment",
       "critique.formal-analysis",
       "canvas.session-plan",
