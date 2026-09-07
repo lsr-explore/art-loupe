@@ -5,7 +5,7 @@
   "strictness": 2,
   "commentTypes": ["logic", "syntax", "style"],
 
-  "_comment_triggers": "Both false for the same reason auto_incremental_review was off in CodeRabbit: the review loop pushes fixes on nearly every PR, and re-reviewing each push burns the quota two or three times per PR. Redundant while skipReview is AUTOMATIC, kept explicit so re-enabling automatic reviews does not silently also re-enable per-push ones.",
+  "_comment_triggers": "STALE COMMENT CORRECTED 2026-09-06: this said 'both false' and referred to a skipReview: AUTOMATIC setting that is no longer in this file. triggerOnUpdates is true, and reviews do arrive unprompted. Observed on PR #29: a review appeared about four minutes after the first push to the branch, and none within ten minutes of the next push to it. So the first push to a PR generally draws a review and a later push may not -- do not rely on either. triggerOnDrafts stays false. dependabot PRs are excluded below rather than by these flags.",
   "triggerOnUpdates": true,
   "triggerOnDrafts": false,
 
