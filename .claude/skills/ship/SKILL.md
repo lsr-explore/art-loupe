@@ -285,7 +285,7 @@ id=$(gh api repos/{owner}/{repo}/pulls/<N>/comments \
   -f commit_id=<reviewed-sha> -f path=<path> -F line=<endLine> -f side=RIGHT \
   -F body=@<body-file> --jq '.id')
 
-diff <(gh api repos/{owner}/{repo}/pulls/comments/"$id" --jq '.body') <body-file> \
+[ "$(gh api repos/{owner}/{repo}/pulls/comments/"$id" --jq '.body')" = "$(cat <body-file>)" ] \
   && echo "inline $id verified" || echo "inline $id MISMATCH"
 ```
 
@@ -294,7 +294,7 @@ diff <(gh api repos/{owner}/{repo}/pulls/comments/"$id" --jq '.body') <body-file
 url=$(gh pr comment <N> --body-file <body-file>)
 id=${url##*issuecomment-}
 
-diff <(gh api repos/{owner}/{repo}/issues/comments/"$id" --jq '.body') <body-file> \
+[ "$(gh api repos/{owner}/{repo}/issues/comments/"$id" --jq '.body')" = "$(cat <body-file>)" ] \
   && echo "top-level $id verified" || echo "top-level $id MISMATCH"
 ```
 
@@ -302,6 +302,13 @@ Inline comments and top-level comments live in **different, disjoint collections
 posting paths write to one each — `pulls/comments/<id>` and `issues/comments/<id>`. A read-back
 that queries only one leaves the other path unverified, and the fallback is the likelier of the
 two to carry a hand-built body, because it runs exactly when the inline post was refused.
+
+**Compare with `[ "$(…)" = "$(…)" ]`, not `diff`.** `gh api --jq '.body'` appends a trailing
+newline that the source file does not have, so a naive `diff` reports a one-line difference on
+**every** correctly posted comment. A check that always fails is worse than no check, because it
+trains you to wave it through. Command substitution strips trailing newlines from both sides,
+which normalises exactly that difference and still catches a genuinely wrong body — measured
+both ways before this line was written.
 
 Finish by counting: every finding you set out to disposition should have produced exactly one
 verified id. A finding with no id is a disposition that does not exist.
