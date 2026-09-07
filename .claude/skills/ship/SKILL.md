@@ -268,21 +268,44 @@ because of the comment.
 gh pr comment <N> --body-file <body-file>
 ```
 
-**Then read the bodies back, before reporting anything as posted.**
+**Then read the bodies back, before reporting anything as posted — from both endpoints.**
+
+Inline comments and top-level comments live in **different, disjoint collections**, and the two
+posting paths above write to one each. `gh api .../pulls/<N>/comments` returns *only* inline
+review comments; a `gh pr comment` fallback lands in `.../issues/<N>/comments` and does not
+appear there at all. Checking one endpoint leaves the other posting path unverified — and the
+fallback is the likelier of the two to carry a hand-built body.
 
 ```sh
+# inline (the `gh api .../pulls/<N>/comments` path)
 gh api repos/{owner}/{repo}/pulls/<N>/comments \
-  -q '.[] | select(.user.login == "<you>") | "id=\(.id) len=\(.body|length)\n  \(.body | split("\n")[0])"'
+  -q '.[] | select(.user.login == "<you>") | "inline id=\(.id) len=\(.body|length)\n  \(.body | split("\n")[0])"'
+
+# top-level (the `gh pr comment` fallback path)
+gh api repos/{owner}/{repo}/issues/<N>/comments \
+  -q '.[] | select(.user.login == "<you>") | "top   id=\(.id) len=\(.body|length)\n  \(.body | split("\n")[0])"'
 ```
+
+Count what comes back against what you set out to post. One finding that produced no row in
+either collection is a finding whose disposition does not exist.
 
 A 2xx with an `html_url` proves a comment object was *created*. It does not prove the comment
 says anything. Those are different claims, and for an outward-facing write only the second one
 matters — the first is what you have when the body is the literal string `@/tmp/f1.md`.
 
 The check costs one command and is the only thing standing between a wrong flag and a PR whose
-record claims reasoning it does not contain. A wrong body is repairable
-(`gh api repos/{owner}/{repo}/pulls/comments/<id> -X PATCH --input <json>`), but only if
-somebody notices.
+record claims reasoning it does not contain. A wrong body is repairable, but only if somebody notices — and the repair endpoint differs by
+kind, the same way the read-back does:
+
+```sh
+# inline
+gh api repos/{owner}/{repo}/pulls/comments/<id> -X PATCH --input <json>
+# top-level
+gh api repos/{owner}/{repo}/issues/comments/<id> -X PATCH --input <json>
+```
+
+Build `<json>` rather than passing the body inline, for the same reason the flag mattered:
+`python3 -c "import json;print(json.dumps({'body': open('f.md').read()}))" > patch.json`.
 
 Neither `gh api` nor `gh pr comment` is allowlisted in `.claude/settings.json`, so both
 prompt. That is deliberate — posting is outward-facing, and `gh api` is a general-purpose
