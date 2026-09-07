@@ -10,10 +10,17 @@ Takes work that is **already done and verified** through to merge-ready. It does
 
 **Two things this skill never does:** merge the PR, and bypass husky.
 
-**Review is Greptile, and it is not automatic.** `greptile.json` sets
-`skipReview: "AUTOMATIC"`, so no review fires on push. That is deliberate: the review loop
-pushes fixes on nearly every PR, and reviewing each intermediate commit burns cycles on work
-that is about to change. **One review, once the branch is final** — §5.
+**Review is Greptile, and it fires on its own — but not reliably on every push.** The
+`skipReview: "AUTOMATIC"` this section used to describe is **no longer in `greptile.json`**,
+and `triggerOnUpdates` is `true`. Observed on #29: a review arrived by itself about four
+minutes after the branch was first pushed, and **no** review arrived within ten minutes of the
+next push to the same branch.
+
+Treat that as the working model rather than a mechanism you understand: **the first push
+usually gets a review; a later push may not.** So the rule is unchanged in spirit and different
+in practice — do not spend a manual review before checking whether one already ran, and never
+report a branch as reviewed without confirming which commit the review actually read. §5 says
+how.
 
 ## 1. Pre-push checks
 
@@ -132,10 +139,15 @@ the CLI can run for many minutes on a large diff and emits **nothing at all** un
 finishes, so "0 bytes so far" is indistinguishable from a hang. Wait on the *process*, not on
 output appearing. Backgrounding is about staying reachable, not about moving on.
 
-**Nothing reviews the PR automatically.** A PR with no review is the expected state, not a
-failure to diagnose — do not poll GitHub waiting for a bot that is switched off. If Laurie
-wants the review on the PR instead of in the terminal, comment `@greptileai` on it (GitHub
-won't autocomplete bot handles, so the missing dropdown entry is normal).
+**Check the PR before spending a review.** Greptile often posts one by itself, so
+`gh pr view <N> --json comments` and `gh api repos/{owner}/{repo}/pulls/<N>/comments` come
+first — a review may already be there, and the summary footer names the commit it read. Only
+run the CLI when no review covers the current HEAD.
+
+A missing review is not automatically a failure to diagnose: on #29 the second push drew none
+at all within ten minutes. Waiting a few minutes and re-checking is right; polling indefinitely
+is not. If Laurie wants a review on the PR rather than in the terminal, comment `@greptileai`
+on it (GitHub won't autocomplete bot handles, so the missing dropdown entry is normal).
 
 **If the review doesn't run** — quota exhausted, the CLI erroring, a diff too large — say so
 plainly in the PR body and hand back. Never let a PR imply it was reviewed when it wasn't,
@@ -229,8 +241,17 @@ gh api repos/{owner}/{repo}/pulls/<N>/comments \
   -f path=<path> \
   -F line=<endLine> \
   -f side=RIGHT \
-  -f body=@<body-file>
+  -F body=@<body-file>
 ```
+
+**`-F` for the body, never `-f`.** This line read `-f body=@<body-file>` and was wrong in the
+worst available way. Per `gh api --help`, `-F/--field` supports `"@<path>"` to read a value
+from a file; `-f/--raw-field` adds the string **literally**. So `-f body=@/tmp/finding.md`
+posts a comment whose entire content is the seven characters `@/tmp/f…` — and the API answers
+**201 with an `html_url`**, so it looks like it worked.
+
+That happened on #29: two dispositions posted as literal filenames, and both were reported as
+successfully posted because the response carried a URL.
 
 Add `-F start_line=<startLine> -f start_side=<side>` when `startLine != endLine`, and use
 `side=LEFT` when the finding's `side` is `old`.
@@ -247,9 +268,89 @@ because of the comment.
 gh pr comment <N> --body-file <body-file>
 ```
 
+**Then read each body back and diff it against the file you posted, before reporting anything
+as posted.**
+
+Compare the **whole stored body** to its source file, not a summary of it. Length and first
+line are a proxy, and this section exists because a proxy check is what let a wrong body
+through in the first place — a body whose opening survives while the rest does not would pass
+any spot-check, and there is no reason to spot-check when an exact comparison is one command.
+
+Capture the id **at post time**; it is the only thing tying a comment to the file it was meant
+to carry.
+
+```sh
+# inline — the id comes straight back
+id=$(gh api repos/{owner}/{repo}/pulls/<N>/comments \
+  -f commit_id=<reviewed-sha> -f path=<path> -F line=<endLine> -f side=RIGHT \
+  -F body=@<body-file> --jq '.id')
+
+[ "$(gh api repos/{owner}/{repo}/pulls/comments/"$id" --jq '.body')" = "$(cat <body-file>)" ] \
+  && echo "inline $id verified" || echo "inline $id MISMATCH"
+```
+
+```sh
+# top-level fallback — `gh pr comment` prints a URL ending in #issuecomment-<id>
+url=$(gh pr comment <N> --body-file <body-file>)
+id=${url##*issuecomment-}
+
+[ "$(gh api repos/{owner}/{repo}/issues/comments/"$id" --jq '.body')" = "$(cat <body-file>)" ] \
+  && echo "top-level $id verified" || echo "top-level $id MISMATCH"
+```
+
+Inline comments and top-level comments live in **different, disjoint collections**, and the two
+posting paths write to one each — `pulls/comments/<id>` and `issues/comments/<id>`. A read-back
+that queries only one leaves the other path unverified, and the fallback is the likelier of the
+two to carry a hand-built body, because it runs exactly when the inline post was refused.
+
+**Compare with `[ "$(…)" = "$(…)" ]`, not `diff`.** `gh api --jq '.body'` appends a trailing
+newline that the source file does not have, so a naive `diff` reports a one-line difference on
+**every** correctly posted comment. A check that always fails is worse than no check, because it
+trains you to wave it through. Command substitution strips trailing newlines from both sides,
+which normalises exactly that difference and still catches a genuinely wrong body — measured
+both ways before this line was written.
+
+Finish by counting: every finding you set out to disposition should have produced exactly one
+verified id. A finding with no id is a disposition that does not exist.
+
+A 2xx with an `html_url` proves a comment object was *created*. It does not prove the comment
+says anything. Those are different claims, and for an outward-facing write only the second one
+matters — the first is what you have when the body is the literal string `@/tmp/f1.md`.
+
+The check costs one command and is the only thing standing between a wrong flag and a PR whose
+record claims reasoning it does not contain. A wrong body is repairable, but only if somebody notices — and the repair endpoint differs by
+kind, the same way the read-back does:
+
+```sh
+# inline
+gh api repos/{owner}/{repo}/pulls/comments/<id> -X PATCH --input <json>
+# top-level
+gh api repos/{owner}/{repo}/issues/comments/<id> -X PATCH --input <json>
+```
+
+Build `<json>` rather than passing the body inline, for the same reason the flag mattered:
+`python3 -c "import json;print(json.dumps({'body': open('f.md').read()}))" > patch.json`.
+
 Neither `gh api` nor `gh pr comment` is allowlisted in `.claude/settings.json`, so both
 prompt. That is deliberate — posting is outward-facing, and `gh api` is a general-purpose
 authenticated write to any endpoint.
+
+**Resolve the threads when the dispositions are posted.** The `main` ruleset requires resolved
+conversations, so an open thread **blocks the merge Laurie is about to do** — including a thread
+you opened yourself to carry a disposition. Greptile resolves its own threads sometimes and not
+others, so check rather than assume:
+
+```sh
+gh api graphql -f query='
+{ repository(owner:"lsr-explore", name:"art-loupe") { pullRequest(number:<N>) {
+    reviewThreads(first:20) { nodes { id isResolved path } } } } }'
+
+gh api graphql -f query='
+mutation { resolveReviewThread(input: {threadId: "<PRRT_…>"}) { thread { isResolved } } }'
+```
+
+Resolve only threads you actually addressed. A thread carrying an open question for Laurie stays
+open, and you say so in the hand-off rather than tidying it away.
 
 **The PR body gets an index line, not the reasoning:**
 
@@ -261,9 +362,16 @@ on this PR.
 A review that *couldn't* run still gets said plainly in the body per §5 — there would be no
 comments to carry it.
 
-Fixes pushed after a review do **not** trigger a re-review, because automatic reviews are
-off. If a fix is substantial enough to warrant re-reviewing, that is a deliberate second
-`greptile review` run — say so rather than assuming the first review still covers the diff.
+A fix pushed after a review **may or may not** draw a re-review — on #29 it drew none. Never
+assume the earlier review covers the newer diff: it was bound to the commit it read, and that
+commit no longer exists at HEAD. Check for a review naming the current SHA; if none arrived and
+the fix is substantial, run a deliberate second `greptile review` and say that you did.
+
+A second review may also diff against a **stale base**. On #29 the CLI run reported the branch
+as "upgrading the repository to Vitest 5" — a change that had already merged to `main` in a
+different PR and appeared nowhere in the diff. Before acting on a finding, confirm the code it
+names is actually in `git diff origin/main`; if it is not, that is a decline with evidence, not
+a fix.
 
 ## 7. Update docs, then hand off
 
