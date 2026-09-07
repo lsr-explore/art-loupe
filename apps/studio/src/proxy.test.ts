@@ -2,7 +2,8 @@
 // Middleware runs on the server, and `next-intl/middleware` resolves `next/server` through
 // node export conditions — under the suite's default jsdom environment that resolution
 // fails outright. This is the one file in the app with no DOM in it.
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Role } from '@artloupe/auth';
 import { ACK_COOKIE_NAME } from '@artloupe/auth/ack';
@@ -74,6 +75,48 @@ const discoverRoutes = (): string[] => {
   return ['', ...segments];
 };
 
+/**
+ * Route handlers discovered from `app/api`, by the same principle as the pages above: read
+ * them off disk, so a handler cannot join the app without showing up as a row here.
+ *
+ * This matters more for handlers than for pages. A page that arrives ungated is at least
+ * visible to anyone who loads it; a handler is reached by script, returns JSON, and the first
+ * evidence that it was never gated is the data already having left. `api` was excluded from
+ * `config.matcher` outright until this PR, so every handler added before now would have been
+ * invisible to the middleware *and* to this test.
+ */
+const discoverApiRoutes = (): string[] => {
+  const apiDir = fileURLToPath(new URL('./app/api', import.meta.url));
+  if (!existsSync(apiDir)) {
+    return [];
+  }
+
+  const found: string[] = [];
+  const walk = (dir: string, prefix: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    )) {
+      if (entry.isDirectory()) {
+        walk(join(dir, entry.name), `${prefix}/${entry.name}`);
+      } else if (entry.name === 'route.ts') {
+        found.push(prefix);
+      }
+    }
+  };
+
+  walk(apiDir, '/api');
+  return found.sort();
+};
+
+/**
+ * A concrete request path for a route pattern.
+ *
+ * The middleware only looks at the `/api` prefix, so the substituted values are arbitrary —
+ * but they have to be *something*, because `NextRequest` needs a real URL.
+ */
+const concretePathFor = (pattern: string): string =>
+  pattern.replace(/\[\.\.\.[^\]]+\]/g, 'catch/all/segments').replace(/\[[^\]]+\]/g, 'value');
+
 interface Visitor {
   label: string;
   role: Role | null;
@@ -98,8 +141,13 @@ const VISITORS: Visitor[] = [
 ];
 
 const requestFor = (route: string, visitor: Visitor): NextRequest => {
-  const url = route ? `${APP_ORIGIN}/${LOCALE}/${route}` : `${APP_ORIGIN}/${LOCALE}`;
-  const request = new NextRequest(new URL(url));
+  // A route beginning `/api` is already an absolute path and carries no locale segment.
+  const path = route.startsWith('/api')
+    ? concretePathFor(route)
+    : route
+      ? `/${LOCALE}/${route}`
+      : `/${LOCALE}`;
+  const request = new NextRequest(new URL(`${APP_ORIGIN}${path}`));
   if (visitor.acknowledged) {
     request.cookies.set(ACK_COOKIE_NAME, '1');
   }
@@ -107,28 +155,47 @@ const requestFor = (route: string, visitor: Visitor): NextRequest => {
 };
 
 /**
- * Collapse a middleware response to one of four outcomes.
+ * Collapse a middleware response to a single readable outcome.
  *
- * The acknowledgement redirect carries a `?next=` absolute URL, which would make the
- * snapshot churn on any origin change; the outcome vocabulary is what the reviewer
- * actually needs to read, so it is normalised here rather than asserted verbatim.
+ * Two vocabularies, because the two kinds of route answer in different currencies and
+ * flattening them would hide the distinction this PR exists to establish:
+ *
+ * - **Pages** answer in redirects. The acknowledgement redirect carries a `?next=` absolute
+ *   URL, which would make the snapshot churn on any origin change, so it is normalised to the
+ *   gate that produced it rather than asserted verbatim.
+ * - **Route handlers** answer in status codes. A redirect is not a legitimate outcome for one
+ *   at all — `fetch` follows it transparently and the caller receives a 200 of HTML — so the
+ *   status is what the row records, and a redirect appearing in an API row is itself the bug.
  */
-const outcomeOf = (location: string | null): string => {
-  if (location === null) return 'render';
-  if (location.startsWith(ENTRY_ORIGIN)) return 'redirect → entry (acknowledgement gate)';
-  const { pathname } = new URL(location, APP_ORIGIN);
-  if (pathname === `/${LOCALE}`) return 'redirect → /en (login)';
-  if (pathname === `/${LOCALE}/home`) return 'redirect → /en/home';
-  return `redirect → ${pathname}`;
+const outcomeOf = (response: NextResponse, isApi: boolean): string => {
+  const location = response.headers.get('location');
+
+  if (location !== null) {
+    if (location.startsWith(ENTRY_ORIGIN)) return 'redirect → entry (acknowledgement gate)';
+    const { pathname } = new URL(location, APP_ORIGIN);
+    if (pathname === `/${LOCALE}`) return 'redirect → /en (login)';
+    if (pathname === `/${LOCALE}/home`) return 'redirect → /en/home';
+    return `redirect → ${pathname}`;
+  }
+
+  if (!isApi) return 'render';
+
+  if (response.status === 401) return '401 unauthenticated';
+  if (response.status === 404) return '404 not_found';
+  // The middleware passed it through; the handler is what answers next. The matrix stops here
+  // deliberately — what the handler then does with ownership is its own test, not this one's.
+  if (response.status === 200) return 'pass → handler';
+  return `${response.status}`;
 };
 
 const gateFor = async (route: string, visitor: Visitor): Promise<string> => {
   session.current = visitor.role ? { role: visitor.role } : null;
   const response = await proxy(requestFor(route, visitor));
-  return outcomeOf(response.headers.get('location'));
+  return outcomeOf(response, route.startsWith('/api'));
 };
 
 const ROUTES = discoverRoutes();
+const API_ROUTES = discoverApiRoutes();
 
 // @trace flow=platform.auth category=security
 describe('Studio middleware gate chain', () => {
@@ -140,13 +207,22 @@ describe('Studio middleware gate chain', () => {
     const header = `| Route | ${VISITORS.map((visitor) => visitor.label).join(' | ')} |`;
     const divider = `| --- | ${VISITORS.map(() => '---').join(' | ')} |`;
 
-    const rows: string[] = [];
-    for (const route of ROUTES) {
+    const rowFor = async (route: string, label: string): Promise<string> => {
       const cells: string[] = [];
       for (const visitor of VISITORS) {
         cells.push(await gateFor(route, visitor));
       }
-      rows.push(`| \`/${LOCALE}${route ? `/${route}` : ''}\` | ${cells.join(' | ')} |`);
+      return `| \`${label}\` | ${cells.join(' | ')} |`;
+    };
+
+    const rows: string[] = [];
+    for (const route of ROUTES) {
+      rows.push(await rowFor(route, `/${LOCALE}${route ? `/${route}` : ''}`));
+    }
+    // Handlers are listed by their on-disk pattern, not the concrete path the request used —
+    // the pattern is what a reviewer recognises, and the substituted value is arbitrary.
+    for (const route of API_ROUTES) {
+      rows.push(await rowFor(route, route));
     }
 
     const matrix = [
@@ -177,6 +253,14 @@ describe('Studio middleware gate chain', () => {
       }
     }
 
+    // Handlers count too, and they fail differently: a page that slips the gate renders
+    // something a human sees, while a handler quietly returns data to a script.
+    for (const route of API_ROUTES) {
+      if ((await gateFor(route, anonymous)) === 'pass → handler') {
+        reached.push(route);
+      }
+    }
+
     expect(
       reached,
       `${reached.join(', ')} rendered for an anonymous visitor. Every path but the landing ` +
@@ -201,5 +285,55 @@ describe('Studio middleware gate chain', () => {
     if (!operator) throw new Error('operator visitor missing from the matrix');
 
     expect(await gateFor('home', operator)).toBe('redirect → /en (login)');
+  });
+
+  it('never answers a route handler with a redirect', async () => {
+    // The property that makes the API branch worth having. `fetch` follows a 302 with no
+    // ceremony, so a page-style bounce hands an XHR a 200 carrying the login page's HTML —
+    // the caller sees success, parses garbage, and no status anywhere says "log in". Deleting
+    // the `isApiPath` early return in `proxy.ts` makes every cell here a redirect, and no
+    // other test in this app changes.
+    const redirected: string[] = [];
+
+    for (const route of API_ROUTES) {
+      for (const visitor of VISITORS) {
+        if ((await gateFor(route, visitor)).startsWith('redirect')) {
+          redirected.push(`${route} (${visitor.label})`);
+        }
+      }
+    }
+
+    expect(
+      redirected,
+      `${redirected.join(', ')} answered a route handler with a redirect. Handlers must ` +
+        'answer in status codes — a client cannot act on a redirect it has already followed.',
+    ).toEqual([]);
+  });
+
+  it('refuses an unauthenticated or cross-app caller at every route handler with 401', async () => {
+    const refused = ['anonymous', 'operator'];
+
+    for (const route of API_ROUTES) {
+      for (const label of refused) {
+        const visitor = VISITORS.find((candidate) => candidate.label === label);
+        if (!visitor) throw new Error(`${label} visitor missing from the matrix`);
+
+        expect(await gateFor(route, visitor), `${route} admitted ${label}`).toBe(
+          '401 unauthenticated',
+        );
+      }
+    }
+  });
+
+  it('lets an artist through to the handler without requiring the acknowledgement', async () => {
+    // Deliberate, and the one place the API chain differs from the page chain in what it
+    // *checks* rather than how it answers. See the note on `gateApiRequest` in `proxy.ts`,
+    // and issue #27, which moves the acknowledgement to the login page.
+    const visitor = VISITORS.find((candidate) => candidate.label === 'artist, no ack');
+    if (!visitor) throw new Error('the unacknowledged artist left the matrix');
+
+    for (const route of API_ROUTES) {
+      expect(await gateFor(route, visitor)).toBe('pass → handler');
+    }
   });
 });

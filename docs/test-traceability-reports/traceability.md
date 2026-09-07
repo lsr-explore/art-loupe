@@ -19,32 +19,32 @@ exists, the detail tells you what it covers.
 
 | Flow | Sev | a11y | sec | priv | safety | data | perf | func | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `analysis.geometry` | P1 | – | – | – | – | – | – | – | **none** |
-| **analysis** | | – | – | – | – | – | – | – | **0** |
+| [`analysis.geometry`](flows/analysis.geometry.md) | P1 | 9 | – | – | – | – | – | 34 | 43 |
+| **analysis** | | 9 | – | – | – | – | – | 34 | **43** |
 | `canvas.session-plan` | P2 | – | – | – | – | – | – | – | **none** |
 | **canvas** | | – | – | – | – | – | – | – | **0** |
 | `critique.no-generation` | P0 | – | – | – | – | – | – | – | **none** |
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 35 | – | 1 | 25 | – | – | 61 |
-| **intake** | | – | 35 | – | 1 | 25 | – | – | **61** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 40 | – | 1 | 32 | – | – | 73 |
+| **intake** | | – | 40 | – | 1 | 32 | – | – | **73** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
 | **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | 1 | 33 | 41 |
-| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 76 | – | – | – | – | 13 | 94 |
+| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 90 | – | – | – | – | 13 | 108 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 106 | 137 |
-| **platform** | | 36 | 83 | – | – | 20 | 1 | 152 | **292** |
+| **platform** | | 36 | 97 | – | – | 20 | 1 | 152 | **306** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **38** | **122** | **–** | **1** | **46** | **1** | **175** | **383** |
+| **all flows** | | **47** | **141** | **–** | **1** | **53** | **1** | **209** | **452** |
 
 ## Gaps
 
-- **7 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `analysis.geometry`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **6 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
 - **`intake.project-intent`** (P2) has tests but none categorised `a11y`.
 
 ## Untagged
@@ -76,7 +76,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 127 | 0 | 127 |
-| Vitest | 232 | 0 | 232 |
+| pytest | 132 | 0 | 132 |
+| Vitest | 296 | 0 | 296 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **383** | **0** | **383** |
+| **All** | **452** | **0** | **452** |

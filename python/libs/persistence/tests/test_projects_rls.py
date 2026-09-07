@@ -366,9 +366,16 @@ def test_an_artist_cannot_write_an_object_into_another_artists_prefix(
 ) -> None:
     with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn:
         # Control: writing under their own prefix works, so the refusal is about the prefix.
+        #
+        # `CHECKSUM_B` under artist A's own prefix, not `CHECKSUM_A`, and the difference is
+        # load bearing: the fixture already writes a `source_images` row citing
+        # `ARTIST_A/PROJECT_A/CHECKSUM_A`, and the insert policy now refuses a second write to
+        # any key a row already claims. Using the claimed key here would make the control fail
+        # for a reason that has nothing to do with prefixes, and the refusal below would then
+        # prove nothing.
         conn.execute(
             "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
-            (REFERENCE_IMAGE_BUCKET, storage_key(ARTIST_A, PROJECT_A, CHECKSUM_A), ARTIST_A),
+            (REFERENCE_IMAGE_BUCKET, storage_key(ARTIST_A, PROJECT_A, CHECKSUM_B), ARTIST_A),
         )
 
         with refused(conn):
@@ -376,6 +383,89 @@ def test_an_artist_cannot_write_an_object_into_another_artists_prefix(
                 "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
                 (REFERENCE_IMAGE_BUCKET, storage_key(ARTIST_B, PROJECT_B, CHECKSUM_B), ARTIST_A),
             )
+
+
+def test_an_artist_cannot_write_a_second_object_to_a_key_a_row_already_claims(
+    two_artists: psycopg.Connection,
+) -> None:
+    """The storage half of FR-105 immutability (issue #22).
+
+    `source_images` already refuses delete-then-insert by having no DELETE policy and no DELETE
+    grant, because deleting the row frees the unique slot and the replacement carries different
+    bytes under the same identity. The object had exactly that hole one layer down: delete the
+    bytes, upload different bytes at the same key, and the row keeps citing a checksum that no
+    longer describes what is stored -- so every derivative and every cache entry points at
+    content that changed underneath them.
+
+    The guard is written against the **row**, not against whether an object currently exists,
+    and that is what makes it survive the delete. It cannot be exercised as a literal
+    delete-then-insert here: Supabase installs a `protect_objects_delete` trigger that refuses
+    any direct `delete from storage.objects` whatever the role (see the test below). So the
+    assertion is the property that actually matters -- while a row cites a key, nothing may be
+    written to it.
+    """
+    claimed = storage_key(ARTIST_A, PROJECT_A, CHECKSUM_A)
+    unclaimed = storage_key(ARTIST_A, PROJECT_A, CHECKSUM_B)
+
+    with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn:
+        # Control: the same artist, the same prefix, the same bucket -- differing only in
+        # whether a `source_images` row cites the key. Without this, the refusal below could be
+        # the prefix policy firing rather than the claim guard.
+        conn.execute(
+            "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
+            (REFERENCE_IMAGE_BUCKET, unclaimed, ARTIST_A),
+        )
+
+        with refused(conn):
+            conn.execute(
+                "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
+                (REFERENCE_IMAGE_BUCKET, claimed, ARTIST_A),
+            )
+
+
+def test_the_guard_does_not_refuse_the_upload_that_creates_the_pair(
+    two_artists: psycopg.Connection,
+) -> None:
+    """The ordering the claim guard depends on, pinned so PR 7 cannot quietly invert it.
+
+    The object is written first and the row second, so at upload time nothing cites the key and
+    the insert passes. An upload path that created the row first would make **every** original
+    upload fail with a bare permissions error -- a failure that would look like a broken policy
+    rather than a broken sequence. This test is what names the cause.
+    """
+    fresh = storage_key(ARTIST_A, PROJECT_A, "d" * 64)
+
+    with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn:
+        conn.execute(
+            "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
+            (REFERENCE_IMAGE_BUCKET, fresh, ARTIST_A),
+        )
+        written = count(conn, "select count(*) from storage.objects where name = %s", (fresh,))
+
+    assert written == 1, "the first upload of a key nothing cites must be allowed"
+
+
+def test_storage_objects_cannot_be_deleted_from_sql_at_all(db: psycopg.Connection) -> None:
+    """A vendor behaviour our deletion design rests on, so it is asserted rather than assumed.
+
+    Supabase installs `protect_objects_delete` on `storage.objects`, raising "Direct deletion
+    from storage tables is not allowed. Use the Storage API instead." even for `postgres`. That
+    is why the project deletion path is not a `security definer` function: no SQL path removes
+    an object, so deletion is inherently two systems and cannot be one transaction.
+
+    If this ever stops being true, the single-transaction design becomes available again and
+    the ordering compromise in `delete-project.ts` can be revisited -- so a failure here is a
+    prompt to redesign, not merely a broken test.
+    """
+    db.execute(
+        "insert into storage.objects (bucket_id, name, owner_id) values (%s, %s, %s)",
+        (REFERENCE_IMAGE_BUCKET, storage_key(ARTIST_A, PROJECT_A, "e" * 64), ARTIST_A),
+    )
+
+    # Raised with SQLSTATE 42501, so it arrives as `InsufficientPrivilege` like an RLS
+    # refusal -- the trigger's message is what distinguishes it.
+    with refused(db):
+        db.execute("delete from storage.objects where bucket_id = %s", (REFERENCE_IMAGE_BUCKET,))
 
 
 def test_the_reference_bucket_is_private(db: psycopg.Connection) -> None:

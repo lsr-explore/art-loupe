@@ -331,6 +331,9 @@ importers:
       '@artloupe/fascia':
         specifier: workspace:*
         version: link:../../packages/fascia
+      '@artloupe/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@base-ui/react':
         specifier: ^1.7.0
         version: 1.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

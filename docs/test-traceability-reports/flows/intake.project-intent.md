@@ -13,11 +13,11 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 61 (7 parametrized) |
-| **Covered** | security 35 · safety 1 · data 25 |
+| **Tests** | 73 (7 parametrized) |
+| **Covered** | security 40 · safety 1 · data 32 |
 | **Not covered** | a11y · privacy · performance · functionality |
 
-## pytest — 37
+## pytest — 42
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -33,13 +33,18 @@ Upload, intake, and the typed ProjectIntent
 | security | test_an_artist_cannot_delete_another_artists_project | `python/libs/persistence/tests/test_projects_rls.py:196` |
 | security | test_only_the_owning_artist_sees_the_uploaded_original | `python/libs/persistence/tests/test_projects_rls.py:211` |
 | security | test_an_artist_cannot_attach_an_upload_to_another_artists_project | `python/libs/persistence/tests/test_projects_rls.py:228` |
-| security | test_an_artist_can_delete_their_own_upload | `python/libs/persistence/tests/test_projects_rls.py:243` |
-| security | test_no_artist_holds_the_update_privilege_on_an_original | `python/libs/persistence/tests/test_projects_rls.py:257` |
-| security | test_there_is_no_update_policy_on_originals | `python/libs/persistence/tests/test_projects_rls.py:274` |
-| security | test_an_artist_sees_only_objects_under_their_own_prefix | `python/libs/persistence/tests/test_projects_rls.py:298` |
-| security | test_an_artist_cannot_write_an_object_into_another_artists_prefix | `python/libs/persistence/tests/test_projects_rls.py:334` |
-| security | test_the_reference_bucket_is_private | `python/libs/persistence/tests/test_projects_rls.py:351` |
-| security | test_every_storage_policy_is_scoped_to_our_bucket | `python/libs/persistence/tests/test_projects_rls.py:365` |
+| security | test_an_artist_cannot_delete_an_original_directly | `python/libs/persistence/tests/test_projects_rls.py:243` |
+| security | test_deleting_the_project_still_removes_its_original | `python/libs/persistence/tests/test_projects_rls.py:256` |
+| security | test_an_artist_cannot_replace_an_original_by_deleting_and_reinserting | `python/libs/persistence/tests/test_projects_rls.py:273` |
+| security | test_no_artist_holds_the_update_privilege_on_an_original | `python/libs/persistence/tests/test_projects_rls.py:287` |
+| security | test_there_is_no_update_policy_on_originals | `python/libs/persistence/tests/test_projects_rls.py:304` |
+| security | test_an_artist_sees_only_objects_under_their_own_prefix | `python/libs/persistence/tests/test_projects_rls.py:328` |
+| security | test_an_artist_cannot_write_an_object_into_another_artists_prefix | `python/libs/persistence/tests/test_projects_rls.py:364` |
+| security | test_an_artist_cannot_write_a_second_object_to_a_key_a_row_already_claims | `python/libs/persistence/tests/test_projects_rls.py:388` |
+| security | test_the_guard_does_not_refuse_the_upload_that_creates_the_pair | `python/libs/persistence/tests/test_projects_rls.py:426` |
+| security | test_storage_objects_cannot_be_deleted_from_sql_at_all | `python/libs/persistence/tests/test_projects_rls.py:450` |
+| security | test_the_reference_bucket_is_private | `python/libs/persistence/tests/test_projects_rls.py:473` |
+| security | test_every_storage_policy_is_scoped_to_our_bucket | `python/libs/persistence/tests/test_projects_rls.py:487` |
 | data | test_a_project_starts_without_an_intent | `python/libs/persistence/tests/test_projects_schema.py:73` |
 | data | test_a_resolved_intent_is_stored_as_given | `python/libs/persistence/tests/test_projects_schema.py:84` |
 | data | test_an_intent_missing_what_routing_needs_is_refused | `python/libs/persistence/tests/test_projects_schema.py:102` |
@@ -59,7 +64,7 @@ Upload, intake, and the typed ProjectIntent
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
 
-## Vitest — 24
+## Vitest — 31
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -71,6 +76,13 @@ Upload, intake, and the typed ProjectIntent
 | data | accepts a lowercase 64-character hex digest | `apps/studio/src/lib/storage/checksum.test.ts:44` |
 | data | rejects uppercase hex, because the database constraint does | `apps/studio/src/lib/storage/checksum.test.ts:48` |
 | data | rejects %s | `apps/studio/src/lib/storage/checksum.test.ts:52` |
+| data | removes storage objects before rows | `apps/studio/src/lib/storage/delete-project.test.ts:72` |
+| data | leaves the rows in place when storage deletes fewer objects than asked | `apps/studio/src/lib/storage/delete-project.test.ts:82` |
+| data | answers not-found for a project RLS does not show the caller | `apps/studio/src/lib/storage/delete-project.test.ts:99` |
+| data | sends the artist token and never a service key | `apps/studio/src/lib/storage/delete-project.test.ts:107` |
+| data | still deletes the row when no image rows exist | `apps/studio/src/lib/storage/delete-project.test.ts:120` |
+| data | reports unavailable when storage refuses, without touching rows | `apps/studio/src/lib/storage/delete-project.test.ts:130` |
+| data | reports unavailable when the row delete fails after storage succeeded | `apps/studio/src/lib/storage/delete-project.test.ts:141` |
 | security | puts the owner id first, which is the segment the storage policy matches on | `apps/studio/src/lib/storage/reference-images.test.ts:18` |
 | security | ends with the checksum, which is what the source_images constraint requires | `apps/studio/src/lib/storage/reference-images.test.ts:29` |
 | security | refuses %s as an owner id | `apps/studio/src/lib/storage/reference-images.test.ts:39` |

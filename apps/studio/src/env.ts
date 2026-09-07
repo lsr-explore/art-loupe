@@ -14,10 +14,14 @@ export const env = createEnv({
     // the hermetic e2e run — never set it in dev/deploy (the login action fails
     // closed on a missing Supabase config rather than silently allowing demo access).
     AUTH_PROVIDER: z.enum(['supabase', 'demo']).default('supabase'),
-    // Supabase Auth — artist email/password sign-in. The anon key is
-    // sufficient for password auth; the service-role key is never read by the app
-    // (only the offline seed script uses it). Optional in the schema so the `demo`
-    // provider can run without them; the login action requires them for `supabase`.
+    // Supabase Auth — artist email/password sign-in, and the PostgREST/Storage calls the
+    // route handlers make on the artist's behalf. The anon key is sufficient for both: it is
+    // the `apikey` header PostgREST requires, while the artist's own bearer token is the real
+    // credential and RLS is what decides. The service-role key is still never read by the app
+    // (only the offline seed script uses it) — the deletion path in `delete-project.ts` was
+    // deliberately built to need the artist's token rather than an RLS-bypassing key.
+    // Optional in the schema so the `demo` provider can run without them; the login action
+    // requires them for `supabase`.
     SUPABASE_URL: z.string().url().optional(),
     SUPABASE_ANON_KEY: z.string().min(1).optional(),
   },

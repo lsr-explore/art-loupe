@@ -13,11 +13,57 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 0 |
-| **Covered** | nothing yet |
-| **Not covered** | a11y · security · privacy · safety · data · performance · functionality |
+| **Tests** | 43 |
+| **Covered** | a11y 9 · functionality 34 |
+| **Not covered** | security · privacy · safety · data · performance |
 
-No test currently claims this flow.
+## Vitest — 43
+
+| Category | Test | Location |
+| --- | --- | --- |
+| functionality | renders the photograph and groups the guides over it | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:68` |
+| functionality | places an armed handle where the photograph is clicked, without a drag | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:75` |
+| functionality | offers no placement target until a handle is armed | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:92` |
+| functionality | disarms after placing, so the target is gone before the next click | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:108` |
+| functionality | throws a useful error when a handle is rendered outside a canvas | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:128` |
+| functionality | does not let the guide layer swallow the placement click | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:149` |
+| a11y | announces a move through one polite live region | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:166` |
+| a11y | has no accessibility violations | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:183` |
+| a11y | gives each canvas its own instructions id | `packages/fascia/src/components/blocks/overlay-canvas.test.tsx:190` |
+| functionality | clamps a point dragged past the edge back onto the photograph | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:14` |
+| functionality | leaves a point inside the unit square untouched | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:18` |
+| functionality | converts a pointer position to normalized coordinates | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:22` |
+| functionality | clamps a pointer position that left the element mid-drag | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:26` |
+| functionality | returns the origin rather than NaN for a zero-sized rect | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:30` |
+| functionality | renders CSS percentages for positioning | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:39` |
+| functionality | rounds to whole percentages for announcement | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:43` |
+| functionality | keeps the minimum target at the WCAG 2.2 SC 2.5.8 floor | `packages/fascia/src/components/blocks/overlay-geometry.test.ts:48` |
+| functionality | draws between two normalized points in the unit viewBox | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:10` |
+| functionality | keeps the stroke width uniform under a non-uniform stretch | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:24` |
+| functionality | dashes a proposal and solidifies a confirmed guide | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:32` |
+| functionality | never intercepts pointer events aimed at the handles beneath it | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:42` |
+| a11y | is hidden from assistive technology unless it is given a label | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:53` |
+| a11y | exposes itself as a named image when it carries a label | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:65` |
+| a11y | has no accessibility violations in either exposure | `packages/fascia/src/components/blocks/overlay-guide.test.tsx:72` |
+| functionality | names itself with the guide, its position, and its status | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:60` |
+| functionality | moves on arrow keys and updates its own accessible name | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:70` |
+| functionality | takes a fine step by default and a coarse step with shift | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:80` |
+| functionality | moves up and left on the corresponding arrows | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:92` |
+| functionality | clamps at the edge rather than walking off the photograph | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:104` |
+| functionality | ignores keys it does not handle | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:113` |
+| functionality | offers a non-dragging pointer path: arm the handle, then click to place | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:124` |
+| functionality | does not arm the handle when a drag ends on it | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:141` |
+| functionality | still arms on a click that involved no pointer movement | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:165` |
+| functionality | still arms when the pointer jitters below the drag threshold | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:183` |
+| functionality | does not let a cancelled drag swallow the next keyboard activation | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:208` |
+| functionality | disarms when the armed handle is clicked again | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:231` |
+| functionality | carries a target at least 24 css px on both axes | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:245` |
+| functionality | positions itself from normalized coordinates | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:255` |
+| functionality | refuses every input path when disabled | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:263` |
+| functionality | marks its status on the element so a proposal reads as provisional | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:278` |
+| a11y | has no accessibility violations | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:287` |
+| a11y | describes every handle with the shared operating instructions | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:294` |
+| a11y | keeps the drawn dot out of the accessibility tree | `packages/fascia/src/components/blocks/overlay-handle.test.tsx:305` |
 
 ---
 
