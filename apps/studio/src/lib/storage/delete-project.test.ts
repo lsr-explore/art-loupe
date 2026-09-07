@@ -31,11 +31,15 @@ const stubFetch = (
     images?: Response;
     storageDelete?: Response;
     projectDelete?: Response;
+    /** Answer to the `HEAD` existence probe. 200 = still there, 400 = gone. */
+    head?: Response;
   } = {},
 ): Stub => {
   const calls: string[] = [];
-  const fetchImpl = vi.fn(async (input: string | URL | Request) => {
+  const fetchImpl = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
     const url = String(input);
+    const method = init?.method ?? 'GET';
+
     if (isProjectLookup(url)) {
       calls.push('lookup');
       return overrides.projects ?? jsonResponse([{ id: PROJECT_ID }]);
@@ -43,6 +47,11 @@ const stubFetch = (
     if (isImageLookup(url)) {
       calls.push('images');
       return overrides.images ?? jsonResponse([{ storage_key: STORAGE_KEY }]);
+    }
+    // Both storage legs sit under `/storage/v1/object/`, so the method separates them.
+    if (isStorageDelete(url) && method === 'HEAD') {
+      calls.push('head');
+      return overrides.head ?? new Response(null, { status: 400 });
     }
     if (isStorageDelete(url)) {
       calls.push('storage-delete');
@@ -52,7 +61,7 @@ const stubFetch = (
       calls.push('row-delete');
       return overrides.projectDelete ?? new Response(null, { status: 204 });
     }
-    throw new Error(`unexpected request: ${url}`);
+    throw new Error(`unexpected ${method} request: ${url}`);
   });
   return { calls, fetchImpl: fetchImpl as unknown as typeof fetch };
 };
@@ -79,11 +88,12 @@ describe('deleteProject', () => {
       expect(stub.calls).toEqual(['lookup', 'images', 'storage-delete', 'row-delete']);
     });
 
-    it('leaves the rows in place when storage deletes fewer objects than asked', async () => {
-      // Storage answers with what it actually removed; two keys requested, one returned.
+    it('leaves the rows in place when an unaccounted object is still there', async () => {
+      // Two keys requested, one returned, and the probe says the other is still present.
       const stub = stubFetch({
         images: jsonResponse([{ storage_key: STORAGE_KEY }, { storage_key: `${STORAGE_KEY}2` }]),
         storageDelete: jsonResponse([{ name: STORAGE_KEY }]),
+        head: new Response(null, { status: 200 }),
       });
 
       await expect(run(stub)).resolves.toEqual({ ok: false, reason: 'partial', status: 200 });
@@ -91,6 +101,37 @@ describe('deleteProject', () => {
       // The rows are the only remaining record that those objects were meant to be gone, and a
       // retry needs them. Deleting them on top of an incomplete storage delete strands the
       // remainder permanently.
+      expect(stub.calls).not.toContain('row-delete');
+    });
+
+    it('completes when an unaccounted object was already gone', async () => {
+      // The regression Greptile caught on #29, reachable by design rather than by accident: the
+      // client storage DELETE policy is deliberately kept, so an artist may remove their own
+      // object directly. `source_images` has no DELETE policy, so the row stays behind. The next
+      // project deletion then asks storage for a key that is already gone and gets `200 []`.
+      //
+      // Counting removals treated that as a partial failure and refused to delete the rows — and
+      // since every retry did the same, the project became permanently undeletable, breaking
+      // FR-806 harder than the defect this path exists to fix. The check is about the end state
+      // now, so an object that is already absent is the success it always was.
+      const stub = stubFetch({
+        storageDelete: jsonResponse([]),
+        head: new Response(null, { status: 400 }),
+      });
+
+      await expect(run(stub)).resolves.toEqual({ ok: true, deletedObjects: 0 });
+      expect(stub.calls).toEqual(['lookup', 'images', 'storage-delete', 'head', 'row-delete']);
+    });
+
+    it('fails safe when the end state cannot be established', async () => {
+      // Neither "gone" nor "still there". Guessing absent would delete rows on top of objects
+      // that might still exist, so this reports `unavailable` — retryable — and touches nothing.
+      const stub = stubFetch({
+        storageDelete: jsonResponse([]),
+        head: new Response(null, { status: 503 }),
+      });
+
+      await expect(run(stub)).resolves.toEqual({ ok: false, reason: 'unavailable', status: 0 });
       expect(stub.calls).not.toContain('row-delete');
     });
   });

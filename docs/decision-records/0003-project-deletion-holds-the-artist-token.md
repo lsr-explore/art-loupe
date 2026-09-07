@@ -85,6 +85,15 @@ without bytes is visible, retryable, and safe. Bytes without rows is defect (1) 
 - No app runtime holds a credential that bypasses RLS. The anon key is used only as PostgREST's
   required `apikey` header; the artist's bearer token remains the real credential.
 - Deletion can report `partial`, which is surfaced as HTTP 500 and must never read as success.
+- **Completeness is judged by the end state, not by a count of removals.** Storage answers
+  `200 []` for a key that is already gone, and keeping the client DELETE policy makes
+  "already gone" a *supported* state — an artist may remove their own object directly, and
+  `source_images` has no DELETE policy so the row stays. An earlier draft compared the removed
+  count against the requested count, which read that as a partial failure, refused to delete the
+  rows, and failed identically on every retry — leaving the project permanently undeletable and
+  breaking FR-806 harder than the defect being fixed. Keys storage does not report are now
+  probed: absent is success, present is a genuine partial, and anything else fails safe as
+  `unavailable` rather than guessing.
 - **The upload path is now order-constrained.** Writing the `source_images` row before uploading
   the object would make every first upload fail with a bare permissions error. PR 7 must
   preserve upload-then-row; `test_the_guard_does_not_refuse_the_upload_that_creates_the_pair`

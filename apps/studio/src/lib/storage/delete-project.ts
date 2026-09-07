@@ -61,6 +61,41 @@ const restHeaders = ({ anonKey, accessToken }: { anonKey: string; accessToken: s
   'content-type': 'application/json',
 });
 
+/**
+ * Whether one object is still in the bucket.
+ *
+ * `HEAD` answers 200 for a present object and 400 for an absent one -- measured against the
+ * local stack, and consistent with `signed-url.ts`'s note that "Storage answers a missing object
+ * with 400 as often as 404". Anything else is `unknown`, which callers must treat as "do not
+ * proceed" rather than as absence: guessing absent here would delete rows on top of objects that
+ * might still exist.
+ */
+const objectExists = async ({
+  base,
+  headers,
+  key,
+  fetchImpl,
+}: {
+  base: string;
+  headers: Record<string, string>;
+  key: string;
+  fetchImpl: typeof fetch;
+}): Promise<'present' | 'absent' | 'unknown'> => {
+  let probe: Response;
+  try {
+    probe = await fetchImpl(`${base}/storage/v1/object/${REFERENCE_IMAGE_BUCKET}/${key}`, {
+      method: 'HEAD',
+      headers,
+    });
+  } catch {
+    return 'unknown';
+  }
+
+  if (probe.ok) return 'present';
+  if (probe.status === 400 || probe.status === 404) return 'absent';
+  return 'unknown';
+};
+
 export const deleteProject = async ({
   supabaseUrl,
   anonKey,
@@ -112,7 +147,7 @@ export const deleteProject = async ({
     .filter((key): key is string => typeof key === 'string' && key.length > 0);
 
   // 3. Objects before rows. Storage answers with the array of what it actually removed, which
-  //    is what makes a partial delete detectable rather than assumed.
+  //    is what makes an incomplete delete detectable rather than assumed.
   let deletedObjects = 0;
   if (keys.length > 0) {
     let removal: Response;
@@ -129,14 +164,50 @@ export const deleteProject = async ({
       return { ok: false, reason: 'unavailable', status: removal.status };
     }
 
-    const removed = (await removal.json().catch(() => null)) as unknown[] | null;
-    deletedObjects = Array.isArray(removed) ? removed.length : 0;
+    const removed = (await removal.json().catch(() => null)) as { name?: unknown }[] | null;
+    if (!Array.isArray(removed)) {
+      return { ok: false, reason: 'unavailable', status: removal.status };
+    }
+    deletedObjects = removed.length;
 
+    // What matters is the **end state**, not the count.
+    //
+    // Storage reports only what this call removed, and answers `200 []` for a key that was
+    // already gone. Treating a short result as a partial failure was wrong in a way that
+    // mattered: the client storage DELETE policy is deliberately kept, so an artist removing
+    // their own object directly is a *supported* action -- and it leaves the `source_images`
+    // row behind, because that table has no DELETE policy. The next project deletion would then
+    // see one key, get zero back, report `partial`, and refuse to remove the rows. Every retry
+    // would repeat it, leaving the project permanently undeletable. That breaks FR-806 harder
+    // than the defect this path exists to fix.
+    //
+    // So a key storage did not report is checked rather than assumed: absent is the desired end
+    // state, present is a genuine partial.
     if (deletedObjects !== keys.length) {
-      // Stop here, and leave the rows. They are the only remaining record that these objects
-      // were meant to be gone, and a retry uses them to finish the job. Deleting them now would
-      // strand whatever storage kept, which is the defect this whole path exists to close.
-      return { ok: false, reason: 'partial', status: removal.status };
+      const reported = new Set(
+        removed
+          .map((entry) => entry.name)
+          .filter((name): name is string => typeof name === 'string'),
+      );
+      const unaccounted = keys.filter((key) => !reported.has(key));
+
+      for (const key of unaccounted) {
+        const presence = await objectExists({ base, headers, key, fetchImpl });
+
+        if (presence === 'unknown') {
+          // Could not establish the end state. Fail safe and leave the rows: `unavailable`
+          // rather than `partial`, because the operation is retryable and nothing is known to
+          // have been stranded.
+          return { ok: false, reason: 'unavailable', status: 0 };
+        }
+
+        if (presence === 'present') {
+          // The real partial case. Stop, and leave the rows -- they are the only remaining
+          // record that these objects were meant to be gone, and a retry uses them to finish
+          // the job. Deleting them now would strand what storage kept.
+          return { ok: false, reason: 'partial', status: removal.status };
+        }
+      }
     }
   }
 
