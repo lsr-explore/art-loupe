@@ -13,8 +13,8 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 108 (2 parametrized) |
-| **Covered** | a11y 5 · security 90 · functionality 13 |
+| **Tests** | 114 (3 parametrized) |
+| **Covered** | a11y 5 · security 96 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
 ## pytest — 14
@@ -36,7 +36,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:90` |
 | security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:108` |
 
-## Vitest — 77
+## Vitest — 83
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -54,10 +54,11 @@ Acknowledgement gate, sign-in, and the route guard
 | security | signs with the artist token, never a service key | `apps/studio/src/app/api/images/[...key]/route.test.ts:100` |
 | security | answers 502 when Storage could not be asked | `apps/studio/src/app/api/images/[...key]/route.test.ts:110` |
 | security | answers 502 when the signed URL does not resolve | `apps/studio/src/app/api/images/[...key]/route.test.ts:123` |
-| security | serves an accepted type through unchanged | `apps/studio/src/app/api/images/[...key]/route.test.ts:134` |
-| security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:142` |
-| security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:160` |
-| security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:169` |
+| security | answers 502 when the connection to storage is refused outright | `apps/studio/src/app/api/images/[...key]/route.test.ts:132` |
+| security | serves an accepted type through unchanged | `apps/studio/src/app/api/images/[...key]/route.test.ts:148` |
+| security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:156` |
+| security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:174` |
+| security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:183` |
 | security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:206` |
 | security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:246` |
 | security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:271` |
@@ -72,6 +73,11 @@ Acknowledgement gate, sign-in, and the route guard
 | security | preserves the deep link query string | `packages/auth/src/ack.test.ts:42` |
 | security | prefers the configured public origin over the request origin | `packages/auth/src/ack.test.ts:55` |
 | security | is the name the entry point writes and the apps read | `packages/auth/src/ack.test.ts:74` |
+| security | reads the sub claim | `packages/auth/src/claims.test.ts:13` |
+| security | lowercases the subject | `packages/auth/src/claims.test.ts:17` |
+| security | survives multi-byte claims alongside the subject | `packages/auth/src/claims.test.ts:25` |
+| security | answers null for a %s | `packages/auth/src/claims.test.ts:31` |
+| security | never throws, whatever it is handed | `packages/auth/src/claims.test.ts:35` |
 | security | returns options with the cookie name and provided password | `packages/auth/src/options.test.ts:12` |
 | security | throws when the password is missing | `packages/auth/src/options.test.ts:23` |
 | security | throws when the password is too short | `packages/auth/src/options.test.ts:29` |

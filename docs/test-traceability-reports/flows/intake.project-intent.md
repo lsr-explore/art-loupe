@@ -13,9 +13,9 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 73 (7 parametrized) |
-| **Covered** | security 40 · safety 1 · data 32 |
-| **Not covered** | a11y · privacy · performance · functionality |
+| **Tests** | 134 (13 parametrized) |
+| **Covered** | security 53 · safety 1 · data 58 · functionality 22 |
+| **Not covered** | a11y · privacy · performance |
 
 ## pytest — 42
 
@@ -42,9 +42,9 @@ Upload, intake, and the typed ProjectIntent
 | security | test_an_artist_cannot_write_an_object_into_another_artists_prefix | `python/libs/persistence/tests/test_projects_rls.py:364` |
 | security | test_an_artist_cannot_write_a_second_object_to_a_key_a_row_already_claims | `python/libs/persistence/tests/test_projects_rls.py:388` |
 | security | test_the_guard_does_not_refuse_the_upload_that_creates_the_pair | `python/libs/persistence/tests/test_projects_rls.py:426` |
-| security | test_storage_objects_cannot_be_deleted_from_sql_at_all | `python/libs/persistence/tests/test_projects_rls.py:450` |
-| security | test_the_reference_bucket_is_private | `python/libs/persistence/tests/test_projects_rls.py:473` |
-| security | test_every_storage_policy_is_scoped_to_our_bucket | `python/libs/persistence/tests/test_projects_rls.py:487` |
+| security | test_storage_objects_cannot_be_deleted_from_sql_at_all | `python/libs/persistence/tests/test_projects_rls.py:448` |
+| security | test_the_reference_bucket_is_private | `python/libs/persistence/tests/test_projects_rls.py:471` |
+| security | test_every_storage_policy_is_scoped_to_our_bucket | `python/libs/persistence/tests/test_projects_rls.py:485` |
 | data | test_a_project_starts_without_an_intent | `python/libs/persistence/tests/test_projects_schema.py:73` |
 | data | test_a_resolved_intent_is_stored_as_given | `python/libs/persistence/tests/test_projects_schema.py:84` |
 | data | test_an_intent_missing_what_routing_needs_is_refused | `python/libs/persistence/tests/test_projects_schema.py:102` |
@@ -64,10 +64,56 @@ Upload, intake, and the typed ProjectIntent
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
 
-## Vitest — 31
+## Vitest — 92
 
 | Category | Test | Location |
 | --- | --- | --- |
+| security | answers 401 with no session | `apps/studio/src/app/api/projects/route.test.ts:50` |
+| security | answers 401 for a demo session, which owns no Supabase project | `apps/studio/src/app/api/projects/route.test.ts:58` |
+| security | takes the owner id from the token and never from the request | `apps/studio/src/app/api/projects/route.test.ts:68` |
+| security | answers 404 when Supabase is not configured | `apps/studio/src/app/api/projects/route.test.ts:75` |
+| functionality | refuses a body that is not multipart at all | `apps/studio/src/app/api/projects/route.test.ts:91` |
+| functionality | refuses a request with no file part | `apps/studio/src/app/api/projects/route.test.ts:101` |
+| functionality | refuses a file part that is a string rather than a file | `apps/studio/src/app/api/projects/route.test.ts:106` |
+| functionality | refuses an oversized file before reading its body | `apps/studio/src/app/api/projects/route.test.ts:111` |
+| functionality | refuses an intent that is %s | `apps/studio/src/app/api/projects/route.test.ts:119` |
+| functionality | forwards the validated intent, with the schema defaults applied | `apps/studio/src/app/api/projects/route.test.ts:137` |
+| functionality | forwards the filename as untrusted provenance | `apps/studio/src/app/api/projects/route.test.ts:157` |
+| functionality | answers 201 with the project identity | `apps/studio/src/app/api/projects/route.test.ts:167` |
+| functionality | returns no signed URL | `apps/studio/src/app/api/projects/route.test.ts:174` |
+| functionality | maps a rejected image to 422 with its reason | `apps/studio/src/app/api/projects/route.test.ts:184` |
+| functionality | maps a duplicate to 409, not to a permissions error | `apps/studio/src/app/api/projects/route.test.ts:195` |
+| functionality | maps an unavailable backend to 502 and logs it | `apps/studio/src/app/api/projects/route.test.ts:203` |
+| functionality | accepts the full intent the walkthrough describes | `apps/studio/src/app/api/projects/route.test.ts:287` |
+| data | uploads the object BEFORE the row that cites it | `apps/studio/src/lib/intake/ingest-upload.test.ts:53` |
+| data | creates the project before anything that needs its id | `apps/studio/src/lib/intake/ingest-upload.test.ts:72` |
+| data | writes the detections last, once the upload is already valid | `apps/studio/src/lib/intake/ingest-upload.test.ts:78` |
+| data | keys the object on the content checksum, under the artist prefix | `apps/studio/src/lib/intake/ingest-upload.test.ts:88` |
+| data | sends the sniffed dimensions and type, not anything it was told | `apps/studio/src/lib/intake/ingest-upload.test.ts:96` |
+| data | stores the filename as provenance and never as a path | `apps/studio/src/lib/intake/ingest-upload.test.ts:110` |
+| data | sends the owner id explicitly, for RLS to check rather than trust | `apps/studio/src/lib/intake/ingest-upload.test.ts:122` |
+| data | removes the project when the object cannot be uploaded | `apps/studio/src/lib/intake/ingest-upload.test.ts:219` |
+| data | removes the object AND the project when the row cannot be written | `apps/studio/src/lib/intake/ingest-upload.test.ts:227` |
+| data | reports an already-claimed key as a duplicate, not as a refusal | `apps/studio/src/lib/intake/ingest-upload.test.ts:243` |
+| data | does not write anything when the project insert fails | `apps/studio/src/lib/intake/ingest-upload.test.ts:252` |
+| data | refuses a body that is not one row carrying an id | `apps/studio/src/lib/intake/ingest-upload.test.ts:260` |
+| data | keeps a complete upload even when the detections cannot be written | `apps/studio/src/lib/intake/ingest-upload.test.ts:270` |
+| security | refuses an SVG without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:282` |
+| security | refuses an undersized photograph without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:293` |
+| functionality | accepts a %s and reports its type | `apps/studio/src/lib/intake/inspect-image.test.ts:25` |
+| functionality | reads the real dimensions out of a %s | `apps/studio/src/lib/intake/inspect-image.test.ts:37` |
+| functionality | reports the byte size it was actually given | `apps/studio/src/lib/intake/inspect-image.test.ts:50` |
+| security | refuses an SVG even though it decodes | `apps/studio/src/lib/intake/inspect-image.test.ts:59` |
+| security | refuses a GIF | `apps/studio/src/lib/intake/inspect-image.test.ts:70` |
+| security | calls a truncated JPEG undecodable rather than unsupported | `apps/studio/src/lib/intake/inspect-image.test.ts:77` |
+| security | refuses bytes that are not an image at all | `apps/studio/src/lib/intake/inspect-image.test.ts:86` |
+| security | never consults a declared content type | `apps/studio/src/lib/intake/inspect-image.test.ts:93` |
+| functionality | refuses an empty upload | `apps/studio/src/lib/intake/inspect-image.test.ts:102` |
+| functionality | refuses bytes over the ceiling | `apps/studio/src/lib/intake/inspect-image.test.ts:109` |
+| functionality | checks size before it tries to decode | `apps/studio/src/lib/intake/inspect-image.test.ts:117` |
+| functionality | refuses a long edge below ${MIN_LONG_EDGE_PX}px | `apps/studio/src/lib/intake/inspect-image.test.ts:124` |
+| functionality | accepts a long edge exactly at the floor | `apps/studio/src/lib/intake/inspect-image.test.ts:131` |
+| functionality | measures the long edge, not the width | `apps/studio/src/lib/intake/inspect-image.test.ts:138` |
 | data | produces the lowercase hex SHA-256 the database constraint accepts | `apps/studio/src/lib/storage/checksum.test.ts:7` |
 | data | matches the published SHA-256 of the empty input | `apps/studio/src/lib/storage/checksum.test.ts:14` |
 | data | changes when a single byte changes | `apps/studio/src/lib/storage/checksum.test.ts:22` |
@@ -76,13 +122,15 @@ Upload, intake, and the typed ProjectIntent
 | data | accepts a lowercase 64-character hex digest | `apps/studio/src/lib/storage/checksum.test.ts:44` |
 | data | rejects uppercase hex, because the database constraint does | `apps/studio/src/lib/storage/checksum.test.ts:48` |
 | data | rejects %s | `apps/studio/src/lib/storage/checksum.test.ts:52` |
-| data | removes storage objects before rows | `apps/studio/src/lib/storage/delete-project.test.ts:72` |
-| data | leaves the rows in place when storage deletes fewer objects than asked | `apps/studio/src/lib/storage/delete-project.test.ts:82` |
-| data | answers not-found for a project RLS does not show the caller | `apps/studio/src/lib/storage/delete-project.test.ts:99` |
-| data | sends the artist token and never a service key | `apps/studio/src/lib/storage/delete-project.test.ts:107` |
-| data | still deletes the row when no image rows exist | `apps/studio/src/lib/storage/delete-project.test.ts:120` |
-| data | reports unavailable when storage refuses, without touching rows | `apps/studio/src/lib/storage/delete-project.test.ts:130` |
-| data | reports unavailable when the row delete fails after storage succeeded | `apps/studio/src/lib/storage/delete-project.test.ts:141` |
+| data | removes storage objects before rows | `apps/studio/src/lib/storage/delete-project.test.ts:81` |
+| data | leaves the rows in place when an unaccounted object is still there | `apps/studio/src/lib/storage/delete-project.test.ts:91` |
+| data | completes when an unaccounted object was already gone | `apps/studio/src/lib/storage/delete-project.test.ts:107` |
+| data | fails safe when the end state cannot be established | `apps/studio/src/lib/storage/delete-project.test.ts:126` |
+| data | answers not-found for a project RLS does not show the caller | `apps/studio/src/lib/storage/delete-project.test.ts:140` |
+| data | sends the artist token and never a service key | `apps/studio/src/lib/storage/delete-project.test.ts:148` |
+| data | still deletes the row when no image rows exist | `apps/studio/src/lib/storage/delete-project.test.ts:161` |
+| data | reports unavailable when storage refuses, without touching rows | `apps/studio/src/lib/storage/delete-project.test.ts:171` |
+| data | reports unavailable when the row delete fails after storage succeeded | `apps/studio/src/lib/storage/delete-project.test.ts:182` |
 | security | puts the owner id first, which is the segment the storage policy matches on | `apps/studio/src/lib/storage/reference-images.test.ts:18` |
 | security | ends with the checksum, which is what the source_images constraint requires | `apps/studio/src/lib/storage/reference-images.test.ts:29` |
 | security | refuses %s as an owner id | `apps/studio/src/lib/storage/reference-images.test.ts:39` |
@@ -99,6 +147,19 @@ Upload, intake, and the typed ProjectIntent
 | security | reports a network failure as unavailable, not as a refusal | `apps/studio/src/lib/storage/signed-url.test.ts:150` |
 | security | refuses a success payload that carries no signed path | `apps/studio/src/lib/storage/signed-url.test.ts:167` |
 | security | reports a malformed success body as unavailable rather than throwing | `apps/studio/src/lib/storage/signed-url.test.ts:186` |
+| security | refuses %s before any request leaves the process | `apps/studio/src/lib/storage/upload-reference-image.test.ts:50` |
+| security | refuses the same keys on the way back out | `apps/studio/src/lib/storage/upload-reference-image.test.ts:61` |
+| data | returns the key it wrote | `apps/studio/src/lib/storage/upload-reference-image.test.ts:76` |
+| data | never upserts | `apps/studio/src/lib/storage/upload-reference-image.test.ts:81` |
+| data | sends the content type it was given, not one it guessed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:90` |
+| data | presents the artist token and never a service key | `apps/studio/src/lib/storage/upload-reference-image.test.ts:97` |
+| data | reads 409 as a key already claimed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:107` |
+| data | reads %i as denied | `apps/studio/src/lib/storage/upload-reference-image.test.ts:112` |
+| data | reads a server error as unavailable | `apps/studio/src/lib/storage/upload-reference-image.test.ts:118` |
+| data | reads a connection failure as unavailable rather than as a refusal | `apps/studio/src/lib/storage/upload-reference-image.test.ts:123` |
+| data | treats %i as removed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:158` |
+| data | reports a server error as not removed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:164` |
+| data | reports a connection failure as not removed rather than throwing | `apps/studio/src/lib/storage/upload-reference-image.test.ts:168` |
 
 ---
 

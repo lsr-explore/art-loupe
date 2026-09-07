@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 132,
-      "vitest": 296,
+      "pytest": 165,
+      "vitest": 394,
       "playwright": 24,
-      "all": 452
+      "all": 583
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 132,
-      "vitest": 296,
+      "pytest": 165,
+      "vitest": 394,
       "playwright": 24,
-      "all": 452
+      "all": 583
     }
   },
   "by_flow": {
@@ -60,6 +60,26 @@
       },
       "total": 0,
       "parametrized": 0
+    },
+    "safety.untrusted-input": {
+      "severity": "P0",
+      "title": "Injection screening on every untrusted surface",
+      "counts": {
+        "a11y": 0,
+        "security": 17,
+        "privacy": 0,
+        "safety": 47,
+        "data": 0,
+        "performance": 0,
+        "functionality": 0
+      },
+      "runners": {
+        "pytest": 33,
+        "vitest": 31,
+        "playwright": 0
+      },
+      "total": 64,
+      "parametrized": 5
     },
     "analysis.geometry": {
       "severity": "P1",
@@ -146,7 +166,7 @@
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 90,
+        "security": 96,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -155,11 +175,11 @@
       },
       "runners": {
         "pytest": 14,
-        "vitest": 77,
+        "vitest": 83,
         "playwright": 17
       },
-      "total": 108,
-      "parametrized": 2
+      "total": 114,
+      "parametrized": 3
     },
     "canvas.session-plan": {
       "severity": "P2",
@@ -186,20 +206,20 @@
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
         "a11y": 0,
-        "security": 40,
+        "security": 53,
         "privacy": 0,
         "safety": 1,
-        "data": 32,
+        "data": 58,
         "performance": 0,
-        "functionality": 0
+        "functionality": 22
       },
       "runners": {
         "pytest": 42,
-        "vitest": 31,
+        "vitest": 92,
         "playwright": 0
       },
-      "total": 73,
-      "parametrized": 7
+      "total": 134,
+      "parametrized": 13
     },
     "ops.observability": {
       "severity": "P2",
@@ -879,28 +899,35 @@
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:134",
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:132",
+      "name": "answers 502 when the connection to storage is refused outright",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:148",
       "name": "serves an accepted type through unchanged",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:142",
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:156",
       "name": "clamps %s to opaque bytes rather than reflecting it",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:160",
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:174",
       "name": "clamps a missing content-type rather than leaving it unset",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:169",
+      "id": "apps/studio/src/app/api/images/[...key]/route.test.ts:183",
       "name": "forbids sniffing and keeps the response out of shared caches",
       "runner": "vitest",
       "flow": "platform.auth",
@@ -933,6 +960,153 @@
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:101",
+      "name": "refuses a request with no file part",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:106",
+      "name": "refuses a file part that is a string rather than a file",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:111",
+      "name": "refuses an oversized file before reading its body",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:119",
+      "name": "refuses an intent that is %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:137",
+      "name": "forwards the validated intent, with the schema defaults applied",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:157",
+      "name": "forwards the filename as untrusted provenance",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:167",
+      "name": "answers 201 with the project identity",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:174",
+      "name": "returns no signed URL",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:184",
+      "name": "maps a rejected image to 422 with its reason",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:195",
+      "name": "maps a duplicate to 409, not to a permissions error",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:203",
+      "name": "maps an unavailable backend to 502 and logs it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:214",
+      "name": "logs the rule and surface when screening found something",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:239",
+      "name": "never puts the excerpt in a log",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:261",
+      "name": "says nothing at all when screening was clean",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:266",
+      "name": "never tells the artist what was detected",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:287",
+      "name": "accepts the full intent the walkthrough describes",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:50",
+      "name": "answers 401 with no session",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:58",
+      "name": "answers 401 for a demo session, which owns no Supabase project",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:68",
+      "name": "takes the owner id from the token and never from the request",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:75",
+      "name": "answers 404 when Supabase is not configured",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:91",
+      "name": "refuses a body that is not multipart at all",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
     },
     {
       "id": "apps/studio/src/components/ui/error-boundary.test.tsx:14",
@@ -968,6 +1142,286 @@
       "runner": "vitest",
       "flow": "platform.shell",
       "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:110",
+      "name": "stores the filename as provenance and never as a path",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:122",
+      "name": "sends the owner id explicitly, for RLS to check rather than trust",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:131",
+      "name": "screens the filename",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:141",
+      "name": "screens the artist",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:152",
+      "name": "screens before it stores",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:161",
+      "name": "records a detection with the surface, rule, severity and excerpt",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:178",
+      "name": "records the surfaces it did NOT screen",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:195",
+      "name": "still writes the unscreened-surface record when nothing was detected",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:203",
+      "name": "makes a retry idempotent rather than doubling the counts",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:219",
+      "name": "removes the project when the object cannot be uploaded",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:227",
+      "name": "removes the object AND the project when the row cannot be written",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:243",
+      "name": "reports an already-claimed key as a duplicate, not as a refusal",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:252",
+      "name": "does not write anything when the project insert fails",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:260",
+      "name": "refuses a body that is not one row carrying an id",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:270",
+      "name": "keeps a complete upload even when the detections cannot be written",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:282",
+      "name": "refuses an SVG without writing anything",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:293",
+      "name": "refuses an undersized photograph without writing anything",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:53",
+      "name": "uploads the object BEFORE the row that cites it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:72",
+      "name": "creates the project before anything that needs its id",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:78",
+      "name": "writes the detections last, once the upload is already valid",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:88",
+      "name": "keys the object on the content checksum, under the artist prefix",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:96",
+      "name": "sends the sniffed dimensions and type, not anything it was told",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:102",
+      "name": "refuses an empty upload",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:109",
+      "name": "refuses bytes over the ceiling",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:117",
+      "name": "checks size before it tries to decode",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:124",
+      "name": "refuses a long edge below ${MIN_LONG_EDGE_PX}px",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:131",
+      "name": "accepts a long edge exactly at the floor",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:138",
+      "name": "measures the long edge, not the width",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:148",
+      "name": "is always an object, even with no metadata to read",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:155",
+      "name": "survives metadata it cannot parse, and says the read was incomplete",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:179",
+      "name": "keeps nothing that a jsonb column cannot hold",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:198",
+      "name": "bounds what it will store",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:25",
+      "name": "accepts a %s and reports its type",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:37",
+      "name": "reads the real dimensions out of a %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:50",
+      "name": "reports the byte size it was actually given",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:59",
+      "name": "refuses an SVG even though it decodes",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:70",
+      "name": "refuses a GIF",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:77",
+      "name": "calls a truncated JPEG undecodable rather than unsupported",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:86",
+      "name": "refuses bytes that are not an image at all",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:93",
+      "name": "never consults a declared content type",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
     },
     {
       "id": "apps/studio/src/lib/storage/checksum.test.ts:14",
@@ -1027,49 +1481,63 @@
     },
     {
       "id": "apps/studio/src/lib/storage/delete-project.test.ts:107",
+      "name": "completes when an unaccounted object was already gone",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:126",
+      "name": "fails safe when the end state cannot be established",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:140",
+      "name": "answers not-found for a project RLS does not show the caller",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:148",
       "name": "sends the artist token and never a service key",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:120",
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:161",
       "name": "still deletes the row when no image rows exist",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:130",
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:171",
       "name": "reports unavailable when storage refuses, without touching rows",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:141",
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:182",
       "name": "reports unavailable when the row delete fails after storage succeeded",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:72",
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:81",
       "name": "removes storage objects before rows",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:82",
-      "name": "leaves the rows in place when storage deletes fewer objects than asked",
-      "runner": "vitest",
-      "flow": "intake.project-intent",
-      "category": "data"
-    },
-    {
-      "id": "apps/studio/src/lib/storage/delete-project.test.ts:99",
-      "name": "answers not-found for a project RLS does not show the caller",
+      "id": "apps/studio/src/lib/storage/delete-project.test.ts:91",
+      "name": "leaves the rows in place when an unaccounted object is still there",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "data"
@@ -1187,6 +1655,97 @@
       "category": "security"
     },
     {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:107",
+      "name": "reads 409 as a key already claimed",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:112",
+      "name": "reads %i as denied",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:118",
+      "name": "reads a server error as unavailable",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:123",
+      "name": "reads a connection failure as unavailable rather than as a refusal",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:158",
+      "name": "treats %i as removed",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:164",
+      "name": "reports a server error as not removed",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:168",
+      "name": "reports a connection failure as not removed rather than throwing",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:50",
+      "name": "refuses %s before any request leaves the process",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:61",
+      "name": "refuses the same keys on the way back out",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:76",
+      "name": "returns the key it wrote",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:81",
+      "name": "never upserts",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:90",
+      "name": "sends the content type it was given, not one it guessed",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/storage/upload-reference-image.test.ts:97",
+      "name": "presents the artist token and never a service key",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
       "id": "apps/studio/src/proxy.test.ts:206",
       "name": "matches the committed route × visitor gate matrix",
       "runner": "vitest",
@@ -1280,6 +1839,41 @@
     {
       "id": "packages/auth/src/ack.test.ts:74",
       "name": "is the name the entry point writes and the apps read",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/claims.test.ts:13",
+      "name": "reads the sub claim",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/claims.test.ts:17",
+      "name": "lowercases the subject",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/claims.test.ts:25",
+      "name": "survives multi-byte claims alongside the subject",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/claims.test.ts:31",
+      "name": "answers null for a %s",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/claims.test.ts:35",
+      "name": "never throws, whatever it is handed",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
@@ -2524,6 +3118,118 @@
       "category": "data"
     },
     {
+      "id": "packages/schemas/src/screening.test.ts:109",
+      "name": "names the surface it was asked about",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:114",
+      "name": "reports a rule once however many times it matches",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:119",
+      "name": "bounds the excerpt",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:125",
+      "name": "collapses whitespace so one detection stays one line",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:133",
+      "name": "finds text nested inside it",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:138",
+      "name": "screens keys as well as values",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:145",
+      "name": "reaches into arrays",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:151",
+      "name": "reports each rule once across the whole block",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:159",
+      "name": "survives a block nested deeper than it will walk",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:171",
+      "name": "ignores the values that are not text",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:42",
+      "name": "(unnamed)",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:52",
+      "name": "declares the same surfaces the module does",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:58",
+      "name": "gives every rule a unique id",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:71",
+      "name": "(unnamed)",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:87",
+      "name": "compiles every pattern",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "packages/schemas/src/screening.test.ts:95",
+      "name": "bounds every quantifier that follows a negated class",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
       "id": "python/libs/auth/tests/test_tokens.py:105",
       "name": "test_rejects_a_token_from_another_issuer",
       "runner": "pytest",
@@ -3049,21 +3755,21 @@
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:450",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:448",
       "name": "test_storage_objects_cannot_be_deleted_from_sql_at_all",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:473",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:471",
       "name": "test_the_reference_bucket_is_private",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_projects_rls.py:487",
+      "id": "python/libs/persistence/tests/test_projects_rls.py:485",
       "name": "test_every_storage_policy_is_scoped_to_our_bucket",
       "runner": "pytest",
       "flow": "intake.project-intent",
@@ -3245,6 +3951,125 @@
       "category": "security"
     },
     {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:113",
+      "name": "test_an_artist_cannot_write_a_detection_into_another_artists_project",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:130",
+      "name": "test_anon_reaches_nothing",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:141",
+      "name": "test_authenticated_holds_no_update_privilege",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:151",
+      "name": "test_authenticated_holds_no_delete_privilege",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:155",
+      "name": "test_authenticated_holds_the_privileges_it_needs",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:161",
+      "name": "test_an_artist_cannot_amend_their_own_detection",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:169",
+      "name": "test_an_artist_cannot_delete_their_own_detection",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:176",
+      "name": "test_deleting_the_project_takes_the_detections_with_it",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:203",
+      "name": "test_an_unknown_surface_is_refused",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:211",
+      "name": "test_every_screened_surface_is_accepted",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:229",
+      "name": "test_the_not_screened_sentinel_is_storable",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:246",
+      "name": "test_the_same_finding_cannot_be_recorded_twice",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:257",
+      "name": "test_an_unbounded_excerpt_is_refused",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:72",
+      "name": "test_both_detections_are_readable_when_no_policy_is_deciding",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:79",
+      "name": "test_an_artist_can_read_their_own_detection",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:85",
+      "name": "test_an_artist_can_insert_a_detection_against_their_own_project",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_screening_detections.py:99",
+      "name": "test_an_artist_cannot_read_another_artists_detections",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "security"
+    },
+    {
       "id": "python/libs/schemas/tests/test_parity.py:103",
       "name": "test_accepts_artifact_metadata",
       "runner": "pytest",
@@ -3313,6 +4138,118 @@
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:104",
+      "name": "test_the_excerpt_is_bounded",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:110",
+      "name": "test_the_excerpt_collapses_whitespace",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:116",
+      "name": "test_walking_a_block_finds_text_nested_inside_it",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:121",
+      "name": "test_walking_a_block_screens_keys_as_well_as_values",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:126",
+      "name": "test_walking_a_block_reaches_into_arrays",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:131",
+      "name": "test_walking_a_block_reports_each_rule_once",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:139",
+      "name": "test_walking_survives_a_block_nested_deeper_than_it_will_walk",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:151",
+      "name": "test_walking_ignores_values_that_are_not_text",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:52",
+      "name": "test_the_shared_corpus_reaches_the_same_verdict",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:57",
+      "name": "test_the_fixture_declares_the_surfaces_the_module_does",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:62",
+      "name": "test_every_rule_id_is_unique",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:68",
+      "name": "test_every_pattern_stays_inside_the_portable_subset",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:84",
+      "name": "test_every_pattern_compiles",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:89",
+      "name": "test_no_pattern_leaves_a_negated_class_unbounded",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:94",
+      "name": "test_a_detection_names_the_surface_it_was_asked_about",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_screening.py:99",
+      "name": "test_a_rule_reports_once_however_many_times_it_matches",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
     },
     {
       "id": "python/services/agent/tests/test_graph.py:15",
@@ -3458,6 +4395,11 @@
       "palette.extraction"
     ],
     "missingExpected": [
+      {
+        "id": "safety.untrusted-input",
+        "severity": "P0",
+        "missing": ["a11y"]
+      },
       {
         "id": "intake.project-intent",
         "severity": "P2",

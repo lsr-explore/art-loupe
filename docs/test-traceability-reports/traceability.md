@@ -27,24 +27,27 @@ exists, the detail tells you what it covers.
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 40 | – | 1 | 32 | – | – | 73 |
-| **intake** | | – | 40 | – | 1 | 32 | – | – | **73** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | – | 53 | – | 1 | 58 | – | 22 | 134 |
+| **intake** | | – | 53 | – | 1 | 58 | – | 22 | **134** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
 | **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | 1 | 33 | 41 |
-| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 90 | – | – | – | – | 13 | 108 |
+| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 96 | – | – | – | – | 13 | 114 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 106 | 137 |
-| **platform** | | 36 | 97 | – | – | 20 | 1 | 152 | **306** |
+| **platform** | | 36 | 103 | – | – | 20 | 1 | 152 | **312** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
-| **all flows** | | **47** | **141** | **–** | **1** | **53** | **1** | **209** | **452** |
+| [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 47 | – | – | – | 64 |
+| **safety** | | – | 17 | – | 47 | – | – | – | **64** |
+| **all flows** | | **47** | **177** | **–** | **48** | **79** | **1** | **231** | **583** |
 
 ## Gaps
 
 - **6 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **`safety.untrusted-input`** (P0) has tests but none categorised `a11y`.
 - **`intake.project-intent`** (P2) has tests but none categorised `a11y`.
 
 ## Untagged
@@ -76,7 +79,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 132 | 0 | 132 |
-| Vitest | 296 | 0 | 296 |
+| pytest | 165 | 0 | 165 |
+| Vitest | 394 | 0 | 394 |
 | Playwright | 24 | 0 | 24 |
-| **All** | **452** | **0** | **452** |
+| **All** | **583** | **0** | **583** |

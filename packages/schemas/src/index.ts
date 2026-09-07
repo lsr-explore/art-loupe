@@ -55,3 +55,12 @@ export {
   toolManifestSchema,
   toolSelectionSchema,
 } from './manifest';
+export {
+  type Detection,
+  type DetectionSeverity,
+  EXCERPT_MAX_LENGTH,
+  SCREENED_SURFACES,
+  type ScreenedSurface,
+  screenText,
+  screenValues,
+} from './screening';
