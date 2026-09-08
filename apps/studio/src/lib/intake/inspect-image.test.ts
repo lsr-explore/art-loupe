@@ -233,6 +233,39 @@ describe('the metadata it keeps', () => {
     expect(serializedBytes(bounded)).toBeLessThanOrEqual(MAX_EXIF_JSON_BYTES);
   });
 
+  it('never presents a trimmed block as a complete one', async () => {
+    // Greptile P1, on my own previous fix. When the retained fields nearly filled the budget,
+    // the fallback returned them with *no* marker — so discarded metadata read as though
+    // nothing had been removed. Losing a field is acceptable; losing the fact that a field was
+    // lost is not, because nothing downstream can then tell.
+    //
+    // One field just under the ceiling plus one that cannot fit is exactly that case: there is
+    // no room left for the count unless something is evicted to make room.
+    const metadata: Record<string, unknown> = {
+      Nearly: 'a'.repeat(MAX_EXIF_JSON_BYTES - 64),
+      TooBig: 'b'.repeat(MAX_EXIF_JSON_BYTES),
+    };
+
+    const bounded = boundMetadata(metadata);
+    expect(bounded.artloupe_dropped_field_count).toBeGreaterThan(0);
+    expect(serializedBytes(bounded)).toBeLessThanOrEqual(MAX_EXIF_JSON_BYTES);
+  });
+
+  it('always carries the count whenever anything was dropped', async () => {
+    // The general form: across a spread of shapes that all overflow, a block that dropped
+    // something must always say so.
+    for (const bigCount of [2, 8, 64]) {
+      const metadata: Record<string, unknown> = {};
+      for (let index = 0; index < bigCount; index += 1) {
+        metadata[`Field${index}`] = 'x'.repeat(Math.floor(MAX_EXIF_JSON_BYTES / 2));
+      }
+
+      const bounded = boundMetadata(metadata);
+      expect(bounded.artloupe_dropped_field_count).toBeGreaterThan(0);
+      expect(serializedBytes(bounded)).toBeLessThanOrEqual(MAX_EXIF_JSON_BYTES);
+    }
+  });
+
   it('leaves a small block untouched', async () => {
     // The control: the trimming path must not fire on ordinary metadata, or every one of the
     // assertions above would hold vacuously.

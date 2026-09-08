@@ -207,16 +207,38 @@ export const boundMetadata = (metadata: Record<string, unknown>): Record<string,
     return kept;
   }
 
-  // **The ledger goes inside the budget, not on top of it.** Those names came out of the file,
-  // so they are attacker-chosen too — a photograph carrying enough long XMP property names
-  // pushes the stored object past the ceiling using the record of what was dropped. That is the
-  // part that reads like bookkeeping and is not: it is the same untrusted input by another
-  // route, bounded only by the 25 MB upload ceiling above it.
+  // **The marker outranks the data it describes.** Everything below exists so that a trimmed
+  // block can never read as a complete one: provenance that quietly omits its own omissions is
+  // worse than provenance with a field missing, because nothing downstream can tell.
+  //
+  // So room is made for the count *first*, by evicting kept fields until it fits. Evicting one
+  // more field costs a field; not doing so costs the fact that any field was lost.
+  while (
+    serializedLength({ ...kept, artloupe_dropped_field_count: dropped.length }) >
+    MAX_EXIF_JSON_BYTES
+  ) {
+    const largest = Object.entries(kept).sort(
+      ([, left], [, right]) => serializedLength(right) - serializedLength(left),
+    )[0];
+    if (largest === undefined) {
+      break;
+    }
+    delete kept[largest[0]];
+    dropped.push(largest[0]);
+  }
+
   const bounded: Record<string, unknown> = {
     ...kept,
     artloupe_dropped_field_count: dropped.length,
   };
 
+  // **The name ledger goes inside the budget, not on top of it.** Those names came out of the
+  // file, so they are attacker-chosen too — a photograph carrying enough long XMP property
+  // names pushes the stored object past the ceiling using the record of what was dropped. That
+  // is the part that reads like bookkeeping and is not: it is the same untrusted input arriving
+  // by another route, bounded only by the 25 MB upload ceiling above it.
+  //
+  // The names are the expendable half. The count is not.
   const names: string[] = [];
   for (const name of [...dropped].sort()) {
     const candidate = { ...bounded, artloupe_dropped_fields: [...names, name] };
@@ -230,10 +252,12 @@ export const boundMetadata = (metadata: Record<string, unknown>): Record<string,
     bounded.artloupe_dropped_fields = names;
   }
 
-  // The count is a small number, but "small" is not "free" — with `kept` already at the ceiling
-  // it can be what tips the object over. Storing an object that breaks its own documented bound
-  // is worse than losing the ledger, so the ledger is what gives way.
-  return serializedLength(bounded) <= MAX_EXIF_JSON_BYTES ? bounded : kept;
+  // Last resort: the marker alone. Unreachable in practice — a single small integer against a
+  // 64 KiB ceiling — but written down rather than assumed, because the alternative to being
+  // wrong here is silently returning a block that claims to be whole.
+  return serializedLength(bounded) <= MAX_EXIF_JSON_BYTES
+    ? bounded
+    : { artloupe_dropped_field_count: dropped.length };
 };
 
 const serializedLength = (value: unknown): number => {
