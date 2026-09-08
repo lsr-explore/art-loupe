@@ -275,6 +275,40 @@ describe('when a step fails', () => {
     expect(result.ok).toBe(true);
     expect(stub.calls).not.toContain('project-delete');
   });
+
+  it('reports a failed detection write rather than discarding it', async () => {
+    // Greptile P1. Surviving the failure and *hiding* it are different things, and an earlier
+    // version did the second while its comment claimed the first — the response was never
+    // checked for `ok`, so a PostgREST refusal returned 201 with the ops record silently short
+    // the OCR not-screened sentinel, the one row whose absence makes an unscreened surface
+    // look clean.
+    const stub = stubIngestFetch({ detectionInsert: jsonResponse({}, 500) });
+    const result = await ingest({}, stub.fetchImpl);
+
+    expect(result.ok && result.result.detectionsRecorded).toBe(false);
+  });
+
+  it('reports a detection write that never reached the server', async () => {
+    const stub = stubIngestFetch();
+    const failing = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).includes('screening_detections')) {
+        throw new TypeError('fetch failed');
+      }
+      return stub.fetchImpl(input, init);
+    }) as unknown as typeof fetch;
+
+    const result = await ingest({}, failing);
+    expect(result.ok && result.result.detectionsRecorded).toBe(false);
+  });
+
+  it('reports success when the detections did land', async () => {
+    // The control: without it both assertions above would hold on a function that always
+    // answered false.
+    const stub = stubIngestFetch();
+    const result = await ingest({}, stub.fetchImpl);
+
+    expect(result.ok && result.result.detectionsRecorded).toBe(true);
+  });
 });
 
 // @trace flow=intake.project-intent category=security

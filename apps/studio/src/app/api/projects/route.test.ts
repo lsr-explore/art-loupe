@@ -33,7 +33,13 @@ const { POST } = await import('./route');
 
 const success = {
   ok: true,
-  result: { projectId: PROJECT_ID, checksum: CHECKSUM, storageKey: 'k', detections: [] },
+  result: {
+    projectId: PROJECT_ID,
+    checksum: CHECKSUM,
+    storageKey: 'k',
+    detections: [],
+    detectionsRecorded: true,
+  },
 };
 
 beforeEach(() => {
@@ -311,6 +317,24 @@ describe('what it says about detections', () => {
   it('says nothing at all when screening was clean', async () => {
     await POST(uploadRequest() as never);
     expect(loggerWarn).not.toHaveBeenCalled();
+  });
+
+  it('logs an error when the detections did not reach the table', async () => {
+    // The upload still succeeds — a bookkeeping failure must not cost the artist a valid
+    // project — but it stops being invisible. Nothing else would ever notice.
+    ingestUpload.mockResolvedValue({
+      ok: true,
+      result: { ...success.result, detectionsRecorded: false },
+    });
+
+    const response = await POST(uploadRequest() as never);
+    expect(response.status).toBe(201);
+    expect(loggerError).toHaveBeenCalled();
+  });
+
+  it('does not log an error when they did', async () => {
+    await POST(uploadRequest() as never);
+    expect(loggerError).not.toHaveBeenCalled();
   });
 
   it('never tells the artist what was detected', async () => {

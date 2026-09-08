@@ -179,7 +179,18 @@ export const POST = async (request: NextRequest) => {
     return Response.json({ error: 'ingest_unavailable' }, { status: 502 });
   }
 
-  const { projectId, checksum, detections } = ingested.result;
+  const { projectId, checksum, detections, detectionsRecorded } = ingested.result;
+
+  // A bookkeeping failure does not cost the artist a valid upload, but it must not vanish.
+  // When this is false the operations panel under-reports, and the OCR not-screened sentinel
+  // is missing — which is precisely the row whose absence makes an unscreened surface look
+  // clean. Logged at error level because nothing else will ever notice.
+  if (!detectionsRecorded) {
+    logger.error(
+      { projectId, detectionCount: detections.length },
+      'screening detections were not recorded for a completed upload',
+    );
+  }
 
   // Logged, not returned as prose. The count and the rule ids are safe to emit; the excerpts
   // are attacker-controlled text and belong only in the table an operator reads deliberately.

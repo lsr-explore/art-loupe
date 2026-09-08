@@ -96,6 +96,15 @@ export interface IngestUploadSuccess {
   checksum: string;
   storageKey: string;
   detections: Detection[];
+  /**
+   * Whether the detections actually reached the table.
+   *
+   * Reported rather than thrown. A bookkeeping failure must not destroy a complete and correct
+   * upload — but it must not vanish either: the ops panel under-reports when this is false, and
+   * the OCR not-screened sentinel is exactly the row whose absence would make an unscreened
+   * surface look clean again. The route logs it; only the caller has a logger.
+   */
+  detectionsRecorded: boolean;
 }
 
 export type IngestUploadResult =
@@ -238,11 +247,20 @@ export const ingestUpload = async ({
   }
 
   // 7. The detections, and the record of what was not looked at. Last on purpose: a failure
-  //    here must not cost the artist a valid upload, so it is reported by the caller's logs
-  //    rather than by unwinding a project that is otherwise complete and correct.
-  await recordDetections({ base, headers, projectId, detections, fetchImpl });
+  //    here must not cost the artist a valid upload, so it is reported to the caller rather
+  //    than unwinding a project that is otherwise complete and correct.
+  const detectionsRecorded = await recordDetections({
+    base,
+    headers,
+    projectId,
+    detections,
+    fetchImpl,
+  });
 
-  return { ok: true, result: { projectId, checksum, storageKey, detections } };
+  return {
+    ok: true,
+    result: { projectId, checksum, storageKey, detections, detectionsRecorded },
+  };
 };
 
 /**
@@ -284,7 +302,7 @@ const recordDetections = async ({
   projectId: string;
   detections: Detection[];
   fetchImpl: typeof fetch;
-}): Promise<void> => {
+}): Promise<boolean> => {
   const rows = [
     ...detections.map((detection) => ({
       project_id: projectId,
@@ -302,15 +320,22 @@ const recordDetections = async ({
     })),
   ];
 
+  // Reported, never thrown, and never silently discarded — the two are different, and an
+  // earlier version of this function did the second while its comment claimed the first. The
+  // upload is complete and correct by now, so failing it here would destroy a valid project to
+  // report a bookkeeping problem; but a `false` that nobody returns is a failure nobody can see.
   try {
-    await fetchImpl(`${base}/rest/v1/screening_detections?on_conflict=project_id,surface,rule_id`, {
-      method: 'POST',
-      headers: { ...headers, prefer: 'resolution=ignore-duplicates' },
-      body: JSON.stringify(rows),
-    });
+    const written = await fetchImpl(
+      `${base}/rest/v1/screening_detections?on_conflict=project_id,surface,rule_id`,
+      {
+        method: 'POST',
+        headers: { ...headers, prefer: 'resolution=ignore-duplicates' },
+        body: JSON.stringify(rows),
+      },
+    );
+    return written.ok;
   } catch {
-    // Swallowed deliberately. The upload is complete and correct at this point, and failing it
-    // now would destroy a valid project to report a bookkeeping problem. The caller logs it.
+    return false;
   }
 };
 
