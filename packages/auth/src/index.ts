@@ -5,6 +5,7 @@
  * - `@artloupe/auth/server` — Server Components / Actions / Route Handlers
  * - `@artloupe/auth/middleware` — Edge Middleware
  */
+export { subjectFromAccessToken } from './claims';
 export { getSessionOptions, SESSION_COOKIE_NAME } from './options';
 export { type AuthProvider, demoAuthProvider, type TokenRefresher } from './provider';
 export {

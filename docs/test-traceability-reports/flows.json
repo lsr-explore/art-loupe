@@ -71,6 +71,18 @@
       ]
     },
     {
+      "id": "safety.untrusted-input",
+      "title": "Injection screening on every untrusted surface",
+      "severity": "P0",
+      "rationale": "Five surfaces carry text nobody in this system wrote — a filename, an uploaded photograph's EXIF block, whatever is legible in its pixels, the artist's own free-text goal, and the documents retrieval brings back. The screener is a hand-authored mirror across two regex engines, which fails quietly: both sides compile the same rule and match differently, and nothing says so until a real detection is missed. The shared rules fixture and its case corpus are what make that loud, so the tests here are the boundary itself rather than a check on it.",
+      "surfaces": [
+        "apps/studio",
+        "packages/schemas",
+        "python/libs/schemas",
+        "python/libs/persistence"
+      ]
+    },
+    {
       "id": "intake.project-intent",
       "title": "Upload, intake, and the typed ProjectIntent",
       "severity": "P2",

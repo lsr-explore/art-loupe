@@ -29,6 +29,7 @@ from artloupe.persistence.config import (
 from artloupe.persistence.tables import (
     PROJECTS_TABLE,
     REFERENCE_IMAGE_BUCKET,
+    SCREENING_DETECTIONS_TABLE,
     SOURCE_IMAGES_TABLE,
 )
 
@@ -36,6 +37,7 @@ __all__ = [
     "CHECKPOINT_SCHEMA",
     "PROJECTS_TABLE",
     "REFERENCE_IMAGE_BUCKET",
+    "SCREENING_DETECTIONS_TABLE",
     "SOURCE_IMAGES_TABLE",
     "PersistenceMode",
     "PersistenceSettings",

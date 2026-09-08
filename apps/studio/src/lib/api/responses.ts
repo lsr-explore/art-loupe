@@ -17,6 +17,22 @@
  * 'not there' the same observable answer by design". This module keeps the HTTP surface
  * agreeing with the database rather than leaking a distinction Postgres refuses to make.
  *
+ * ## The third code, and why it does not break the rule above
+ *
+ * `422 invalid_upload` **does** carry a reason, which is the opposite of what the two codes
+ * above do. The distinction is what the answer is about:
+ *
+ * - 401 and 404 describe *the system's* state — whether a session is good, whether a row
+ *   exists, who owns it. Detail there is an oracle, because the caller learns something it
+ *   could not otherwise know.
+ * - `invalid_upload` describes *the bytes the caller just sent*, which they already have. A
+ *   reason tells them nothing about anyone else's data, and FR-101 requires one: "anything
+ *   else is refused with a reason". An artist whose 600 px photograph is rejected has to be
+ *   able to find out that it was the size.
+ *
+ * The reason vocabulary is therefore closed and enumerated, so it cannot drift into carrying
+ * anything derived from stored state.
+ *
  * No `server-only` import: middleware imports this on the Edge runtime, where that marker
  * fails the build.
  */
@@ -24,10 +40,25 @@
 import { NextResponse } from 'next/server';
 
 /** The closed set of machine-readable refusal codes. Widening it is an API change. */
-export type ApiErrorCode = 'unauthenticated' | 'not_found';
+export type ApiErrorCode = 'unauthenticated' | 'not_found' | 'invalid_upload' | 'conflict';
+
+/**
+ * Why an upload was refused — a closed set, and never anything computed from stored state.
+ *
+ * Mirrors `ImageRejection` in `intake/inspect-image.ts` plus the two failures that belong to
+ * the request rather than to the image.
+ */
+export type UploadRejection =
+  | 'missing_file'
+  | 'too_large'
+  | 'unsupported_type'
+  | 'undecodable'
+  | 'below_min_dimension'
+  | 'invalid_intent';
 
 interface ApiErrorBody {
   error: ApiErrorCode;
+  reason?: UploadRejection;
 }
 
 /**
@@ -49,3 +80,26 @@ export const unauthenticated = (): NextResponse<ApiErrorBody> =>
  */
 export const notFound = (): NextResponse<ApiErrorBody> =>
   NextResponse.json({ error: 'not_found' }, { status: 404 });
+
+/**
+ * The submitted file or intent is not something this system accepts.
+ *
+ * 422 rather than 400: the request was well formed — correct method, parseable multipart, a
+ * file part present — and it is the *content* that is unacceptable, which is exactly the
+ * distinction 422 exists to make. A 400 would put a valid-but-refused photograph in the same
+ * bucket as a malformed request body and make a client unable to tell whether retrying with a
+ * different image could ever work.
+ */
+export const invalidUpload = (reason: UploadRejection): NextResponse<ApiErrorBody> =>
+  NextResponse.json({ error: 'invalid_upload', reason }, { status: 422 });
+
+/**
+ * This artist has already uploaded these exact bytes to this project.
+ *
+ * Carries no reason string. Unlike `invalidUpload`, the fact being reported is about stored
+ * state — a row that already exists — so the status code is the whole answer. It is safe to
+ * report at all only because the state in question is the caller's own: RLS decided that
+ * before this was reachable.
+ */
+export const conflict = (): NextResponse<ApiErrorBody> =>
+  NextResponse.json({ error: 'conflict' }, { status: 409 });

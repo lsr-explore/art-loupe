@@ -1,6 +1,6 @@
 """Where artist project data lives, named once.
 
-These three names appear in four places between them — the migration that creates them, the
+These four names appear in four places between them — the migration that creates them, the
 TypeScript helpers in `apps/studio/src/lib/storage/`, the Python that will read them, and the
 tests that assert the policies hold. Naming them here gives the Python half one spelling.
 
@@ -17,6 +17,10 @@ PROJECTS_TABLE = "public.projects"
 
 # The immutable original (FR-105). One row per project (FR-101).
 SOURCE_IMAGES_TABLE = "public.source_images"
+
+# What injection screening found on each untrusted surface (FR-106, FR-505, FR-803).
+# Append-only by design: `authenticated` holds select and insert, and neither update nor delete.
+SCREENING_DETECTIONS_TABLE = "public.screening_detections"
 
 # The private Supabase Storage bucket holding the uploaded bytes. Object keys are
 # `{owner_id}/{project_id}/{checksum}`; the leading segment is what the storage policies match.
