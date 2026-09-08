@@ -11,32 +11,16 @@
  */
 
 import { z } from 'zod';
+import { MEDIA, SKILL_LEVELS } from './intent-values';
 
 /**
- * The media a plan can be built for.
+ * `MEDIA` and `SKILL_LEVELS` live in `intent-values.ts`, not here.
  *
- * Scoped deliberately: pastel, gouache, and digital are **not** supported in the first
- * version, so they are absent rather than accepted-and-handled-badly. Every entry here is a
- * medium the planner is expected to produce a defensible plan for.
- *
- * Spelling follows the repo's existing convention — `watercolour`, `coloured-pencil`, to
- * match `licence` and "eight-colour palette" in the design documents. These are wire values,
- * so a mixed convention would be a lasting papercut.
- *
- * Kept as one editable array on each side: widening it is a two-line diff, and it is the
- * kind of call that belongs to whoever owns the art domain.
+ * They are plain arrays and the intake form renders its options from them, so leaving them in
+ * this module — which imports `zod` at the top — would put the whole validator in the client
+ * bundle for the sake of seven strings. Re-exported so the barrel's surface is unchanged.
  */
-export const MEDIA = [
-  'graphite',
-  'charcoal',
-  'ink',
-  'coloured-pencil',
-  'watercolour',
-  'acrylic',
-  'oil',
-] as const;
-
-export const SKILL_LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
+export { MEDIA, type Medium, SKILL_LEVELS, type SkillLevel } from './intent-values';
 
 /**
  * Physical size of what the artist is working on.
@@ -63,5 +47,3 @@ export const projectIntentSchema = z.object({
 
 export type SupportSize = z.infer<typeof supportSizeSchema>;
 export type ProjectIntent = z.infer<typeof projectIntentSchema>;
-export type Medium = (typeof MEDIA)[number];
-export type SkillLevel = (typeof SKILL_LEVELS)[number];

@@ -38,28 +38,17 @@
  */
 
 import { NextResponse } from 'next/server';
-
-/** The closed set of machine-readable refusal codes. Widening it is an API change. */
-export type ApiErrorCode = 'unauthenticated' | 'not_found' | 'invalid_upload' | 'conflict';
+import type { ApiErrorBody, UploadRejection } from './project-contract';
 
 /**
- * Why an upload was refused — a closed set, and never anything computed from stored state.
+ * The vocabulary itself lives in `project-contract.ts`, not here.
  *
- * Mirrors `ImageRejection` in `intake/inspect-image.ts` plus the two failures that belong to
- * the request rather than to the image.
+ * The intake form and the Playwright stub both need these names, and neither can import a
+ * module that constructs `NextResponse`. Splitting the types out is what lets the browser side
+ * of the contract be written from the same declarations the handler answers with. Re-exported
+ * so existing importers of this module are unaffected.
  */
-export type UploadRejection =
-  | 'missing_file'
-  | 'too_large'
-  | 'unsupported_type'
-  | 'undecodable'
-  | 'below_min_dimension'
-  | 'invalid_intent';
-
-interface ApiErrorBody {
-  error: ApiErrorCode;
-  reason?: UploadRejection;
-}
+export type { ApiErrorBody, ApiErrorCode, UploadRejection } from './project-contract';
 
 /**
  * No usable artist session on this surface.

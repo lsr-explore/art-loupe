@@ -13,9 +13,9 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 134 (13 parametrized) |
-| **Covered** | security 53 · safety 1 · data 58 · functionality 22 |
-| **Not covered** | a11y · privacy · performance |
+| **Tests** | 173 (16 parametrized) |
+| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 51 |
+| **Not covered** | privacy · performance |
 
 ## pytest — 42
 
@@ -64,27 +64,52 @@ Upload, intake, and the typed ProjectIntent
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
 
-## Vitest — 92
+## Vitest — 120
 
 | Category | Test | Location |
 | --- | --- | --- |
-| security | answers 401 with no session | `apps/studio/src/app/api/projects/route.test.ts:50` |
-| security | answers 401 for a demo session, which owns no Supabase project | `apps/studio/src/app/api/projects/route.test.ts:58` |
-| security | takes the owner id from the token and never from the request | `apps/studio/src/app/api/projects/route.test.ts:68` |
-| security | answers 404 when Supabase is not configured | `apps/studio/src/app/api/projects/route.test.ts:75` |
-| functionality | refuses a body that is not multipart at all | `apps/studio/src/app/api/projects/route.test.ts:91` |
-| functionality | refuses a request with no file part | `apps/studio/src/app/api/projects/route.test.ts:101` |
-| functionality | refuses a file part that is a string rather than a file | `apps/studio/src/app/api/projects/route.test.ts:106` |
-| functionality | refuses an oversized file before reading its body | `apps/studio/src/app/api/projects/route.test.ts:111` |
-| functionality | refuses an intent that is %s | `apps/studio/src/app/api/projects/route.test.ts:119` |
-| functionality | forwards the validated intent, with the schema defaults applied | `apps/studio/src/app/api/projects/route.test.ts:137` |
-| functionality | forwards the filename as untrusted provenance | `apps/studio/src/app/api/projects/route.test.ts:157` |
-| functionality | answers 201 with the project identity | `apps/studio/src/app/api/projects/route.test.ts:167` |
-| functionality | returns no signed URL | `apps/studio/src/app/api/projects/route.test.ts:174` |
-| functionality | maps a rejected image to 422 with its reason | `apps/studio/src/app/api/projects/route.test.ts:184` |
-| functionality | maps a duplicate to 409, not to a permissions error | `apps/studio/src/app/api/projects/route.test.ts:195` |
-| functionality | maps an unavailable backend to 502 and logs it | `apps/studio/src/app/api/projects/route.test.ts:203` |
-| functionality | accepts the full intent the walkthrough describes | `apps/studio/src/app/api/projects/route.test.ts:287` |
+| functionality | confirms the upload and says plainly that the plan is not built | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:46` |
+| functionality | shows the project reference it was given | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:59` |
+| functionality | refuses %j rather than presenting it as a project | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:70` |
+| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:79` |
+| functionality | renders the page heading and the intake form | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:27` |
+| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:35` |
+| security | answers 401 with no session | `apps/studio/src/app/api/projects/route.test.ts:56` |
+| security | answers 401 for a demo session, which owns no Supabase project | `apps/studio/src/app/api/projects/route.test.ts:64` |
+| security | takes the owner id from the token and never from the request | `apps/studio/src/app/api/projects/route.test.ts:74` |
+| security | answers 404 when Supabase is not configured | `apps/studio/src/app/api/projects/route.test.ts:81` |
+| functionality | refuses a body that is not multipart at all | `apps/studio/src/app/api/projects/route.test.ts:97` |
+| functionality | refuses a request with no file part | `apps/studio/src/app/api/projects/route.test.ts:107` |
+| functionality | refuses a file part that is a string rather than a file | `apps/studio/src/app/api/projects/route.test.ts:112` |
+| functionality | abandons an over-large body BEFORE parsing it | `apps/studio/src/app/api/projects/route.test.ts:117` |
+| functionality | stops pulling the stream instead of draining it | `apps/studio/src/app/api/projects/route.test.ts:130` |
+| functionality | refuses on an honest oversized Content-Length without consuming the body | `apps/studio/src/app/api/projects/route.test.ts:139` |
+| functionality | does not trust a Content-Length that lies about a huge body | `apps/studio/src/app/api/projects/route.test.ts:157` |
+| functionality | accepts a body with no Content-Length at all | `apps/studio/src/app/api/projects/route.test.ts:168` |
+| functionality | refuses an intent that is %s | `apps/studio/src/app/api/projects/route.test.ts:175` |
+| functionality | forwards the validated intent, with the schema defaults applied | `apps/studio/src/app/api/projects/route.test.ts:193` |
+| functionality | forwards the filename as untrusted provenance | `apps/studio/src/app/api/projects/route.test.ts:213` |
+| functionality | answers 201 with the project identity | `apps/studio/src/app/api/projects/route.test.ts:223` |
+| functionality | returns no signed URL | `apps/studio/src/app/api/projects/route.test.ts:230` |
+| functionality | maps a rejected image to 422 with its reason | `apps/studio/src/app/api/projects/route.test.ts:240` |
+| functionality | maps a duplicate to 409, not to a permissions error | `apps/studio/src/app/api/projects/route.test.ts:251` |
+| functionality | maps an unavailable backend to 502 and logs it | `apps/studio/src/app/api/projects/route.test.ts:259` |
+| functionality | accepts the full intent the walkthrough describes | `apps/studio/src/app/api/projects/route.test.ts:361` |
+| functionality | posts the photograph and a validated intent, then opens the new project | `apps/studio/src/components/intake/intake-form.test.tsx:94` |
+| functionality | collects every missing required field into one summary instead of one per submit | `apps/studio/src/components/intake/intake-form.test.tsx:124` |
+| functionality | moves focus to the summary and links each entry to the field it belongs to | `apps/studio/src/components/intake/intake-form.test.tsx:136` |
+| functionality | refuses an over-sized photograph before it is uploaded | `apps/studio/src/components/intake/intake-form.test.tsx:150` |
+| functionality | treats a blank support size as  | `apps/studio/src/components/intake/intake-form.test.tsx:161` |
+| functionality | rejects a fractional or negative time budget | `apps/studio/src/components/intake/intake-form.test.tsx:184` |
+| functionality | sends the artist goal verbatim, including instruction-shaped text | `apps/studio/src/components/intake/intake-form.test.tsx:200` |
+| functionality | sends a blank goal as null rather than an empty string | `apps/studio/src/components/intake/intake-form.test.tsx:213` |
+| functionality | renders the server refusal %s as something to act on | `apps/studio/src/components/intake/intake-form.test.tsx:225` |
+| functionality | reports a %i as a whole-request failure with no field link | `apps/studio/src/components/intake/intake-form.test.tsx:241` |
+| functionality | falls back to a readable message when a refusal carries no reason | `apps/studio/src/components/intake/intake-form.test.tsx:261` |
+| functionality | reports a transport failure rather than leaving the button spinning | `apps/studio/src/components/intake/intake-form.test.tsx:273` |
+| functionality | cannot be submitted twice while a project is being created | `apps/studio/src/components/intake/intake-form.test.tsx:291` |
+| a11y | has no accessibility violations | `apps/studio/src/components/intake/intake-form.test.tsx:307` |
+| a11y | has no accessibility violations while showing errors | `apps/studio/src/components/intake/intake-form.test.tsx:313` |
 | data | uploads the object BEFORE the row that cites it | `apps/studio/src/lib/intake/ingest-upload.test.ts:53` |
 | data | creates the project before anything that needs its id | `apps/studio/src/lib/intake/ingest-upload.test.ts:72` |
 | data | writes the detections last, once the upload is already valid | `apps/studio/src/lib/intake/ingest-upload.test.ts:78` |
@@ -98,22 +123,25 @@ Upload, intake, and the typed ProjectIntent
 | data | does not write anything when the project insert fails | `apps/studio/src/lib/intake/ingest-upload.test.ts:252` |
 | data | refuses a body that is not one row carrying an id | `apps/studio/src/lib/intake/ingest-upload.test.ts:260` |
 | data | keeps a complete upload even when the detections cannot be written | `apps/studio/src/lib/intake/ingest-upload.test.ts:270` |
-| security | refuses an SVG without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:282` |
-| security | refuses an undersized photograph without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:293` |
-| functionality | accepts a %s and reports its type | `apps/studio/src/lib/intake/inspect-image.test.ts:25` |
-| functionality | reads the real dimensions out of a %s | `apps/studio/src/lib/intake/inspect-image.test.ts:37` |
-| functionality | reports the byte size it was actually given | `apps/studio/src/lib/intake/inspect-image.test.ts:50` |
-| security | refuses an SVG even though it decodes | `apps/studio/src/lib/intake/inspect-image.test.ts:59` |
-| security | refuses a GIF | `apps/studio/src/lib/intake/inspect-image.test.ts:70` |
-| security | calls a truncated JPEG undecodable rather than unsupported | `apps/studio/src/lib/intake/inspect-image.test.ts:77` |
-| security | refuses bytes that are not an image at all | `apps/studio/src/lib/intake/inspect-image.test.ts:86` |
-| security | never consults a declared content type | `apps/studio/src/lib/intake/inspect-image.test.ts:93` |
-| functionality | refuses an empty upload | `apps/studio/src/lib/intake/inspect-image.test.ts:102` |
-| functionality | refuses bytes over the ceiling | `apps/studio/src/lib/intake/inspect-image.test.ts:109` |
-| functionality | checks size before it tries to decode | `apps/studio/src/lib/intake/inspect-image.test.ts:117` |
-| functionality | refuses a long edge below ${MIN_LONG_EDGE_PX}px | `apps/studio/src/lib/intake/inspect-image.test.ts:124` |
-| functionality | accepts a long edge exactly at the floor | `apps/studio/src/lib/intake/inspect-image.test.ts:131` |
-| functionality | measures the long edge, not the width | `apps/studio/src/lib/intake/inspect-image.test.ts:138` |
+| data | reports a failed detection write rather than discarding it | `apps/studio/src/lib/intake/ingest-upload.test.ts:279` |
+| data | reports a detection write that never reached the server | `apps/studio/src/lib/intake/ingest-upload.test.ts:291` |
+| data | reports success when the detections did land | `apps/studio/src/lib/intake/ingest-upload.test.ts:304` |
+| security | refuses an SVG without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:316` |
+| security | refuses an undersized photograph without writing anything | `apps/studio/src/lib/intake/ingest-upload.test.ts:327` |
+| functionality | accepts a %s and reports its type | `apps/studio/src/lib/intake/inspect-image.test.ts:29` |
+| functionality | reads the real dimensions out of a %s | `apps/studio/src/lib/intake/inspect-image.test.ts:41` |
+| functionality | reports the byte size it was actually given | `apps/studio/src/lib/intake/inspect-image.test.ts:54` |
+| security | refuses an SVG even though it decodes | `apps/studio/src/lib/intake/inspect-image.test.ts:63` |
+| security | refuses a GIF | `apps/studio/src/lib/intake/inspect-image.test.ts:74` |
+| security | calls a truncated JPEG undecodable rather than unsupported | `apps/studio/src/lib/intake/inspect-image.test.ts:81` |
+| security | refuses bytes that are not an image at all | `apps/studio/src/lib/intake/inspect-image.test.ts:90` |
+| security | never consults a declared content type | `apps/studio/src/lib/intake/inspect-image.test.ts:97` |
+| functionality | refuses an empty upload | `apps/studio/src/lib/intake/inspect-image.test.ts:106` |
+| functionality | refuses bytes over the ceiling | `apps/studio/src/lib/intake/inspect-image.test.ts:113` |
+| functionality | checks size before it tries to decode | `apps/studio/src/lib/intake/inspect-image.test.ts:121` |
+| functionality | refuses a long edge below ${MIN_LONG_EDGE_PX}px | `apps/studio/src/lib/intake/inspect-image.test.ts:128` |
+| functionality | accepts a long edge exactly at the floor | `apps/studio/src/lib/intake/inspect-image.test.ts:135` |
+| functionality | measures the long edge, not the width | `apps/studio/src/lib/intake/inspect-image.test.ts:142` |
 | data | produces the lowercase hex SHA-256 the database constraint accepts | `apps/studio/src/lib/storage/checksum.test.ts:7` |
 | data | matches the published SHA-256 of the empty input | `apps/studio/src/lib/storage/checksum.test.ts:14` |
 | data | changes when a single byte changes | `apps/studio/src/lib/storage/checksum.test.ts:22` |
@@ -160,6 +188,22 @@ Upload, intake, and the typed ProjectIntent
 | data | treats %i as removed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:158` |
 | data | reports a server error as not removed | `apps/studio/src/lib/storage/upload-reference-image.test.ts:164` |
 | data | reports a connection failure as not removed rather than throwing | `apps/studio/src/lib/storage/upload-reference-image.test.ts:168` |
+
+## Playwright — 11
+
+| Category | Test | Location |
+| --- | --- | --- |
+| functionality | builds the multipart request the upload route expects | `apps/studio/e2e/intake.spec.ts:98` |
+| functionality | opens the created project on a 201 | `apps/studio/e2e/intake.spec.ts:127` |
+| functionality | validates in the browser before anything is uploaded | `apps/studio/e2e/intake.spec.ts:142` |
+| functionality | moves focus to the error summary so the failure is announced | `apps/studio/e2e/intake.spec.ts:159` |
+| functionality | explains the refusal ${reason} in words an artist can act on | `apps/studio/e2e/intake.spec.ts:178` |
+| functionality | reports a duplicate upload without pretending it failed | `apps/studio/e2e/intake.spec.ts:192` |
+| functionality | reports an expired session rather than a generic failure | `apps/studio/e2e/intake.spec.ts:202` |
+| functionality | reflows at 320 CSS px without horizontal scrolling | `apps/studio/e2e/intake.spec.ts:223` |
+| a11y | the intake form has no accessibility violations | `apps/studio/e2e/intake.spec.ts:236` |
+| a11y | the error state has no accessibility violations | `apps/studio/e2e/intake.spec.ts:246` |
+| a11y | the project page has no accessibility violations | `apps/studio/e2e/intake.spec.ts:260` |
 
 ---
 

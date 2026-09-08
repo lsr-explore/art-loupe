@@ -59,13 +59,13 @@ Acknowledgement gate, sign-in, and the route guard
 | security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:156` |
 | security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:174` |
 | security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:183` |
-| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:206` |
-| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:246` |
-| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:271` |
-| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:283` |
-| security | never answers a route handler with a redirect | `apps/studio/src/proxy.test.ts:290` |
-| security | refuses an unauthenticated or cross-app caller at every route handler with 401 | `apps/studio/src/proxy.test.ts:313` |
-| security | lets an artist through to the handler without requiring the acknowledgement | `apps/studio/src/proxy.test.ts:328` |
+| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:227` |
+| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:267` |
+| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:292` |
+| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:304` |
+| security | never answers a route handler with a redirect | `apps/studio/src/proxy.test.ts:311` |
+| security | refuses an unauthenticated or cross-app caller at every route handler with 401 | `apps/studio/src/proxy.test.ts:334` |
+| security | lets an artist through to the handler without requiring the acknowledgement | `apps/studio/src/proxy.test.ts:349` |
 | security | is true when the cookie is present | `packages/auth/src/ack.test.ts:16` |
 | security | is false when it is absent | `packages/auth/src/ack.test.ts:20` |
 | security | does not accept the session cookie in its place | `packages/auth/src/ack.test.ts:24` |

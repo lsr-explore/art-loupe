@@ -28,13 +28,10 @@ import { getAccessToken } from '@artloupe/auth/server';
 import { MAX_UPLOAD_BYTES, projectIntentSchema } from '@artloupe/schemas';
 import type { NextRequest } from 'next/server';
 import { env } from '@/env';
+import { type CreateProjectResponse, FILE_FIELD, INTENT_FIELD } from '@/lib/api/project-contract';
 import { conflict, invalidUpload, notFound, unauthenticated } from '@/lib/api/responses';
 import { ingestUpload } from '@/lib/intake/ingest-upload';
 import { logger } from '@/lib/logger';
-
-/** The multipart field names this handler reads. Anything else in the body is ignored. */
-const FILE_FIELD = 'file';
-const INTENT_FIELD = 'intent';
 
 /**
  * Ceiling on the whole wire body, as opposed to the photograph inside it.
@@ -210,7 +207,12 @@ export const POST = async (request: NextRequest) => {
 
   // 201 with the identity of what was made. No signed URL: the app reads originals back
   // through the image route so `img-src` stays `'self'` and the CSP is never widened.
-  return Response.json({ projectId, checksum }, { status: 201 });
+  //
+  // Annotated rather than merely returned: the intake form and its Playwright stub are written
+  // from `CreateProjectResponse`, so a field renamed here has to fail typechecking there
+  // instead of leaving a green e2e suite in front of a broken form.
+  const body: CreateProjectResponse = { projectId, checksum };
+  return Response.json(body, { status: 201 });
 };
 
 /**

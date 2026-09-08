@@ -13,8 +13,8 @@ Injection screening on every untrusted surface
 | **Severity** | P0 |
 | **Why** | Five surfaces carry text nobody in this system wrote — a filename, an uploaded photograph's EXIF block, whatever is legible in its pixels, the artist's own free-text goal, and the documents retrieval brings back. The screener is a hand-authored mirror across two regex engines, which fails quietly: both sides compile the same rule and match differently, and nothing says so until a real detection is missed. The shared rules fixture and its case corpus are what make that loud, so the tests here are the boundary itself rather than a check on it. |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/schemas` · `python/libs/persistence` |
-| **Tests** | 64 (5 parametrized) |
-| **Covered** | security 17 · safety 47 |
+| **Tests** | 71 (5 parametrized) |
+| **Covered** | security 17 · safety 54 |
 | **Not covered** | a11y · privacy · data · performance · functionality |
 
 ## pytest — 33
@@ -55,14 +55,16 @@ Injection screening on every untrusted surface
 | safety | test_walking_survives_a_block_nested_deeper_than_it_will_walk | `python/libs/schemas/tests/test_screening.py:139` |
 | safety | test_walking_ignores_values_that_are_not_text | `python/libs/schemas/tests/test_screening.py:151` |
 
-## Vitest — 31
+## Vitest — 38
 
 | Category | Test | Location |
 | --- | --- | --- |
-| safety | logs the rule and surface when screening found something | `apps/studio/src/app/api/projects/route.test.ts:214` |
-| safety | never puts the excerpt in a log | `apps/studio/src/app/api/projects/route.test.ts:239` |
-| safety | says nothing at all when screening was clean | `apps/studio/src/app/api/projects/route.test.ts:261` |
-| safety | never tells the artist what was detected | `apps/studio/src/app/api/projects/route.test.ts:266` |
+| safety | logs the rule and surface when screening found something | `apps/studio/src/app/api/projects/route.test.ts:270` |
+| safety | never puts the excerpt in a log | `apps/studio/src/app/api/projects/route.test.ts:295` |
+| safety | says nothing at all when screening was clean | `apps/studio/src/app/api/projects/route.test.ts:317` |
+| safety | logs an error when the detections did not reach the table | `apps/studio/src/app/api/projects/route.test.ts:322` |
+| safety | does not log an error when they did | `apps/studio/src/app/api/projects/route.test.ts:335` |
+| safety | never tells the artist what was detected | `apps/studio/src/app/api/projects/route.test.ts:340` |
 | safety | screens the filename | `apps/studio/src/lib/intake/ingest-upload.test.ts:131` |
 | safety | screens the artist | `apps/studio/src/lib/intake/ingest-upload.test.ts:141` |
 | safety | screens before it stores | `apps/studio/src/lib/intake/ingest-upload.test.ts:152` |
@@ -70,10 +72,15 @@ Injection screening on every untrusted surface
 | safety | records the surfaces it did NOT screen | `apps/studio/src/lib/intake/ingest-upload.test.ts:178` |
 | safety | still writes the unscreened-surface record when nothing was detected | `apps/studio/src/lib/intake/ingest-upload.test.ts:195` |
 | safety | makes a retry idempotent rather than doubling the counts | `apps/studio/src/lib/intake/ingest-upload.test.ts:203` |
-| safety | is always an object, even with no metadata to read | `apps/studio/src/lib/intake/inspect-image.test.ts:148` |
-| safety | survives metadata it cannot parse, and says the read was incomplete | `apps/studio/src/lib/intake/inspect-image.test.ts:155` |
-| safety | keeps nothing that a jsonb column cannot hold | `apps/studio/src/lib/intake/inspect-image.test.ts:179` |
-| safety | bounds what it will store | `apps/studio/src/lib/intake/inspect-image.test.ts:198` |
+| safety | is always an object, even with no metadata to read | `apps/studio/src/lib/intake/inspect-image.test.ts:152` |
+| safety | survives metadata it cannot parse, and says the read was incomplete | `apps/studio/src/lib/intake/inspect-image.test.ts:159` |
+| safety | keeps nothing that a jsonb column cannot hold | `apps/studio/src/lib/intake/inspect-image.test.ts:183` |
+| safety | bounds what it will store | `apps/studio/src/lib/intake/inspect-image.test.ts:202` |
+| safety | keeps the record of what it dropped inside the same budget | `apps/studio/src/lib/intake/inspect-image.test.ts:208` |
+| safety | still records that fields were dropped, as a count | `apps/studio/src/lib/intake/inspect-image.test.ts:223` |
+| safety | never presents a trimmed block as a complete one | `apps/studio/src/lib/intake/inspect-image.test.ts:236` |
+| safety | always carries the count whenever anything was dropped | `apps/studio/src/lib/intake/inspect-image.test.ts:254` |
+| safety | leaves a small block untouched | `apps/studio/src/lib/intake/inspect-image.test.ts:269` |
 | safety | (unnamed) | `packages/schemas/src/screening.test.ts:42` |
 | safety | declares the same surfaces the module does | `packages/schemas/src/screening.test.ts:52` |
 | safety | gives every rule a unique id | `packages/schemas/src/screening.test.ts:58` |
