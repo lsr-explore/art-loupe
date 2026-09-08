@@ -387,7 +387,12 @@ const fixed = sum(sessions.map((session) => session.review.fixed))
 const avgChurn = mean(sessions.map((session) => session.effort_split.churn)).toFixed(1)
 const avgDocs = mean(sessions.map((session) => session.effort_split.docs)).toFixed(1)
 
-const attribution = ['under_specified', 'claude_error', 'genuine_discovery'].map((key) => ({
+const attribution = [
+  'under_specified',
+  'refinement',
+  'avoidable_error',
+  'genuine_discovery',
+].map((key) => ({
   key,
   share: sum(
     sessions.map(
@@ -470,8 +475,17 @@ ${chart('overview', 'Effort split, cost and time by day')}${
 
 ### Where the churn came from
 
-Weighted by each session's churn share. A falling \`under_specified\` share is the
-improvement curve; \`genuine_discovery\` is the irreducible floor.
+Weighted by each session's churn share. Not all churn is waste, and the four causes are
+not equally worth driving down:
+
+- \`under_specified\` — the prompt did not carry what it needed. A falling share is the
+  improvement curve.
+- \`refinement\` — converged through the loop and caught before it left the branch. A normal
+  cost of building under uncertainty, and sometimes the reason the result is any good: a
+  design that survives its own failing test is better understood than one that never failed.
+- \`avoidable_error\` — the information was already in hand and was missed anyway. **This is
+  the actionable one**, and a cause that repeats across sessions is the signal worth acting on.
+- \`genuine_discovery\` — nobody could have known upfront. The irreducible floor.
 
 | Cause | Share of all churn |
 | --- | --- |

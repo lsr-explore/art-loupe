@@ -17,9 +17,10 @@
     "churn": 20
   },
   "churn_attribution": {
-    "claude_error": 60,
-    "genuine_discovery": 32,
-    "under_specified": 8
+    "under_specified": 8,
+    "refinement": 15,
+    "avoidable_error": 45,
+    "genuine_discovery": 32
   },
   "ratings": {
     "scoping_clarity": 4,
@@ -27,8 +28,16 @@
     "tooling_leverage": 3
   },
   "rework_of": [],
-  "delivered": { "prs": [28, 29, 30], "adrs": [3] },
-  "review": { "coderabbit_findings": 5, "fixed": 4, "deferred": 0, "declined": 1 },
+  "delivered": {
+    "prs": [28, 29, 30],
+    "adrs": [3]
+  },
+  "review": {
+    "coderabbit_findings": 5,
+    "fixed": 4,
+    "deferred": 0,
+    "declined": 1
+  },
   "decisions": [
     "Issue #22 folded into PR 6 as one branch rather than landing ahead of it: the deletion route is born gated instead of being retrofitted into a policy that did not exist when it was written",
     "The project deletion path holds the artist's own token, never service_role, so no RLS-bypassing credential enters an app runtime -- ADR 0003",
@@ -46,5 +55,5 @@
     "improve": "The comment-posting bug is the one worth sitting with. `gh api -f body=@file` adds the string literally, so two dispositions on #29 posted as the eleven characters of a filename -- and I reported both as successfully posted, because the API answered 201 with an html_url. I verified that a write had happened, not what it wrote, and it took Laurie noticing an unresolved thread for the real state to surface. The same shape recurred twice more: I framed a design question on a false premise, calling the synthetic-data notice a consent record when packages/auth/src/ack.ts says in terms that it is a demo disclaimer, and I asserted vitest 5 could not be adopted without running the suite that disproved it. Three cases of concluding from inference where one command was available. The correction itself then needed four commits, including a fix whose own diff-based check would have reported MISMATCH on every correctly posted comment.",
     "tooling_suggestion": "`pnpm --filter <pkg> test -u` silently swallows the flag: pnpm consumes it and prints its own CLI help, so a snapshot update reads as a broken command rather than a missing `--`. .claude/rules/workflow.md already says to pass extra args through the script for e2e; generalising that line to every script would have saved a cycle. Separately, markdownlint-cli2's glob does not honour .gitignore, so `pnpm lint:md` and therefore `pnpm check:all` are red locally for anyone with docs/temp-references/ present -- 44 errors in files git never sees, which erodes the pre-commit hook's value."
   },
-  "note": "Cost, durations and the 87% context figure are from /usage. context_over_150k_pct and the skills breakdown are its last-24h figures across all local sessions, not this session alone -- the same panel attributes 60% of last-24h usage to subagent-heavy sessions and 2% to Explore, but this session spawned no subagents at all. parallel_agents is 1 accordingly: a worktree was prepared for PR 11 and rebased twice, but no session ever ran in it. Prompt cache held 99% of input tokens across 269 requests with no misses. Laurie also merged four dependabot PRs (#23, #24, #25, #26); #26 bundled a vitest 4 -> 5 major with six patch bumps, which is what PR #28 existed to unblock, and the underlying grouping in .github/dependabot.yml is still unrestricted so it will recur on the next major. Issue #27 filed and parked. Five review findings across three PRs: four fixed, one declined as both out of diff and factually wrong about vitest-axe's peer range. Two of the three PRs merged today were repairs of my own errors rather than planned work."
+  "note": "Cost, durations and the 87% context figure are from /usage. context_over_150k_pct and the skills breakdown are its last-24h figures across all local sessions, not this session alone -- the same panel attributes 60% of last-24h usage to subagent-heavy sessions and 2% to Explore, but this session spawned no subagents at all. parallel_agents is 1 accordingly: a worktree was prepared for PR 11 and rebased twice, but no session ever ran in it. Prompt cache held 99% of input tokens across 269 requests with no misses. Laurie also merged four dependabot PRs (#23, #24, #25, #26); #26 bundled a vitest 4 -> 5 major with six patch bumps, which is what PR #28 existed to unblock, and the underlying grouping in .github/dependabot.yml is still unrestricted so it will recur on the next major. Issue #27 filed and parked. Five review findings across three PRs: four fixed, one declined as both out of diff and factually wrong about vitest-axe's peer range. Two of the three PRs merged today were repairs of my own errors rather than planned work. The churn split into `refinement` and `avoidable_error` is reconstructed: this record was written when the two were one `claude_error` bucket (60%), and the split was derived afterwards from this record's own retro rather than from the session."
 }

@@ -42,7 +42,7 @@ matches the order they happened — the generator sorts by filename.
 | `api_minutes` / `wall_minutes` | duration |
 | `context_over_150k_pct` | share of usage above 150k context — the cache-read cost driver |
 | `effort_split` | % across `build` / `setup` / `design` / `docs` / `verify_ops` / `churn`, sums to 100. The generator **rejects** unknown keys — an unchartable bucket would silently vanish from the stacked bars |
-| `churn_attribution` | % of the *within-session* churn by cause: `under_specified` (prompt), `claude_error`, `genuine_discovery` |
+| `churn_attribution` | % of the *within-session* churn by cause: `under_specified` (prompt), `refinement` (converged through the loop, caught before push), `avoidable_error` (the information was in hand and missed), `genuine_discovery` |
 | `rework_of` | record ids (filename without `.json`) of earlier sessions whose work this one redid — **cross-session** rework, the expensive kind |
 | `delivered` | `prs` / `issues` / `adrs` numbers. `prs_merged` and `issues_closed` are deliberately not tracked — PRs merge shortly after opening here, so both would just shadow `prs` |
 | `review` | CodeRabbit findings by disposition; `ci_reruns` counts infra retries |

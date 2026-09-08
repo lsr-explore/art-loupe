@@ -106,10 +106,21 @@ These are the ones only you can write, because you were in the conversation:
   rework is the expensive kind: it means a decision didn't hold, so everything built on it
   gets revisited. Check the `decisions` arrays of recent records before writing this —
   if this session superseded one of them, say so.
-- **`churn_attribution`** — split the *within-session* churn by cause: `under_specified` (the prompt didn't
-  carry what it needed), `claude_error` (I misread, assumed, or ignored something in
-  context), `genuine_discovery` (nobody could have known upfront). **Be honest about
-  `claude_error`** — a metric that flatters me is worthless to her.
+- **`churn_attribution`** — split the *within-session* churn by cause, summing to 100:
+  - `under_specified` — the prompt didn't carry what it needed.
+  - `refinement` — I built it, my own tests or checks caught the problem, I converged before
+    anything left the branch. **Not a mistake.** Building under uncertainty costs iteration,
+    and a design that survived its own failing test is better understood than one that never
+    failed. Do not score this as error.
+  - `avoidable_error` — the information was already in hand and I missed it anyway: something
+    in context, a module I wrote this same session, or a lesson an earlier record already
+    carries. **Be honest here** — a metric that flatters me is worthless to her, and this is
+    the only bucket that tells her whether I'm repeating myself across sessions.
+  - `genuine_discovery` — nobody could have known upfront.
+
+  The line between the first two is *who caught it and when*, not how embarrassing it was.
+  Caught by the loop before push is refinement even when the first attempt was poor; escaping
+  to review or to Laurie is where it stops being.
 - **`ratings`** — 1–5 on `scoping_clarity` (how clear was the ask at session start?),
   `decision_stability` (did settled decisions stay settled — including *your own* design
   calls?), `tooling_leverage` (skills, subagents, running the right command first time).

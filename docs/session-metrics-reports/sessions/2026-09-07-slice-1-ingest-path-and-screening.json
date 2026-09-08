@@ -1,0 +1,54 @@
+{
+  "date": "2026-09-07",
+  "label": "Slice 1 PR 7a — the ingest path, a mirrored injection screener, and four review findings of which two were mine",
+  "confidence": "measured",
+  "cost_usd": 62.83,
+  "api_minutes": 57.0,
+  "wall_minutes": 573.7,
+  "context_over_150k_pct": 93,
+  "parallel_agents": 1,
+  "themes": ["app", "data"],
+  "effort_split": {
+    "build": 35,
+    "setup": 2,
+    "design": 12,
+    "docs": 13,
+    "verify_ops": 20,
+    "churn": 18
+  },
+  "churn_attribution": {
+    "under_specified": 5,
+    "refinement": 30,
+    "avoidable_error": 27,
+    "genuine_discovery": 38
+  },
+  "ratings": {
+    "scoping_clarity": 4,
+    "decision_stability": 3,
+    "tooling_leverage": 3
+  },
+  "rework_of": [],
+  "delivered": { "prs": [31], "adrs": [] },
+  "review": { "coderabbit_findings": 4, "fixed": 4, "deferred": 0, "declined": 0 },
+  "decisions": [
+    "PR 7 split into 7a (server side) and 7b (form + e2e), so every security boundary and the upload-before-row ordering trap get reviewed in one diff and 7b stays presentational",
+    "The injection screener is mirrored TS + Python over one shared rules fixture, not a service call: Python screens retrieved documents later while Next screens filename and EXIF at ingest, so a screener in either would be reimplemented in the other. Same arrangement contract-parity.json already makes for Zod and Pydantic",
+    "Both screener suites enforce a regex portability subset mechanically -- no lookbehind, named groups, inline flags, backreferences, or \\d/\\w. The likely failure of a hand-authored mirror is not a forgotten rule but a pattern that compiles on both sides and matches on only one, which the case corpus only catches for text somebody thought to write",
+    "The rules live in packages/schemas rather than a new packages/screening: two new workspace packages, allowlist entries and depcruise rules for ~200 lines was the wrong trade",
+    "Object before row on ingest, which is the opposite of deletion's order and forced by the same policy from its other side. Verified live rather than assumed: reversed, the upload is refused 403 'new row violates row-level security policy'",
+    "screening_detections holds select and insert and neither update nor delete -- a detection is a record of what arrived, and the ops panel reads it",
+    "A surface nothing screened is written down as a sentinel row rather than left absent, because an absent row is indistinguishable from a clean one and would let the panel imply coverage of a surface never read",
+    "OCR deferred with the gap recorded (issue #32) rather than silently: Tesseract is a system binary and easyocr pulls the torch slice 1 cut",
+    "project-goal added as a fifth screened surface, closing a promise intent.ts already made in prose. Untrusted because it is where pasted text arrives and it reaches a model prompt in PR 12; FR-1013 untouched",
+    "EXIF GPS deliberately never decoded -- the one block that says where a person was, not needed to plan a painting, and not reading it is the cheapest way to not hold it",
+    "subjectFromAccessToken reads the sub claim without verifying the signature: the token came from our own sealed cookie, and the storage policy independently checks the key prefix against auth.uid(), so a wrong sub is a refused write rather than a crossed boundary",
+    "The refusal vocabulary widens from two codes to four. 401/404 describe the system's state where detail is an oracle; 422 invalid_upload describes the bytes the caller just sent, which FR-101 requires a reason for. An argued extension of the 2026-09-06 decision, not a reversal",
+    "churn_attribution's claude_error split into refinement and avoidable_error, so iteration the loop catches stops being scored as a mistake while a cause that repeats across sessions stays visible"
+  ],
+  "retro": {
+    "went_well": "The tests kept disagreeing with me, and were right every time. A fixture refusing to hold a faked File.size, a JPEG that image-size would not decode without a JFIF segment, and a ReadableStream pre-pulling one chunk each corrected an assertion that would otherwise have passed while testing nothing. Two genuine defects surfaced the same way and neither was findable by reading: exifr reports a malformed segment in-band as {errors: [RangeError]} rather than throwing, so an unserializable Error was headed for a jsonb column, and exifr leaves userComment off by default -- the single most important EXIF text field for screening, which would have made the block look covered and been the opposite. Verifying against the live stack rather than mocks is what proved the ordering trap real: reversed deliberately, storage answers 403 'new row violates row-level security policy', which is exactly the misleading error the pickup notes warned about. Splitting PR 7 kept the security surface in one reviewable diff.",
+    "improve": "Two of the four review findings were defects in my own fixes, and the second review is the only reason the worse one was caught -- bounding the EXIF ledger introduced a fallback that returned the retained fields with no truncation marker, so a trimmed block read as complete. That is worse than the overflow it replaced, because an over-large block is visible and a silent omission is not. I nearly did not run that second review at all. Separately, I reported four dispositions as posted and byte-verified when nothing had been posted: gh was not found inside a shell function, the ids came back empty, and comparing two empty strings returned true. That is the #29 lesson repeating almost exactly -- confirming that a write happened rather than what it wrote -- and the only reason it surfaced is that I then looked at the PR. My live verification also left orphaned storage objects that broke a pre-existing RLS test, in the session where I wrote the module explaining that deleting rows never deletes objects.",
+    "tooling_suggestion": "A verification helper wrapped in a shell function silently lost gh from PATH and failed open, printing 'verified' for comments that did not exist. Any check whose failure mode is a false pass needs the empty case to be a hard error -- comparing two empty strings must not read as agreement. Also: greptile review errored server-side mid-run and left a resume id in stderr, which greptile review show recovered in full; the ship skill mentions --resume but not that show can recover a run that has already failed, and that is the cheaper recovery. Finally, a lot of wall-clock went on polling background watchers a few seconds apart; waiting on the completion notification rather than re-checking would have cost less and read better."
+  },
+  "note": "Cost, durations and the 93% context figure are from /usage. cost_usd is API-equivalent on the Max plan, not out-of-pocket. wall_minutes covers a 9h33m window that includes substantial idle time -- the prompt cache records a single miss after a 1h19m gap -- so it overstates active work by some margin; api_minutes is the honest measure of engaged time. context_over_150k_pct and the skills breakdown are /usage's last-24h figures across all local sessions rather than this session alone: it attributes 7% to /ship, 1% to /wrap and 3% to Explore, and 82% to subagent-heavy sessions, where this session spawned exactly one Explore agent. parallel_agents is 1 accordingly. Prompt cache held 99% of input tokens across 308 requests. Four review findings, all fixed, all P1, and two of them defects in fixes written this session; the fourth was found only because a second deliberate review was run after the automatic one did not cover the fix commits. Five issues filed (#32-#36); four are deliberately unparented because epic #5 is scoped to static-analysis tooling and only #35 is that. docs/backlog/critical-path.md is stale inherited material -- dated 2026-08-01, traced against a commit not in this repository, citing issues #225/#226/#229 that do not exist here."
+}

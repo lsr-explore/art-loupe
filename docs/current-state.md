@@ -1,12 +1,13 @@
 # Current state
 
-**Updated:** 2026-09-06
+**Updated:** 2026-09-07
 
 ## 1. Snapshot
 
-**Slice 1 is eight of fourteen PRs in.** The Python agent layer, the shared contracts, the
-durable checkpointer, the cost ledger, the project/storage schema, the overlay primitives, and
-now route-handler gating with complete artist deletion all exist as tested code.
+**Slice 1 is nine of fourteen PRs in.** The Python agent layer, the shared contracts, the
+durable checkpointer, the cost ledger, the project/storage schema, the overlay primitives,
+route-handler gating with complete artist deletion, and now the **ingest path** all exist as
+tested code.
 
 Art Loupe turns a reference photograph into a medium-aware, time-boxed working plan where every
 claim is **measured** (a pixel fact), **cited** (an instructional source), or **chosen** (a
@@ -20,50 +21,51 @@ labelled artistic call). It never generates or alters imagery.
 | 4 | loop guards + per-node token/latency/cost ledger | merged (#19) |
 | 5 | `projects`, immutable `source_images`, RLS, storage helpers | merged (#20) |
 | 6 | route-handler gating + issue #22 complete deletion | merged (#29) |
+| 7a | upload, intake, EXIF/filename/goal screening, detections table | merged (#31) |
 | 9 | overlay primitives in `packages/fascia` | merged (#21) |
-| 7, 8, 10-14 | upload · plates · CV · routing · interrupt · ops | **not started** |
+| 7b, 8, 10-14 | intake form · plates · CV · routing · interrupt · ops | **not started** |
 
 ### What works today
 
-- **Three apps run and build**: `entry` (3003), `studio` (3001), `operations` (3000).
-- **The click-through flow works end to end**: entry → acknowledge → launch → sign in.
-- **Route handlers are gated.** `api` is inside the matcher and takes its own branch before
-  locale negotiation; handlers answer in status codes, never redirects.
-- **Artist deletion reaches the bytes.** Storage objects go before rows, and completeness is
-  judged by end state rather than by a count of removals.
+- **An artist can upload.** `POST /api/projects` takes a photograph and a `ProjectIntent`,
+  stores the original immutably, and returns a project. Verified end to end against the live
+  stack with a real token, not only against mocks.
+- **Untrusted text is screened at ingest** on three of five surfaces — filename, EXIF, and the
+  artist's free-text goal. Detections are recorded by surface in `screening_detections`.
+- **The two unscreened surfaces are written down**, not omitted: a `surface-not-screened`
+  sentinel row keeps the operations panel from implying coverage of a surface nothing read.
+- **Route handlers are gated**, and artist deletion reaches the bytes.
 - **An interrupted run resumes in a different process**, against real Postgres.
 - **Every node is metered and every run is capped** before the first paid call exists.
-- **452 tagged tests, 0 untagged**, across Vitest, Playwright and pytest.
+- **639 tagged tests, 0 untagged**, across Vitest, Playwright and pytest.
 
 ### What is *not* demoable, and should be said plainly
 
-There is **no artist-facing product flow**. `studio/home` is a heading and a paragraph. The PR 9
-overlay primitives render **nowhere** — exported from `fascia`, imported by no app, no Storybook.
-No app calls any API route. Upload (PR 7) is the unlock: nothing downstream can be shown without
-a photograph in the system.
+There is **still no artist-facing UI for any of this**. The upload route has no form in front of
+it — `studio/home` is a heading and a paragraph, and the PR 9 overlay primitives render nowhere.
+PR 7b is the unlock, and it opens with a real problem (below).
 
-**The graph runs no agent.** `graph.py` is `START → seed → END`, where `seed` returns a string;
-there is **no LLM SDK anywhere in the workspace**. PR 12 adds the one model call in the slice.
-After all fourteen PRs, slice 1 exercises the `measured` arm of the evidence union and nothing
-that produces a `cited` one — no critique, no retrieval, no citations, no Plan Critic. That is a
-deliberate spine-before-payload ladder, but "multi-agent" would overclaim what slice 1 shows.
+**The graph still runs no agent.** `graph.py` is `START → seed → END`; there is no LLM SDK
+anywhere in the workspace. PR 12 adds the one model call in the slice. After all fourteen PRs,
+slice 1 exercises the `measured` arm of the evidence union and nothing that produces a `cited`
+one — no critique, no retrieval, no citations, no Plan Critic. Deliberate spine-before-payload,
+but "multi-agent" would overclaim what slice 1 shows.
 
 ### Open questions
 
+- **PR 7b's e2e path is blocked and needs a decision first.** The hermetic Playwright run uses
+  `AUTH_PROVIDER=demo`; a demo session carries no Supabase token, so `getAccessToken()` returns
+  null and the upload route answers 401. A Playwright upload spec needs either a live Supabase
+  or a seam the demo provider can satisfy. Decide at the top of 7b, not at the end.
 - **The ack-cookie-lifetime question in [#27](https://github.com/lsr-explore/art-loupe/issues/27)
-  is unanswered.** Recommendation recorded there (match the ack cookie to the session `ttl`);
-  the call is Laurie's.
-- **ADR numbering.** 0003 was taken by the deletion ADR; `settled-decisions.md`'s scope
-  amendment, previously earmarked 0003, needs 0004.
-- **`@artloupe/schemas` is still missing from `entry` and `operations`.** It was in no app's
-  dependencies despite the previous state doc saying otherwise; only `studio` was fixed.
-- **Dependabot groups are unrestricted** — `.github/dependabot.yml` groups by
-  `dependency-type` with no `update-types`, so a framework major rides with patch bumps again
-  on the next one.
-- **`pnpm lint:md` is red locally** on gitignored `docs/temp-references/`; markdownlint's glob
-  does not honour `.gitignore`, so `check:all` is unusable locally though CI is unaffected.
-- **Vitest browser mode** is unfiled. Strong fit here — jsdom has no layout, so PR 9's 24px
-  target sizes are unverifiable at component level — but it is a whole test-suite migration.
+  is still unanswered.** Recommendation recorded there; the call is Laurie's.
+- **ADR numbering.** 0003 is the deletion ADR; `settled-decisions.md`'s scope amendment needs 0004.
+- **`docs/backlog/critical-path.md` is stale inherited material** — dated 2026-08-01, traced
+  against a commit not in this repository, citing issues #225/#226/#229 that do not exist here.
+  Refresh or delete; it is a proposal document and the sequencing is Laurie's.
+- **Four newly filed issues are deliberately unparented** (#32, #33, #34, #36). Epic #5 is scoped
+  to static-analysis tooling and only #35 is that. Two epics suggest themselves — slice-1 safety
+  completion, and workspace/dependency hygiene — each currently holding one or two issues.
 - The `.task` model licence, `flows.json` restructure, guard defaults, `BudgetExceeded → 429`,
   Spanish copy, chat credits, embedding model, materials corpus and gold set all remain as
   previously recorded.
@@ -76,48 +78,51 @@ deliberate spine-before-payload ladder, but "multi-agent" would overclaim what s
 
 ## 2. Agent pickup notes
 
-**State:** slice 1, PRs 1-6 and 9 of 14 merged. `main` at `3063618`. No open PRs. Issue #22
-closed by #29. Backlog is GitHub issues on user project 3.
+**State:** slice 1, PRs 1-6, 7a and 9 of 14 merged. `main` at `4f5d663`. No open PRs. No
+worktrees — the `feat/line-vp-detection` one was removed as empty. Backlog is GitHub issues on
+user project 3; issues #32-#36 filed 2026-09-07.
 
-**Next step: PR 7** — upload + intake + EXIF/filename/OCR screening at ingest, with a fixture
-fallback when `ARTLOUPE_AGENT_URL` is unset so Playwright stays hermetic.
-
-**PR 7 is order-constrained, and getting it wrong fails loudly but misleadingly.** The object
-must be uploaded **before** its `source_images` row is written. The storage INSERT policy refuses
-a write to a key a row already cites (FR-105, issue #22), so creating the row first makes *every*
-first upload fail with a bare permissions error that reads like a broken policy.
-`test_the_guard_does_not_refuse_the_upload_that_creates_the_pair` exists to name the cause.
+**Next step: PR 7b** — the intake form, its i18n copy, and the e2e spec. **Answer the demo-auth
+question before writing the form**, not after: `AUTH_PROVIDER=demo` yields no Supabase token, so
+the upload route answers 401 and a hermetic Playwright upload cannot reach it as things stand.
 
 **Then PR 11 before PR 10** (approved 2026-09-05). PR 11 owns the `opencv-contrib-python`
-dependency and the one-`cv2`-provider hygiene test. A worktree is prepared and rebased at
-`worktrees/feat/line-vp-detection/art-loupe`; it needs `uv sync --all-packages` before pytest.
+dependency and the one-`cv2`-provider hygiene test. Its worktree was removed; recreate with
+`wt new` against current `main` rather than looking for the old one.
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Never generates
-imagery. Artwork critique is **cut**; the **Plan Critic** (evaluator over the plan) is **kept**.
+imagery. Artwork critique is **cut**; the **Plan Critic** is **kept**.
 
-**Load-bearing invariants** — unchanged, plus two from this session:
+**Load-bearing invariants** — unchanged, plus five from this session:
 
 - Every claim is `measured` | `cited` | `chosen`; an artist assertion is never evidence.
 - Only `confirmed` / `adjusted` regions reach measurement.
 - Chat credits and the plan budget are separate ledgers.
 - `interrupt()` sits **alone** in its node, or resume double-charges the ledger.
 - Checkpoints live in the `langgraph` schema via `options=-csearch_path=langgraph,public`.
-- **An original is immutable against every verb**, at both layers: no UPDATE policy or grant and
-  no DELETE on `source_images`, *and* the storage INSERT policy refuses a second write to a
-  claimed key.
-- **Deletion is two systems and cannot be one transaction.** `protect_objects_delete` refuses
-  direct SQL deletion from `storage.objects` for every role. Objects before rows; judge
-  completeness by end state, because storage answers `200 []` for an already-absent key.
-- **No app runtime holds `service_role`.** The deletion path uses the artist's token.
+- **An original is immutable against every verb**, at both layers.
+- **Deletion is two systems and cannot be one transaction.** Objects before rows; judge
+  completeness by end state.
+- **Ingest runs the opposite order: object BEFORE the row that cites it.** The storage insert
+  policy refuses a write to a key a `source_images` row already claims, so row-first makes every
+  first upload fail with a bare permissions error that reads like a broken policy.
+- **No app runtime holds `service_role`.** Every storage and PostgREST call uses the artist's token.
+- **The screener's rules are data, not code.** One fixture, two hand-authored implementations, one
+  shared case corpus, and a mechanically enforced regex portability subset — the likely failure is
+  a pattern that compiles on both sides and matches on only one.
+- **A surface nothing screened is a row, not an absence.** An absent row is indistinguishable from
+  a clean one.
+- **A detection is a record.** `screening_detections` has no UPDATE and no DELETE.
 - Confidence must measure the detector, never the sitter.
 
 **Stack:** pnpm workspaces + uv workspace (`libs/auth|schemas|persistence|metering`,
 `services/agent`). Next 16 / React 19 — read `node_modules/next/dist/docs/` first. Node 24,
-pnpm 10.0.0, **vitest 5**.
+pnpm 10.0.0, **vitest 5**. `apps/studio` now also carries `exifr` and `image-size` (pure JS).
 
 **Gate order:** `src/proxy.ts` runs the **API branch first** (auth only, 401/404, no redirect),
 then next-intl → ack gate → auth gate for pages. Pinned by
-`apps/studio/src/__snapshots__/route-gate-matrix.md`, which discovers handlers off disk.
+`apps/studio/src/__snapshots__/route-gate-matrix.md`, which discovers handlers off disk — a new
+route handler changes that snapshot, and the change is the review signal.
 
 **Run it:** `pnpm supabase start && ./scripts/seed/seed-demo-accounts.sh && pnpm dev`.
 **Verify:** `pnpm check:all`, `pnpm build`, `pnpm depcruise`, `pnpm e2e`,
@@ -126,16 +131,24 @@ then next-intl → ack gate → auth gate for pages. Pinned by
 **Housekeeping gotchas:**
 
 - **One container runtime: Docker Desktop.** Colima's autostart is removed.
+- **Live verification leaves storage objects behind.** Deleting project *rows* never removes
+  bucket objects — that is the whole two-systems design — and leftovers break
+  `test_an_artist_sees_only_objects_under_their_own_prefix`, whose `both == 2` control is what
+  catches it. Clean the bucket with the artist's token, not `service_role`.
 - **Parallel worktrees cannot share a migration history** — `supabase db reset` per branch.
-- **Clear `apps/*/.next` when switching between branches that add routes**, or `tsc` fails on a
-  stale `.next/types/validator.ts` referencing a route the branch does not have.
-- **Pass extra args through pnpm scripts with `--`** — `pnpm --filter <pkg> test -- -u`. Without
-  it pnpm swallows the flag and prints its own help.
+- **Clear `apps/*/.next` when switching between branches that add routes.**
+- **Pass extra args through pnpm scripts with `--`** — `pnpm --filter <pkg> test -- -u`.
 - **The pre-commit hook runs no ruff.** Run `uv run --directory python poe check` before pushing.
-- Biome formats JSON, so a hand-written metrics record fails `format:check` until `pnpm format`.
-- **Review is Greptile, and its triggering is unreliable** — it fired on a first push and not on
-  the next. Confirm which commit a review actually read before calling a branch reviewed, and
-  check findings against `git diff origin/main`: one CLI review diffed against a stale base.
-  `.claude/skills/ship/SKILL.md` was corrected for this in #30.
-- **Two merged remote branches were not auto-deleted**: `origin/feat/route-gating-and-deletion`,
-  `origin/fix/ship-skill-review-and-comment-flags`.
+- Biome formats JSON, so a hand-written metrics record fails `format:check` until `pnpm format` —
+  and a *generated* report must be formatted after it is generated, not before.
+- **`pnpm lint:md` is red locally** on gitignored `docs/temp-references/`, which stops `check:all`
+  before i18n, traceability, contrast, typecheck and tests ever run. Filed as
+  [#35](https://github.com/lsr-explore/art-loupe/issues/35); run the checks individually meanwhile.
+- **Review is Greptile, and its triggering is unreliable.** On #31 no automatic review arrived for
+  ~13 minutes, the CLI run then errored server-side mid-run — `greptile review show <id>` recovered
+  it in full — and the automatic review that did land covered only the first fix commit. **A fix
+  commit does not get reviewed by the review that prompted it**: two of #31's four findings were
+  defects in its own fixes, and the last was found only by a second deliberate review.
+- **`gh api` writes need their body read back.** A 201 with an `html_url` proves a comment was
+  created, not that it says anything — and a verification helper wrapped in a shell function can
+  lose `gh` from `PATH` and fail *open*, printing "verified" for comments that do not exist.
