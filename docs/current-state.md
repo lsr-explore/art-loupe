@@ -43,7 +43,7 @@ labelled artistic call). It never generates or alters imagery.
 
 There is **still no artist-facing UI for any of this**. The upload route has no form in front of
 it — `studio/home` is a heading and a paragraph, and the PR 9 overlay primitives render nowhere.
-PR 7b is the unlock, and it opens with a real problem (below).
+PR 7b is the unlock, and its e2e approach is already decided (see §2).
 
 **The graph still runs no agent.** `graph.py` is `START → seed → END`; there is no LLM SDK
 anywhere in the workspace. PR 12 adds the one model call in the slice. After all fourteen PRs,
@@ -53,16 +53,9 @@ but "multi-agent" would overclaim what slice 1 shows.
 
 ### Open questions
 
-- **PR 7b's e2e path is blocked and needs a decision first.** The hermetic Playwright run uses
-  `AUTH_PROVIDER=demo`; a demo session carries no Supabase token, so `getAccessToken()` returns
-  null and the upload route answers 401. A Playwright upload spec needs either a live Supabase
-  or a seam the demo provider can satisfy. Decide at the top of 7b, not at the end.
 - **The ack-cookie-lifetime question in [#27](https://github.com/lsr-explore/art-loupe/issues/27)
   is still unanswered.** Recommendation recorded there; the call is Laurie's.
 - **ADR numbering.** 0003 is the deletion ADR; `settled-decisions.md`'s scope amendment needs 0004.
-- **`docs/backlog/critical-path.md` is stale inherited material** — dated 2026-08-01, traced
-  against a commit not in this repository, citing issues #225/#226/#229 that do not exist here.
-  Refresh or delete; it is a proposal document and the sequencing is Laurie's.
 - **Four newly filed issues are deliberately unparented** (#32, #33, #34, #36). Epic #5 is scoped
   to static-analysis tooling and only #35 is that. Two epics suggest themselves — slice-1 safety
   completion, and workspace/dependency hygiene — each currently holding one or two issues.
@@ -82,9 +75,20 @@ but "multi-agent" would overclaim what slice 1 shows.
 worktrees — the `feat/line-vp-detection` one was removed as empty. Backlog is GitHub issues on
 user project 3; issues #32-#36 filed 2026-09-07.
 
-**Next step: PR 7b** — the intake form, its i18n copy, and the e2e spec. **Answer the demo-auth
-question before writing the form**, not after: `AUTH_PROVIDER=demo` yields no Supabase token, so
-the upload route answers 401 and a hermetic Playwright upload cannot reach it as things stand.
+**Next step: PR 7b** — the intake form, its i18n copy, and the e2e spec.
+
+**The e2e approach is decided (2026-09-07): stub at the browser with `page.route`.** Playwright
+intercepts the form's `fetch('/api/projects')` and returns a canned 201 or 422, so the suite stays
+hermetic and needs no Supabase. This is a decision, not a workaround — `demoAuthProvider` returns
+no `tokens` by construction, so `getAccessToken()` is null and the upload route answers **401** for
+any demo session; the CI Playwright job has no Supabase in it either. The route's own correctness
+is already covered by 30 vitest tests plus a live end-to-end verification, so what Playwright
+uniquely adds here is the browser half: does the form build the right request, does each refusal
+reason render something an artist can act on, is the error surface accessible.
+
+Known weakness to mitigate: the form/route contract is then asserted against a hand-written stub,
+so a change to the route's response shape keeps passing. Derive the stub's payloads from the same
+exported types rather than retyping them.
 
 **Then PR 11 before PR 10** (approved 2026-09-05). PR 11 owns the `opencv-contrib-python`
 dependency and the one-`cv2`-provider hygiene test. Its worktree was removed; recreate with

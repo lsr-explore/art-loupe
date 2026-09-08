@@ -4,8 +4,7 @@
      Re-run `pnpm backlog:report`. Edit the issues in GitHub, not this file. -->
 
 Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-08**.
-Descriptive only — this file reports what GitHub says. The proposed *order of attack*
-is a separate, hand-written judgment call in [`critical-path.md`](./critical-path.md);
+Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
 - Open issues: **14** — **1** epics, **7** filed under an epic, **6** unparented

@@ -5,7 +5,7 @@ description: File deferred work as a GitHub issue and refresh the backlog docs �
 
 # Backlog maintenance
 
-The tracker is the source of truth; `docs/backlog/` is a map of it. Four things exist and
+The tracker is the source of truth; `docs/backlog/` is a map of it. Three things exist and
 they have different rules. None of the three files exist yet — `issues.md` appears the first
 time the report runs, and the two hand-written ones are worth writing only once there are
 epics to describe:
@@ -15,7 +15,6 @@ epics to describe:
 | GitHub issues + the project board | the source of truth — always edit here first |
 | `docs/backlog/issues.md` | **generated** by `pnpm backlog:report` — never hand-edit |
 | `docs/backlog/README.md` | hand-written; only changes when the **epic set** changes |
-| `docs/backlog/critical-path.md` | hand-written **proposal** — Laurie's call, see §4 |
 
 Filing an issue is not done when `gh issue create` returns. An issue that isn't on the
 project board has no Priority, and one without a parent link never appears under its epic in
@@ -123,9 +122,11 @@ Then, and only if it applies:
 - **`README.md`** — update only when the **epic set** changes (new epic, epic closed, an
   epic's purpose or dependency changed). Adding a child issue does **not** touch it. Keep the
   entry to what the epic is *for* and what it depends on; no issue lists — that's `issues.md`.
-- **`critical-path.md`** — this is opinion, and sequencing is Laurie's. Don't silently rewrite
-  it. Surface what changed (a new blocker, a shipped step, a stale claim) and let her decide.
-  If she asks for a refresh, re-date it and keep the **Status: Proposal** header.
+There is deliberately **no sequencing document**. One existed, inherited from the repo this
+was scaffolded from, and was removed on 2026-09-07 rather than refreshed: it was traced against
+a commit absent from this history and cited issues that do not exist here, and a stale critical
+path reads as authoritative. While a single build plan governs the order, that argument belongs
+in the plan. If sequencing ever needs arguing separately, propose it — do not assume a file.
 
 Regenerating drops issues that closed, so the diff can be larger than the work — read it
 before staging.

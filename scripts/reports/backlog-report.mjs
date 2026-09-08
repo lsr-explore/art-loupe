@@ -4,9 +4,8 @@
  *
  * The output is GENERATED — never hand-edit it. It is a *descriptive snapshot*: epic →
  * sub-issue structure, the project's Priority/Status fields, and area grouping, exactly
- * as they stand in GitHub. It carries no sequencing opinion; the proposed order of attack
- * lives in docs/backlog/critical-path.md, which IS hand-written and may drift from this
- * file on purpose.
+ * as they stand in GitHub. It carries no sequencing opinion: while a single build plan
+ * governs the order, docs/design/slice-1-build-plan.md is where that argument lives.
  *
  *   node scripts/reports/backlog-report.mjs      (or: pnpm backlog:report)
  *
@@ -190,8 +189,7 @@ const main = () => {
     '     Re-run `pnpm backlog:report`. Edit the issues in GitHub, not this file. -->',
     '',
     `Snapshot of \`${slug}\` open issues taken **${today}**.`,
-    'Descriptive only — this file reports what GitHub says. The proposed *order of attack*',
-    'is a separate, hand-written judgment call in [`critical-path.md`](./critical-path.md);',
+    'Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;',
     'what each epic is **for** is in [`README.md`](./README.md).',
     '',
     `- Open issues: **${issues.length}** — **${epics.length}** epics, **${filed}** filed under an epic, **${orphans.length}** unparented`,
