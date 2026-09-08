@@ -27,8 +27,8 @@ exists, the detail tells you what it covers.
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | – | – | – | – | **0** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 7 | 53 | – | 1 | 61 | – | 51 | 173 |
-| **intake** | | 7 | 53 | – | 1 | 61 | – | 51 | **173** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 7 | 53 | – | 1 | 61 | – | 53 | 175 |
+| **intake** | | 7 | 53 | – | 1 | 61 | – | 53 | **175** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
 | **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
@@ -42,7 +42,7 @@ exists, the detail tells you what it covers.
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 54 | – | – | – | 71 |
 | **safety** | | – | 17 | – | 54 | – | – | – | **71** |
-| **all flows** | | **54** | **177** | **–** | **55** | **82** | **1** | **262** | **631** |
+| **all flows** | | **54** | **177** | **–** | **55** | **82** | **1** | **264** | **633** |
 
 ## Gaps
 
@@ -79,6 +79,6 @@ Three specific limits:
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
 | pytest | 165 | 0 | 165 |
-| Vitest | 430 | 0 | 430 |
+| Vitest | 432 | 0 | 432 |
 | Playwright | 36 | 0 | 36 |
-| **All** | **631** | **0** | **631** |
+| **All** | **633** | **0** | **633** |

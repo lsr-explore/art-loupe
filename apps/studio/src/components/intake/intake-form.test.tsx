@@ -7,11 +7,13 @@ import messages from '../../../messages/en.json';
 import {
   CHECKSUM,
   createdResponse,
+  creationWithoutId,
   oversizedPhotograph,
   PROJECT_ID,
   referencePhotograph,
   refusalResponse,
   statusResponse,
+  undecodableCreation,
   unreasonedRefusal,
   VALID_ENTRY,
 } from './intake-form.fixtures';
@@ -210,6 +212,24 @@ describe('IntakeForm', () => {
     expect(sentIntent(fetchMock).goal).toBe(goal);
   });
 
+  /**
+   * The other half of "verbatim", and the one that is easy to lose: every *other* field here
+   * is trimmed, so trimming this one too looks like consistency rather than like altering the
+   * text the screener is meant to read.
+   */
+  it('preserves whitespace the artist typed around the goal', async () => {
+    fetchMock.mockResolvedValue(createdResponse());
+    renderForm();
+
+    const goal = '  likeness over finish\n';
+    attach(referencePhotograph());
+    fillIntent({ goal });
+    submit();
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(sentIntent(fetchMock).goal).toBe(goal);
+  });
+
   it('sends a blank goal as null rather than an empty string', async () => {
     fetchMock.mockResolvedValue(createdResponse());
     renderForm();
@@ -268,6 +288,29 @@ describe('IntakeForm', () => {
 
     const summary = await screen.findByRole('alert');
     expect(within(summary).getByText(/could not be completed just now/i)).toBeInTheDocument();
+  });
+
+  /**
+   * The project exists — the 201 said so — but there is no id to navigate to. The form must
+   * neither strand itself nor tell the artist it failed: a resubmit would create a second
+   * project from the same photograph.
+   */
+  it.each([
+    ['a body that will not decode', undecodableCreation],
+    ['a body carrying no project id', creationWithoutId],
+  ] as const)('recovers from a 201 with %s', async (_label, respond) => {
+    fetchMock.mockResolvedValue(respond());
+    renderForm();
+
+    attach(referencePhotograph());
+    fillIntent();
+    submit();
+
+    const summary = await screen.findByRole('alert');
+    expect(within(summary).getByText(/may already exist/i)).toBeInTheDocument();
+    expect(within(summary).getByText(/was uploaded/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start the project' })).toBeEnabled();
+    expect(push).not.toHaveBeenCalled();
   });
 
   it('reports a transport failure rather than leaving the button spinning', async () => {

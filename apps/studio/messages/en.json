@@ -67,6 +67,7 @@
       "invalidSupport": "Enter both the width and the height as numbers above zero, or leave the support size blank.",
       "goalTooLong": "That is longer than the field takes. Shorten it and try again.",
       "duplicate": "You have already uploaded this exact photograph.",
+      "createdUnreadable": "Your photograph was uploaded, but the reply could not be read, so the project could not be opened. The project may already exist — reload before uploading it again.",
       "sessionExpired": "Your session has ended. Sign in again, then start the project.",
       "network": "The upload did not reach us. Check your connection and try again.",
       "unavailable": "The upload could not be completed just now. Try again in a moment."

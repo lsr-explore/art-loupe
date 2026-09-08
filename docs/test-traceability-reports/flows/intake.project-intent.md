@@ -13,8 +13,8 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 173 (16 parametrized) |
-| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 51 |
+| **Tests** | 175 (17 parametrized) |
+| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 53 |
 | **Not covered** | privacy · performance |
 
 ## pytest — 42
@@ -64,7 +64,7 @@ Upload, intake, and the typed ProjectIntent
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
 
-## Vitest — 120
+## Vitest — 122
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -95,21 +95,23 @@ Upload, intake, and the typed ProjectIntent
 | functionality | maps a duplicate to 409, not to a permissions error | `apps/studio/src/app/api/projects/route.test.ts:251` |
 | functionality | maps an unavailable backend to 502 and logs it | `apps/studio/src/app/api/projects/route.test.ts:259` |
 | functionality | accepts the full intent the walkthrough describes | `apps/studio/src/app/api/projects/route.test.ts:361` |
-| functionality | posts the photograph and a validated intent, then opens the new project | `apps/studio/src/components/intake/intake-form.test.tsx:94` |
-| functionality | collects every missing required field into one summary instead of one per submit | `apps/studio/src/components/intake/intake-form.test.tsx:124` |
-| functionality | moves focus to the summary and links each entry to the field it belongs to | `apps/studio/src/components/intake/intake-form.test.tsx:136` |
-| functionality | refuses an over-sized photograph before it is uploaded | `apps/studio/src/components/intake/intake-form.test.tsx:150` |
-| functionality | treats a blank support size as  | `apps/studio/src/components/intake/intake-form.test.tsx:161` |
-| functionality | rejects a fractional or negative time budget | `apps/studio/src/components/intake/intake-form.test.tsx:184` |
-| functionality | sends the artist goal verbatim, including instruction-shaped text | `apps/studio/src/components/intake/intake-form.test.tsx:200` |
-| functionality | sends a blank goal as null rather than an empty string | `apps/studio/src/components/intake/intake-form.test.tsx:213` |
-| functionality | renders the server refusal %s as something to act on | `apps/studio/src/components/intake/intake-form.test.tsx:225` |
-| functionality | reports a %i as a whole-request failure with no field link | `apps/studio/src/components/intake/intake-form.test.tsx:241` |
-| functionality | falls back to a readable message when a refusal carries no reason | `apps/studio/src/components/intake/intake-form.test.tsx:261` |
-| functionality | reports a transport failure rather than leaving the button spinning | `apps/studio/src/components/intake/intake-form.test.tsx:273` |
-| functionality | cannot be submitted twice while a project is being created | `apps/studio/src/components/intake/intake-form.test.tsx:291` |
-| a11y | has no accessibility violations | `apps/studio/src/components/intake/intake-form.test.tsx:307` |
-| a11y | has no accessibility violations while showing errors | `apps/studio/src/components/intake/intake-form.test.tsx:313` |
+| functionality | posts the photograph and a validated intent, then opens the new project | `apps/studio/src/components/intake/intake-form.test.tsx:96` |
+| functionality | collects every missing required field into one summary instead of one per submit | `apps/studio/src/components/intake/intake-form.test.tsx:126` |
+| functionality | moves focus to the summary and links each entry to the field it belongs to | `apps/studio/src/components/intake/intake-form.test.tsx:138` |
+| functionality | refuses an over-sized photograph before it is uploaded | `apps/studio/src/components/intake/intake-form.test.tsx:152` |
+| functionality | treats a blank support size as  | `apps/studio/src/components/intake/intake-form.test.tsx:163` |
+| functionality | rejects a fractional or negative time budget | `apps/studio/src/components/intake/intake-form.test.tsx:186` |
+| functionality | sends the artist goal verbatim, including instruction-shaped text | `apps/studio/src/components/intake/intake-form.test.tsx:202` |
+| functionality | preserves whitespace the artist typed around the goal | `apps/studio/src/components/intake/intake-form.test.tsx:220` |
+| functionality | sends a blank goal as null rather than an empty string | `apps/studio/src/components/intake/intake-form.test.tsx:233` |
+| functionality | renders the server refusal %s as something to act on | `apps/studio/src/components/intake/intake-form.test.tsx:245` |
+| functionality | reports a %i as a whole-request failure with no field link | `apps/studio/src/components/intake/intake-form.test.tsx:261` |
+| functionality | falls back to a readable message when a refusal carries no reason | `apps/studio/src/components/intake/intake-form.test.tsx:281` |
+| functionality | recovers from a 201 with %s | `apps/studio/src/components/intake/intake-form.test.tsx:298` |
+| functionality | reports a transport failure rather than leaving the button spinning | `apps/studio/src/components/intake/intake-form.test.tsx:316` |
+| functionality | cannot be submitted twice while a project is being created | `apps/studio/src/components/intake/intake-form.test.tsx:334` |
+| a11y | has no accessibility violations | `apps/studio/src/components/intake/intake-form.test.tsx:350` |
+| a11y | has no accessibility violations while showing errors | `apps/studio/src/components/intake/intake-form.test.tsx:356` |
 | data | uploads the object BEFORE the row that cites it | `apps/studio/src/lib/intake/ingest-upload.test.ts:53` |
 | data | creates the project before anything that needs its id | `apps/studio/src/lib/intake/ingest-upload.test.ts:72` |
 | data | writes the detections last, once the upload is already valid | `apps/studio/src/lib/intake/ingest-upload.test.ts:78` |

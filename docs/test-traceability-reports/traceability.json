@@ -3,9 +3,9 @@
   "totals": {
     "tagged": {
       "pytest": 165,
-      "vitest": 430,
+      "vitest": 432,
       "playwright": 36,
-      "all": 631
+      "all": 633
     },
     "untagged": {
       "pytest": 0,
@@ -15,9 +15,9 @@
     },
     "all": {
       "pytest": 165,
-      "vitest": 430,
+      "vitest": 432,
       "playwright": 36,
-      "all": 631
+      "all": 633
     }
   },
   "by_flow": {
@@ -211,15 +211,15 @@
         "safety": 1,
         "data": 61,
         "performance": 0,
-        "functionality": 51
+        "functionality": 53
       },
       "runners": {
         "pytest": 42,
-        "vitest": 120,
+        "vitest": 122,
         "playwright": 11
       },
-      "total": 173,
-      "parametrized": 16
+      "total": 175,
+      "parametrized": 17
     },
     "ops.observability": {
       "severity": "P2",
@@ -1284,105 +1284,119 @@
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:124",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:126",
       "name": "collects every missing required field into one summary instead of one per submit",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:136",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:138",
       "name": "moves focus to the summary and links each entry to the field it belongs to",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:150",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:152",
       "name": "refuses an over-sized photograph before it is uploaded",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:161",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:163",
       "name": "treats a blank support size as ",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:184",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:186",
       "name": "rejects a fractional or negative time budget",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:200",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:202",
       "name": "sends the artist goal verbatim, including instruction-shaped text",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:213",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:220",
+      "name": "preserves whitespace the artist typed around the goal",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:233",
       "name": "sends a blank goal as null rather than an empty string",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:225",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:245",
       "name": "renders the server refusal %s as something to act on",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:241",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:261",
       "name": "reports a %i as a whole-request failure with no field link",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:261",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:281",
       "name": "falls back to a readable message when a refusal carries no reason",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:273",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:298",
+      "name": "recovers from a 201 with %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:316",
       "name": "reports a transport failure rather than leaving the button spinning",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:291",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:334",
       "name": "cannot be submitted twice while a project is being created",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:307",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:350",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:313",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:356",
       "name": "has no accessibility violations while showing errors",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
-      "id": "apps/studio/src/components/intake/intake-form.test.tsx:94",
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:96",
       "name": "posts the photograph and a validated intent, then opens the new project",
       "runner": "vitest",
       "flow": "intake.project-intent",

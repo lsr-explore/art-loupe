@@ -114,11 +114,18 @@ const REJECTION_MESSAGE: Record<UploadRejection, { key: string; fieldId?: FieldI
   invalid_intent: { key: 'invalidIntent' },
 };
 
-/** Read a form field as trimmed text. `FormData` yields `File | string | null`. */
-const textField = (form: FormData, name: string): string => {
+/**
+ * Read a form field as text, exactly as it was typed. `FormData` yields `File | string | null`.
+ *
+ * Separate from `textField` because the goal must not be trimmed — see `validate`.
+ */
+const rawTextField = (form: FormData, name: string): string => {
   const value = form.get(name);
-  return typeof value === 'string' ? value.trim() : '';
+  return typeof value === 'string' ? value : '';
 };
+
+/** Read a form field as trimmed text. Correct for every field the artist did not author. */
+const textField = (form: FormData, name: string): string => rawTextField(form, name).trim();
 
 /** A positive integer, or `null` for anything else — including `''`, `1.5`, `-3` and `1e3`. */
 const positiveInteger = (raw: string): number | null => {
@@ -202,7 +209,20 @@ const validate = (form: FormData, chosen: File | null): Validation => {
     }
   }
 
-  const rawGoal = textField(form, 'goal');
+  /**
+   * The goal is read **untrimmed** (FR-106).
+   *
+   * Every other field here is trimmed, because every other field is a value the artist picked
+   * from a list or typed as a number — whitespace around it is noise. The goal is prose they
+   * wrote, it is stored as provenance, and it is screened as untrusted text, so what reaches
+   * the screener has to be what they submitted. Trimming is a small sanitization, and the
+   * whole point of this path is that this side performs none.
+   *
+   * Blank is still `null` rather than `''`: the *decision* uses a trimmed copy, and the value
+   * that goes on the wire is the original. Those are different things, and conflating them is
+   * what made this trim the submitted text.
+   */
+  const rawGoal = rawTextField(form, 'goal');
   if (rawGoal.length > MAX_GOAL_LENGTH) {
     errors.push({ key: 'goalTooLong', fieldId: FIELD.goal });
   }
@@ -222,8 +242,9 @@ const validate = (form: FormData, chosen: File | null): Validation => {
         skill_level: skillLevel,
         // UNTRUSTED (FR-106). Sent verbatim for the server to screen; this side neither
         // interprets it nor sanitizes it, because sanitizing here would hide from the screener
-        // exactly the text it exists to record.
-        goal: rawGoal === '' ? null : rawGoal,
+        // exactly the text it exists to record. `.trim()` decides blankness only — the value
+        // sent is `rawGoal`, whitespace and all.
+        goal: rawGoal.trim() === '' ? null : rawGoal,
       },
     },
   };
@@ -300,7 +321,27 @@ export const IntakeForm = () => {
     }
 
     if (response.status === 201) {
-      const created = (await response.json()) as CreateProjectResponse;
+      const created = (await response.json().catch(() => null)) as CreateProjectResponse | null;
+
+      /**
+       * A 201 whose body cannot be read, or carries no id.
+       *
+       * Guarded rather than assumed: an unguarded `response.json()` rejects *outside* the
+       * `try` above, so the rejection escapes the handler with `submitting` still true and
+       * the button disabled for good — the artist's only way out is a reload. A body that
+       * parses but has no `projectId` is the quieter half of the same hole, and navigates to
+       * `/projects/undefined`.
+       *
+       * The message is its own string, not `unavailable`, because the project **was created**
+       * — the 201 said so. Telling the artist it failed would invite a resubmit, and every
+       * POST makes a fresh project, so the retry would leave them with two.
+       */
+      if (typeof created?.projectId !== 'string' || created.projectId === '') {
+        setSubmitting(false);
+        fail([{ key: 'createdUnreadable' }]);
+        return;
+      }
+
       // `submitting` stays true through the navigation, so the button cannot be pressed twice
       // while the next route loads and a second project cannot be created by an impatient click.
       router.push(`/projects/${created.projectId}`);

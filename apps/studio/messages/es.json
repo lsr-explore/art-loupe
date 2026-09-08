@@ -67,6 +67,7 @@
       "invalidSupport": "Indica el ancho y el alto como números mayores que cero, o deja el tamaño del soporte en blanco.",
       "goalTooLong": "Es más largo de lo que admite el campo. Acórtalo e inténtalo de nuevo.",
       "duplicate": "Ya has subido exactamente esta fotografía.",
+      "createdUnreadable": "Tu fotografía se subió, pero no se pudo leer la respuesta, así que no se pudo abrir el proyecto. Puede que el proyecto ya exista: recarga la página antes de volver a subirla.",
       "sessionExpired": "Tu sesión ha terminado. Inicia sesión de nuevo y empieza el proyecto.",
       "network": "La subida no llegó. Comprueba tu conexión e inténtalo de nuevo.",
       "unavailable": "No se pudo completar la subida ahora mismo. Inténtalo dentro de un momento."

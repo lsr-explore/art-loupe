@@ -60,5 +60,25 @@ export const refusalResponse = (reason: UploadRejection): Response =>
 /** A refusal that carries no reason at all — the arm that must not render "undefined". */
 export const unreasonedRefusal = (): Response => stubResponse(422, { error: 'invalid_upload' });
 
+/**
+ * A 201 whose body will not decode — an empty, truncated or malformed reply.
+ *
+ * `json()` rejects rather than resolving to `null`, because that is what a real `Response`
+ * does: a stub that resolved would not exercise the rejection path at all, which is the one
+ * that used to escape the submit handler.
+ */
+export const undecodableCreation = (): Response =>
+  ({
+    status: 201,
+    // Annotated `Promise<unknown>`: an unannotated throwing body infers `Promise<never>`,
+    // which does not overlap `Response['json']` and fails the cast.
+    json: async (): Promise<unknown> => {
+      throw new SyntaxError('Unexpected end of JSON input');
+    },
+  }) as Response;
+
+/** A 201 that decodes but names no project — the quieter half of the same hole. */
+export const creationWithoutId = (): Response => stubResponse(201, { checksum: CHECKSUM });
+
 export const statusResponse = (status: number, error: string): Response =>
   stubResponse(status, { error });
