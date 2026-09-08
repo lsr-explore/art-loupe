@@ -13,11 +13,11 @@ App shell, navigation, theming, and localization
 | **Severity** | P2 |
 | **Why** | The chrome every surface renders identically. Regressions here are wide but shallow, and a11y lives here. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/fascia` |
-| **Tests** | 137 (7 parametrized) |
-| **Covered** | a11y 31 · functionality 106 |
+| **Tests** | 139 (7 parametrized) |
+| **Covered** | a11y 31 · functionality 108 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## Vitest — 130
+## Vitest — 131
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -61,8 +61,9 @@ App shell, navigation, theming, and localization
 | functionality | renders static fallback ReactNode when provided | `apps/operations/src/components/ui/error-boundary.test.tsx:41` |
 | functionality | renders fallback render function with error and reset | `apps/operations/src/components/ui/error-boundary.test.tsx:55` |
 | functionality | resets error state when reset is called | `apps/operations/src/components/ui/error-boundary.test.tsx:79` |
-| functionality | renders the page heading | `apps/studio/src/app/[locale]/home/page.test.tsx:20` |
-| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/home/page.test.tsx:27` |
+| functionality | renders the page heading | `apps/studio/src/app/[locale]/home/page.test.tsx:29` |
+| functionality | offers intake as a link to the project route | `apps/studio/src/app/[locale]/home/page.test.tsx:37` |
+| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/home/page.test.tsx:47` |
 | functionality | renders the heading and the login section | `apps/studio/src/app/[locale]/page.test.tsx:29` |
 | functionality | renders the backdrop as a decorative image, not an announced one | `apps/studio/src/app/[locale]/page.test.tsx:36` |
 | functionality | applies the 0.75 to the image itself rather than as a scrim over it | `apps/studio/src/app/[locale]/page.test.tsx:49` |
@@ -152,7 +153,7 @@ App shell, navigation, theming, and localization
 | a11y | uses cyan as the dark chart lead | `packages/fascia/src/theme/contrast.test.ts:262` |
 | a11y | never assigns cyan to a text-bearing token | `packages/fascia/src/theme/contrast.test.ts:267` |
 
-## Playwright — 7
+## Playwright — 8
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -162,6 +163,7 @@ App shell, navigation, theming, and localization
 | a11y | has no detectable accessibility violations | `apps/entry/e2e/entry.spec.ts:41` |
 | functionality | ${route} is served directly | `apps/entry/e2e/metadata-routes.spec.ts:28` |
 | functionality | ${route} is served directly | `apps/operations/e2e/metadata-routes.spec.ts:28` |
+| functionality | renders the form in Spanish on the Spanish route | `apps/studio/e2e/intake.spec.ts:212` |
 | functionality | ${route} is served directly | `apps/studio/e2e/metadata-routes.spec.ts:28` |
 
 ---

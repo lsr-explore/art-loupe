@@ -64,15 +64,34 @@ const LOCALE = 'en';
  * Route segments discovered from the App Router tree, not hand-listed. Reading the
  * filesystem is the whole point: a hand-maintained list would silently stop covering the
  * app the first time someone adds a page, which is precisely the regression this guards.
+ *
+ * It walks for `page.tsx` rather than listing the directories directly beneath `[locale]`,
+ * for the same reason `discoverApiRoutes` walks for `route.ts`. Listing directories was
+ * right while every page was one segment deep and became wrong the moment one was not: a
+ * nested page (`projects/new`) would have been reported as its parent, and a directory that
+ * groups routes without being one itself (`projects/`) would have appeared in the matrix as
+ * a path that does not exist. Both failures point the same way — the row a reviewer reads
+ * would stop naming the route that was actually gated.
  */
 const discoverRoutes = (): string[] => {
   const localeDir = fileURLToPath(new URL('./app/[locale]', import.meta.url));
-  const segments = readdirSync(localeDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
+  const found: string[] = [];
+
+  const walk = (dir: string, prefix: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    )) {
+      if (entry.isDirectory()) {
+        walk(join(dir, entry.name), prefix ? `${prefix}/${entry.name}` : entry.name);
+      } else if (entry.name === 'page.tsx') {
+        found.push(prefix);
+      }
+    }
+  };
+
   // '' is the landing page (`app/[locale]/page.tsx`) — the one intentionally public path.
-  return ['', ...segments];
+  walk(localeDir, '');
+  return found.sort();
 };
 
 /**
@@ -142,10 +161,12 @@ const VISITORS: Visitor[] = [
 
 const requestFor = (route: string, visitor: Visitor): NextRequest => {
   // A route beginning `/api` is already an absolute path and carries no locale segment.
+  // Pages go through `concretePathFor` too — a dynamic page segment (`projects/[id]`) is a
+  // pattern, and `new URL()` would carry the brackets through as percent-encoded path text.
   const path = route.startsWith('/api')
     ? concretePathFor(route)
     : route
-      ? `/${LOCALE}/${route}`
+      ? `/${LOCALE}/${concretePathFor(route)}`
       : `/${LOCALE}`;
   const request = new NextRequest(new URL(`${APP_ORIGIN}${path}`));
   if (visitor.acknowledged) {

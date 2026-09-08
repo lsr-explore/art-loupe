@@ -13,15 +13,19 @@
 
 import { z } from 'zod';
 import { checksumSchema } from './evidence';
+import { ACCEPTED_MIME_TYPES, MAX_UPLOAD_BYTES, MIN_LONG_EDGE_PX } from './image-limits';
 
-/** FR-101 accepted formats, minus HEIC. Widening this needs a decode path to match. */
-export const ACCEPTED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-
-/** FR-101: 25 MB. */
-export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
-
-/** FR-101: the long edge must reach this, or the studies have nothing to measure. */
-export const MIN_LONG_EDGE_PX = 800;
+/**
+ * The bounds live in `image-limits.ts`, not here — see `intent-values.ts` for why. The intake
+ * form states them to the artist before a file is chosen, and it must not pull `zod` in to do
+ * it. Re-exported so the barrel's surface is unchanged.
+ */
+export {
+  ACCEPTED_MIME_TYPES,
+  type AcceptedMimeType,
+  MAX_UPLOAD_BYTES,
+  MIN_LONG_EDGE_PX,
+} from './image-limits';
 
 export const imageRefSchema = z
   .object({
@@ -39,4 +43,3 @@ export const imageRefSchema = z
   );
 
 export type ImageRef = z.infer<typeof imageRefSchema>;
-export type AcceptedMimeType = (typeof ACCEPTED_MIME_TYPES)[number];

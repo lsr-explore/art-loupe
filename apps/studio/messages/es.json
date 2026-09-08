@@ -14,7 +14,71 @@
   },
   "home": {
     "title": "Estudio",
-    "description": "Tu espacio de trabajo. Sube una obra para comenzar una crítica o inicia un plan de sesión."
+    "description": "Tu espacio de trabajo. Sube una obra para comenzar una crítica o inicia un plan de sesión.",
+    "startProject": "Iniciar un proyecto"
+  },
+  "intake": {
+    "title": "Iniciar un proyecto",
+    "description": "Sube la fotografía de referencia con la que trabajas y cuéntanos qué quieres hacer. Aquí no se genera nada: el plan se construye en torno al trabajo que haces tú.",
+    "fileLabel": "Fotografía de referencia",
+    "fileHint": "JPEG, PNG o WebP · hasta {limitMb} MB · al menos {minPx} px en el lado largo.",
+    "mediumLabel": "Medio",
+    "mediumPlaceholder": "Elige un medio",
+    "timeLabel": "Tiempo disponible",
+    "timeHint": "En minutos. Una sesión de tres horas son 180.",
+    "supportLegend": "Tamaño del soporte",
+    "supportHint": "Opcional. El tamaño físico del papel, el tablero o el lienzo con el que trabajas: déjalo en blanco si aún no lo has decidido.",
+    "supportWidthLabel": "Ancho",
+    "supportHeightLabel": "Alto",
+    "supportUnitsLabel": "Unidades",
+    "skillLabel": "Nivel",
+    "goalLabel": "¿Qué buscas?",
+    "goalHint": "Opcional. Texto libre, con tus palabras: por ejemplo, “me importa más el parecido que el acabado”. Se guarda y se analiza como texto, nunca se sigue como instrucción.",
+    "submit": "Iniciar el proyecto",
+    "submitting": "Subiendo…",
+    "errorSummaryTitle": "Hay un problema",
+    "media": {
+      "graphite": "Grafito",
+      "charcoal": "Carboncillo",
+      "ink": "Tinta",
+      "coloured-pencil": "Lápiz de color",
+      "watercolour": "Acuarela",
+      "acrylic": "Acrílico",
+      "oil": "Óleo"
+    },
+    "skills": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado"
+    },
+    "units": {
+      "in": "pulgadas",
+      "mm": "milímetros"
+    },
+    "errors": {
+      "missingFile": "Elige una fotografía de referencia con la que trabajar.",
+      "tooLarge": "Esa fotografía supera los {limitMb} MB. Expórtala a un tamaño menor e inténtalo de nuevo.",
+      "unsupportedType": "Ese archivo no es JPEG, PNG ni WebP. Conviértelo e inténtalo de nuevo.",
+      "undecodable": "No se pudo leer ese archivo como imagen. Puede estar incompleto: prueba a exportarlo otra vez.",
+      "belowMinDimension": "Esa fotografía es demasiado pequeña para medirla. El lado largo debe tener al menos {minPx} px.",
+      "invalidIntent": "No se aceptó algún dato del proyecto. Revisa los campos e inténtalo de nuevo.",
+      "missingMedium": "Elige el medio con el que trabajas.",
+      "invalidTime": "Indica de cuántos minutos dispones, como un número entero mayor que cero.",
+      "invalidSupport": "Indica el ancho y el alto como números mayores que cero, o deja el tamaño del soporte en blanco.",
+      "goalTooLong": "Es más largo de lo que admite el campo. Acórtalo e inténtalo de nuevo.",
+      "duplicate": "Ya has subido exactamente esta fotografía.",
+      "createdUnreadable": "Tu fotografía se subió, pero no se pudo leer la respuesta, así que no se pudo abrir el proyecto. Puede que el proyecto ya exista: recarga la página antes de volver a subirla.",
+      "sessionExpired": "Tu sesión ha terminado. Inicia sesión de nuevo y empieza el proyecto.",
+      "network": "La subida no llegó. Comprueba tu conexión e inténtalo de nuevo.",
+      "unavailable": "No se pudo completar la subida ahora mismo. Inténtalo dentro de un momento."
+    }
+  },
+  "project": {
+    "receivedTitle": "Fotografía de referencia recibida",
+    "receivedDescription": "Tu original se guarda tal y como lo enviaste, y nunca se modifica.",
+    "referenceLabel": "Referencia del proyecto",
+    "planPending": "El plan de este proyecto aún no está construido. La evaluación de la referencia, las planchas de valor y contorno, el enrutado de herramientas y el plan de estudio llegan más adelante: aquí es donde aparecerán.",
+    "startAnother": "Iniciar otro proyecto"
   },
   "nav": {
     "label": "Secciones del estudio"

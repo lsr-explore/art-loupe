@@ -3,9 +3,9 @@
   "totals": {
     "tagged": {
       "pytest": 165,
-      "vitest": 394,
-      "playwright": 24,
-      "all": 583
+      "vitest": 432,
+      "playwright": 36,
+      "all": 633
     },
     "untagged": {
       "pytest": 0,
@@ -15,9 +15,9 @@
     },
     "all": {
       "pytest": 165,
-      "vitest": 394,
-      "playwright": 24,
-      "all": 583
+      "vitest": 432,
+      "playwright": 36,
+      "all": 633
     }
   },
   "by_flow": {
@@ -68,17 +68,17 @@
         "a11y": 0,
         "security": 17,
         "privacy": 0,
-        "safety": 47,
+        "safety": 54,
         "data": 0,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
         "pytest": 33,
-        "vitest": 31,
+        "vitest": 38,
         "playwright": 0
       },
-      "total": 64,
+      "total": 71,
       "parametrized": 5
     },
     "analysis.geometry": {
@@ -205,21 +205,21 @@
       "severity": "P2",
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
-        "a11y": 0,
+        "a11y": 7,
         "security": 53,
         "privacy": 0,
         "safety": 1,
-        "data": 58,
+        "data": 61,
         "performance": 0,
-        "functionality": 22
+        "functionality": 53
       },
       "runners": {
         "pytest": 42,
-        "vitest": 92,
-        "playwright": 0
+        "vitest": 122,
+        "playwright": 11
       },
-      "total": 134,
-      "parametrized": 13
+      "total": 175,
+      "parametrized": 17
     },
     "ops.observability": {
       "severity": "P2",
@@ -291,14 +291,14 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 106
+        "functionality": 108
       },
       "runners": {
         "pytest": 0,
-        "vitest": 130,
-        "playwright": 7
+        "vitest": 131,
+        "playwright": 8
       },
-      "total": 137,
+      "total": 139,
       "parametrized": 7
     }
   },
@@ -829,6 +829,90 @@
       "category": "security"
     },
     {
+      "id": "apps/studio/e2e/intake.spec.ts:127",
+      "name": "opens the created project on a 201",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:142",
+      "name": "validates in the browser before anything is uploaded",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:159",
+      "name": "moves focus to the error summary so the failure is announced",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:178",
+      "name": "explains the refusal ${reason} in words an artist can act on",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:192",
+      "name": "reports a duplicate upload without pretending it failed",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:202",
+      "name": "reports an expired session rather than a generic failure",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:212",
+      "name": "renders the form in Spanish on the Spanish route",
+      "runner": "playwright",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:223",
+      "name": "reflows at 320 CSS px without horizontal scrolling",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:236",
+      "name": "the intake form has no accessibility violations",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:246",
+      "name": "the error state has no accessibility violations",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:260",
+      "name": "the project page has no accessibility violations",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/e2e/intake.spec.ts:98",
+      "name": "builds the multipart request the upload route expects",
+      "runner": "playwright",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
       "id": "apps/studio/e2e/metadata-routes.spec.ts:28",
       "name": "${route} is served directly",
       "runner": "playwright",
@@ -836,14 +920,21 @@
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:20",
+      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:29",
       "name": "renders the page heading",
       "runner": "vitest",
       "flow": "platform.shell",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:27",
+      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:37",
+      "name": "offers intake as a link to the project route",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/home/page.test.tsx:47",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "platform.shell",
@@ -875,6 +966,48 @@
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:46",
+      "name": "confirms the upload and says plainly that the plan is not built",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:59",
+      "name": "shows the project reference it was given",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:70",
+      "name": "refuses %j rather than presenting it as a project",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:79",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/new/page.test.tsx:27",
+      "name": "renders the page heading and the intake form",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/new/page.test.tsx:35",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
@@ -962,148 +1095,309 @@
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:101",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:107",
       "name": "refuses a request with no file part",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:106",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:112",
       "name": "refuses a file part that is a string rather than a file",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:111",
-      "name": "refuses an oversized file before reading its body",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:117",
+      "name": "abandons an over-large body BEFORE parsing it",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:119",
-      "name": "refuses an intent that is %s",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:130",
+      "name": "stops pulling the stream instead of draining it",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:137",
-      "name": "forwards the validated intent, with the schema defaults applied",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:139",
+      "name": "refuses on an honest oversized Content-Length without consuming the body",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
       "id": "apps/studio/src/app/api/projects/route.test.ts:157",
+      "name": "does not trust a Content-Length that lies about a huge body",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:168",
+      "name": "accepts a body with no Content-Length at all",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:175",
+      "name": "refuses an intent that is %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:193",
+      "name": "forwards the validated intent, with the schema defaults applied",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:213",
       "name": "forwards the filename as untrusted provenance",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:167",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:223",
       "name": "answers 201 with the project identity",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:174",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:230",
       "name": "returns no signed URL",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:184",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:240",
       "name": "maps a rejected image to 422 with its reason",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:195",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:251",
       "name": "maps a duplicate to 409, not to a permissions error",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:203",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:259",
       "name": "maps an unavailable backend to 502 and logs it",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:214",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:270",
       "name": "logs the rule and surface when screening found something",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:239",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:295",
       "name": "never puts the excerpt in a log",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:261",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:317",
       "name": "says nothing at all when screening was clean",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:266",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:322",
+      "name": "logs an error when the detections did not reach the table",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:335",
+      "name": "does not log an error when they did",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/route.test.ts:340",
       "name": "never tells the artist what was detected",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:287",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:361",
       "name": "accepts the full intent the walkthrough describes",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:50",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:56",
       "name": "answers 401 with no session",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:58",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:64",
       "name": "answers 401 for a demo session, which owns no Supabase project",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:68",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:74",
       "name": "takes the owner id from the token and never from the request",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:75",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:81",
       "name": "answers 404 when Supabase is not configured",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/api/projects/route.test.ts:91",
+      "id": "apps/studio/src/app/api/projects/route.test.ts:97",
       "name": "refuses a body that is not multipart at all",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:126",
+      "name": "collects every missing required field into one summary instead of one per submit",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:138",
+      "name": "moves focus to the summary and links each entry to the field it belongs to",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:152",
+      "name": "refuses an over-sized photograph before it is uploaded",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:163",
+      "name": "treats a blank support size as ",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:186",
+      "name": "rejects a fractional or negative time budget",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:202",
+      "name": "sends the artist goal verbatim, including instruction-shaped text",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:220",
+      "name": "preserves whitespace the artist typed around the goal",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:233",
+      "name": "sends a blank goal as null rather than an empty string",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:245",
+      "name": "renders the server refusal %s as something to act on",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:261",
+      "name": "reports a %i as a whole-request failure with no field link",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:281",
+      "name": "falls back to a readable message when a refusal carries no reason",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:298",
+      "name": "recovers from a 201 with %s",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:316",
+      "name": "reports a transport failure rather than leaving the button spinning",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:334",
+      "name": "cannot be submitted twice while a project is being created",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:350",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:356",
+      "name": "has no accessibility violations while showing errors",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/intake/intake-form.test.tsx:96",
+      "name": "posts the photograph and a validated intent, then opens the new project",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
@@ -1249,14 +1543,35 @@
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:282",
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:279",
+      "name": "reports a failed detection write rather than discarding it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:291",
+      "name": "reports a detection write that never reached the server",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:304",
+      "name": "reports success when the detections did land",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "data"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:316",
       "name": "refuses an SVG without writing anything",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:293",
+      "id": "apps/studio/src/lib/intake/ingest-upload.test.ts:327",
       "name": "refuses an undersized photograph without writing anything",
       "runner": "vitest",
       "flow": "intake.project-intent",
@@ -1298,126 +1613,161 @@
       "category": "data"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:102",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:106",
       "name": "refuses an empty upload",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:109",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:113",
       "name": "refuses bytes over the ceiling",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:117",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:121",
       "name": "checks size before it tries to decode",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:124",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:128",
       "name": "refuses a long edge below ${MIN_LONG_EDGE_PX}px",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:131",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:135",
       "name": "accepts a long edge exactly at the floor",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:138",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:142",
       "name": "measures the long edge, not the width",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:148",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:152",
       "name": "is always an object, even with no metadata to read",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:155",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:159",
       "name": "survives metadata it cannot parse, and says the read was incomplete",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:179",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:183",
       "name": "keeps nothing that a jsonb column cannot hold",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:198",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:202",
       "name": "bounds what it will store",
       "runner": "vitest",
       "flow": "safety.untrusted-input",
       "category": "safety"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:25",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:208",
+      "name": "keeps the record of what it dropped inside the same budget",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:223",
+      "name": "still records that fields were dropped, as a count",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:236",
+      "name": "never presents a trimmed block as a complete one",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:254",
+      "name": "always carries the count whenever anything was dropped",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:269",
+      "name": "leaves a small block untouched",
+      "runner": "vitest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:29",
       "name": "accepts a %s and reports its type",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:37",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:41",
       "name": "reads the real dimensions out of a %s",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:50",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:54",
       "name": "reports the byte size it was actually given",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:59",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:63",
       "name": "refuses an SVG even though it decodes",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:70",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:74",
       "name": "refuses a GIF",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:77",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:81",
       "name": "calls a truncated JPEG undecodable rather than unsupported",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:86",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:90",
       "name": "refuses bytes that are not an image at all",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:93",
+      "id": "apps/studio/src/lib/intake/inspect-image.test.ts:97",
       "name": "never consults a declared content type",
       "runner": "vitest",
       "flow": "intake.project-intent",
@@ -1746,49 +2096,49 @@
       "category": "data"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:206",
+      "id": "apps/studio/src/proxy.test.ts:227",
       "name": "matches the committed route × visitor gate matrix",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:246",
+      "id": "apps/studio/src/proxy.test.ts:267",
       "name": "admits no anonymous visitor to any route but the landing",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:271",
+      "id": "apps/studio/src/proxy.test.ts:292",
       "name": "applies the acknowledgement gate before the auth gate",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:283",
+      "id": "apps/studio/src/proxy.test.ts:304",
       "name": "refuses an operator session rather than treating it as authorized",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:290",
+      "id": "apps/studio/src/proxy.test.ts:311",
       "name": "never answers a route handler with a redirect",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:313",
+      "id": "apps/studio/src/proxy.test.ts:334",
       "name": "refuses an unauthenticated or cross-app caller at every route handler with 401",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/proxy.test.ts:328",
+      "id": "apps/studio/src/proxy.test.ts:349",
       "name": "lets an artist through to the handler without requiring the acknowledgement",
       "runner": "vitest",
       "flow": "platform.auth",
@@ -4398,11 +4748,6 @@
       {
         "id": "safety.untrusted-input",
         "severity": "P0",
-        "missing": ["a11y"]
-      },
-      {
-        "id": "intake.project-intent",
-        "severity": "P2",
         "missing": ["a11y"]
       }
     ]

@@ -7,14 +7,14 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-08**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **14** — **1** epics, **7** filed under an epic, **6** unparented
+- Open issues: **16** — **1** epics, **7** filed under an epic, **8** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 0 |
 | P1 | 1 |
-| P2 | 7 |
-| P3 | 6 |
+| P2 | 8 |
+| P3 | 7 |
 | — | 0 |
 
 Priority and Status are the [Project #3](https://github.com/users/lsr-explore/projects/3)
@@ -46,6 +46,8 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | --- | --- | --- | --- |
 | [#32](https://github.com/lsr-explore/art-loupe/issues/32) | studio: screen OCR-visible text at ingest | P1 | Backlog |
 | [#27](https://github.com/lsr-explore/art-loupe/issues/27) | studio: move the synthetic-data acknowledgement to the login page | P2 | Backlog |
+| [#39](https://github.com/lsr-explore/art-loupe/issues/39) | studio: a failed object cleanup strands a storage object, and the docblock says it self-heals | P2 | Backlog |
+| [#38](https://github.com/lsr-explore/art-loupe/issues/38) | studio: an unreadable insert response leaves an orphan project row | P3 | Backlog |
 
 ### auth
 

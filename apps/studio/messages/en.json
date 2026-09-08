@@ -14,7 +14,71 @@
   },
   "home": {
     "title": "Studio",
-    "description": "Your workspace. Upload a piece to begin a critique, or start a session plan."
+    "description": "Your workspace. Upload a piece to begin a critique, or start a session plan.",
+    "startProject": "Start a project"
+  },
+  "intake": {
+    "title": "Start a project",
+    "description": "Upload the reference photograph you are working from, and tell us what you are trying to make. Nothing here is generated — the plan is built around the work you do.",
+    "fileLabel": "Reference photograph",
+    "fileHint": "JPEG, PNG or WebP · up to {limitMb} MB · at least {minPx} px on the long edge.",
+    "mediumLabel": "Medium",
+    "mediumPlaceholder": "Choose a medium",
+    "timeLabel": "Time available",
+    "timeHint": "In minutes. A three-hour session is 180.",
+    "supportLegend": "Support size",
+    "supportHint": "Optional. The physical size of the paper, panel or canvas you are working on — leave it blank if you have not decided.",
+    "supportWidthLabel": "Width",
+    "supportHeightLabel": "Height",
+    "supportUnitsLabel": "Units",
+    "skillLabel": "Skill level",
+    "goalLabel": "What are you after?",
+    "goalHint": "Optional. Free text, in your own words — for example, “likeness matters more than finish”. It is stored and screened as text, never followed as an instruction.",
+    "submit": "Start the project",
+    "submitting": "Uploading…",
+    "errorSummaryTitle": "There is a problem",
+    "media": {
+      "graphite": "Graphite",
+      "charcoal": "Charcoal",
+      "ink": "Ink",
+      "coloured-pencil": "Coloured pencil",
+      "watercolour": "Watercolour",
+      "acrylic": "Acrylic",
+      "oil": "Oil"
+    },
+    "skills": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "units": {
+      "in": "inches",
+      "mm": "millimetres"
+    },
+    "errors": {
+      "missingFile": "Choose a reference photograph to work from.",
+      "tooLarge": "That photograph is over {limitMb} MB. Export it at a smaller size and try again.",
+      "unsupportedType": "That file is not a JPEG, PNG or WebP. Convert it and try again.",
+      "undecodable": "That file could not be read as an image. It may be incomplete — try exporting it again.",
+      "belowMinDimension": "That photograph is too small to measure. The long edge needs to be at least {minPx} px.",
+      "invalidIntent": "Something in the project details was not accepted. Check the fields and try again.",
+      "missingMedium": "Choose the medium you are working in.",
+      "invalidTime": "Enter how many minutes you have, as a whole number above zero.",
+      "invalidSupport": "Enter both the width and the height as numbers above zero, or leave the support size blank.",
+      "goalTooLong": "That is longer than the field takes. Shorten it and try again.",
+      "duplicate": "You have already uploaded this exact photograph.",
+      "createdUnreadable": "Your photograph was uploaded, but the reply could not be read, so the project could not be opened. The project may already exist — reload before uploading it again.",
+      "sessionExpired": "Your session has ended. Sign in again, then start the project.",
+      "network": "The upload did not reach us. Check your connection and try again.",
+      "unavailable": "The upload could not be completed just now. Try again in a moment."
+    }
+  },
+  "project": {
+    "receivedTitle": "Reference photograph received",
+    "receivedDescription": "Your original is stored exactly as you sent it, and it is never altered.",
+    "referenceLabel": "Project reference",
+    "planPending": "The plan for this project is not built yet. Reference assessment, value and outline plates, the tool routing and the studio plan all arrive in later work — this page is where they will appear.",
+    "startAnother": "Start another project"
   },
   "nav": {
     "label": "Studio sections"
