@@ -5,16 +5,16 @@
 
 2026-08-30 → 2026-09-07
 
-- Sessions: **6**
-- Cost, LLM (API-equivalent): **$254.36**
+- Sessions: **7**
+- Cost, LLM (API-equivalent): **$276.16**
 - Time (API): **4.7h**
-- Time (wall): **36.4h**
-- PRs: **8**
-- CodeRabbit findings fixed: **20/24**
+- Time (wall): **39.0h**
+- PRs: **9**
+- CodeRabbit findings fixed: **22/28**
 
 ## Effort, cost and time
 
-Average churn **11.0%** · average docs maintenance **23.5%**.
+Average churn **11.6%** · average docs maintenance **21.6%**.
 Docs is tracked apart from design deliberately: design is the work, doc upkeep is
 overhead and a candidate for automation.
 
@@ -36,18 +36,18 @@ not equally worth driving down:
 
 | Cause | Share of all churn |
 | --- | --- |
-| `under_specified` | 7% |
-| `refinement` | 19% |
+| `under_specified` | 6% |
+| `refinement` | 22% |
 | `avoidable_error` | 40% |
-| `genuine_discovery` | 34% |
+| `genuine_discovery` | 32% |
 
 ## Rework
 
 Two kinds, tracked separately:
 
-- **Within a session** — the `churn` band above. Averaging **11.0%**.
+- **Within a session** — the `churn` band above. Averaging **11.6%**.
 - **Across sessions** — work a *later* session had to redo. **0 of
-  6** sessions redid earlier work.
+  7** sessions redid earlier work.
 
 Cross-session rework is the more expensive kind: it means a decision didn't hold, so
 everything built on it has to be revisited. Watch it against `decision_stability`.
@@ -61,6 +61,25 @@ everything built on it has to be revisited. Watch it against `decision_stability
 ![Dot plot of themes touched per day over time](charts/themes.svg)
 
 ## Recent retrospectives
+
+### 2026-09-07 — Slice 1 PR 7b — the intake form, a Zod-free schemas split forced by the bundle budget, and two review findings that contradicted my own docblock
+
+- **Went well:** Running pnpm size unprompted is the only reason the Zod bundle regression never left the branch: importing seven medium names through the schemas barrel took the studio from 248 to 347 kB gzipped against a 300 kB budget, and nothing else in check:all would have said so. Measuring the baseline by stashing and rebuilding, rather than trusting a remembered figure, is what made the number arguable rather than asserted. Both in-scope review findings were verified against the source before acting, and both fixes were checked by reverting each one to confirm its test actually fails -- one failure for the first, two for the second. The two terminal-review findings were confirmed to sit outside git diff origin/main...HEAD before being dispositioned, which turned a stale-base review into two filed issues instead of two out-of-scope patches; the second is the more valuable half, because it establishes that an existing docblock tells the next reader a leak self-heals when it does not.
+- **Improve:** Both in-scope findings were self-contradictions inside a file I wrote this same session. The goal was trimmed by the same helper as every other field, breaking a rule that file's own docblock states in prose -- that this side sanitizes nothing, because sanitizing would hide from the screener exactly the text it exists to record. The unguarded response.json() on the 201 path sat eight lines above a .catch(() => null) doing the right thing on the 422 path. Neither needed information I did not have; both escaped to review, which is where iteration stops being refinement. I also spent a Greptile CLI review that was redundant: I checked for an automatic one, found none, and started the CLI -- the automatic review landed on the same SHA moments later, and the skill says explicitly to wait a few minutes and re-check rather than spend one. The Zod regression is scored refinement because my own check caught it, but the information was in hand: I had read packages/schemas/package.json listing zod as a dependency and the current-state doc's 242-248 kB figure, and did not connect them until the budget failed.
+- **Tooling:** pnpm --filter @artloupe/studio e2e -- --project=chromium silently ignored the passthrough and ran all three browsers anyway. The workflow rule says to pass extra args through the script rather than via exec, and for Playwright that does not work as written -- worth either correcting the rule or noting the exception. jsdom cost three probe iterations before yielding the actual constraint: fireEvent.change(input, {target:{files:[...]}}) sets the wrapper property but not the internal slot new FormData(form) reads, so the form appears to receive no file. That failure looks like a broken component rather than an environment limit and is worth recording in the testing rules. Finally, greptile config reports 'Rules (0): (none)' while greptile.json declares three customContext rules including the WCAG 2.2 AA one scoped to apps/*/src/**; neither review raised an accessibility finding on a PR that is almost entirely new UI, and the output cannot distinguish a clean bill from a rule that never loaded.
+- **Decisions:**
+  - The intake form gets its own route (/projects/new) rather than folding into /home, and a 201 navigates to a stub /projects/[id] rather than rendering an inline success panel. Both Laurie's calls, taken at the top of the session
+  - The stub project page reads nothing -- there is no GET for a project yet -- so it confirms the upload, which the redirect is evidence of, and never claims the project was loaded. The id is UUID-checked before rendering: React escapes it, so this is a correctness guard rather than an injection one, because echoing an arbitrary path segment back as 'your project' is a claim the page cannot support
+  - Validation stays server-authoritative. The two client-side checks are round-trip concerns rather than correctness: size, because route.ts refuses an over-sized body as it streams and cancels the reader, so the artist would push 40 MB to be told no and the cancelled request can surface as a transport failure rather than the 422 that explains itself; and the intent fields, because invalid_intent is one opaque reason by design, so naming which field is wrong has to happen client-side or nowhere
+  - The file's declared type is deliberately NOT checked client-side. inspect-image.ts sniffs the format from the bytes and never consults the client's claim, so a browser reporting an empty or wrong File.type -- which happens on Linux and some Android pickers -- would be refused locally for a photograph the server accepts. accept narrows the picker, which is a hint; the sniff is the answer
+  - The error surface is the GOV.UK error-summary pattern: a focused region listing every problem at once, each entry linking to its field, the message repeated inline, aria-invalid on the control. The error state carries its own axe assertion in both vitest and Playwright, because it only exists after a failed submit and a clean audit of the empty form says nothing about it
+  - packages/schemas splits its plain values out of the Zod modules into intent-values.ts and image-limits.ts with subpath exports. Importing MEDIA through the package barrel put the whole validator in the client bundle -- measured at 248.21 to 346.79 kB gzipped against a 300 kB size-limit budget, now 256.44 kB. The barrel's surface is unchanged, so nothing server-side moved. The Python mirror is deliberately not split: there is no bundle on that side and splitting it would make the parity comparison harder
+  - apps/studio/tsconfig.json now typechecks e2e/, which is what makes 'derive the Playwright stub from the same exported types' real rather than decorative -- without it a renamed field passes quietly against a hand-written fixture
+  - lib/api/project-contract.ts holds the endpoint, the multipart field names and both body shapes with no runtime imports, so route.ts, the intake form and the Playwright spec read one set of declarations. It exists separately from responses.ts because that module builds NextResponse objects and is unreachable from a client component or a test process
+  - proxy.test.ts discovers pages by walking for page.tsx rather than listing directories under [locale], the way discoverApiRoutes already walks for route.ts. Listing directories was right while every page was one segment deep; projects/new is the first that is not, and it would have been reported as its parent -- a path that does not exist
+  - fascia gets a native <select> primitive rather than a base-ui listbox. Typeahead, closed-state arrow keys, the platform popup and the mobile wheel picker all come from the platform, as do the WCAG target-size and focus-appearance criteria. Option rows cannot be styled; that is the accepted trade, stated in the file
+  - The undecodable-201 recovery gets its own message rather than reusing unavailable. The project was created -- the 201 says so -- and every POST makes a fresh project, so telling the artist it failed would invite a resubmit and leave them holding two
+  - Two ingest findings deferred rather than fixed (#38 P3, #39 P2): ingest-upload.ts is not in this PR's diff, confirmed against git diff origin/main...HEAD before acting. #39 establishes that the module docblock's stated reason for tolerating a storage orphan -- 'overwritten by an identical retry, because the key ends in the content checksum' -- is false, because the key is scoped by projectId and every POST makes a new one
 
 ### 2026-09-07 — Slice 1 PR 7a — the ingest path, a mirrored injection screener, and four review findings of which two were mine
 
@@ -142,21 +161,6 @@ everything built on it has to be revisited. Watch it against `decision_stability
   - The corpus is public-read to any authenticated principal and is not artist data; ownership RLS belongs on projects and transcripts, never on corpus tables
   - No cross-encoder reranker: the fine-tune was its reason to exist, so RRF's fused order is final
   - flows.json restructure is proposed in requirements.md §7 but not applied — the names are Laurie's and the file is a CI gate
-
-### 2026-08-30 — Art Loupe scope proposal — reference-to-plan, artwork critique cut
-
-- **Went well:** The reference corpus was binary — .docx and .xlsx — and was read directly by unzipping and stripping the XML rather than asking for conversions, so nothing in the brief went unread. The Explore agent's repo inventory changed the proposal materially rather than confirming it: it surfaced that flows.json still encodes the now-dead critique scope across three P0-adjacent flow names, that settled-decisions.md defines Art Loupe as including critique, and that no LLM dependency exists anywhere in the repo yet. Reading veloce-trace next door established what is actually portable instead of guessing. The proposal pushes back on Codex at the one place Codex's own evaluation flags a risk it does not then resolve — a fixed Director-to-Critic route is a workflow, not an agent system.
-- **Improve:** ExitPlanMode was called without first saying plainly what approving would do. Laurie rejected it — 'I wasn't quite sure what I was approving' — and the repair was a single sentence that should have preceded the call: approving writes one gitignored markdown file and nothing else. Putting a 387-line deliverable document inside a plan file is exactly the case where 'approve the plan' reads as 'approve building this.' Separately, the first draft asserted that docs/temp-references was in-tree without running git check-ignore; it is gitignored, and the claim needed correcting after the fact. That is the same verify-late pattern the previous session's retro already flagged.
-- **Tooling:** markdownlint walks docs/temp-references/ even though .gitignore excludes it, so pnpm check:all fails locally while CI stays green. A gate that disagrees with CI teaches people to ignore the gate. Either markdownlint should honour .gitignore or its ignore list should mirror it — the specific folder is disposable here, but the class of drift is not.
-- **Decisions:**
-  - Art Loupe is the final capstone pivot — the discharge app was left for personal defensibility, not because it was weaker
-  - Scope is two feature-bearing apps (studio, operations); apps/entry stays as the built public shell and never grows a workflow
-  - In-progress artwork critique is cut; its value folds into reference assessment at intake, a hand-applied self-check card, and the Plan Critic
-  - The Plan Critic survives the cut and must be named as such — it critiques the plan, not the artwork
-  - Proposed wedge: every plan claim is measured, cited, or chosen — the anti-confabulation spine, and the eval spine
-  - Proposed that the graph must branch on tool results (complexity threshold, confidence interrupt, defect-driven re-retrieval), not only on intake answers
-  - docs/temp-references is transient and gitignored; its markdownlint failures will not be fixed because the folder goes away with the design docs
-  - Pending Laurie's answers: showcase vision tool, the Week 9 fine-tuning story, and whether voice is in scope
 
 ---
 
