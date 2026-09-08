@@ -11,9 +11,16 @@
  *
  * **The bytes cross this boundary in memory.** FR-101 caps an upload at 25 MB and the checksum
  * has to be computed over exactly the bytes that get stored, so there is nothing to stream to.
- * The cap is enforced twice — once on the declared part size before reading, and again on the
- * buffer's real length inside `inspectImage` — because a multipart part's advertised size is a
- * client's claim like any other.
+ * That makes *when* the cap is applied a resource question, not just a validation one, and it is
+ * applied three times on the way in:
+ *
+ * 1. the body itself, **counted as it streams in** and abandoned the moment it passes the
+ *    envelope — `request.formData()` buffers the whole request before returning, and Next.js
+ *    applies no default body limit to a route handler, so without this an authenticated artist
+ *    can make a worker buffer arbitrarily much before being told no;
+ * 2. the file part's declared `size`, after parsing;
+ * 3. the buffer's real length inside `inspectImage` — because every number a client supplies
+ *    about its own request, header or part, is a claim rather than a fact.
  */
 
 import { subjectFromAccessToken } from '@artloupe/auth';
@@ -28,6 +35,67 @@ import { logger } from '@/lib/logger';
 /** The multipart field names this handler reads. Anything else in the body is ignored. */
 const FILE_FIELD = 'file';
 const INTENT_FIELD = 'intent';
+
+/**
+ * Ceiling on the whole wire body, as opposed to the photograph inside it.
+ *
+ * The envelope carries the `intent` JSON (a goal is capped at 2000 characters by the schema)
+ * plus multipart boundaries and per-part headers. 64 KiB is far more than that needs and far
+ * less than a second photograph, so it cannot be used to smuggle payload past the FR-101 cap.
+ */
+const MAX_REQUEST_BYTES = MAX_UPLOAD_BYTES + 64 * 1024;
+
+/**
+ * Read the body, refusing as soon as it passes the ceiling.
+ *
+ * `request.formData()` buffers the entire request before returning, so a size check that runs
+ * on its result has already paid the cost it was meant to prevent — and Next.js applies no
+ * default body limit to a route handler, nor does this repo configure an upstream one.
+ *
+ * **Counting the stream rather than trusting `Content-Length`** is the part that matters. The
+ * header is the cheap fast path and is checked first, but it is a claim: an attacker sending an
+ * enormous body simply omits it, and refusing every request that lacks one would reject
+ * legitimate chunked uploads instead. Counting as the bytes arrive bounds the memory whether
+ * the header is honest, absent, or a lie.
+ *
+ * `null` means "over the ceiling, stop" — the caller turns that into the refusal, and the
+ * reader is cancelled so the remainder is never pulled.
+ */
+const readBoundedBody = async (request: NextRequest): Promise<Uint8Array | null> => {
+  const declared = Number(request.headers.get('content-length'));
+  if (Number.isFinite(declared) && declared > MAX_REQUEST_BYTES) {
+    return null;
+  }
+
+  if (request.body === null) {
+    return null;
+  }
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    total += value.byteLength;
+    if (total > MAX_REQUEST_BYTES) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+
+  const body = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return body;
+};
 
 export const POST = async (request: NextRequest) => {
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
@@ -48,9 +116,19 @@ export const POST = async (request: NextRequest) => {
     return unauthenticated();
   }
 
+  // Bounded as it arrives, before anything parses it. See `readBoundedBody`.
+  const rawBody = await readBoundedBody(request);
+  if (rawBody === null) {
+    return invalidUpload('too_large');
+  }
+
   let form: FormData;
   try {
-    form = await request.formData();
+    // Re-parsed from the bytes already counted, rather than from the request, so the multipart
+    // decode cannot reach past the ceiling the read above enforced.
+    form = await new Response(rawBody as unknown as BodyInit, {
+      headers: { 'content-type': request.headers.get('content-type') ?? '' },
+    }).formData();
   } catch {
     // Not a parseable multipart body at all — malformed rather than unacceptable, which is the
     // one case in this handler that really is a 400. `invalid_upload` reports it as
@@ -63,8 +141,8 @@ export const POST = async (request: NextRequest) => {
     return invalidUpload('missing_file');
   }
 
-  // Checked before the body is read into memory. `inspectImage` checks the real length again;
-  // this one only avoids buffering 200 MB to then refuse it.
+  // The second of the three checks. `Content-Length` bounded the envelope; this bounds the
+  // photograph, and `inspectImage` re-measures the buffer that actually arrived.
   if (file.size > MAX_UPLOAD_BYTES) {
     return invalidUpload('too_large');
   }

@@ -91,24 +91,51 @@ export const malformedRequest = (): Request =>
   });
 
 /**
- * A request whose file part claims to be enormous.
+ * A request whose body streams more bytes than the envelope allows.
  *
- * Deliberately *not* built through `new Request(..., { body: form })` like the others. Doing
- * that re-encodes the multipart body and rebuilds the `File` on the way out, so a faked `size`
- * is discarded and the case silently tests nothing — which is exactly what happened first.
+ * Shaped around what the handler actually touches — `headers` and `body` — because the guard
+ * now counts the stream rather than trusting `Content-Length`. `formData()` throws if it is
+ * ever reached, which is what makes the test an assertion about *ordering* and not merely about
+ * a status code: the point of the fix is that the body is abandoned before anything parses it.
  *
- * The handler only ever calls `request.formData()`, so handing it an object with that one
- * method keeps the part intact and lets the pre-read ceiling be tested without allocating
- * 25 MB. That the fake is this thin is the argument for it: if the handler ever starts reading
- * the request some other way, this stops compiling rather than quietly passing.
+ * The stream yields in small chunks so the refusal happens part-way through, proving the count
+ * is incremental rather than a check on an already-buffered whole.
  */
-export const oversizedRequest = (bytes: number): Request => {
-  const file = new File([new Uint8Array(8) as BlobPart], 'huge.jpg', { type: 'image/jpeg' });
-  Object.defineProperty(file, 'size', { value: bytes });
+export const streamingRequest = ({
+  totalBytes,
+  contentLength,
+  chunkBytes = 64 * 1024,
+}: {
+  totalBytes: number;
+  contentLength?: string | null;
+  chunkBytes?: number;
+}): { request: Request; bytesPulled: () => number } => {
+  let pulled = 0;
 
-  const form = new FormData();
-  form.set('file', file);
-  form.set('intent', JSON.stringify(VALID_INTENT));
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      if (pulled >= totalBytes) {
+        controller.close();
+        return;
+      }
+      const size = Math.min(chunkBytes, totalBytes - pulled);
+      pulled += size;
+      controller.enqueue(new Uint8Array(size));
+    },
+  });
 
-  return { formData: async () => form } as unknown as Request;
+  const headers = new Headers({ 'content-type': 'multipart/form-data; boundary=x' });
+  if (contentLength !== null && contentLength !== undefined) {
+    headers.set('content-length', contentLength);
+  }
+
+  const request = {
+    headers,
+    body,
+    formData: async () => {
+      throw new Error('formData() was reached — the body was parsed before it was bounded');
+    },
+  } as unknown as Request;
+
+  return { request, bytesPulled: () => pulled };
 };

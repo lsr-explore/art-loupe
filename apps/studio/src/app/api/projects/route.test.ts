@@ -10,9 +10,9 @@ import {
   CHECKSUM,
   malformedRequest,
   OWNER_ID,
-  oversizedRequest,
   PROJECT_ID,
   SUPABASE_URL,
+  streamingRequest,
   uploadRequest,
   VALID_INTENT,
 } from './route.fixtures';
@@ -108,12 +108,62 @@ describe('the multipart body', () => {
     await expect(response.json()).resolves.toMatchObject({ reason: 'missing_file' });
   });
 
-  it('refuses an oversized file before reading its body', async () => {
-    const response = await POST(oversizedRequest(MAX_UPLOAD_BYTES + 1) as never);
+  it('abandons an over-large body BEFORE parsing it', async () => {
+    // Greptile P1. `request.formData()` buffers the whole request before returning, and Next
+    // applies no default body limit to a route handler — so a check on its result has already
+    // paid the cost it was meant to prevent. The fixture's `formData()` throws if reached, so
+    // this asserts the ordering rather than just the status code.
+    const { request } = streamingRequest({ totalBytes: MAX_UPLOAD_BYTES * 4 });
+    const response = await POST(request as never);
 
     expect(response.status).toBe(422);
     await expect(response.json()).resolves.toMatchObject({ reason: 'too_large' });
     expect(ingestUpload).not.toHaveBeenCalled();
+  });
+
+  it('stops pulling the stream instead of draining it', async () => {
+    // The property that makes this a resource fix rather than a validation one: the reader is
+    // cancelled part-way, so an attacker cannot make the worker hold the whole body regardless.
+    const { request, bytesPulled } = streamingRequest({ totalBytes: MAX_UPLOAD_BYTES * 4 });
+    await POST(request as never);
+
+    expect(bytesPulled()).toBeLessThan(MAX_UPLOAD_BYTES * 4);
+  });
+
+  it('refuses on an honest oversized Content-Length without consuming the body', async () => {
+    // The cheap fast path: when the header is truthful there is no reason to touch the body.
+    //
+    // Asserted as "at most one chunk", not zero. A `ReadableStream` calls `pull` once on its
+    // own to prime the queue, before any consumer reads — so zero is unreachable here and an
+    // assertion demanding it would be testing the stream, not the handler.
+    const chunkBytes = 64 * 1024;
+    const { request, bytesPulled } = streamingRequest({
+      totalBytes: MAX_UPLOAD_BYTES * 4,
+      contentLength: String(MAX_UPLOAD_BYTES * 4),
+      chunkBytes,
+    });
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(422);
+    expect(bytesPulled()).toBeLessThanOrEqual(chunkBytes);
+  });
+
+  it('does not trust a Content-Length that lies about a huge body', async () => {
+    // The reason the stream is counted at all: an attacker sending an enormous body simply
+    // omits or understates the header, and a header-only guard would wave it through.
+    const { request } = streamingRequest({
+      totalBytes: MAX_UPLOAD_BYTES * 4,
+      contentLength: '10',
+    });
+
+    expect((await POST(request as never)).status).toBe(422);
+  });
+
+  it('accepts a body with no Content-Length at all', async () => {
+    // Refusing these would have been the easy fix and the wrong one — it rejects legitimate
+    // chunked uploads to stop an attacker who would simply have set the header instead.
+    const response = await POST(uploadRequest() as never);
+    expect(response.status).toBe(201);
   });
 
   it.each([

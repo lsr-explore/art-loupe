@@ -4,7 +4,7 @@
 
 import { MAX_UPLOAD_BYTES, MIN_LONG_EDGE_PX } from '@artloupe/schemas';
 import { describe, expect, it, vi } from 'vitest';
-import { inspectImage, MAX_EXIF_JSON_BYTES } from './inspect-image';
+import { boundMetadata, inspectImage, MAX_EXIF_JSON_BYTES } from './inspect-image';
 import {
   GIF_BYTES,
   jpegBytes,
@@ -19,6 +19,10 @@ import {
 } from './inspect-image.fixtures';
 
 vi.mock('server-only', () => ({}));
+
+/** What the `exif` column would actually receive, in bytes. */
+const serializedBytes = (value: unknown): number =>
+  new TextEncoder().encode(JSON.stringify(value)).length;
 
 // @trace flow=intake.project-intent category=functionality
 describe('the formats FR-101 accepts', () => {
@@ -199,5 +203,40 @@ describe('the metadata it keeps', () => {
     // EXIF is attacker-controlled and XMP has no practical size limit. Without a ceiling the
     // `exif` column is an unbounded write primitive for every signed-in artist.
     expect(MAX_EXIF_JSON_BYTES).toBeLessThanOrEqual(64 * 1024);
+  });
+
+  it('keeps the record of what it dropped inside the same budget', async () => {
+    // Greptile P1. The dropped-field ledger is built from XMP property *names*, which the file
+    // chooses — so appending it after the budget check let a photograph carrying enough long
+    // property names push the stored object past the ceiling using the record of the fields
+    // that were removed for being over the ceiling.
+    const metadata: Record<string, unknown> = {};
+    for (let index = 0; index < 400; index += 1) {
+      metadata[`XmpVeryLongPropertyNameNumber${String(index).padStart(4, '0')}${'x'.repeat(180)}`] =
+        'y'.repeat(400);
+    }
+
+    const bounded = boundMetadata(metadata);
+    expect(serializedBytes(bounded)).toBeLessThanOrEqual(MAX_EXIF_JSON_BYTES);
+  });
+
+  it('still records that fields were dropped, as a count', async () => {
+    // Losing the names is acceptable; losing the fact is not — a reader must be able to tell a
+    // trimmed block from a file that simply had little metadata.
+    const metadata: Record<string, unknown> = { Make: 'Canon' };
+    for (let index = 0; index < 200; index += 1) {
+      metadata[`Xmp${index}${'n'.repeat(200)}`] = 'v'.repeat(500);
+    }
+
+    const bounded = boundMetadata(metadata);
+    expect(bounded.artloupe_dropped_field_count).toBeGreaterThan(0);
+    expect(serializedBytes(bounded)).toBeLessThanOrEqual(MAX_EXIF_JSON_BYTES);
+  });
+
+  it('leaves a small block untouched', async () => {
+    // The control: the trimming path must not fire on ordinary metadata, or every one of the
+    // assertions above would hold vacuously.
+    const bounded = boundMetadata({ Make: 'Canon', Model: 'EOS R5' });
+    expect(bounded).toEqual({ Make: 'Canon', Model: 'EOS R5' });
   });
 });

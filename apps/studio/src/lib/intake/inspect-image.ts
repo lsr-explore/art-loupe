@@ -180,7 +180,7 @@ const stripParseErrors = (metadata: Record<string, unknown>): Record<string, unk
  * What was dropped is recorded in place, so a reader of the row is not left thinking the file
  * simply had no `XMP`.
  */
-const boundMetadata = (metadata: Record<string, unknown>): Record<string, unknown> => {
+export const boundMetadata = (metadata: Record<string, unknown>): Record<string, unknown> => {
   if (serializedLength(metadata) <= MAX_EXIF_JSON_BYTES) {
     return metadata;
   }
@@ -203,10 +203,37 @@ const boundMetadata = (metadata: Record<string, unknown>): Record<string, unknow
     }
   }
 
-  if (dropped.length > 0) {
-    kept.artloupe_dropped_fields = dropped.sort();
+  if (dropped.length === 0) {
+    return kept;
   }
-  return kept;
+
+  // **The ledger goes inside the budget, not on top of it.** Those names came out of the file,
+  // so they are attacker-chosen too — a photograph carrying enough long XMP property names
+  // pushes the stored object past the ceiling using the record of what was dropped. That is the
+  // part that reads like bookkeeping and is not: it is the same untrusted input by another
+  // route, bounded only by the 25 MB upload ceiling above it.
+  const bounded: Record<string, unknown> = {
+    ...kept,
+    artloupe_dropped_field_count: dropped.length,
+  };
+
+  const names: string[] = [];
+  for (const name of [...dropped].sort()) {
+    const candidate = { ...bounded, artloupe_dropped_fields: [...names, name] };
+    if (serializedLength(candidate) > MAX_EXIF_JSON_BYTES) {
+      break;
+    }
+    names.push(name);
+  }
+
+  if (names.length > 0) {
+    bounded.artloupe_dropped_fields = names;
+  }
+
+  // The count is a small number, but "small" is not "free" — with `kept` already at the ceiling
+  // it can be what tips the object over. Storing an object that breaks its own documented bound
+  // is worse than losing the ledger, so the ledger is what gives way.
+  return serializedLength(bounded) <= MAX_EXIF_JSON_BYTES ? bounded : kept;
 };
 
 const serializedLength = (value: unknown): number => {
