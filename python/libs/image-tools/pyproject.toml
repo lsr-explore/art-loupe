@@ -1,8 +1,9 @@
 # Art Loupe image tools — the deterministic pixel tools the Studio Director selects (FR-301/302).
 #
 # Every tool here reads a photograph and returns an artifact plus FR-305 metadata. None of them
-# produces or alters a pixel the artist will be shown as imagery (FR-801); what comes back is
-# geometry and measurement, never a picture.
+# generates imagery (FR-801): a plate's pixels are a fixed function of the artist's own
+# photograph and its recorded parameters, and everything else that comes back is geometry and
+# measurement.
 #
 # This package owns the workspace's one `cv2`. It must be `opencv-contrib-python` — the
 # distribution `mediapipe` pulls in for PR 10 — and never `opencv-python` alongside it: both
@@ -11,7 +12,7 @@
 [project]
 name = "artloupe-image-tools"
 version = "0.1.0"
-description = "Deterministic image-analysis tools for Art Loupe: perspective, and later landmarks and plates."
+description = "Deterministic image-analysis tools for Art Loupe: perspective and plates, and later landmarks."
 requires-python = ">=3.12"
 dependencies = [
   # `ArtifactMetadata` is the shared FR-305 contract. Tools fill it; they do not redefine it.

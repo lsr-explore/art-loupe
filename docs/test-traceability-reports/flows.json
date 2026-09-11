@@ -110,6 +110,13 @@
       ]
     },
     {
+      "id": "analysis.deterministic-studies",
+      "title": "Grayscale, value maps, and value-contour outlines from one pipeline",
+      "severity": "P1",
+      "rationale": "Deterministic image processing, not model output: every plate reproduces exactly from its FR-305 recipe or it has broken. Two failures look alike from outside — a value map whose thresholds silently moved with a library version, and an outline that no longer traces the value map it claims to come from. Each is wrong analysis handed to the artist as a measurement.",
+      "surfaces": ["python/libs/image-tools"]
+    },
+    {
       "id": "critique.formal-analysis",
       "title": "Structural analysis of a supplied work",
       "severity": "P1",
