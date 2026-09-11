@@ -16,6 +16,7 @@ from artloupe.image_tools.faces import (
     FacialLandmarkReliability,
     HeadPose,
     Landmark,
+    OpenLandmarker,
     find_face,
     open_landmarker,
 )
@@ -81,6 +82,7 @@ __all__ = [
     "Landmark",
     "LoomisConstruction",
     "NormalizedPoint",
+    "OpenLandmarker",
     "OutlineDetail",
     "OutlinePlate",
     "PerspectiveParameters",

@@ -159,6 +159,21 @@ def test_proportions_are_measured_not_scored() -> None:
     assert construction.middle_to_lower_ratio == pytest.approx(BROW_TO_NOSE / NOSE_TO_CHIN)
 
 
+def test_the_eye_line_passes_through_both_eye_corners() -> None:
+    """Measured means through the sitter's own points, even when the eyes are not level."""
+    uneven = (np.array([430.0, 440.0, -100.0]), np.array([570.0, 462.0, -100.0]))
+    construction = construct(_frontal(), uneven, width=WIDTH, height=HEIGHT)
+    start, end = _element(construction, "eye_line")
+
+    for corner in uneven:
+        corner_x, corner_y = corner[0] / WIDTH, corner[1] / HEIGHT
+        off_line = (end[0] - start[0]) * (corner_y - start[1]) - (end[1] - start[1]) * (
+            corner_x - start[0]
+        )
+        assert abs(off_line) < TOLERANCE
+        assert min(start[0], end[0]) <= corner_x <= max(start[0], end[0])
+
+
 def test_the_construction_reloads_from_json_exactly() -> None:
     construction = _build()
 

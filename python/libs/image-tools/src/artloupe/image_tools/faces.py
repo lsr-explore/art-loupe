@@ -264,14 +264,23 @@ def _as_rgb(image: NDArray[np.uint8]) -> NDArray[np.uint8]:
     raise ValueError(f"expected a grayscale or BGR image, got shape {image.shape}")
 
 
-@contextmanager
-def open_landmarker(parameters: FaceDetectionParameters) -> Iterator[FaceLandmarker]:
-    """A landmarker built from `parameters`. Closing it sends Google a usage report (#43).
+class OpenLandmarker(BaseModel):
+    """A landmarker and the parameters it was opened with, carried together.
 
-    Pass it to `find_face` to share one across calls — as the tests do, so a test run sends one
-    report rather than one per photograph. It must be opened with the same parameters the call
-    records, or the recipe no longer describes what ran.
+    Sharing one across calls is how the tests send Google one usage report rather than one per
+    photograph (#43). Because the handle carries its own parameters, a call records what actually
+    ran — and refuses different ones — instead of trusting a caller to keep the two in step.
     """
+
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+
+    parameters: FaceDetectionParameters
+    landmarker: FaceLandmarker
+
+
+@contextmanager
+def open_landmarker(parameters: FaceDetectionParameters) -> Iterator[OpenLandmarker]:
+    """A landmarker built from `parameters`. Closing it sends Google a usage report (#43)."""
     options = FaceLandmarkerOptions(
         base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
         running_mode=RunningMode.IMAGE,
@@ -281,28 +290,30 @@ def open_landmarker(parameters: FaceDetectionParameters) -> Iterator[FaceLandmar
         output_facial_transformation_matrixes=True,
     )
     with FaceLandmarker.create_from_options(options) as landmarker:
-        yield landmarker
+        yield OpenLandmarker(parameters=parameters, landmarker=landmarker)
 
 
 def find_face(
     image: NDArray[np.uint8],
     *,
     parameters: FaceDetectionParameters | None = None,
-    landmarker: FaceLandmarker | None = None,
+    landmarker: OpenLandmarker | None = None,
 ) -> DetectedFace | None:
     """The most prominent face, with its pose and reliability — or `None` when none is found.
 
     `image` is a uint8 grayscale or BGR array, EXIF-oriented, at full resolution. `None` is the
     deterministic portrait gate's answer: a head turned too far, or a face too small for the
-    bundled detector (#45), both come back as no face at all.
+    bundled detector (#45), both come back as no face at all. A shared `landmarker` runs with the
+    parameters it was opened with; passing different ones as well is refused.
     """
-    params = parameters or FaceDetectionParameters()
     frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=_as_rgb(image))
-    if landmarker is None:
-        with open_landmarker(params) as own:
-            result = own.detect(frame)
+    if landmarker is not None:
+        if parameters is not None and parameters != landmarker.parameters:
+            raise ValueError("the landmarker was opened with different detection parameters")
+        result = landmarker.landmarker.detect(frame)
     else:
-        result = landmarker.detect(frame)
+        with open_landmarker(parameters or FaceDetectionParameters()) as own:
+            result = own.landmarker.detect(frame)
     if not result.face_landmarks:
         return None
 

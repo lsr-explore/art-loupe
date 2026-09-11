@@ -159,6 +159,17 @@ def construct(
     def across_line(through: NDArray) -> list:
         return [through - half * across, through + half * across]
 
+    def through_both(first: NDArray, second: NDArray) -> list:
+        """The line through two measured points, reaching at least out to the side planes.
+
+        A line in 3D through both points projects to a line through both projections, so the
+        drawn guide passes through each eye corner whatever the head's turn or the eyes' levels.
+        """
+        direction = _unit(second - first, "an eye line")
+        middle = (first + second) / 2.0
+        reach = max(half, float(np.linalg.norm(second - first)) / 2.0)
+        return [middle - reach * direction, middle + reach * direction]
+
     def visible(points: list) -> list:
         """The part of an arc on the ball's camera-facing half; the rest runs behind the head.
 
@@ -167,7 +178,6 @@ def construct(
         """
         return [point for point in points if (point - centre)[2] <= 1e-6 * radius]
 
-    eye_centre = (eye_corners_px[0] + eye_corners_px[1]) / 2.0
     ball = [
         np.array([centre[0] + radius * math.cos(angle), centre[1] + radius * math.sin(angle), 0.0])
         for angle in np.radians(np.linspace(0.0, 360.0, params.samples, endpoint=False))
@@ -176,7 +186,7 @@ def construct(
         ("centre_line", "measured", [brow, nose, chin], False),
         # The front half of the ball's equator: through the measured brow, curved by the ball.
         ("brow_line", "measured", visible(arc(forward, across, centre, (-90.0, 90.0))), False),
-        ("eye_line", "measured", across_line(eye_centre), False),
+        ("eye_line", "measured", through_both(eye_corners_px[0], eye_corners_px[1]), False),
         ("nose_line", "measured", across_line(nose), False),
         ("chin_line", "measured", across_line(chin), False),
         # A sphere projects orthographically to a circle of its own radius.

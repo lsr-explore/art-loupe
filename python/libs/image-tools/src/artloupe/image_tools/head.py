@@ -18,7 +18,6 @@ from functools import cache
 
 import mediapipe
 import numpy as np
-from mediapipe.tasks.python.vision import FaceLandmarker
 from numpy.typing import NDArray
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -28,6 +27,7 @@ from artloupe.image_tools.faces import (
     AnchorName,
     DetectedFace,
     FaceDetectionParameters,
+    OpenLandmarker,
     find_face,
 )
 from artloupe.image_tools.loomis import ConstructionParameters, LoomisConstruction, construct
@@ -148,16 +148,21 @@ def construct_head(
     *,
     source_checksum: Checksum,
     parameters: HeadConstructionParameters | None = None,
-    landmarker: FaceLandmarker | None = None,
+    landmarker: OpenLandmarker | None = None,
 ) -> HeadConstructionResult:
     """Find the face, fit the construction, and state what it rests on.
 
-    `image` is a uint8 grayscale or BGR array, EXIF-oriented, at full resolution. `landmarker`,
-    when given, must come from `open_landmarker` with `parameters.detection`; without one, a
-    landmarker is created and closed for this call, which sends Google one usage report (#43).
+    `image` is a uint8 grayscale or BGR array, EXIF-oriented, at full resolution. A shared
+    `landmarker` runs, and is recorded, with the parameters it was opened with; passing different
+    detection parameters as well is refused. Without one, a landmarker is created and closed for
+    this call, which sends Google one usage report (#43).
     """
     started = time.perf_counter()
     params = parameters or HeadConstructionParameters()
+    if landmarker is not None:
+        if parameters is not None and parameters.detection != landmarker.parameters:
+            raise ValueError("the landmarker was opened with different detection parameters")
+        params = params.model_copy(update={"detection": landmarker.parameters})
     face = find_face(image, parameters=params.detection, landmarker=landmarker)
 
     def metadata(confidence: float, limitations: list[str]) -> ArtifactMetadata:
