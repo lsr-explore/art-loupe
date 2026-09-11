@@ -19,8 +19,9 @@ exists, the detail tells you what it covers.
 
 | Flow | Sev | a11y | sec | priv | safety | data | perf | func | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [`analysis.deterministic-studies`](flows/analysis.deterministic-studies.md) | P1 | – | – | – | – | – | – | 27 | 27 |
 | [`analysis.geometry`](flows/analysis.geometry.md) | P1 | 9 | – | – | – | – | – | 65 | 74 |
-| **analysis** | | 9 | – | – | – | – | – | 65 | **74** |
+| **analysis** | | 9 | – | – | – | – | – | 92 | **101** |
 | `canvas.session-plan` | P2 | – | – | – | – | – | – | – | **none** |
 | **canvas** | | – | – | – | – | – | – | – | **0** |
 | `critique.no-generation` | P0 | – | – | – | – | – | – | – | **none** |
@@ -42,7 +43,7 @@ exists, the detail tells you what it covers.
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 54 | – | – | – | 71 |
 | **safety** | | – | 17 | – | 54 | – | – | – | **71** |
-| **all flows** | | **54** | **177** | **–** | **55** | **82** | **1** | **295** | **664** |
+| **all flows** | | **54** | **177** | **–** | **55** | **82** | **1** | **322** | **691** |
 
 ## Gaps
 
@@ -78,7 +79,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 196 | 0 | 196 |
+| pytest | 223 | 0 | 223 |
 | Vitest | 432 | 0 | 432 |
 | Playwright | 36 | 0 | 36 |
-| **All** | **664** | **0** | **664** |
+| **All** | **691** | **0** | **691** |

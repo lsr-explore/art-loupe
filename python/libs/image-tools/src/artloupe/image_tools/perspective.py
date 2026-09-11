@@ -43,18 +43,14 @@ from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, computed_field
 
 from artloupe.image_tools.segments import ImageFrame, detect_segments
 from artloupe.image_tools.vanishing import Family, find_families
+from artloupe.image_tools.versioning import tool_version
 from artloupe.schemas.artifact import ArtifactMetadata
 from artloupe.schemas.evidence import Checksum
 
 # Bump when the algorithm or any constant below changes what a given input produces. The
-# OpenCV and NumPy versions are appended at run time — LSD's output can move between OpenCV
-# releases, and NumPy supplies both the seeded RANSAC generator and the eigensolver — because
-# the FR-305 recipe `(source_checksum, tool, tool_version, parameters)` must reproduce exactly.
+# OpenCV and NumPy versions are appended by `tool_version` — LSD's output can move between
+# OpenCV releases, and NumPy supplies both the seeded RANSAC generator and the eigensolver.
 PERSPECTIVE_ALGORITHM_VERSION = "1"
-
-
-def _tool_version() -> str:
-    return f"{PERSPECTIVE_ALGORITHM_VERSION}+opencv-{cv2.__version__}.numpy-{np.__version__}"
 
 
 # FR-302 covers one- and two-point perspective, so at most two points are reported.
@@ -352,7 +348,7 @@ def detect_perspective(
 
     metadata = ArtifactMetadata(
         tool="perspective",
-        tool_version=_tool_version(),
+        tool_version=tool_version(PERSPECTIVE_ALGORITHM_VERSION),
         parameters=params.model_dump(),
         source_checksum=source_checksum,
         duration_ms=round((time.perf_counter() - started) * 1000),
