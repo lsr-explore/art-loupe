@@ -7,15 +7,15 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-11**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **17** — **1** epics, **7** filed under an epic, **9** unparented
+- Open issues: **17** — **1** epics, **6** filed under an epic, **10** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 0 |
 | P1 | 2 |
-| P2 | 8 |
+| P2 | 7 |
 | P3 | 7 |
-| — | 0 |
+| — | 1 |
 
 Priority and Status are the [Project #3](https://github.com/users/lsr-explore/projects/3)
 field values — there are no priority labels. `—` means the field is unset.
@@ -24,12 +24,11 @@ field values — there are no priority labels. `—` means the field is unset.
 
 ### [#5](https://github.com/lsr-explore/art-loupe/issues/5) — quality: static-analysis and prose-tooling follow-ups
 
-**P2** · Backlog · 7 open sub-issues
+**P2** · Backlog · 6 open sub-issues
 
 | # | Title | Priority | Status |
 | --- | --- | --- | --- |
 | [#9](https://github.com/lsr-explore/art-loupe/issues/9) | quality: tighten the JS size budget now that all apps sit at 242-248 kB | P2 | Backlog |
-| [#35](https://github.com/lsr-explore/art-loupe/issues/35) | quality: lint:md does not honour .gitignore, so check:all is unusable locally | P2 | Backlog |
 | [#6](https://github.com/lsr-explore/art-loupe/issues/6) | quality: i18n:check:unused cannot see the shared-catalog merge | P3 | Backlog |
 | [#7](https://github.com/lsr-explore/art-loupe/issues/7) | quality: madge cannot resolve workspace imports | P3 | Backlog |
 | [#8](https://github.com/lsr-explore/art-loupe/issues/8) | quality: size-limit config cleanup — dead root entry, misleading name | P3 | Backlog |
@@ -66,6 +65,12 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | # | Title | Priority | Status |
 | --- | --- | --- | --- |
 | [#33](https://github.com/lsr-explore/art-loupe/issues/33) | packages: add @artloupe/schemas to entry and operations | P2 | Backlog |
+
+### python
+
+| # | Title | Priority | Status |
+| --- | --- | --- | --- |
+| [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | — | Backlog |
 
 ### repo
 

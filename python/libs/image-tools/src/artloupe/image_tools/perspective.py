@@ -47,9 +47,15 @@ from artloupe.schemas.artifact import ArtifactMetadata
 from artloupe.schemas.evidence import Checksum
 
 # Bump when the algorithm or any constant below changes what a given input produces. The
-# OpenCV version is appended at run time, because LSD's output can move between releases and
+# OpenCV and NumPy versions are appended at run time — LSD's output can move between OpenCV
+# releases, and NumPy supplies both the seeded RANSAC generator and the eigensolver — because
 # the FR-305 recipe `(source_checksum, tool, tool_version, parameters)` must reproduce exactly.
 PERSPECTIVE_ALGORITHM_VERSION = "1"
+
+
+def _tool_version() -> str:
+    return f"{PERSPECTIVE_ALGORITHM_VERSION}+opencv-{cv2.__version__}.numpy-{np.__version__}"
+
 
 # FR-302 covers one- and two-point perspective, so at most two points are reported.
 MAX_VANISHING_POINTS = 2
@@ -89,7 +95,11 @@ LIMITATION_NOT_VALIDATED = (
     "Detection is not tuned or validated against a gold set; the confidence measures how well "
     "the detected lines converge, not whether the detected structure is the one that matters."
 )
-LIMITATION_NO_VERTICAL = "Vertical convergence (three-point perspective) is not reported."
+LIMITATION_NO_VERTICAL = (
+    "Vertical convergence (three-point perspective) is set aside when its vanishing point lies "
+    "above or below the photograph. A camera pitched steeply enough to bring it inside the frame "
+    "is not recognised, and that point can then be reported as a horizontal candidate."
+)
 LIMITATION_PARALLEL = (
     "Line families whose vanishing point lies more than "
     f"{MAX_VANISHING_DISTANCE:g} image-lengths away are treated as parallel and not reported."
@@ -342,7 +352,7 @@ def detect_perspective(
 
     metadata = ArtifactMetadata(
         tool="perspective",
-        tool_version=f"{PERSPECTIVE_ALGORITHM_VERSION}+opencv-{cv2.__version__}",
+        tool_version=_tool_version(),
         parameters=params.model_dump(),
         source_checksum=source_checksum,
         duration_ms=round((time.perf_counter() - started) * 1000),

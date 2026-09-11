@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 195,
+      "pytest": 196,
       "vitest": 432,
       "playwright": 36,
-      "all": 663
+      "all": 664
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 195,
+      "pytest": 196,
       "vitest": 432,
       "playwright": 36,
-      "all": 663
+      "all": 664
     }
   },
   "by_flow": {
@@ -91,14 +91,14 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 64
+        "functionality": 65
       },
       "runners": {
-        "pytest": 30,
+        "pytest": 31,
         "vitest": 43,
         "playwright": 0
       },
-      "total": 73,
+      "total": 74,
       "parametrized": 1
     },
     "critique.alignment": {
@@ -3811,35 +3811,42 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_perspective.py:233",
-      "name": "test_metadata_records_the_recipe",
-      "runner": "pytest",
-      "flow": "analysis.geometry",
-      "category": "functionality"
-    },
-    {
-      "id": "python/libs/image-tools/tests/test_perspective.py:247",
-      "name": "test_the_same_recipe_reproduces_the_same_result",
+      "id": "python/libs/image-tools/tests/test_perspective.py:230",
+      "name": "test_search_effort_does_not_buy_phantom_confidence",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
       "id": "python/libs/image-tools/tests/test_perspective.py:256",
+      "name": "test_metadata_records_the_recipe",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:270",
+      "name": "test_the_same_recipe_reproduces_the_same_result",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:279",
       "name": "test_an_invalid_checksum_is_refused",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_perspective.py:261",
+      "id": "python/libs/image-tools/tests/test_perspective.py:284",
       "name": "test_unknown_parameters_are_refused",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_perspective.py:274",
+      "id": "python/libs/image-tools/tests/test_perspective.py:297",
       "name": "test_unsupported_images_are_refused",
       "runner": "pytest",
       "flow": "analysis.geometry",

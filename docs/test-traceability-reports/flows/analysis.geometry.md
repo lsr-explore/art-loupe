@@ -13,11 +13,11 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 73 (1 parametrized) |
-| **Covered** | a11y 9 · functionality 64 |
+| **Tests** | 74 (1 parametrized) |
+| **Covered** | a11y 9 · functionality 65 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## pytest — 30
+## pytest — 31
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -46,11 +46,12 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_a_phantom_beside_real_structure_is_the_one_flagged | `python/libs/image-tools/tests/test_perspective.py:190` |
 | functionality | test_nothing_found_is_zero_confidence_not_none | `python/libs/image-tools/tests/test_perspective.py:213` |
 | functionality | test_artifact_confidence_is_its_weakest_feature | `python/libs/image-tools/tests/test_perspective.py:223` |
-| functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:233` |
-| functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:247` |
-| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:256` |
-| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:261` |
-| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:274` |
+| functionality | test_search_effort_does_not_buy_phantom_confidence | `python/libs/image-tools/tests/test_perspective.py:230` |
+| functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:256` |
+| functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:270` |
+| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:279` |
+| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:284` |
+| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:297` |
 
 ## Vitest — 43
 

@@ -227,6 +227,29 @@ def test_artifact_confidence_is_its_weakest_feature() -> None:
     assert result.horizon.confidence == result.metadata.confidence
 
 
+def test_search_effort_does_not_buy_phantom_confidence() -> None:
+    """More RANSAC hypotheses must not make clutter look more significant.
+
+    `significance` compares support with chance agreement at *one* point, while RANSAC keeps
+    the best of many — so a longer search could, in principle, inflate it. Measured, it does
+    not: across 200-20,000 hypotheses phantom confidence stays at 0.21-0.23, because hypotheses
+    are drawn from segment pairs and the reachable points saturate early. The selection bias
+    is a constant floor (phantoms sit near 4× chance, not 1×) that `FULL_SIGNIFICANCE_MULTIPLE`
+    is calibrated over. This pins that it stays constant.
+    """
+
+    def phantom_ceiling(hypotheses: int) -> float:
+        return max(
+            vp.confidence.value
+            for seed in range(1, 4)
+            for vp in _detect(
+                scenes.single_family(0, clutter=150, seed=seed).image, hypotheses=hypotheses
+            ).vanishing_points
+        )
+
+    assert phantom_ceiling(8000) == pytest.approx(phantom_ceiling(500), abs=0.05)
+
+
 # --- The FR-305 recipe -----------------------------------------------------------------------
 
 
@@ -237,7 +260,7 @@ def test_metadata_records_the_recipe() -> None:
     )
 
     assert result.metadata.tool == "perspective"
-    assert result.metadata.tool_version.endswith(f"+opencv-{cv2.__version__}")
+    assert result.metadata.tool_version == (f"1+opencv-{cv2.__version__}.numpy-{np.__version__}")
     assert result.metadata.parameters == parameters.model_dump()
     assert result.metadata.source_checksum == CHECKSUM
     assert result.metadata.duration_ms >= 0
