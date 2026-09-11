@@ -4,19 +4,22 @@ The Python half of Art Loupe, managed as a single [uv](https://docs.astral.sh/uv
 workspace. The TypeScript apps live in `../apps` and `../packages`; everything Python
 lives here, organized by role.
 
-**Currently an empty scaffold.** The toolchain is wired and enforced in CI; the agent
-and ML code is authored from here.
-
 ```text
 python/
 ├─ pyproject.toml   # workspace root (virtual): members, ruff + pytest config
 ├─ conftest.py      # pytest `trace` marker, validated against flows.json
 ├─ uv.lock          # single lockfile for all members
-├─ services/        # deployable apps — one per Cloud Run service
-└─ libs/            # shared libraries
+├─ services/
+│  └─ agent/        # the LangGraph agent behind FastAPI — one Cloud Run service
+└─ libs/
+   ├─ auth/         # Supabase access-token verification and the FastAPI guards on it
+   ├─ schemas/      # Pydantic mirror of @artloupe/schemas, held to parity by a fixture
+   ├─ persistence/  # LangGraph checkpointing over Postgres, in its own schema
+   ├─ metering/     # per-node token, latency and cost metering, and run guards
+   └─ image-tools/  # deterministic CV — the workspace's one cv2 provider
 ```
 
-Packages will use the `artloupe.*` namespace (PEP 420) to mirror the TypeScript
+Packages use the `artloupe.*` namespace (PEP 420) to mirror the TypeScript
 `@artloupe/*` scope: `artloupe-schemas` imported as `from artloupe.schemas import ...`.
 
 ## Commands
@@ -41,5 +44,5 @@ validates the value against `../docs/test-traceability-reports/flows.json` at co
 time, so an unknown flow is a hard error rather than a silently dropped row.
 
 ```python
-pytestmark = pytest.mark.trace(flow="critique.formal-analysis", category="functionality")
+pytestmark = pytest.mark.trace(flow="analysis.geometry", category="functionality")
 ```

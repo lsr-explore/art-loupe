@@ -73,7 +73,7 @@ Watch what a new surface implies before adding it: `expect.whenSurfaceMatches` t
 has no meaningful a11y surface area manufactures a permanent false gap. When that happens,
 suspect the *tag* rather than the catalog. Reaching for a data-handling flow on a test that
 merely verifies scoping in the privacy respect is the usual cause — flow is what the test
-is *about*, category is the respect it verifies, and `critique.alignment` + `privacy` says
+is *about*, category is the respect it verifies, and `intake.project-intent` + `privacy` says
 that far better than a dedicated privacy flow + `privacy` does.
 
 ### 4. Apply
@@ -89,7 +89,7 @@ idempotent (skip files that already contain `@trace` / `pytest.mark.trace`).
    *statement* whole by tracking paren depth, and skip the module docstring first.
 2. **More than one top-level block per file.** Tagging only the first `describe` leaves the
    rest inheriting nothing. Tag them all — and check whether a second block deserves a
-   *different* flow (a `critique.spec.ts` may hold both analysis and alignment).
+   *different* flow (an `intake.spec.ts` may hold both the form and its ingest screening).
 3. **`describe.each(...)('%s', …)`** has no literal title, so a regex expecting a quoted
    string skips it entirely and its tests silently go untagged.
 4. **Import order.** Appending `import pytest` after the last import violates ruff's `I001`.

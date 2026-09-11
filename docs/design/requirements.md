@@ -368,8 +368,10 @@ your word before it is applied — the file is a CI gate and the names are yours
 | `safety.no-identity-inference` | P0 | FR-802, FR-1007, FR-1014 | new — chat is its primary surface |
 | `ops.observability` | P2 | FR-900 | keep |
 
-Dropped: `critique.formal-analysis`, `critique.alignment`, `palette.extraction`,
-`canvas.session-plan`.
+Names approved 2026-09-11. Retired: `critique.formal-analysis` and `critique.alignment`,
+whose scope was cut. `palette.extraction` and `canvas.session-plan` retire as **names only** —
+palette extraction continues under `analysis.deterministic-studies` (FR-301) and session
+planning under `plan.synthesis` (FR-600).
 
 Two consequences to decide alongside the names:
 

@@ -59,19 +59,41 @@ photographs, not drawn scenes.
 - **PR 10's derived face score is named `facial_landmark_reliability`** (plan §3). Still open, and
   Laurie's: its scaling (which yaw angle and face scale map to 0), and whether it also fills the
   shared `ArtifactMetadata.confidence` field.
+
+  > Notes [laurie]: I approve the name facial_landmark_reliability
+
 - **MediaPipe Tasks sends usage metrics to Google** per its privacy notice, with no documented
   opt-out, and the consent obligation lands on us: [#43](https://github.com/lsr-explore/art-loupe/issues/43)
   (P1). Measure whether the pinned Python build sends them, then disable or disclose. Blocks PR 10
   *merging*, not starting. The `.task` **licence is resolved**: all three bundled models are
   Apache 2.0 per their model cards, which extract fine despite the spike doc's note.
+
+  > Notes [laurie]: We will definitely disclose this.  If we can, disable it.
+
 - **#27 ack-cookie lifetime** — recommendation recorded there; still Laurie's call.
+  > Notes [laurie]: Will review later
+
 - **`greptile config` reports `Rules (0)`** while `greptile.json` declares three rules, including the
   WCAG 2.2 AA one. #41 had no UI, so it neither confirmed nor refuted this.
+  > Notes [laurie]: Need more information
 - **ADR numbering.** 0003 is the deletion ADR; `settled-decisions.md`'s scope amendment needs 0004.
   No ADR was written for the `image-tools` package boundary; the plan and package README carry it.
+  > Notes [laurie]: This is fine. No further action needed. We will review ADRs later.
+- **`flows.json` restructure — names approved 2026-09-11, not yet applied.** Apply
+  [`requirements.md`](./design/requirements.md) §7 to the catalog: only `intake.project-intent`,
+  `analysis.geometry` and `safety.untrusted-input` are in so far. Palette extraction and canvas
+  session planning **stay in scope** — only their old flow names retire, into
+  `analysis.deterministic-studies` and `plan.synthesis`. Still Laurie's: whether the P0
+  definition gains the identity-inference clause.
+
 - **Unparented issues:** #32, #33, #34, #36, #38, #39, #40, #42, #43. Epic #5 is static-analysis
   only. #40 (off-frame vanishing points, P1) must land by PR 13; #43 (P1) by PR 10.
+
+  > Notes [laurie]: Will review later
+
 - **A drag-and-drop target** from walkthrough beat 3 is still unbuilt and unfiled.
+
+  > Notes [laurie]: Please file a ticket for this.
 
 ### Read first
 
@@ -101,7 +123,7 @@ Backlog is GitHub issues on user project 3; #40 (P1) and #42 (P2) filed 2026-09-
 - **PR 8, the plate suite** — grayscale, three-value posterization, outline-from-posterization,
   one pipeline, FR-305 metadata. Also belongs in `image-tools`, and may use its `cv2`.
 
-Create the worktree with `wt new <branch>`, then `uv sync --all-packages` in `python/`. The main
+  Create the worktree with `wt new <branch>`, then `uv sync --all-packages` in `python/`. The main
 checkout's venv has not been re-synced since `image-tools` merged.
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Never generates

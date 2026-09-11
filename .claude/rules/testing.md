@@ -17,20 +17,20 @@ comment, or a `test.describe` annotation covers everything inside it. Only overr
 test differs from its block, which in practice is a11y cases inside a functional suite.
 
 ```python
-pytestmark = pytest.mark.trace(flow="critique.formal-analysis", category="functionality")
+pytestmark = pytest.mark.trace(flow="analysis.geometry", category="functionality")
 ```
 
 ```ts
-// @trace flow=critique.formal-analysis category=functionality
-describe('CritiquePanel', () => {
+// @trace flow=analysis.geometry category=functionality
+describe('OverlayCanvas', () => {
   // @trace category=a11y
   it('has no accessibility violations', async () => { /* … */ });
 });
 ```
 
 ```ts
-test.describe('Critique panel', {
-  annotation: [{ type: 'flow', description: 'critique.formal-analysis' }],
+test.describe('Intake form', {
+  annotation: [{ type: 'flow', description: 'intake.project-intent' }],
 }, () => { /* … */ });
 ```
 

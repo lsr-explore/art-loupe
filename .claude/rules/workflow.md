@@ -26,10 +26,6 @@ source of truth, and `docs/backlog/` is a generated map of it. Filing is not fin
 sub-issue link to its epic. The **`backlog`** skill carries that procedure; use it rather
 than filing by hand.
 
-**Not live yet.** This needs the GitHub repo and its project board to exist. Until the repo
-is pushed there is nowhere to file, so raise the deferral in conversation and let Laurie
-decide whether it earns an issue once the board is up.
-
 ## Commands
 
 - Proceed without asking when running normal project scripts such as `pnpm test`, `pnpm lint`, `pnpm build`, and similar safe verification commands.

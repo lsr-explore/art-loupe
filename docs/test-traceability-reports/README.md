@@ -38,16 +38,16 @@ incremental, and *missing* is reported, never failed.
 
 ```python
 # python — module-level default, per-test override
-pytestmark = pytest.mark.trace(flow="critique.formal-analysis", category="functionality")
+pytestmark = pytest.mark.trace(flow="analysis.geometry", category="functionality")
 
-@pytest.mark.trace(flow="critique.formal-analysis", category="safety")
-def test_febrile_reading_inside_window_blocks() -> None: ...
+@pytest.mark.trace(flow="analysis.geometry", category="performance")
+def test_detection_finishes_within_budget_on_a_large_photograph() -> None: ...
 ```
 
 ```ts
 // vitest — comment above the block; a per-test comment overrides it
-// @trace flow=critique.formal-analysis category=functionality
-describe('CritiquePanel', () => {
+// @trace flow=analysis.geometry category=functionality
+describe('OverlayCanvas', () => {
   // @trace category=a11y
   it('has no accessibility violations', async () => { /* … */ });
 });
@@ -55,8 +55,8 @@ describe('CritiquePanel', () => {
 
 ```ts
 // playwright — the native `annotation` field of TestDetails
-test.describe('Critique panel', {
-  annotation: [{ type: 'flow', description: 'critique.formal-analysis' }],
+test.describe('Intake form', {
+  annotation: [{ type: 'flow', description: 'intake.project-intent' }],
 }, () => {
   test('has no detectable accessibility violations', {
     annotation: [{ type: 'category', description: 'a11y' }],
@@ -95,11 +95,11 @@ Run only the tests protecting a flow:
 
 ```sh
 # pytest selects natively, via python/conftest.py
-uv run --directory python pytest --flow critique.formal-analysis
+uv run --directory python pytest --flow analysis.geometry
 uv run --directory python pytest --category safety
 
 # all three runners, resolved from the catalog
-node scripts/reports/traceability-report.mjs --run --flow critique.formal-analysis
+node scripts/reports/traceability-report.mjs --run --flow analysis.geometry
 node scripts/reports/traceability-report.mjs --run --category a11y
 ```
 

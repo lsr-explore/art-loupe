@@ -1,22 +1,26 @@
 # Art Loupe
 
-**Structured critique and studio planning for working artists — grounded in
-art-historical sources, never in generated imagery.**
+**A reference photograph in, a medium-aware working plan out — every claim measured,
+cited, or chosen, and never an image generated.**
 
-Art Loupe is a multi-agent **Artist's Studio Director**: an artist-facing studio that
-analyses work the artist supplies and returns formal analysis, alignment critique
-against the artist's own stated goal, palette and value studies, and session plans —
-each claim carried back to a citation.
+Art Loupe is a multi-agent studio assistant for working artists. The artist uploads a
+reference photograph and says what they want to make; a Studio Director agent routes it
+through deterministic image analysis and grounded retrieval, and returns a time-boxed
+working plan in the artist's medium. Every claim in the plan is **measured** (a pixel
+fact), **cited** (an open-access instructional source), or **chosen** (an explicitly
+labelled artistic call).
 
-> **The system never generates imagery.** It reasons about work the artist made. That
-> is a design commitment, not a limitation: it keeps the tool on the right side of
-> authorship and copyright, and it is what makes the critique worth reading.
+> **The system never generates or alters imagery.** It reasons about a photograph the
+> artist supplies, and the artist makes the work. That is a design commitment, not a
+> limitation: it keeps the tool on the right side of authorship and copyright, and it
+> keeps "never generates" structurally verifiable rather than a policy promise.
 
 ⚠️ **Educational demonstration only.** Art Loupe is a portfolio/capstone demo. It is not
 a valuation, authentication, or legal service. See [`NOTICE`](./NOTICE).
 
 > Domain: `artloupestudio.com` · package scope: `@artloupe/*`. This README documents a
-> **work in progress**; the repository is currently an initial scaffold.
+> **work in progress** — [`docs/current-state.md`](./docs/current-state.md) says what
+> works today.
 
 ## Table of contents
 
@@ -37,10 +41,11 @@ The planned workflows, in the order they are being built:
 
 | Workflow | What it does |
 | --- | --- |
-| **Critique studio** | Formal structural analysis, then a critique of whether execution matches the artist's *stated goal*, then academic/historical context via retrieval. |
-| **Value & palette studies** | Deterministic CV — K-means quantisation for dominant and accent colours, grayscale/Notan value studies, Canny/Sobel edge maps. No inpainting, no generation. |
-| **Session planner** | Aspect-ratio match to a physical canvas, compositional grid overlays, and a printable studio prep kit. |
-| **Operations** | Cost and latency per agent, prompt version management, evaluation health. |
+| **Reference intake** | One reference photograph plus a stated intent — medium, time budget, goal. Untrusted text in the filename, EXIF and goal is screened at ingest; the original is immutable. |
+| **Image analysis** | Deterministic studies — grayscale, three- and five-value maps, an eight-colour palette with click-sampling, structural outlines, a transfer grid, and crop candidates at the artist's support aspect ratio — and geometry: head construction from face landmarks, perspective from vanishing points. Each geometry result carries a measured confidence; a low one pauses the run for the artist to confirm or correct. No inpainting, no generation. |
+| **Working plan** | A medium-aware plan of time-boxed stages with a brand-neutral materials list and a self-check card, exported as a study-pack PDF. Instructional claims are cited through hybrid retrieval over open-access sources, and the **Plan Critic** checks the plan before the artist sees it. |
+| **Studio chat** | Grounded questions about the reference and the medium. An answer that implies plan work proposes an amendment the artist accepts. Metered in daily credits, on a ledger separate from the plan budget. |
+| **Operations** | Traces, cost and latency per agent, grounding, safety assertions, and evaluation health. |
 
 ## Surfaces
 
@@ -63,8 +68,8 @@ apps/          entry · studio · operations        (Next.js 16, React 19)
 packages/
   fascia       shared shadcn/base-ui components, design tokens   @artloupe/fascia
   auth         iron-session + swappable AuthProvider seam        @artloupe/auth
-  schemas      shared Zod contracts (empty scaffold)             @artloupe/schemas
-python/        uv workspace — agent + ML layer (empty scaffold)
+  schemas      shared Zod contracts, mirrored in Python          @artloupe/schemas
+python/        uv workspace — libs/* and the LangGraph service in services/agent
 supabase/      local Postgres + pgvector via the Supabase CLI
 scripts/       report generators, seed scripts
 docs/          ADRs, traceability, contrast, session metrics
@@ -95,35 +100,19 @@ assumed present.
 ### Bootstrapping
 
 The Supabase CLI, Playwright, Biome, Vale and the report generators are all
-devDependencies; `pnpm install` is the only step that fetches them. Three things it does
+devDependencies; `pnpm install` is the only step that fetches them. Two things it does
 not fetch, because they live outside the npm cache:
 
 ```sh
 pnpm --filter @artloupe/studio exec playwright install --with-deps   # e2e browsers
 pnpm exec vale sync                                                  # prose style packages
-npx skills add vercel-labs/agent-skills --agent claude-code -y \
-  --skill deploy-to-vercel vercel-composition-patterns vercel-optimize \
-          vercel-react-best-practices vercel-react-view-transitions \
-          web-design-guidelines writing-guidelines
 ```
 
 ### Agent skills
 
-The repo uses seven third-party skills from
-[`vercel-labs/agent-skills`](https://github.com/vercel-labs/agent-skills) (MIT) as
-**development-time** guidance for the coding agent — React/Next performance review, Vercel
-deployment and cost work, design and prose guidelines. They are not runtime dependencies
-and ship in no build artifact.
-
-They are **pinned but not vendored**: [`skills-lock.json`](./skills-lock.json) records each
-skill's source, path and content hash, while the installed directories under
-`.claude/skills/` are gitignored — committing them would mean redistributing them, which
-pulls each skill's license into play. The first-party skills authored here (`wrap`, `ship`,
-`backlog`, `tag-tests`) *are* tracked.
-
-Run the command above after cloning. Reinstall details, the two CLI behaviours that make an
-uninstalled skill look like a broken one, and the standing license caution before adding a
-new skill are in [`.agents/skills/README.md`](./.agents/skills/README.md).
+The first-party skills authored here (`wrap`, `ship`, `backlog`, `tag-tests`) are tracked
+in `.claude/skills/`. No third-party skill is vendored or pinned in the repo — any the coding
+agent uses are installed globally, outside it.
 
 ## Setup
 
@@ -234,7 +223,7 @@ rot if kept by hand. **None of their outputs are hand-edited** — fix the input
 | **Token contrast** — measured WCAG 2.2 ratios per token pairing, light and dark | `pnpm contrast:report` | `pnpm contrast:check` | [`docs/contrast-report/`](./docs/contrast-report/) |
 | **Test traceability** — which flow each test covers, and in what respect | `pnpm traceability:report` | `pnpm traceability:check` | [`docs/test-traceability-reports/`](./docs/test-traceability-reports/) |
 | **Session metrics** — cost, effort split and retro, one record per session | `pnpm session-metrics:report` | — | [`docs/session-metrics-reports/`](./docs/session-metrics-reports/) |
-| **Backlog** — a generated map of the GitHub issues on the project board | `pnpm backlog:report` | — | `docs/backlog/issues.md` (not live yet — needs the board) |
+| **Backlog** — a generated map of the GitHub issues on the project board | `pnpm backlog:report` | — | [`docs/backlog/issues.md`](./docs/backlog/issues.md) |
 
 The two with a `:check` form run in CI. `contrast:check` fails on any asserted pairing
 below its bar and `contrast:check:strict` fails on warnings too; `traceability:check`
@@ -254,15 +243,15 @@ The catalog is [`docs/test-traceability-reports/flows.json`](./docs/test-traceab
 an unknown flow or category is a hard error in CI, not a silently dropped row.
 
 ```ts
-// @trace flow=critique.formal-analysis category=functionality
+// @trace flow=analysis.geometry category=functionality
 ```
 
 ## Documentation
 
 - **Architecture decisions** — [`docs/decision-records/`](./docs/decision-records/)
 - **Current state** — [`docs/current-state.md`](./docs/current-state.md), read first each session
+- **Design** — [`docs/design/`](./docs/design/), starting with [`requirements.md`](./docs/design/requirements.md)
 - **Token contrast** — [`docs/contrast-report/`](./docs/contrast-report/), the baseline the next palette change is measured against
-- **Agent skills** — [`.agents/skills/README.md`](./.agents/skills/README.md), what's pinned in `skills-lock.json` and why none of it is vendored
 
 ## License
 

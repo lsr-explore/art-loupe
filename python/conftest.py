@@ -2,7 +2,7 @@
 
 Every test may declare which application flow it verifies and in what respect::
 
-    @pytest.mark.trace(flow="critique.formal-analysis", category="safety")
+    @pytest.mark.trace(flow="analysis.geometry", category="functionality")
 
 The catalog of valid flows and categories is ``docs/test-traceability-reports/flows.json``
 — the same file ``scripts/reports/traceability-report.mjs`` reads to build the dashboard.
@@ -20,9 +20,9 @@ rename into five sequential runs.
 The tags also drive **selection**, which is the point: a map you can only read is a map
 that goes stale, because nobody has a daily reason to keep it right.
 
-    uv run pytest --flow critique.formal-analysis      # everything protecting the gate
-    uv run pytest --category safety                # every clinical-safety test
-    uv run pytest --flow critique.formal-analysis --category functionality
+    uv run pytest --flow analysis.geometry         # everything protecting geometry detection
+    uv run pytest --category safety                # every safety test
+    uv run pytest --flow analysis.geometry --category functionality
 
 ``-m trace`` still works for "any tagged test" — pytest's own marker expressions cannot
 match on keyword arguments, which is why these options exist.
