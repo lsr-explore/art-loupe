@@ -276,6 +276,18 @@ def test_the_same_recipe_reproduces_the_same_result() -> None:
     )
 
 
+def test_a_result_reloads_from_json_exactly() -> None:
+    """A stored result is reloaded, never recomputed.
+
+    The confidence's `weakest` and `value` are computed fields, written to JSON for readers; on
+    reload they are dropped and derived again. Before that, `extra="forbid"` rejected them and no
+    stored perspective result could be read back at all.
+    """
+    result = _detect(scenes.two_point().image)
+
+    assert PerspectiveResult.model_validate_json(result.model_dump_json()) == result
+
+
 def test_an_invalid_checksum_is_refused() -> None:
     with pytest.raises(ValidationError):
         detect_perspective(scenes.blank(), source_checksum="not-a-checksum")

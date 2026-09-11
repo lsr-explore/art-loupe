@@ -17,6 +17,11 @@ requires-python = ">=3.12"
 dependencies = [
   # `ArtifactMetadata` is the shared FR-305 contract. Tools fill it; they do not redefine it.
   "artloupe-schemas",
+  # Pinned exactly, not ranged: `1.x` hard-aborts on darwin/arm64 — `TensorsToDetectionsCalculator`
+  # initialises the Metal helper unconditionally, so `delegate=CPU` does not avoid it, and it is
+  # an `abort()` that takes the interpreter with it rather than a catchable exception.
+  # docs/spikes/mediapipe-feasibility.md §1. Revisit only by re-running that spike.
+  "mediapipe==0.10.35",
   "numpy>=2",
   "opencv-contrib-python>=5.0",
   "pydantic>=2.9",

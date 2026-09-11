@@ -86,19 +86,30 @@ must never read as the same kind of claim. Rejected: `geometric_plausibility` (t
 `facial_landmark_alignment` — in computer vision "face alignment" *is* landmark localization, so
 it would read as a fit-quality claim the detector cannot support, and it does not cover scale.
 
-Still open for PR 10: the scaling (which yaw angle and which face scale map to 0), and whether
-the value also fills `ArtifactMetadata.confidence` — the shared FR-305 field that FR-401's
-"per-feature confidence" wording points at — with provenance saying it was derived.
+**It also fills `ArtifactMetadata.confidence`** (Laurie, 2026-09-11) — the shared FR-305 field
+that FR-401's "per-feature confidence" wording points at — so the interrupt reads one field for
+every tool. Filling the field does not change the claim: the artifact's `limitations` carry a
+string saying the value is derived from head pose and face scale, not a detector score, and the
+result exposes it under its own name, `facial_landmark_reliability`, beside its components.
 
 ### Two independent signals, combined with `min`, not a product or a mean
 
-Each is a distinct failure mode, cheap, and explainable to an artist:
+Each is a distinct failure mode, cheap, and explainable to an artist. The scaling is Laurie's
+(2026-09-11), set against eight pose fixtures measured with the detector itself
+([`../media-assets.md`](../media-assets.md)):
 
-1. **Pose extremity** — yaw, pitch and roll extracted from the 4×4 facial transformation
-   matrix. A Loomis construction degrades as the head turns, because past roughly 35° of yaw
-   the far-side landmarks are extrapolated rather than observed.
-2. **Scale** — face bounding-box height as a fraction of image height. On a small face,
-   per-landmark pixel error dominates the proportions being measured.
+1. **Pose extremity** — yaw and pitch from the 4×4 facial transformation matrix, each 1 at a
+   measured 15° or less and 0 at 45°, linear between. A Loomis construction degrades as the
+   head turns or nods, because the far-side landmarks are then extrapolated rather than
+   observed. The thresholds are on *measured* angles, which flatten at steep turns: a
+   near-profile the eye reads as 70–80° measures 56.6°, and a three-quarter view that reads as
+   60° measures 37.6°. **Roll is excluded** — a tilt within the picture hides no landmark, the
+   detector corrects for it, and the construction simply rotates with the head.
+2. **Scale** — the face's height in *source pixels*, 1 at 170 px or more and 0 at 64 px. The
+   mesh model resizes each face crop, with a 25% margin on every side, to 256 px (FaceMesh-V2
+   model card), so below about 170 px of face its landmarks are placed on upsampled pixels. A
+   share of the frame would say little: the bundled detector finds no face whose landmarks span
+   less than about 15–18% of the frame height at all.
 
 Both measure the **conditions the observation was made under**, not the face. That distinction
 is the constraint on adding a third.
@@ -141,6 +152,20 @@ anyway.
 `min` is also why the bar for adding a signal is high. Whatever is weakest **controls** the
 score, so a signal that is wrong in some population is not diluted by the others — it decides.
 
+### Per anchor, not only per face
+
+FR-401 asks for per-feature confidence, and the walkthrough's run A flags a single landmark. So
+each draggable anchor of the Loomis construction ([`loomis-construction.md`](./loomis-construction.md)
+§5) carries its own reliability: the face-level value above, combined by `min` with how far that
+anchor's surface faces away from the camera, computed from the pose and the landmarks' own depth
+(Laurie, 2026-09-11). An anchor on the far side of a turned head is extrapolated rather than
+observed, and this measures exactly that — a condition of the observation, not a property of the
+face — which is the bar set above for a third signal. It scales 1 up to 90° between the anchor's
+surface and the camera, 0 at 120° (Laurie, 2026-09-11): on the pose fixtures a frontal face's
+chin and sides already sit at 78–91°, a matter of where each point lies on the face's curve,
+while only the far side of a turned head passes edge-on (96–146°). A frontal chin is never
+flagged.
+
 ### Consequences for the claim taxonomy
 
 The resulting number is `measured` under §6's closed union — it is computed from pixels, with
@@ -174,9 +199,37 @@ opener:
 
 ## 6. Open
 
-- **The `.task` model's licence is unconfirmed.** The library is Apache 2.0; the model bundle is
-  a separate artifact whose FaceMesh-V2 model card is a scanned PDF with no extractable text,
-  and the solutions page states no terms. This should be resolved before PR 10 merges, not
-  before it starts — it does not block writing the code, only shipping it.
+- **The pinned build sends usage metrics to Google every time a landmarker closes**
+  ([#43](https://github.com/lsr-explore/art-loupe/issues/43)), and this blocks PR 10 merging,
+  not writing it. The native library compiles in a Clearcut uploader
+  (`portable_clearcut_uploader.cc`, endpoint `play.googleapis.com/log`) carrying MediaPipe's
+  solution-invocation events. Captured on linux/amd64 (`python:3.12-slim`, 2026-09-11): a
+  landmarker held open for 130 seconds after one detection sent nothing while open, then made
+  one HTTPS upload the moment it closed — about 0.9 kB out and 4.2 kB in, to
+  `play.googleapis.com` (`172.217.118.4:443`). In one process that created, used and closed a
+  fresh landmarker every five seconds, **every close uploaded**: 25 closes, 25 uploads, each
+  within 0.1 s of its close. No switch turns it off — no environment variable, no Python
+  option, no state file. The payload could not be read: the uploader rejects an intercepting
+  proxy's certificate (`tlsv1 alert unknown ca`) even with the proxy's CA in the system trust
+  store, so it carries its own roots or pins. What it sends is known from the library's
+  strings, not from a decoded request.
+- **A new landmarker per call, with its result stored** (Laurie, 2026-09-11). Because the
+  upload is triggered by `close()`, that is one upload per photograph analysed — and since face
+  detection is also the portrait gate, that means every photograph uploaded, not only
+  portraits. The result is reloaded rather than recomputed: PR 10 makes it round-trip through
+  JSON exactly, and PR 12's checksum-keyed cache stores it with the study, so reopening a study
+  sends nothing. One landmarker per process would send fewer, and was not chosen. Not
+  measured: whether a landmarker held open past 130 seconds flushes on a timer, and what a
+  process killed without `close()` sends — both matter less when each landmarker closes within
+  its call.
+- **The user-facing disclosure** is drafted in
+  [`../about-site/data-sent-to-google.md`](../about-site/data-sent-to-google.md), for a page
+  linked from the About site, which is not built yet.
+- **Small faces are not found at all.** The bundled detector (BlazeFace short range) finds no
+  face whose landmarks span less than about 15–18% of the frame height, so a half- or
+  full-length figure never routes as a portrait. PR 10 states it as a limitation and the
+  portrait gate gives it as the declination reason (Laurie, 2026-09-11); searching crops or
+  tiles is [#45](https://github.com/lsr-explore/art-loupe/issues/45).
+- **The model licence is settled** — Apache 2.0, in [`../media-assets.md`](../media-assets.md).
 - **`0.10.35` ships no `manylinux aarch64` wheel** (`1.x` does). Irrelevant on GitHub's x86_64
   runners; relevant the day anything targets arm64 Linux.

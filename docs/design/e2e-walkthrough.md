@@ -111,13 +111,17 @@ dashboard more compelling than a numeric one: the evidence is inspectable by eye
 
 ### Beat 6 — the interrupt
 
-**Artist sees:** the head-construction overlay, with **the jaw landmark flagged low
-confidence** and the rest of the construction drawn normally. A draggable handle. The run is
-paused and says so.
+**Artist sees:** the head-construction overlay, with **one side of the face flagged low
+reliability** — the anchor on the side turning away from the camera — and the rest of the
+construction drawn normally. A draggable handle. The run is paused and says so.
 
 **System:** the head-construction tool ran on the queued worker (Tier B, never inside a
-Vercel request). Per-landmark confidence came back below threshold, so the graph raised a
-LangGraph `interrupt` and checkpointed state.
+Vercel request). That anchor's reliability came back below threshold: its surface faces away
+from the camera, so its landmarks are extrapolated rather than observed. The number is
+`facial_landmark_reliability`, derived rather than reported by the detector, and it names the
+signal that fired. The graph raised a LangGraph `interrupt` and checkpointed state. On the demo
+portrait, turned 11.5°, the far-side anchor scores 0.77, so whether this beat fires unprompted
+depends on the runtime threshold; the build plan's force-interrupt affordance covers it.
 
 **It did not guess, and it did not proceed with a caveat.**
 
@@ -128,7 +132,7 @@ LangGraph `interrupt` and checkpointed state.
 
 ### Beat 7 — correction and resume
 
-**Artist sees:** they drag the jaw guide into place. The run resumes. The structural outline
+**Artist sees:** they drag that side's anchor into place. The run resumes. The structural outline
 and the crop recommendation **visibly change**, because they depended on the corrected
 geometry.
 
@@ -463,7 +467,7 @@ pass. Beat 8 and beat 10 are skippable; beat 11 is not.
 The four moments that carry it:
 
 - the Director **declining** perspective on a portrait and selecting it on the canal;
-- the jaw landmark **interrupting**, and downstream studies visibly recomputing after the
+- the far-side anchor **interrupting**, and downstream studies visibly recomputing after the
   correction;
 - the Plan Critic **rejecting draft one** in front of the audience;
 - the artist asking about the stubble, **getting the technique answer immediately**, and

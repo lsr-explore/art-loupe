@@ -55,6 +55,9 @@ const eslintConfig = defineConfig([
     // so linting it would make `pnpm lint` fail for anyone who ran the coverage task.
     // (`**/coverage/**` above is the JS-side reportsDirectory; coverage.py uses htmlcov/.)
     '**/htmlcov/**',
+    // The uv workspace's virtualenv (gitignored). `mediapipe` pulls in matplotlib, whose web
+    // backend ships its own JS; linting installed packages fails on code we do not own.
+    '**/.venv/**',
     '**/playwright-report/**',
     '**/test-results/**',
     '**/.agents/skills/**',

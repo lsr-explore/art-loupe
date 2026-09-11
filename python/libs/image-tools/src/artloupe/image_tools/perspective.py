@@ -34,12 +34,12 @@ EXIF applied — or every coordinate lands on the wrong spot of the photograph t
 
 import math
 import time
-from typing import Literal
+from typing import Any, Literal
 
 import cv2
 import numpy as np
 from numpy.typing import NDArray
-from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, computed_field
+from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, computed_field, model_validator
 
 from artloupe.image_tools.segments import ImageFrame, detect_segments
 from artloupe.image_tools.vanishing import Family, find_families
@@ -157,6 +157,18 @@ class VanishingPointConfidence(BaseModel):
     # Times more supporting segments than chance predicts among those unclaimed at the fit.
     chance_multiple: float = Field(ge=0.0)
     mean_residual_deg: float = Field(ge=0.0)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _recompute_on_reload(cls, data: Any) -> Any:
+        """`weakest` and `value` are written to JSON for readers, and recomputed on reload.
+
+        Without this a stored result could not be read back — `extra="forbid"` rejects the
+        computed keys — and a stored value would be trusted rather than derived again.
+        """
+        if isinstance(data, dict):
+            return {key: item for key, item in data.items() if key not in cls.model_computed_fields}
+        return data
 
     @computed_field
     @property
