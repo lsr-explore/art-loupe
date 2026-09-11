@@ -13,11 +13,11 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 74 (1 parametrized) |
-| **Covered** | a11y 9 · functionality 65 |
+| **Tests** | 99 (6 parametrized) |
+| **Covered** | a11y 9 · functionality 90 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## pytest — 31
+## pytest — 56
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -28,6 +28,30 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_a_perpendicular_segment_has_a_right_angle_residual | `python/libs/image-tools/tests/test_geometry_primitives.py:45` |
 | functionality | test_a_point_at_infinity_is_supported_by_parallel_segments | `python/libs/image-tools/tests/test_geometry_primitives.py:52` |
 | functionality | test_residual_ignores_which_way_the_segment_was_drawn | `python/libs/image-tools/tests/test_geometry_primitives.py:63` |
+| functionality | test_a_frontal_close_up_is_fully_reliable | `python/libs/image-tools/tests/test_head_construction.py:102` |
+| functionality | test_a_near_profile_scores_zero_and_names_the_yaw | `python/libs/image-tools/tests/test_head_construction.py:109` |
+| functionality | test_the_artifact_confidence_is_the_derived_reliability | `python/libs/image-tools/tests/test_head_construction.py:117` |
+| functionality | test_a_small_image_of_a_face_loses_scale_reliability | `python/libs/image-tools/tests/test_head_construction.py:126` |
+| functionality | test_the_far_side_anchor_of_a_turned_head_is_flagged | `python/libs/image-tools/tests/test_head_construction.py:148` |
+| functionality | test_a_chin_facing_the_camera_is_never_flagged | `python/libs/image-tools/tests/test_head_construction.py:159` |
+| functionality | test_pose_signs_follow_the_documented_convention | `python/libs/image-tools/tests/test_head_construction.py:167` |
+| functionality | test_no_face_is_the_portrait_gates_answer | `python/libs/image-tools/tests/test_head_construction.py:178` |
+| functionality | test_the_detector_has_a_small_face_limit | `python/libs/image-tools/tests/test_head_construction.py:188` |
+| functionality | test_a_corrected_chin_moves_the_chin_line | `python/libs/image-tools/tests/test_head_construction.py:197` |
+| functionality | test_a_correction_to_something_that_is_not_an_anchor_is_refused | `python/libs/image-tools/tests/test_head_construction.py:218` |
+| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_head_construction.py:233` |
+| functionality | test_the_version_names_the_runtime_and_the_model | `python/libs/image-tools/tests/test_head_construction.py:240` |
+| functionality | test_without_a_landmarker_one_is_opened_for_the_call | `python/libs/image-tools/tests/test_head_construction.py:247` |
+| functionality | test_measured_lines_run_level_through_their_anchors | `python/libs/image-tools/tests/test_loomis.py:78` |
+| functionality | test_the_ball_is_centred_on_the_brow_at_the_chosen_radius | `python/libs/image-tools/tests/test_loomis.py:91` |
+| functionality | test_the_ball_factor_is_a_parameter | `python/libs/image-tools/tests/test_loomis.py:100` |
+| functionality | test_every_element_is_labelled_measured_or_chosen | `python/libs/image-tools/tests/test_loomis.py:104` |
+| functionality | test_the_cranial_centre_line_stops_at_the_top_of_the_ball | `python/libs/image-tools/tests/test_loomis.py:122` |
+| functionality | test_a_frontal_head_shows_both_side_planes_edge_on | `python/libs/image-tools/tests/test_loomis.py:137` |
+| functionality | test_a_turned_head_shows_only_the_near_side_plane | `python/libs/image-tools/tests/test_loomis.py:145` |
+| functionality | test_proportions_are_measured_not_scored | `python/libs/image-tools/tests/test_loomis.py:154` |
+| functionality | test_the_construction_reloads_from_json_exactly | `python/libs/image-tools/tests/test_loomis.py:162` |
+| functionality | test_degenerate_anchors_are_refused | `python/libs/image-tools/tests/test_loomis.py:176` |
 | functionality | test_canal_finds_the_convergence_on_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:43` |
 | functionality | test_canal_horizon_sits_at_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:54` |
 | functionality | test_a_portrait_is_less_confident_than_an_architectural_scene | `python/libs/image-tools/tests/test_perspective_photographs.py:62` |
@@ -49,9 +73,10 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_search_effort_does_not_buy_phantom_confidence | `python/libs/image-tools/tests/test_perspective.py:230` |
 | functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:256` |
 | functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:270` |
-| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:279` |
-| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:284` |
-| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:297` |
+| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_perspective.py:279` |
+| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:291` |
+| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:296` |
+| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:309` |
 
 ## Vitest — 43
 

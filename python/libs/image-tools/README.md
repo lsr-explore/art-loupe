@@ -5,9 +5,10 @@ photograph the artist supplied and returns geometry, measurement or a plate, plu
 metadata. None generates imagery (FR-801): every pixel of a plate is a fixed function of the
 artist's own photograph and its recorded parameters, and nothing in it is invented.
 
-Two tools so far: **perspective** (PR 11), up to two vanishing points and the horizon through
-them, each with a measured confidence; and the **plate suite** (PR 8), grayscale, a value map
-and value contours from one pipeline.
+Three tools so far: **perspective** (PR 11), up to two vanishing points and the horizon through
+them, each with a measured confidence; the **plate suite** (PR 8), grayscale, a value map and
+value contours from one pipeline; and **head construction** (PR 10), face landmarks and a Loomis
+construction fitted to them, with a derived reliability.
 
 ## Perspective
 
@@ -67,18 +68,68 @@ for contour in plates.outline.contours:
   mixes contrast with abruptness: a faint hard edge and a strong soft one can measure alike.
 - **Deterministic plates state no confidence** — `None`, which is a different claim from `0.0`.
 
+## Head construction
+
+```python
+from artloupe.image_tools import NormalizedPoint, construct_from_face, construct_head
+
+result = construct_head(bgr_uint8, source_checksum=source_image.checksum)
+result.face                       # None when no face is found — the portrait gate's answer
+reliability = result.face.facial_landmark_reliability
+reliability.value                 # derived: min of yaw, pitch and scale below
+reliability.weakest               # which one decided — what an interrupt should name
+for anchor in result.face.anchors:        # brow, nose, chin, right_side, left_side
+    anchor.point, anchor.facing_deg, anchor.reliability
+for element in result.construction.elements:
+    element.name, element.claim   # "measured" through the sitter's landmarks, or "chosen" scaffold
+    element.points                # normalized polyline, unclamped
+result.metadata.confidence        # the face's reliability; its limitations say it is derived
+
+# FR-403/404: an artist-corrected anchor recomputes the construction; depth stays the detector's
+construct_from_face(result.face, width=w, height=h,
+                    corrections={"chin": NormalizedPoint(x=0.51, y=0.83)})
+```
+
+The design is [`docs/design/loomis-construction.md`](../../../docs/design/loomis-construction.md);
+the reliability's is [`docs/design/geometry-confidence-plan.md`](../../../docs/design/geometry-confidence-plan.md) §3.
+
+### Reliability — derived, not detected
+
+MediaPipe reports no confidence, so this one is derived from the conditions the observation was
+made under, never from the face, and named `facial_landmark_reliability` rather than
+"confidence". Signals combine with `min`:
+
+| Signal | Low when | Scaled from |
+| --- | --- | --- |
+| `yaw`, `pitch` | the head is turned or nodded | measured angle: 1 at 15° or less, 0 at 45° |
+| `scale` | the face covers few source pixels | forehead to chin: 1 at 170 px or more, 0 at 64 px |
+| an anchor's `facing` | its surface is turned away from the camera | angle to the camera: 1 up to 90°, 0 at 120° |
+
+- **Ratios are measurements, never scores.** The construction reports brow-to-nose and
+  nose-to-chin; nothing flags a face for departing from the method's ideal thirds.
+- **Every landmarker close sends Google a usage report** (#43). One is opened per call by
+  default; share one with `open_landmarker(parameters)`, as the tests do.
+- **Small faces are not found at all** — below about 15–18% of the frame's height (#45).
+
 ## Invariants
 
-- **One `cv2` provider: `opencv-contrib-python`.** It is what `mediapipe` (PR 10) depends on.
-  Never add `opencv-python` — both install `cv2`, uv resolves the pair silently, and the
-  loser breaks at import. `tests/test_dependency_hygiene.py` fails if a second appears
-  anywhere in the workspace.
+- **One `cv2` provider: `opencv-contrib-python`.** It is what `mediapipe` depends on. Never add
+  `opencv-python` — both install `cv2`, uv resolves the pair silently, and the loser breaks at
+  import. `tests/test_dependency_hygiene.py` fails if a second appears anywhere in the
+  workspace.
+- **`mediapipe` is pinned to `0.10.35`**, because `1.x` hard-aborts on darwin/arm64. The model
+  ships as package data in `models/`, with its Apache 2.0 licence beside it.
 - **The input is already oriented.** Decode with EXIF applied, or every point lands on the
-  wrong spot of the photograph the artist sees.
+  wrong spot of the photograph the artist sees. For head construction, pass the full-resolution
+  original too: the scale signal counts source pixels.
 - **The recipe reproduces the result.** Every tool's `tool_version` comes from
-  `versioning.tool_version` and carries the OpenCV and NumPy versions, because either can move
-  the output. Perspective's RANSAC is seeded from `PerspectiveParameters.seed`.
+  `versioning.tool_version` and carries the OpenCV and NumPy versions; head construction adds
+  the `mediapipe` version and a digest of the model. Perspective's RANSAC is seeded from
+  `PerspectiveParameters.seed`.
+- **Results reload from JSON exactly.** Computed fields are written for readers and derived
+  again on reload, so a stored result is read back, never recomputed and never trusted blindly.
 - **Every contour point lies on an edge of the value map.** `tests/test_plates.py` asserts it
   on drawn scenes and `tests/test_plates_photographs.py` on both demo photographs; an
   independent edge detector would pass every other plate test.
-- **CI needs `libgl1 libglib2.0-0`** for the non-headless `cv2`.
+- **CI needs `libgl1 libglib2.0-0 libgles2 libegl1`** — the first pair for the non-headless
+  `cv2`, the second for the face model at load time.
