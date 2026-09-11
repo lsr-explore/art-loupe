@@ -148,8 +148,11 @@ must land before any handler carries a payload.
 - **No torch.** MediaPipe Tasks `face_landmarker` is a ~3 MB `.task` file with no torch
   dependency. Torch adds ~2.5 GB and slows `uv sync --all-packages --frozen` on every PR.
   Everything in FR-301/302/401 is reachable with MediaPipe Tasks + OpenCV + numpy.
-- **MediaPipe's pins are hostile** — protobuf/numpy/jax ranges that fight `numpy>=2`. Confirm a
-  py3.12 arm64 wheel exists, and check the `.task` model's licence, before committing.
+- **MediaPipe's pin is exact.** The feared protobuf/numpy/jax fight with `numpy>=2` did not
+  happen — `0.10.35` resolves beside NumPy 2 with neither pin — but `1.x` hard-aborts on
+  darwin/arm64, so the version is pinned, not ranged
+  ([spike](../spikes/mediapipe-feasibility.md)). The `.task` model is Apache 2.0 and committed
+  with its licence text ([`../media-assets.md`](../media-assets.md)).
 - **Cache key.** Key on the FR-105 content checksum — never the signed URL (they rotate) and
   never the bytes. Do **not** reuse veloce-trace's `SqliteLLMCache`: it keys on the serialized
   prompt, so a multimodal message writes megabytes per entry and misses on every re-upload.

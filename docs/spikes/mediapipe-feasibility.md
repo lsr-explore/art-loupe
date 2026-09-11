@@ -103,10 +103,11 @@ sitter's conformity to an idealized template rather than the detector's uncertai
 have fired the FR-402 interrupt more often the further a face sat from that ideal. See §3 of
 the plan for why, and do not reintroduce it from this file.
 
-## Open
+## Model licence
 
-**The `.task` model's licence is unconfirmed.** The `mediapipe` library is Apache 2.0 (repo
-`LICENSE` verified). The model bundle is a separate artifact from
-`storage.googleapis.com/mediapipe-models/`, and its FaceMesh-V2 model card is a scanned PDF
-with no extractable text; the solutions page links the card but states no terms. Treat this as
-open until someone reads the card, not as settled by the library's licence.
+The `mediapipe` library is Apache 2.0 (repo `LICENSE` verified). The `.task` bundle is a
+separate artifact from `storage.googleapis.com/mediapipe-models/`, and it carries no licence
+metadata of its own — its four files are three `.tflite` models and a geometry `.binarypb`.
+The terms come from the three models' cards: the face detector, FaceMesh-V2 and the blendshape
+model are each **Apache 2.0**, and all three cards extract as text. The verdict and the
+bundle's checksums are recorded in [`../media-assets.md`](../media-assets.md).

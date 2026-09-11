@@ -86,9 +86,13 @@ must never read as the same kind of claim. Rejected: `geometric_plausibility` (t
 `facial_landmark_alignment` — in computer vision "face alignment" *is* landmark localization, so
 it would read as a fit-quality claim the detector cannot support, and it does not cover scale.
 
-Still open for PR 10: the scaling (which yaw angle and which face scale map to 0), and whether
-the value also fills `ArtifactMetadata.confidence` — the shared FR-305 field that FR-401's
-"per-feature confidence" wording points at — with provenance saying it was derived.
+**It also fills `ArtifactMetadata.confidence`** (Laurie, 2026-09-11) — the shared FR-305 field
+that FR-401's "per-feature confidence" wording points at — so the interrupt reads one field for
+every tool. Filling the field does not change the claim: the artifact's `limitations` carry a
+string saying the value is derived from head pose and face scale, not a detector score, and the
+result exposes it under its own name, `facial_landmark_reliability`, beside its components.
+
+Still open for PR 10: the scaling — which yaw angle and which face scale map to 0.
 
 ### Two independent signals, combined with `min`, not a product or a mean
 
@@ -174,9 +178,26 @@ opener:
 
 ## 6. Open
 
-- **The `.task` model's licence is unconfirmed.** The library is Apache 2.0; the model bundle is
-  a separate artifact whose FaceMesh-V2 model card is a scanned PDF with no extractable text,
-  and the solutions page states no terms. This should be resolved before PR 10 merges, not
-  before it starts — it does not block writing the code, only shipping it.
+- **The pinned build sends usage metrics to Google every time a landmarker closes**
+  ([#43](https://github.com/lsr-explore/art-loupe/issues/43)), and this blocks PR 10 merging,
+  not writing it. The native library compiles in a Clearcut uploader
+  (`portable_clearcut_uploader.cc`, endpoint `play.googleapis.com/log`) carrying MediaPipe's
+  solution-invocation events. Captured on linux/amd64 (`python:3.12-slim`, 2026-09-11): a
+  landmarker held open for 130 seconds after one detection sent nothing while open, then made
+  one HTTPS upload the moment it closed — about 0.9 kB out and 4.2 kB in, to
+  `play.googleapis.com` (`172.217.118.4:443`). In one process that created, used and closed a
+  fresh landmarker every five seconds, **every close uploaded**: 25 closes, 25 uploads, each
+  within 0.1 s of its close. No switch turns it off — no environment variable, no Python
+  option, no state file. The payload could not be read: the uploader rejects an intercepting
+  proxy's certificate (`tlsv1 alert unknown ca`) even with the proxy's CA in the system trust
+  store, so it carries its own roots or pins. What it sends is known from the library's
+  strings, not from a decoded request.
+- **A short-lived detector is not a mitigation; it is the worst case.** It was chosen on
+  2026-09-11 on the reading that the upload was deferred and a brief session escaped it. The
+  capture shows the upload is triggered by `close()`, so a detector per call is an upload per
+  call. One landmarker per process, closed once at shutdown, sends least — and still sends.
+  Revisiting the choice is Laurie's call. Not measured: whether a landmarker held open longer
+  than 130 seconds flushes on a timer, and what a process killed without `close()` sends.
+- **The model licence is settled** — Apache 2.0, in [`../media-assets.md`](../media-assets.md).
 - **`0.10.35` ships no `manylinux aarch64` wheel** (`1.x` does). Irrelevant on GitHub's x86_64
   runners; relevant the day anything targets arm64 Linux.
