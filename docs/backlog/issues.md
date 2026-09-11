@@ -13,9 +13,9 @@ what each epic is **for** is in [`README.md`](./README.md).
 | --- | --- |
 | P0 | 0 |
 | P1 | 2 |
-| P2 | 7 |
+| P2 | 8 |
 | P3 | 7 |
-| — | 1 |
+| — | 0 |
 
 Priority and Status are the [Project #3](https://github.com/users/lsr-explore/projects/3)
 field values — there are no priority labels. `—` means the field is unset.
@@ -70,7 +70,7 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 
 | # | Title | Priority | Status |
 | --- | --- | --- | --- |
-| [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | — | Backlog |
+| [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | P2 | Backlog |
 
 ### repo
 
