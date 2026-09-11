@@ -7,12 +7,12 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-11**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **17** — **1** epics, **6** filed under an epic, **10** unparented
+- Open issues: **18** — **1** epics, **6** filed under an epic, **11** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 0 |
-| P1 | 2 |
+| P1 | 3 |
 | P2 | 8 |
 | P3 | 7 |
 | — | 0 |
@@ -48,6 +48,13 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | [#39](https://github.com/lsr-explore/art-loupe/issues/39) | studio: a failed object cleanup strands a storage object, and the docblock says it self-heals | P2 | Backlog |
 | [#38](https://github.com/lsr-explore/art-loupe/issues/38) | studio: an unreadable insert response leaves an orphan project row | P3 | Backlog |
 
+### python
+
+| # | Title | Priority | Status |
+| --- | --- | --- | --- |
+| [#43](https://github.com/lsr-explore/art-loupe/issues/43) | python: MediaPipe Tasks sends usage metrics to Google — measure, then disable or disclose before PR 10 merges | P1 | Backlog |
+| [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | P2 | Backlog |
+
 ### auth
 
 | # | Title | Priority | Status |
@@ -65,12 +72,6 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | # | Title | Priority | Status |
 | --- | --- | --- | --- |
 | [#33](https://github.com/lsr-explore/art-loupe/issues/33) | packages: add @artloupe/schemas to entry and operations | P2 | Backlog |
-
-### python
-
-| # | Title | Priority | Status |
-| --- | --- | --- | --- |
-| [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | P2 | Backlog |
 
 ### repo
 

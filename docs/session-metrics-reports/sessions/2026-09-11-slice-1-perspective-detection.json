@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-11",
+  "label": "Slice 1 PR 11 — vanishing points with a chance-relative confidence, the walkthrough photos brought into the repo, and #35 closed by moving reference material out",
+  "confidence": "measured",
+  "cost_usd": 23.12,
+  "api_minutes": 32.9,
+  "wall_minutes": 91.3,
+  "context_over_150k_pct": 76,
+  "parallel_agents": 1,
+  "themes": ["agent", "devex"],
+  "effort_split": {
+    "build": 38,
+    "setup": 5,
+    "design": 14,
+    "docs": 13,
+    "verify_ops": 22,
+    "churn": 8
+  },
+  "churn_attribution": {
+    "under_specified": 5,
+    "refinement": 40,
+    "avoidable_error": 30,
+    "genuine_discovery": 25
+  },
+  "ratings": {
+    "scoping_clarity": 4,
+    "decision_stability": 3,
+    "tooling_leverage": 4
+  },
+  "rework_of": [],
+  "delivered": {
+    "prs": [41],
+    "adrs": []
+  },
+  "review": {
+    "coderabbit_findings": 3,
+    "fixed": 1,
+    "deferred": 1,
+    "declined": 1
+  },
+  "decisions": [
+    "#35 resolved by the issue's option 3: reference material moved out of the repo to temp-references/ beside the checkout, not by a markdownlint ignore. Laurie moved it herself",
+    "PR ladder in slice-1-build-plan.md gains a Status column (duplicates current-state §1; kept at Laurie's request)",
+    "New workspace lib python/libs/image-tools -> artloupe.image_tools (Laurie's name), owning the one cv2 provider opencv-contrib-python 5.0.0.93, enforced by test_dependency_hygiene.py. CI installs libgl1 libglib2.0-0",
+    "Perspective result types stay Python-only until a TS consumer exists (PR 13)",
+    "Confidence = min of three signals; significance (support / chance agreement, full at 20x) replaced the plan's plain inlier ratio after drawn clutter scored phantoms 0.74 vs real one-point 0.75. Laurie's call between swap / add a 4th / keep",
+    "Five families searched and the two most confident reported, not the best-supported: the Murano canal's bridge convergence was the 4th family and a 3-family search never reported it. Decided in session, flagged in the PR",
+    "No absolute confidence bound for phantoms beside real structure: on photographs they overlap (0.54 phantom vs 0.42 real canal point), so the threshold is PR 13's call against photographs; tests pin orderings",
+    "Output coordinates unclamped; fascia's in-frame clamp filed as #40 (P1) and noted on the PR 13 ladder row",
+    "Walkthrough photos (Pexels canal, Tim Diercks portrait) committed unmodified to fixtures/demo-images/ (Laurie's location), provenance and licence verdict in docs/media-assets.md, portrait marked with conditions for an identifiable person",
+    "Greptile: search-effort inflation declined with measurements (flat across 200-20,000 hypotheses) and pinned by a test; in-frame vertical VP deferred to #42 (P2) with the limitation text corrected; NumPy added to tool_version",
+    "face_landmarker.task licence resolved: all three bundled models (BlazeFace, FaceMesh-V2, Blendshape V2) are Apache 2.0 per their model cards, whose text extracts fine despite the spike's 'scanned PDF' note. PR 10 pins the versioned /float16/1/ model URL, never /latest/",
+    "MediaPipe Tasks' privacy notice (usage metrics sent to Google, no documented opt-out, consent obligation on the app) filed as #43 at P1, gating PR 10's merge: measure whether the pinned Python build sends them, then disable or disclose"
+  ],
+  "retro": {
+    "went_well": "Probing the confidence against deliberately degraded scenes before writing assertions exposed the clutter overlap, and a ten-seed sweep showed the first passing test had a 0.006 margin — a pass that proved nothing. Running the detector on the real canal before shipping caught the family-budget miss that every drawn scene passed. Greptile's P1 on search effort was answered by measurement rather than argument, and the three dispositions went inline on their threads with every body read back.",
+    "improve": "Two review findings were in-hand information: the `tool_version` comment reasoned about OpenCV reproducibility while NumPy supplied the RNG and eigensolver in the same file, and `LIMITATION_NO_VERTICAL` claimed more than the `_classify` function beside it did. A zsh loop variable named `path` clobbered PATH during thread resolution — a known zsh trap. The first CI watch after a push reported the previous commit's runs, and only the SHA check caught it.",
+    "tooling_suggestion": "The ship skill's resolve-threads loop should never use `path` as a shell variable name under zsh; worth a line in the skill. `gh pr checks --watch` started immediately after a push can exit on the prior commit's completed runs — poll `gh run list` filtered by `headSha` instead, which is what worked here."
+  },
+  "note": "cost_usd, api_minutes and wall_minutes are from /usage at wrap time. context_over_150k_pct is /usage's last-24h figure across all local sessions, not this session alone; the same panel's skills breakdown (/backlog 28%, /ship 6%, /wrap 3%) is also last-24h and machine-wide — this session invoked /backlog once and /ship once, with no subagents and one worktree. /usage also records 24.7k Haiku input tokens ($0.03), from WebFetch summarisation of the Pexels licence and photo pages. ccusage for this session id: 152 requests, 154.5k output tokens, 30.7m cache read, 299.9k cache write; /usage reports 153 requests at 99% cache with no misses. Greptile reviewed automatically on 3e314b3 (3/5); the fix commit drew no re-review, and none was requested for a version string, a limitation sentence and a test. CI green on all four pushes, each confirmed by headSha rather than the checks board."
+}
