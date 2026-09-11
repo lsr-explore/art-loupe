@@ -73,17 +73,24 @@ drawn clutter, and scores 0.42. So the signal ranks points well, but no threshol
 real from coincidental on photographs by construction — PR 13 has to set one against them.
 The package README (`python/libs/image-tools/README.md`) carries the definitions.
 
-## 3. Recommendation — derive a *geometric plausibility* score, and do not call it confidence
+## 3. Derive a *facial landmark reliability* score, and do not call it confidence
 
 The honest framing matters more than the arithmetic here. A number derived from face geometry
 is not the model's probability that it found a face; it is our assessment of whether the
 landmarks are in a configuration a Loomis construction can be trusted on. Calling that
 `confidence` invites every later reader to treat it as a detector output.
 
-**Proposed name: `geometric_plausibility`.** This is a naming call and therefore Laurie's — but
-whatever it is called, it should not be the same word PR 11 uses for a real inlier ratio.
+**Name: `facial_landmark_reliability`** (Laurie, 2026-09-11). Face-specific on purpose: PR 11's
+perspective number stays `confidence`, because it is measured by the fit itself, and the two
+must never read as the same kind of claim. Rejected: `geometric_plausibility` (too generic) and
+`facial_landmark_alignment` — in computer vision "face alignment" *is* landmark localization, so
+it would read as a fit-quality claim the detector cannot support, and it does not cover scale.
 
-### Three independent signals, combined with `min`, not a product or a mean
+Still open for PR 10: the scaling (which yaw angle and which face scale map to 0), and whether
+the value also fills `ArtifactMetadata.confidence` — the shared FR-305 field that FR-401's
+"per-feature confidence" wording points at — with provenance saying it was derived.
+
+### Two independent signals, combined with `min`, not a product or a mean
 
 Each is a distinct failure mode, cheap, and explainable to an artist:
 

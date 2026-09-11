@@ -56,8 +56,9 @@ photographs, not drawn scenes.
 
 ### Open questions
 
-- **PR 10 naming: `geometric_plausibility`** for the face path's derived score (plan §3), and its
-  scaling — which yaw angle and face scale map to what — is undesigned. Both are Laurie's.
+- **PR 10's derived face score is named `facial_landmark_reliability`** (plan §3). Still open, and
+  Laurie's: its scaling (which yaw angle and face scale map to 0), and whether it also fills the
+  shared `ArtifactMetadata.confidence` field.
 - **MediaPipe Tasks sends usage metrics to Google** per its privacy notice, with no documented
   opt-out, and the consent obligation lands on us: [#43](https://github.com/lsr-explore/art-loupe/issues/43)
   (P1). Measure whether the pinned Python build sends them, then disable or disclose. Blocks PR 10
@@ -86,8 +87,9 @@ Backlog is GitHub issues on user project 3; #40 (P1) and #42 (P2) filed 2026-09-
 
 **Next step — Laurie picks between two:**
 
-- **PR 10, face landmarks + Loomis + `geometric_plausibility`**, in `python/libs/image-tools`.
-  First, get Laurie's call on the score's name and scaling before writing it. The model licence
+- **PR 10, face landmarks + Loomis + `facial_landmark_reliability`**, in `python/libs/image-tools`.
+  First, get Laurie's call on the score's scaling and on the `ArtifactMetadata.confidence` question
+  (plan §3) before writing it. The model licence
   is settled (Apache 2.0 for the detector, FaceMesh-V2 and blendshape cards alike); record it in
   `docs/media-assets.md` and correct the spike doc's "scanned PDF" note and plan §6. Fetch the
   model from the **versioned** URL `…/face_landmarker/float16/1/face_landmarker.task`, never
