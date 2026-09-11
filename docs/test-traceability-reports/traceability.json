@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 165,
+      "pytest": 195,
       "vitest": 432,
       "playwright": 36,
-      "all": 633
+      "all": 663
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 165,
+      "pytest": 195,
       "vitest": 432,
       "playwright": 36,
-      "all": 633
+      "all": 663
     }
   },
   "by_flow": {
@@ -91,15 +91,15 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 34
+        "functionality": 64
       },
       "runners": {
-        "pytest": 0,
+        "pytest": 30,
         "vitest": 43,
         "playwright": 0
       },
-      "total": 43,
-      "parametrized": 0
+      "total": 73,
+      "parametrized": 1
     },
     "critique.alignment": {
       "severity": "P1",
@@ -3662,6 +3662,216 @@
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_dependency_hygiene.py:27",
+      "name": "test_exactly_one_cv2_provider",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:18",
+      "name": "test_image_edges_map_to_the_overlay_unit_square",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:28",
+      "name": "test_the_isotropic_frame_preserves_angles",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:39",
+      "name": "test_a_segment_pointing_at_the_point_has_zero_residual",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:45",
+      "name": "test_a_perpendicular_segment_has_a_right_angle_residual",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:52",
+      "name": "test_a_point_at_infinity_is_supported_by_parallel_segments",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_geometry_primitives.py:63",
+      "name": "test_residual_ignores_which_way_the_segment_was_drawn",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective_photographs.py:43",
+      "name": "test_canal_finds_the_convergence_on_the_bridge",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective_photographs.py:54",
+      "name": "test_canal_horizon_sits_at_the_bridge",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective_photographs.py:62",
+      "name": "test_a_portrait_is_less_confident_than_an_architectural_scene",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:106",
+      "name": "test_portrait_orientation_converts_through_the_other_axis",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:113",
+      "name": "test_output_does_not_depend_on_the_working_resolution",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:120",
+      "name": "test_bgr_input_matches_grayscale",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:129",
+      "name": "test_confidence_is_the_weakest_signal_and_names_it",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:142",
+      "name": "test_a_clean_scene_is_confident",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:147",
+      "name": "test_few_supporting_lines_lower_confidence_through_support",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:157",
+      "name": "test_loose_convergence_lowers_confidence_through_angular_fit",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:166",
+      "name": "test_clutter_alone_scores_far_below_real_structure",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:190",
+      "name": "test_a_phantom_beside_real_structure_is_the_one_flagged",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:213",
+      "name": "test_nothing_found_is_zero_confidence_not_none",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:223",
+      "name": "test_artifact_confidence_is_its_weakest_feature",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:233",
+      "name": "test_metadata_records_the_recipe",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:247",
+      "name": "test_the_same_recipe_reproduces_the_same_result",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:256",
+      "name": "test_an_invalid_checksum_is_refused",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:261",
+      "name": "test_unknown_parameters_are_refused",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:274",
+      "name": "test_unsupported_images_are_refused",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:59",
+      "name": "test_two_point_scene_finds_both_points_off_frame_and_unclamped",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:74",
+      "name": "test_two_point_horizon_is_measured_through_both_points",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:86",
+      "name": "test_verticals_and_parallels_are_not_reported_as_vanishing_points",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_perspective.py:93",
+      "name": "test_one_point_horizon_is_level_and_says_it_was_assumed",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
     },
     {
       "id": "python/libs/metering/tests/test_guards.py:105",

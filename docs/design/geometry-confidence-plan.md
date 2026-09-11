@@ -58,10 +58,20 @@ as if they were:
 
 | Path | Confidence available? |
 | --- | --- |
-| Lines / vanishing points (PR 11) | **Yes, genuinely measured.** RANSAC inlier ratio, angular residual of the fit, and count of supporting segments all fall out of the estimation itself |
+| Lines / vanishing points (PR 11) | **Yes, genuinely measured.** Support above chance, angular residual of the fit, and count of supporting segments all fall out of the estimation itself |
 | Face landmarks (PR 10) | **No.** `visibility` and `presence` are `None`; the `min_*_confidence` options are input thresholds, and nothing reports the score achieved |
 
 So PR 11 can report a measured confidence. PR 10 cannot, and must derive one.
+
+PR 11 combines its three signals with `min`, the same rule §3 sets for the face path. Its
+first signal is support measured **against chance**, not a plain RANSAC inlier ratio: among
+enough unrelated segments some point always collects agreement by coincidence, and on drawn
+clutter a ratio-based signal scored those phantoms level with real one-point structure.
+Measured against chance, drawn clutter lands at 3-12× and drawn structure at 17-60×.
+Photographs are harder: the Murano canal's real convergence on the bridge is 9×, level with
+drawn clutter, and scores 0.42. So the signal ranks points well, but no threshold separates
+real from coincidental on photographs by construction — PR 13 has to set one against them.
+The package README (`python/libs/image-tools/README.md`) carries the definitions.
 
 ## 3. Recommendation — derive a *geometric plausibility* score, and do not call it confidence
 

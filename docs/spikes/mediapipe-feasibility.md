@@ -5,7 +5,9 @@
 Retires the largest unretired risk in the back half of the slice-1 ladder before PR 10 depends
 on the answer. Everything below was measured, not read off a changelog: a scratchpad venv on
 darwin/arm64 and a `python:3.12-slim` container on `linux/amd64`, both running
-`face_landmarker` against `docs/temp-references/tim-diercks-portrait/01-original-reference.jpg`.
+`face_landmarker` against `tim-diercks-portrait/01-original-reference.jpg` from the study pack
+in `../temp-references/`, outside the repo — a 1400 × 2097 downscale of
+`fixtures/demo-images/pexels-tim-diercks-719708976-31589335.jpg`.
 
 ## Verdict
 

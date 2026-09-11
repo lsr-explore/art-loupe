@@ -119,22 +119,22 @@ must land before any handler carries a payload.
 
 ## PR ladder
 
-| # | PR | Why here |
-| --- | --- | --- |
-| 1 | Contracts — `packages/schemas` + `python/libs/schemas` with a shared JSON fixture both suites assert against; add `analysis.geometry` and `intake.project-intent`; add `@artloupe/schemas` to `transpilePackages` in all three apps; drop `--passWithNoTests` | The parity fixture is what makes hand-mirrored Zod/Pydantic safe |
-| 2 | `python/services/agent` skeleton — FastAPI, `python/libs/auth`, `/health`, trivial graph, CI job (no Dockerfile — deferred with deployment) | `services/*` is already a workspace glob; purely additive |
-| 3 | Checkpointer lib + a two-node toy interrupt/resume spike that survives a **process restart**; tables in a `langgraph` schema, not `public` | Highest-uncertainty mechanism in the slice with no prior art in either repo — prove it before CV depends on it |
-| 4 | Loop guards + per-node token/latency/cost instrumentation | Net-new; the ledger must exist before the first paid call, or PR 14 renders an empty table |
-| 5 | Storage + RLS + `projects` table + checksum + signed-URL helper (no HTTP path yet) | Database-shaped and independently reviewable |
-| 6 | Route-handler gating — `api` matcher policy, per-handler `getSession()`, `route-gate-matrix.md` rows, read-through image route | The first route handler is ungated by construction |
-| 7 | Upload + intake + EXIF/filename/OCR screening **at ingest** + fixture fallback when `ARTLOUPE_AGENT_URL` is unset | FR-106/803 require screening before any model sees the bytes; the fallback keeps Playwright hermetic |
-| 8 | Plate suite — grayscale, three-value posterization, outline-from-posterization, all from one pipeline, emitting FR-305 metadata | No dependency fight, no vendor, and the three plates visibly relate because they share a parameter |
-| 9 | Overlay primitives in `packages/fascia`, built against a fixture image — keyboard path, 24 px targets, non-drag alternative, own a11y tests | Largest net-new UI in the slice, zero existing primitives, zero dependency on CV output |
-| 10 | Face landmarks + Loomis + confidence — MediaPipe Tasks, **no torch** | Isolates the one dependency-resolution risk so a red CI means only that |
-| 11 | Line + VP detection + confidence — OpenCV Hough/LSD | Independent of 10 |
-| 12 | Routing call — deterministic face gate feeds a structured-output manifest and declination reason; checksum-keyed node cache | Keeps the critical path deterministic where it can be |
-| 13 | Interrupt + resume — **`runs` table with owner RLS**, threshold as runtime config, `interrupt()` alone in its node, force-interrupt affordance | The runs table is the missing authz boundary; node isolation stops resume double-charging |
-| 14 | Ops cost + run health | Reads tables PRs 4 and 13 already fill |
+| # | PR | Status | Why here |
+| --- | --- | --- | --- |
+| 1 | Contracts — `packages/schemas` + `python/libs/schemas` with a shared JSON fixture both suites assert against; add `analysis.geometry` and `intake.project-intent`; add `@artloupe/schemas` to `transpilePackages` in all three apps; drop `--passWithNoTests` | Done (#13) | The parity fixture is what makes hand-mirrored Zod/Pydantic safe |
+| 2 | `python/services/agent` skeleton — FastAPI, `python/libs/auth`, `/health`, trivial graph, CI job (no Dockerfile — deferred with deployment) | Done (#16) | `services/*` is already a workspace glob; purely additive |
+| 3 | Checkpointer lib + a two-node toy interrupt/resume spike that survives a **process restart**; tables in a `langgraph` schema, not `public` | Done (#17) | Highest-uncertainty mechanism in the slice with no prior art in either repo — prove it before CV depends on it |
+| 4 | Loop guards + per-node token/latency/cost instrumentation | Done (#19) | Net-new; the ledger must exist before the first paid call, or PR 14 renders an empty table |
+| 5 | Storage + RLS + `projects` table + checksum + signed-URL helper (no HTTP path yet) | Done (#20) | Database-shaped and independently reviewable |
+| 6 | Route-handler gating — `api` matcher policy, per-handler `getSession()`, `route-gate-matrix.md` rows, read-through image route | Done (#29) | The first route handler is ungated by construction |
+| 7 | Upload + intake + EXIF/filename/OCR screening **at ingest** + fixture fallback when `ARTLOUPE_AGENT_URL` is unset | Done (#31, #37) | FR-106/803 require screening before any model sees the bytes; the fallback keeps Playwright hermetic |
+| 8 | Plate suite — grayscale, three-value posterization, outline-from-posterization, all from one pipeline, emitting FR-305 metadata | Pending | No dependency fight, no vendor, and the three plates visibly relate because they share a parameter |
+| 9 | Overlay primitives in `packages/fascia`, built against a fixture image — keyboard path, 24 px targets, non-drag alternative, own a11y tests | Done (#21) | Largest net-new UI in the slice, zero existing primitives, zero dependency on CV output |
+| 10 | Face landmarks + Loomis + confidence — MediaPipe Tasks, **no torch** | Pending | Isolates the one dependency-resolution risk so a red CI means only that |
+| 11 | Line + VP detection + confidence — OpenCV Hough/LSD | Pending | Independent of 10 |
+| 12 | Routing call — deterministic face gate feeds a structured-output manifest and declination reason; checksum-keyed node cache | Pending | Keeps the critical path deterministic where it can be |
+| 13 | Interrupt + resume — **`runs` table with owner RLS**, threshold as runtime config, `interrupt()` alone in its node, force-interrupt affordance; overlay guides must reach an off-frame vanishing point, which fascia's in-frame clamp currently prevents ([#40](https://github.com/lsr-explore/art-loupe/issues/40)) | Pending | The runs table is the missing authz boundary; node isolation stops resume double-charging |
+| 14 | Ops cost + run health | Pending | Reads tables PRs 4 and 13 already fill |
 
 ## Risks worth naming
 
