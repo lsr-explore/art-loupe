@@ -109,5 +109,7 @@ The `mediapipe` library is Apache 2.0 (repo `LICENSE` verified). The `.task` bun
 separate artifact from `storage.googleapis.com/mediapipe-models/`, and it carries no licence
 metadata of its own — its four files are three `.tflite` models and a geometry `.binarypb`.
 The terms come from the three models' cards: the face detector, FaceMesh-V2 and the blendshape
-model are each **Apache 2.0**, and all three cards extract as text. The verdict and the
-bundle's checksums are recorded in [`../media-assets.md`](../media-assets.md).
+model are each **Apache 2.0**, stated on each card's first page. The FaceMesh-V2 and blendshape
+cards did not extract as text with the tooling used, so their licence line was read from the
+rendered page. The verdict and the bundle's checksums are recorded in
+[`../media-assets.md`](../media-assets.md).

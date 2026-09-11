@@ -192,12 +192,18 @@ opener:
   proxy's certificate (`tlsv1 alert unknown ca`) even with the proxy's CA in the system trust
   store, so it carries its own roots or pins. What it sends is known from the library's
   strings, not from a decoded request.
-- **A short-lived detector is not a mitigation; it is the worst case.** It was chosen on
-  2026-09-11 on the reading that the upload was deferred and a brief session escaped it. The
-  capture shows the upload is triggered by `close()`, so a detector per call is an upload per
-  call. One landmarker per process, closed once at shutdown, sends least — and still sends.
-  Revisiting the choice is Laurie's call. Not measured: whether a landmarker held open longer
-  than 130 seconds flushes on a timer, and what a process killed without `close()` sends.
+- **A new landmarker per call, with its result stored** (Laurie, 2026-09-11). Because the
+  upload is triggered by `close()`, that is one upload per photograph analysed — and since face
+  detection is also the portrait gate, that means every photograph uploaded, not only
+  portraits. The result is reloaded rather than recomputed: PR 10 makes it round-trip through
+  JSON exactly, and PR 12's checksum-keyed cache stores it with the study, so reopening a study
+  sends nothing. One landmarker per process would send fewer, and was not chosen. Not
+  measured: whether a landmarker held open past 130 seconds flushes on a timer, and what a
+  process killed without `close()` sends — both matter less when each landmarker closes within
+  its call.
+- **The user-facing disclosure** is drafted in
+  [`../about-site/data-sent-to-google.md`](../about-site/data-sent-to-google.md), for a page
+  linked from the About site, which is not built yet.
 - **The model licence is settled** — Apache 2.0, in [`../media-assets.md`](../media-assets.md).
 - **`0.10.35` ships no `manylinux aarch64` wheel** (`1.x` does). Irrelevant on GitHub's x86_64
   runners; relevant the day anything targets arm64 Linux.

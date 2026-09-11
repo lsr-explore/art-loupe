@@ -102,6 +102,8 @@ obligation to disclose lands on this project, not on Google.
 - **When.** Each time a face landmarker is closed — not while it is open, and not at import or
   model load. One upload is under 1 kB outbound including the TLS handshake: far too small to
   carry the photograph or the 478-point landmark set.
+- **Tests and CI.** The face tool's tests run the detector, so every local and CI test run sends
+  uploads too — one per landmarker closed.
 - **Opt-out.** None. No environment variable, API option or configuration file disables it in
   `mediapipe==0.10.35`. The only control is network egress from the process running detection.
 - **Also installed.** `mediapipe` pulls in `sounddevice`, an audio-capture library. Nothing in
