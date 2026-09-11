@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 222,
+      "pytest": 223,
       "vitest": 432,
       "playwright": 36,
-      "all": 690
+      "all": 691
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 222,
+      "pytest": 223,
       "vitest": 432,
       "playwright": 36,
-      "all": 690
+      "all": 691
     }
   },
   "by_flow": {
@@ -91,14 +91,14 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 26
+        "functionality": 27
       },
       "runners": {
-        "pytest": 26,
+        "pytest": 27,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 26,
+      "total": 27,
       "parametrized": 4
     },
     "analysis.geometry": {
@@ -3922,161 +3922,168 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:104",
+      "id": "python/libs/image-tools/tests/test_plates.py:105",
       "name": "test_a_speck_below_min_region_is_absorbed",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:112",
+      "id": "python/libs/image-tools/tests/test_plates.py:113",
       "name": "test_min_region_zero_keeps_the_speck",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:123",
+      "id": "python/libs/image-tools/tests/test_plates.py:125",
+      "name": "test_when_no_region_is_large_enough_nothing_is_claimed_absorbed",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_plates.py:139",
       "name": "test_grayscale_keeps_lightness_and_drops_colour",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:135",
+      "id": "python/libs/image-tools/tests/test_plates.py:151",
       "name": "test_outline_lies_on_the_band_boundaries",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:145",
+      "id": "python/libs/image-tools/tests/test_plates.py:161",
       "name": "test_a_contour_meeting_the_frame_is_open_and_reaches_it",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:155",
+      "id": "python/libs/image-tools/tests/test_plates.py:171",
       "name": "test_a_contour_clear_of_the_frame_is_closed",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:171",
+      "id": "python/libs/image-tools/tests/test_plates.py:187",
       "name": "test_every_contour_point_lies_on_an_edge_of_the_value_map",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:182",
+      "id": "python/libs/image-tools/tests/test_plates.py:198",
       "name": "test_a_hard_edge_measures_strong",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:186",
+      "id": "python/libs/image-tools/tests/test_plates.py:202",
       "name": "test_a_soft_edge_measures_weaker",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:193",
+      "id": "python/libs/image-tools/tests/test_plates.py:209",
       "name": "test_a_ramp_crossing_is_not_an_edge",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:201",
+      "id": "python/libs/image-tools/tests/test_plates.py:217",
       "name": "test_the_recipe_reproduces_every_plate",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:211",
+      "id": "python/libs/image-tools/tests/test_plates.py:227",
       "name": "test_each_plate_carries_its_own_metadata",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:227",
+      "id": "python/libs/image-tools/tests/test_plates.py:243",
       "name": "test_large_images_are_worked_at_the_working_size",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:235",
+      "id": "python/libs/image-tools/tests/test_plates.py:251",
       "name": "test_small_images_are_never_upscaled",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:257",
+      "id": "python/libs/image-tools/tests/test_plates.py:273",
       "name": "test_invalid_parameters_are_refused",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:266",
+      "id": "python/libs/image-tools/tests/test_plates.py:282",
       "name": "test_unsupported_images_are_refused",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:48",
+      "id": "python/libs/image-tools/tests/test_plates.py:49",
       "name": "test_fitted_thresholds_fall_between_the_bands",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:58",
+      "id": "python/libs/image-tools/tests/test_plates.py:59",
       "name": "test_each_band_is_one_value",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:66",
+      "id": "python/libs/image-tools/tests/test_plates.py:67",
       "name": "test_supplied_thresholds_are_used_and_marked_a_choice",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:74",
+      "id": "python/libs/image-tools/tests/test_plates.py:75",
       "name": "test_value_tones_are_evenly_spaced_lightness",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:82",
+      "id": "python/libs/image-tools/tests/test_plates.py:83",
       "name": "test_more_levels_divide_more_finely",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:90",
+      "id": "python/libs/image-tools/tests/test_plates.py:91",
       "name": "test_detail_presets_are_three_five_and_seven",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:95",
+      "id": "python/libs/image-tools/tests/test_plates.py:96",
       "name": "test_an_absent_value_is_stated_not_hidden",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",

@@ -17,6 +17,7 @@ from artloupe.image_tools import DETAIL_LEVELS, PlateParameters, PlateSuite, mak
 from artloupe.image_tools.plates import (
     LIMITATION_EMPTY_VALUE,
     LIMITATION_FITTED,
+    LIMITATION_NOTHING_ABSORBED,
     LIMITATION_SUPPLIED,
 )
 
@@ -115,6 +116,21 @@ def test_min_region_zero_keeps_the_speck() -> None:
 
     assert plates.values.labels[row, col] == 2
     assert any(contour.closed for contour in plates.outline.contours)
+    # Nothing was absorbed, so nothing is claimed absorbed.
+    assert not any(
+        text.startswith("Value regions smaller") for text in plates.values.metadata.limitations
+    )
+
+
+def test_when_no_region_is_large_enough_nothing_is_claimed_absorbed() -> None:
+    """With every region below `min_region` there is nothing to absorb into: keep it, say so."""
+    values = _plates(
+        scenes.checkerboard(), levels=2, thresholds=(50.0,), smoothing=0.0, min_region=0.05
+    ).values
+
+    assert set(np.unique(values.labels).tolist()) == {0, 1}
+    assert LIMITATION_NOTHING_ABSORBED in values.metadata.limitations
+    assert not any(text.startswith("Value regions smaller") for text in values.metadata.limitations)
 
 
 # --- The grayscale plate ---------------------------------------------------------------------

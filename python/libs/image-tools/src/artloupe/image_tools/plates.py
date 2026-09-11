@@ -87,6 +87,10 @@ LIMITATION_EMPTY_VALUE = (
     "The photograph has fewer distinct values than were requested; at least one value covers "
     "none of it."
 )
+LIMITATION_NOTHING_ABSORBED = (
+    "No value region reached the minimum region size, so there was nothing to absorb the small "
+    "ones into: the value map keeps every region, however small."
+)
 LIMITATION_THRESHOLD_CROSSING = (
     "A contour marks where lightness crosses a threshold, not an edge in the photograph. On a "
     "soft gradient — the edge of a form shadow, light on water — the threshold sets its "
@@ -219,6 +223,11 @@ class PlateSuite(BaseModel):
     outline: OutlinePlate
 
 
+# What small-region cleanup did, so the metadata claims only what happened: `off` when the
+# minimum rounds to a pixel or less, `no_anchor` when every region was below it.
+Cleanup = Literal["off", "applied", "no_anchor"]
+
+
 def _as_bgr(image: NDArray[np.uint8]) -> NDArray[np.uint8]:
     if image.dtype != np.uint8:
         raise ValueError(f"expected a uint8 image, got {image.dtype}")
@@ -295,10 +304,16 @@ def _multi_otsu(lightness: NDArray[np.float32], levels: int) -> tuple[float, ...
     return tuple(sorted(cuts))
 
 
-def _absorb_small_regions(labels: NDArray[np.uint8], min_area: int) -> NDArray[np.uint8]:
-    """Reassign every region smaller than `min_area` to the nearest pixel outside one."""
+def _absorb_small_regions(
+    labels: NDArray[np.uint8], min_area: int
+) -> tuple[NDArray[np.uint8], Cleanup]:
+    """Reassign every region smaller than `min_area` to the nearest pixel outside one.
+
+    When every region is below the minimum there is nothing to absorb into. The labels come
+    back unchanged and the outcome says so, rather than a limitation claiming work not done.
+    """
     if min_area <= 1:
-        return labels
+        return labels, "off"
     small = np.zeros(labels.shape, dtype=bool)
     for value in np.unique(labels):
         mask = (labels == value).astype(np.uint8)
@@ -309,8 +324,10 @@ def _absorb_small_regions(labels: NDArray[np.uint8], min_area: int) -> NDArray[n
         tiny = tiny[tiny != 0]  # component 0 is everything that is not this value
         if tiny.size:
             small |= np.isin(components, tiny)
-    if not small.any() or small.all():
-        return labels
+    if not small.any():
+        return labels, "applied"
+    if small.all():
+        return labels, "no_anchor"
     # Pixels to keep are the zeros the distance transform measures from; each small pixel takes
     # the label of the nearest one.
     marked = np.where(small, 255, 0).astype(np.uint8)
@@ -319,7 +336,7 @@ def _absorb_small_regions(labels: NDArray[np.uint8], min_area: int) -> NDArray[n
     )
     lookup = np.zeros(int(nearest.max()) + 1, dtype=labels.dtype)
     lookup[nearest[~small]] = labels[~small]
-    return lookup[nearest]
+    return lookup[nearest], "applied"
 
 
 def _edge_gradient(lightness: NDArray[np.float32], long_edge: int) -> NDArray[np.float32]:
@@ -476,7 +493,7 @@ def make_plates(
     smoothed = _smooth(lightness, params.smoothing * long_edge)
     thresholds = params.thresholds or _multi_otsu(smoothed, params.levels)
     labels = np.digitize(smoothed, thresholds).astype(np.uint8)
-    labels = _absorb_small_regions(labels, round(params.min_region * height * width))
+    labels, cleanup = _absorb_small_regions(labels, round(params.min_region * height * width))
     counts = np.bincount(labels.ravel(), minlength=params.levels)
     shares = tuple(float(count) / labels.size for count in counts)
     tones = _grey_for_lightness(np.linspace(0.0, 100.0, params.levels, dtype=np.float32))
@@ -484,8 +501,11 @@ def make_plates(
     value_limitations = [
         LIMITATION_SRGB,
         LIMITATION_SUPPLIED if params.thresholds else LIMITATION_FITTED,
-        _limitation_small_regions(params.min_region),
     ]
+    if cleanup == "applied":
+        value_limitations.append(_limitation_small_regions(params.min_region))
+    elif cleanup == "no_anchor":
+        value_limitations.append(LIMITATION_NOTHING_ABSORBED)
     if not all(counts):
         value_limitations.append(LIMITATION_EMPTY_VALUE)
     values = ValuePlate(

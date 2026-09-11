@@ -59,6 +59,16 @@ def disc() -> NDArray[np.uint8]:
     return image
 
 
+CHECKER_CELL = 10
+
+
+def checkerboard() -> NDArray[np.uint8]:
+    """L* 20 and 80 cells that meet their own value only at corners, so every region is small."""
+    rows, cols = np.indices((HEIGHT, WIDTH))
+    light = ((rows // CHECKER_CELL) + (cols // CHECKER_CELL)) % 2 == 1
+    return np.where(light, grey_for(80.0), grey_for(20.0)).astype(np.uint8)
+
+
 def step(softness: float = 0.0) -> NDArray[np.uint8]:
     """L* 20 on the left and 80 on the right, blurred by a sigma of `softness` × the width."""
     image = np.full((HEIGHT, WIDTH), grey_for(20.0), dtype=np.uint8)
