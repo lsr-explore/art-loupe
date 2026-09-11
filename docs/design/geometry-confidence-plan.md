@@ -211,6 +211,11 @@ opener:
 - **The user-facing disclosure** is drafted in
   [`../about-site/data-sent-to-google.md`](../about-site/data-sent-to-google.md), for a page
   linked from the About site, which is not built yet.
+- **Small faces are not found at all.** The bundled detector (BlazeFace short range) finds no
+  face whose landmarks span less than about 15–18% of the frame height, so a half- or
+  full-length figure never routes as a portrait. PR 10 states it as a limitation and the
+  portrait gate gives it as the declination reason (Laurie, 2026-09-11); searching crops or
+  tiles is [#45](https://github.com/lsr-explore/art-loupe/issues/45).
 - **The model licence is settled** — Apache 2.0, in [`../media-assets.md`](../media-assets.md).
 - **`0.10.35` ships no `manylinux aarch64` wheel** (`1.x` does). Irrelevant on GitHub's x86_64
   runners; relevant the day anything targets arm64 Linux.

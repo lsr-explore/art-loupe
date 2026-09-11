@@ -7,14 +7,14 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-11**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **18** — **1** epics, **6** filed under an epic, **11** unparented
+- Open issues: **19** — **1** epics, **6** filed under an epic, **12** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 0 |
 | P1 | 3 |
 | P2 | 8 |
-| P3 | 7 |
+| P3 | 8 |
 | — | 0 |
 
 Priority and Status are the [Project #3](https://github.com/users/lsr-explore/projects/3)
@@ -54,6 +54,7 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | --- | --- | --- | --- |
 | [#43](https://github.com/lsr-explore/art-loupe/issues/43) | python: MediaPipe Tasks sends usage metrics to Google — measure, then disable or disclose before PR 10 merges | P1 | Backlog |
 | [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | P2 | Backlog |
+| [#45](https://github.com/lsr-explore/art-loupe/issues/45) | python: find faces smaller than the bundled detector's minimum | P3 | Backlog |
 
 ### auth
 
