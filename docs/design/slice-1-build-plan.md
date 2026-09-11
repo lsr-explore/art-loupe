@@ -131,7 +131,7 @@ must land before any handler carries a payload.
 | 8 | Plate suite — grayscale, three-value posterization, outline-from-posterization, all from one pipeline, emitting FR-305 metadata | Pending | No dependency fight, no vendor, and the three plates visibly relate because they share a parameter |
 | 9 | Overlay primitives in `packages/fascia`, built against a fixture image — keyboard path, 24 px targets, non-drag alternative, own a11y tests | Done (#21) | Largest net-new UI in the slice, zero existing primitives, zero dependency on CV output |
 | 10 | Face landmarks + Loomis + confidence — MediaPipe Tasks, **no torch** | Pending | Isolates the one dependency-resolution risk so a red CI means only that |
-| 11 | Line + VP detection + confidence — OpenCV Hough/LSD | Pending | Independent of 10 |
+| 11 | Line + VP detection + confidence — OpenCV LSD + sequential RANSAC, in `python/libs/image-tools` | Done (#41) | Independent of 10 |
 | 12 | Routing call — deterministic face gate feeds a structured-output manifest and declination reason; checksum-keyed node cache | Pending | Keeps the critical path deterministic where it can be |
 | 13 | Interrupt + resume — **`runs` table with owner RLS**, threshold as runtime config, `interrupt()` alone in its node, force-interrupt affordance; overlay guides must reach an off-frame vanishing point, which fascia's in-frame clamp currently prevents ([#40](https://github.com/lsr-explore/art-loupe/issues/40)) | Pending | The runs table is the missing authz boundary; node isolation stops resume double-charging |
 | 14 | Ops cost + run health | Pending | Reads tables PRs 4 and 13 already fill |
