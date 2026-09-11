@@ -92,17 +92,24 @@ every tool. Filling the field does not change the claim: the artifact's `limitat
 string saying the value is derived from head pose and face scale, not a detector score, and the
 result exposes it under its own name, `facial_landmark_reliability`, beside its components.
 
-Still open for PR 10: the scaling — which yaw angle and which face scale map to 0.
-
 ### Two independent signals, combined with `min`, not a product or a mean
 
-Each is a distinct failure mode, cheap, and explainable to an artist:
+Each is a distinct failure mode, cheap, and explainable to an artist. The scaling is Laurie's
+(2026-09-11), set against eight pose fixtures measured with the detector itself
+([`../media-assets.md`](../media-assets.md)):
 
-1. **Pose extremity** — yaw, pitch and roll extracted from the 4×4 facial transformation
-   matrix. A Loomis construction degrades as the head turns, because past roughly 35° of yaw
-   the far-side landmarks are extrapolated rather than observed.
-2. **Scale** — face bounding-box height as a fraction of image height. On a small face,
-   per-landmark pixel error dominates the proportions being measured.
+1. **Pose extremity** — yaw and pitch from the 4×4 facial transformation matrix, each 1 at a
+   measured 15° or less and 0 at 45°, linear between. A Loomis construction degrades as the
+   head turns or nods, because the far-side landmarks are then extrapolated rather than
+   observed. The thresholds are on *measured* angles, which flatten at steep turns: a
+   near-profile the eye reads as 70–80° measures 56.6°, and a three-quarter view that reads as
+   60° measures 37.6°. **Roll is excluded** — a tilt within the picture hides no landmark, the
+   detector corrects for it, and the construction simply rotates with the head.
+2. **Scale** — the face's height in *source pixels*, 1 at 170 px or more and 0 at 64 px. The
+   mesh model resizes each face crop, with a 25% margin on every side, to 256 px (FaceMesh-V2
+   model card), so below about 170 px of face its landmarks are placed on upsampled pixels. A
+   share of the frame would say little: the bundled detector finds no face whose landmarks span
+   less than about 15–18% of the frame height at all.
 
 Both measure the **conditions the observation was made under**, not the face. That distinction
 is the constraint on adding a third.
