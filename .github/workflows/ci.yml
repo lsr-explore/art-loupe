@@ -138,6 +138,14 @@ jobs:
         with:
           enable-cache: true
 
+      # `opencv-contrib-python` (the one cv2 provider, owned by `libs/image-tools`) is the
+      # non-headless build `mediapipe` requires, so `import cv2` needs libGL at load time.
+      # Installed explicitly rather than trusted to the runner image: without them the failure is
+      # `ImportError: libGL.so.1`, raised from whichever test imports cv2 first. PR 10's
+      # face_landmarker will add `libgles2 libegl1` — see docs/spikes/mediapipe-feasibility.md §2.
+      - name: Install OpenCV system libraries
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgl1 libglib2.0-0
+
       - name: Sync workspace
         run: uv sync --all-packages --frozen
 

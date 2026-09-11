@@ -104,6 +104,7 @@
         "apps/studio",
         "packages/fascia",
         "packages/schemas",
+        "python/libs/image-tools",
         "python/libs/schemas",
         "python/services/agent"
       ]

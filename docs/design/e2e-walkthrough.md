@@ -21,10 +21,12 @@ third run covers standalone chat, which has no project and no photograph at all.
 References are from the curated demo allowlist, each with an attribution record on the
 `docs/media-assets.md` model.
 
-- **Run A** — `pexels-tim-diercks-719708976-31589335.jpg`, portrait, Tim Diercks via Pexels.
-  The worked study pack in `temp-references/tim-diercks-portrait/` shows the artifact set.
-- **Run B** — the canal scene. The worked output in
-  `temp-references/canal-image-analysis/` shows the assessment and perspective shape.
+- **Run A** — `fixtures/demo-images/pexels-tim-diercks-719708976-31589335.jpg`, portrait,
+  Tim Diercks via Pexels. The worked study pack in `../temp-references/tim-diercks-portrait/`,
+  outside the repo, shows the artifact set.
+- **Run B** — `fixtures/demo-images/pexels-dalia-nava-167975-7954434.jpg`, the Murano canal,
+  dalia nava via Pexels. The worked output in `../temp-references/canal-image-analysis/`,
+  outside the repo, shows the assessment and perspective shape.
 
 ## Run A — portrait, graphite, three hours
 

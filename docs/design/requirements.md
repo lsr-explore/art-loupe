@@ -3,7 +3,7 @@
 - **Status:** Draft for review — first of the `docs/design/` set
 - **Date:** 2026-08-31
 - **Deciders:** Laurie Reynolds
-- **Supersedes:** the scope half of `docs/temp-references/art-loupe-proposal.md`
+- **Supersedes:** the scope half of `art-loupe-proposal.md` in `../temp-references/`, outside the repo
 - **Related:** [`agents.md`](./agents.md) · [`retrieval.md`](./retrieval.md) ·
   [`e2e-walkthrough.md`](./e2e-walkthrough.md) ·
   [ADR 0002](../decision-records/0002-authentication-authority-and-deployment-topology.md)

@@ -12,10 +12,46 @@ Head construction, perspective, confidence, and artist correction
 | --- | --- |
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
-| **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 43 |
-| **Covered** | a11y 9 · functionality 34 |
+| **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
+| **Tests** | 74 (1 parametrized) |
+| **Covered** | a11y 9 · functionality 65 |
 | **Not covered** | security · privacy · safety · data · performance |
+
+## pytest — 31
+
+| Category | Test | Location |
+| --- | --- | --- |
+| functionality | test_exactly_one_cv2_provider | `python/libs/image-tools/tests/test_dependency_hygiene.py:27` |
+| functionality | test_image_edges_map_to_the_overlay_unit_square | `python/libs/image-tools/tests/test_geometry_primitives.py:18` |
+| functionality | test_the_isotropic_frame_preserves_angles | `python/libs/image-tools/tests/test_geometry_primitives.py:28` |
+| functionality | test_a_segment_pointing_at_the_point_has_zero_residual | `python/libs/image-tools/tests/test_geometry_primitives.py:39` |
+| functionality | test_a_perpendicular_segment_has_a_right_angle_residual | `python/libs/image-tools/tests/test_geometry_primitives.py:45` |
+| functionality | test_a_point_at_infinity_is_supported_by_parallel_segments | `python/libs/image-tools/tests/test_geometry_primitives.py:52` |
+| functionality | test_residual_ignores_which_way_the_segment_was_drawn | `python/libs/image-tools/tests/test_geometry_primitives.py:63` |
+| functionality | test_canal_finds_the_convergence_on_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:43` |
+| functionality | test_canal_horizon_sits_at_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:54` |
+| functionality | test_a_portrait_is_less_confident_than_an_architectural_scene | `python/libs/image-tools/tests/test_perspective_photographs.py:62` |
+| functionality | test_two_point_scene_finds_both_points_off_frame_and_unclamped | `python/libs/image-tools/tests/test_perspective.py:59` |
+| functionality | test_two_point_horizon_is_measured_through_both_points | `python/libs/image-tools/tests/test_perspective.py:74` |
+| functionality | test_verticals_and_parallels_are_not_reported_as_vanishing_points | `python/libs/image-tools/tests/test_perspective.py:86` |
+| functionality | test_one_point_horizon_is_level_and_says_it_was_assumed | `python/libs/image-tools/tests/test_perspective.py:93` |
+| functionality | test_portrait_orientation_converts_through_the_other_axis | `python/libs/image-tools/tests/test_perspective.py:106` |
+| functionality | test_output_does_not_depend_on_the_working_resolution | `python/libs/image-tools/tests/test_perspective.py:113` |
+| functionality | test_bgr_input_matches_grayscale | `python/libs/image-tools/tests/test_perspective.py:120` |
+| functionality | test_confidence_is_the_weakest_signal_and_names_it | `python/libs/image-tools/tests/test_perspective.py:129` |
+| functionality | test_a_clean_scene_is_confident | `python/libs/image-tools/tests/test_perspective.py:142` |
+| functionality | test_few_supporting_lines_lower_confidence_through_support | `python/libs/image-tools/tests/test_perspective.py:147` |
+| functionality | test_loose_convergence_lowers_confidence_through_angular_fit | `python/libs/image-tools/tests/test_perspective.py:157` |
+| functionality | test_clutter_alone_scores_far_below_real_structure | `python/libs/image-tools/tests/test_perspective.py:166` |
+| functionality | test_a_phantom_beside_real_structure_is_the_one_flagged | `python/libs/image-tools/tests/test_perspective.py:190` |
+| functionality | test_nothing_found_is_zero_confidence_not_none | `python/libs/image-tools/tests/test_perspective.py:213` |
+| functionality | test_artifact_confidence_is_its_weakest_feature | `python/libs/image-tools/tests/test_perspective.py:223` |
+| functionality | test_search_effort_does_not_buy_phantom_confidence | `python/libs/image-tools/tests/test_perspective.py:230` |
+| functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:256` |
+| functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:270` |
+| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:279` |
+| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:284` |
+| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:297` |
 
 ## Vitest — 43
 
