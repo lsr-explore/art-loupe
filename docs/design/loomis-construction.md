@@ -129,5 +129,11 @@ It serializes to JSON and reloads exactly, so a stored result is never recompute
   observation rather than a property of the face. The jaw is not one of the five anchors, so the
   walkthrough's flagged jaw becomes the flagged far-side anchor (234 or 454).
 - **Five draggable anchors** — 9, 2, 152, 234 and 454 (Laurie, 2026-09-11).
-- **Open: the per-anchor scaling** — how far from facing the camera an anchor may turn before it
-  scores 0, to be set against the pose fixtures.
+- **Per-anchor scaling: 1 up to 90° from the camera, 0 at 120°, linear between** (Laurie,
+  2026-09-11). Measured on the fixtures, a frontal face's chin and sides already sit at 78–91° —
+  where each point lies on the curve of the face, which says more about the face than about the
+  detector — while only the far side of a turned head passes edge-on (96–146°). So an anchor
+  loses reliability only once its surface is turned away from the camera, and a frontal chin is
+  never flagged. Three anchors (152, 234, 454) sit on the mesh's outer edge, where a surface
+  direction estimated from neighbouring points is one-sided; the implementation takes it from the
+  mesh's own triangles and re-measures the fixtures before the thresholds are trusted.

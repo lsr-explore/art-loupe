@@ -160,8 +160,11 @@ each draggable anchor of the Loomis construction ([`loomis-construction.md`](./l
 anchor's surface faces away from the camera, computed from the pose and the landmarks' own depth
 (Laurie, 2026-09-11). An anchor on the far side of a turned head is extrapolated rather than
 observed, and this measures exactly that — a condition of the observation, not a property of the
-face — which is the bar set above for a third signal. Its scaling is open until measured against
-the pose fixtures.
+face — which is the bar set above for a third signal. It scales 1 up to 90° between the anchor's
+surface and the camera, 0 at 120° (Laurie, 2026-09-11): on the pose fixtures a frontal face's
+chin and sides already sit at 78–91°, a matter of where each point lies on the face's curve,
+while only the far side of a turned head passes edge-on (96–146°). A frontal chin is never
+flagged.
 
 ### Consequences for the claim taxonomy
 
