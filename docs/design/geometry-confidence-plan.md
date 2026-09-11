@@ -152,6 +152,17 @@ anyway.
 `min` is also why the bar for adding a signal is high. Whatever is weakest **controls** the
 score, so a signal that is wrong in some population is not diluted by the others — it decides.
 
+### Per anchor, not only per face
+
+FR-401 asks for per-feature confidence, and the walkthrough's run A flags a single landmark. So
+each draggable anchor of the Loomis construction ([`loomis-construction.md`](./loomis-construction.md)
+§5) carries its own reliability: the face-level value above, combined by `min` with how far that
+anchor's surface faces away from the camera, computed from the pose and the landmarks' own depth
+(Laurie, 2026-09-11). An anchor on the far side of a turned head is extrapolated rather than
+observed, and this measures exactly that — a condition of the observation, not a property of the
+face — which is the bar set above for a third signal. Its scaling is open until measured against
+the pose fixtures.
+
 ### Consequences for the claim taxonomy
 
 The resulting number is `measured` under §6's closed union — it is computed from pixels, with
