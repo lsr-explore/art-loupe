@@ -117,10 +117,12 @@ made under, never from the face, and named `facial_landmark_reliability` rather 
 | `scale` | the face covers few source pixels | forehead to chin: 1 at 170 px or more, 0 at 64 px |
 | an anchor's `facing` | its surface is turned away from the camera | angle to the camera: 1 up to 90°, 0 at 120° |
 
-- **Pose is corrected for framing.** The detector reads a face high in the frame as nodding and
-  one near the edge as turned less than it is; the pose is rotated to the line of sight through
-  the face (`FRAMING_VFOV_DEG`, calibrated on the fixtures), which removes about two thirds of
-  that. The detector's own angles travel beside the corrected ones.
+- **Pose is corrected for framing.** The detector reads a face high in the frame as nodding, and
+  one to the side as turned. The pose is rotated to the line of sight through the face
+  (`FRAMING_VFOV_DEG`, calibrated on the fixtures), which removes nearly all of that from pitch,
+  and from yaw on a turned head. On a near-frontal face it over-corrects yaw, by about 5° at the
+  frame's edge. That leaves the score unchanged, since yaw's reliability is full below 15°. The
+  detector's own angles travel beside the corrected ones.
 - **Ratios are measurements, never scores.** The construction reports brow-to-nose and
   nose-to-chin; nothing flags a face for departing from the method's ideal thirds.
 - **Every landmarker close sends Google a usage report** (#43). One is opened per call by

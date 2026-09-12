@@ -173,7 +173,7 @@ def test_pose_signs_follow_the_documented_convention(landmarker: OpenLandmarker)
 
 
 def _placed(image: np.ndarray, face: DetectedFace, where: str) -> np.ndarray:
-    """A head-and-shoulders crop, padded flat above or below so the face sits high or low.
+    """A head-and-shoulders crop, padded flat on one side so the face sits high, low, left or right.
 
     Nothing is cut from the face and nothing invented: the flat border only moves the face
     within the frame, which cannot change the head's true pose.
@@ -188,26 +188,54 @@ def _placed(image: np.ndarray, face: DetectedFace, where: str) -> np.ndarray:
     crop = np.ascontiguousarray(image[top : top + crop_height, left : left + crop_width])
     pad = int(0.6 * crop_height)
     fill = [int(channel) for channel in crop.reshape(-1, 3).mean(axis=0)]
-    above, below = (0, pad) if where == "high" else (pad, 0)
-    return cv2.copyMakeBorder(crop, above, below, 0, 0, cv2.BORDER_CONSTANT, value=fill)
+    # The pad goes on the side opposite to where the face should end up.
+    above, below, before, after = (
+        pad * (where == side) for side in ("low", "high", "right", "left")
+    )
+    return cv2.copyMakeBorder(crop, above, below, before, after, cv2.BORDER_CONSTANT, value=fill)
 
 
-def test_pose_barely_depends_on_where_the_face_sits(landmarker: OpenLandmarker) -> None:
-    """The framing correction: the same face high and low in the frame.
+@pytest.mark.parametrize(
+    ("path", "placements", "angle", "remaining"),
+    [
+        (PORTRAIT, ("high", "low"), "pitch", 1 / 3),
+        (TURNED_LEFT, ("left", "right"), "yaw", 1 / 3),
+        # The detector's yaw error grows as the head turns and the correction does not, so on a
+        # near-frontal face it overshoots: measured 2026-09-11, 10.9° of shift became 4.8° the
+        # other way. Disclosed in the limitations, and bounded here.
+        (PORTRAIT, ("left", "right"), "yaw", 0.6),
+    ],
+    ids=["pitch-high-and-low", "yaw-turned-left-and-right", "yaw-frontal-left-and-right"],
+)
+def test_pose_barely_depends_on_where_the_face_sits(
+    path: Path,
+    placements: tuple[str, str],
+    angle: str,
+    remaining: float,
+    landmarker: OpenLandmarker,
+) -> None:
+    """The framing correction: the same face at opposite sides of the frame.
 
-    The detector's own pitch moves several degrees between the two, though the head has not
-    moved; the corrected pitch should move far less (calibrated 2026-09-11, `FRAMING_VFOV_DEG`).
+    The detector's own angle moves several degrees between the two — pitch high and low, yaw left
+    and right — though the head has not moved; the corrected angle should move far less
+    (calibrated 2026-09-11, `FRAMING_VFOV_DEG`). A sign error in either direction of the
+    correction adds to the detector's shift instead of removing it, which every case here fails.
     """
-    image = _image(PORTRAIT)
-    face = _face(PORTRAIT, landmarker)
-    high = find_face(_placed(image, face, "high"), landmarker=landmarker)
-    low = find_face(_placed(image, face, "low"), landmarker=landmarker)
+    image = _image(path)
+    face = _face(path, landmarker)
+    first, second = (
+        find_face(_placed(image, face, where), landmarker=landmarker) for where in placements
+    )
 
-    assert high is not None and low is not None
-    detector_shift = abs(high.pose.detector_pitch_deg - low.pose.detector_pitch_deg)
-    corrected_shift = abs(high.pose.pitch_deg - low.pose.pitch_deg)
+    assert first is not None and second is not None
+    detector_shift = abs(
+        getattr(first.pose, f"detector_{angle}_deg") - getattr(second.pose, f"detector_{angle}_deg")
+    )
+    corrected_shift = abs(
+        getattr(first.pose, f"{angle}_deg") - getattr(second.pose, f"{angle}_deg")
+    )
     assert detector_shift > 5.0
-    assert corrected_shift < detector_shift / 3
+    assert corrected_shift < detector_shift * remaining
 
 
 # --- No face ----------------------------------------------------------------------------------

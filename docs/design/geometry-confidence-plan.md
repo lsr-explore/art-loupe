@@ -107,7 +107,11 @@ Each is a distinct failure mode, cheap, and explainable to an artist. The scalin
    through the face's centre, as if seen through a 26° vertical field of view — calibrated by
    placing each fixture at ten positions, where the true pose cannot change, and choosing the
    value that held it most still: the mean spread across positions fell from 12°, 13° and 10°
-   (yaw, pitch, roll) to 5°, 4° and 4°. Corrected, the three-quarter fixture reads 50.7° rather
+   (yaw, pitch, roll) to 5°, 4° and 4°. What remains is uneven: the detector's yaw error grows as
+   the head turns while the correction is fixed, so a turned head's yaw is corrected closely and a
+   near-frontal face at the frame's edge is over-corrected by about 5° (10.9° of shift became
+   4.8° the other way) — which the score cannot feel below 15°, and which the tool's limitations
+   state. Corrected, the three-quarter fixture reads 50.7° rather
    than 37.6°, much closer to the ~60° the eye reads, so the zero moved from 45° to 60° to keep
    meaning about 60° of real turn (Laurie, 2026-09-11). **Roll is excluded** — a tilt within the
    picture hides no landmark, the detector corrects for it, and the construction simply rotates

@@ -13,7 +13,10 @@ frame: the same face reads 8–10° more chin-down at the top of a photograph th
 and a face at the edge of a wide frame reads as turned less than it is — though a head's angle
 cannot change with its position in the picture. The pose reported here is the detector's,
 rotated to the line of sight through the face's centre (`FRAMING_VFOV_DEG`); the detector's own
-angles travel beside it.
+angles travel beside it. That removes nearly all of the effect from pitch, and from the yaw of a
+turned head. The detector's yaw error grows as the head turns while the correction does not, so
+a near-frontal face at the frame's edge is over-corrected by about 5° — harmless to the score,
+since yaw's reliability is full below 15°.
 
 **Every close sends Google a usage report** (#43). The landmarker is created and closed per call
 unless the caller passes one in, so each photograph analysed sends one;

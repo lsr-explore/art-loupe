@@ -72,7 +72,8 @@ LIMITATION_NO_FACE = (
 )
 LIMITATION_FRAMING = (
     "Head pose is corrected for where the face sits in the frame, with a field of view "
-    "calibrated on the pose fixtures; about a third of the framing effect remains, and a "
+    "calibrated on the pose fixtures. Pitch, and the yaw of a turned head, are corrected closely; "
+    "a near-frontal face at the frame's edge has its yaw over-corrected by about 5°, and a "
     "genuinely wide-angle photograph keeps its real perspective."
 )
 
