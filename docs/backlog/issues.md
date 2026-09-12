@@ -7,13 +7,13 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-12**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **21** — **1** epics, **6** filed under an epic, **14** unparented
+- Open issues: **22** — **1** epics, **6** filed under an epic, **15** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 0 |
 | P1 | 3 |
-| P2 | 9 |
+| P2 | 10 |
 | P3 | 9 |
 | — | 0 |
 
@@ -39,6 +39,16 @@ field values — there are no priority labels. `—` means the field is unset.
 
 Open issues with no epic parent, grouped by the `area:` prefix in their title.
 
+### studio
+
+| # | Title | Priority | Status |
+| --- | --- | --- | --- |
+| [#32](https://github.com/lsr-explore/art-loupe/issues/32) | studio: screen OCR-visible text at ingest | P1 | Backlog |
+| [#27](https://github.com/lsr-explore/art-loupe/issues/27) | studio: move the synthetic-data acknowledgement to the login page | P2 | Backlog |
+| [#39](https://github.com/lsr-explore/art-loupe/issues/39) | studio: a failed object cleanup strands a storage object, and the docblock says it self-heals | P2 | Backlog |
+| [#50](https://github.com/lsr-explore/art-loupe/issues/50) | studio: a drag-and-drop target for the reference upload | P2 | Backlog |
+| [#38](https://github.com/lsr-explore/art-loupe/issues/38) | studio: an unreadable insert response leaves an orphan project row | P3 | Backlog |
+
 ### python
 
 | # | Title | Priority | Status |
@@ -47,15 +57,6 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | [#42](https://github.com/lsr-explore/art-loupe/issues/42) | python: an in-frame vertical vanishing point is reported as a horizontal candidate | P2 | Backlog |
 | [#47](https://github.com/lsr-explore/art-loupe/issues/47) | python: an eye-detail overlay — eye outlines and iris centres | P2 | Backlog |
 | [#45](https://github.com/lsr-explore/art-loupe/issues/45) | python: find faces smaller than the bundled detector's minimum | P3 | Backlog |
-
-### studio
-
-| # | Title | Priority | Status |
-| --- | --- | --- | --- |
-| [#32](https://github.com/lsr-explore/art-loupe/issues/32) | studio: screen OCR-visible text at ingest | P1 | Backlog |
-| [#27](https://github.com/lsr-explore/art-loupe/issues/27) | studio: move the synthetic-data acknowledgement to the login page | P2 | Backlog |
-| [#39](https://github.com/lsr-explore/art-loupe/issues/39) | studio: a failed object cleanup strands a storage object, and the docblock says it self-heals | P2 | Backlog |
-| [#38](https://github.com/lsr-explore/art-loupe/issues/38) | studio: an unreadable insert response leaves an orphan project row | P3 | Backlog |
 
 ### test
 

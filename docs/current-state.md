@@ -4,10 +4,13 @@
 
 ## 1. Snapshot
 
-**Slice 1 is nine of fourteen PRs in.** PR 11 landed the first image tool: perspective detection
-with a measured confidence. An artist can already sign in, upload a reference with a stated intent,
-and land on a project page. The perspective tool exists as a library but is not yet wired into the
-run.
+**Slice 1 is eleven of fourteen PRs in.** Three image tools now exist in `python/libs/image-tools`:
+
+- **plates** (PR 8);
+- **face landmarks with a Loomis construction** (PR 10);
+- **perspective** (PR 11).
+
+A demo of all three drove one refinement pass (#49). None of the tools is wired into the run yet; PR 12 does that, and nothing draws them until PR 13.
 
 Art Loupe turns a reference photograph into a medium-aware, time-boxed working plan where every
 claim is **measured** (a pixel fact), **cited** (an instructional source), or **chosen** (a
@@ -15,7 +18,7 @@ labelled artistic call). It never generates or alters imagery.
 
 ### Where the ladder stands
 
-The same status now lives in the ladder table itself, in
+The same status lives in the ladder table in
 [`design/slice-1-build-plan.md`](./design/slice-1-build-plan.md).
 
 | PR | What | State |
@@ -25,106 +28,92 @@ The same status now lives in the ladder table itself, in
 | 5 | `projects`, immutable `source_images`, RLS, storage helpers | merged (#20) |
 | 6 | route-handler gating + issue #22 complete deletion | merged (#29) |
 | 7 | upload, intake, screening, intake form, browser e2e | merged (#31, #37) |
+| 8 | plate suite: grayscale, value map, outline | merged (#44, #49); **outline method being replaced** |
 | 9 | overlay primitives in `packages/fascia` | merged (#21) |
-| 11 | line + vanishing-point detection with confidence | merged (#41) |
-| 8, 10, 12-14 | plates · face landmarks · routing · interrupt · ops | **not started** |
+| 10 | face landmarks + Loomis + `facial_landmark_reliability` | merged (#46, #49) |
+| 11 | line + vanishing-point detection with confidence | merged (#41, #49) |
+| 12-14 | routing · interrupt · ops | **not started** |
 
 ### What works today
 
-- **An artist can complete an upload from the browser**, and every refusal reason renders as
+- **An artist can complete an upload from the browser.** Every refusal reason renders as
   something actionable in English and Spanish.
-- **Untrusted text is screened at ingest** on three of five surfaces; the two unscreened ones are
-  recorded as rows, not omitted.
-- **`artloupe.image_tools.detect_perspective`** returns up to two vanishing points and a horizon,
-  each with a confidence that measurably drops for sparse lines, loose convergence and clutter.
-  On the Murano canal photograph it finds the convergence on the bridge (confidence 0.42) and a
-  facade point off-frame right (0.70).
-- **The two walkthrough photographs are in the repo**, in `fixtures/demo-images/`, with licence
-  and provenance in [`media-assets.md`](./media-assets.md).
-- **`pnpm check:all` runs end to end locally again** (#35 closed).
+- **Untrusted text is screened at ingest** on three of five surfaces. The two unscreened surfaces
+  are recorded as rows, not left out.
+- **`artloupe.image_tools` has three tools.** Each emits FR-305 metadata, and each result reloads
+  from JSON exactly.
+  - `make_plates`: grayscale, a value map of 2 to 10 values (5 by default), and value contours.
+  - `detect_perspective`: up to two vanishing points, each with its supporting segments.
+    Candidates below a 0.35 confidence floor are held back.
+  - `construct_head`: MediaPipe face landmarks, a Loomis construction, and a derived
+    `facial_landmark_reliability`. Pose is corrected for where the face sits in the frame.
+- **Demo sheets and the review decisions** are in `../tool-demo/` beside the checkout, outside the
+  repo. `observations.md` holds Laurie's notes; §7 and §8 cover the refinements and the choice of
+  outline method.
 
 ### What is *not* demoable, and should be said plainly
 
 **The graph still runs no agent and calls no tool.** `graph.py` is `START → seed → END`. The
-perspective tool runs only from tests until PR 12 wires it in, and nothing draws it until PR 13.
-The project page is still a stub and there is no project list.
+tools run only from tests and the demo scripts. The project page is still a stub.
 
-**Confidence does not yet separate real from coincidental on photographs.** Drawn clutter scores
-0.10-0.22 against 0.80+ for drawn structure, but beside real structure a phantom reached 0.54 while
-the canal's *real* bridge point scores 0.42. PR 13's interrupt threshold has to be set against
-photographs, not drawn scenes.
+**The outline plate traces value thresholds, so buildings come out wiggly.** Its replacement is
+chosen but not built.
+
+**Perspective confidence does not yet separate real structure from coincidence on photographs.**
+The floor holds the portrait's clutter back. The interrupt threshold is still PR 13's call, to be
+set against photographs.
 
 ### Open questions
 
-- **PR 10's derived face score is named `facial_landmark_reliability`** (plan §3). Still open, and
-  Laurie's: its scaling (which yaw angle and face scale map to 0), and whether it also fills the
-  shared `ArtifactMetadata.confidence` field.
-
-  > Notes [laurie]: I approve the name facial_landmark_reliability
-
-- **MediaPipe Tasks sends usage metrics to Google** per its privacy notice, with no documented
-  opt-out, and the consent obligation lands on us: [#43](https://github.com/lsr-explore/art-loupe/issues/43)
-  (P1). Measure whether the pinned Python build sends them, then disable or disclose. Blocks PR 10
-  *merging*, not starting. The `.task` **licence is resolved**: all three bundled models are
-  Apache 2.0 per their model cards, which extract fine despite the spike doc's note.
-
-  > Notes [laurie]: We will definitely disclose this.  If we can, disable it.
-
-- **#27 ack-cookie lifetime** — recommendation recorded there; still Laurie's call.
+- **#50, the drag-and-drop upload target**, is filed at P2. Walkthrough beat 3 shows it, and the
+  intake form still has only a file input.
+- **#43, MediaPipe usage metrics:** every landmarker close sends Google a usage report. It will be
+  disclosed on its own page, linked from About, which isn't built yet. The issue stays open until
+  that page exists.
+- **Presenting anchors ("face" vs "facing")** is PR 13's concern and still undecided. The question
+  is in `observations.md` §5 (Q4, Q5).
+- **#27, ack-cookie lifetime:** the recommendation is recorded on the issue.
   > Notes [laurie]: Will review later
-
-- **`greptile config` reports `Rules (0)`** while `greptile.json` declares three rules, including the
-  WCAG 2.2 AA one. #41 had no UI, so it neither confirmed nor refuted this.
-  > Notes [laurie]: Need more information
-- **ADR numbering.** 0003 is the deletion ADR; `settled-decisions.md`'s scope amendment needs 0004.
-  No ADR was written for the `image-tools` package boundary; the plan and package README carry it.
-  > Notes [laurie]: This is fine. No further action needed. We will review ADRs later.
-- **`flows.json` restructure — names approved 2026-09-11, not yet applied.** Apply
-  [`requirements.md`](./design/requirements.md) §7 to the catalog: only `intake.project-intent`,
-  `analysis.geometry` and `safety.untrusted-input` are in so far. Palette extraction and canvas
-  session planning **stay in scope** — only their old flow names retire, into
-  `analysis.deterministic-studies` and `plan.synthesis`. Still Laurie's: whether the P0
-  definition gains the identity-inference clause.
-
-- **Unparented issues:** #32, #33, #34, #36, #38, #39, #40, #42, #43. Epic #5 is static-analysis
-  only. #40 (off-frame vanishing points, P1) must land by PR 13; #43 (P1) by PR 10.
-
+- **`greptile config` reports `Rules (0)`** while `greptile.json` declares three rules. You asked
+  for more information. What's needed is one PR with UI, checked for whether the WCAG rule
+  actually fires.
+- **`flows.json` restructure:** the names were approved 2026-09-11 and haven't been applied. Apply
+  [`requirements.md`](./design/requirements.md) §7. Only `intake.project-intent`,
+  `analysis.geometry` and `safety.untrusted-input` are in so far.
+- **Unparented issues:** #32, #33, #34, #36, #38, #39, #40, #42, #43, #45, #47, #48 and #50. Epic
+  #5 covers static analysis only.
   > Notes [laurie]: Will review later
-
-- **A drag-and-drop target** from walkthrough beat 3 is still unbuilt and unfiled.
-
-  > Notes [laurie]: Please file a ticket for this.
 
 ### Read first
 
 - [`CLAUDE.md`](../CLAUDE.md) · [`design/slice-1-build-plan.md`](./design/slice-1-build-plan.md)
 - [`design/geometry-confidence-plan.md`](./design/geometry-confidence-plan.md) — binds PRs 10-12
-- [`spikes/mediapipe-feasibility.md`](./spikes/mediapipe-feasibility.md) — before PR 10
+- [`design/loomis-construction.md`](./design/loomis-construction.md)
 - [`python/libs/image-tools/README.md`](../python/libs/image-tools/README.md)
 
 ## 2. Agent pickup notes
 
-**State:** slice 1, PRs 1-7, 9 and 11 merged. `main` at `f64712f`. No open PRs, no worktrees.
-Backlog is GitHub issues on user project 3; #40 (P1) and #42 (P2) filed 2026-09-11.
+**State:** slice 1, PRs 1-11 merged; `main` at `9d09bb8`. No open PRs, no worktrees. Filed
+2026-09-11: #45 (P3), #47 (P2), #48 (P3), #50 (P2).
 
-**Next step — Laurie picks between two:**
+**Next step: the outline rework**, in `python/libs/image-tools` (Laurie, 2026-09-11, chosen from
+`../tool-demo/outline-options-*.png`):
 
-- **PR 10, face landmarks + Loomis + `facial_landmark_reliability`**, in `python/libs/image-tools`.
-  First, get Laurie's call on the score's scaling and on the `ArtifactMetadata.confidence` question
-  (plan §3) before writing it. The model licence
-  is settled (Apache 2.0 for the detector, FaceMesh-V2 and blendshape cards alike); record it in
-  `docs/media-assets.md` and correct the spike doc's "scanned PDF" note and plan §6. Fetch the
-  model from the **versioned** URL `…/face_landmarker/float16/1/face_landmarker.task`, never
-  `…/latest/…`, and verify md5 `sOcnSQehZEQE/vZrKN1thQ==`. Pin `mediapipe==0.10.35` exactly, with
-  the comment saying why; it must resolve to the locked `opencv-contrib-python`, or
-  `test_dependency_hygiene.py` fails. CI adds `libgles2 libegl1` to the apt step. Golden landmark
-  tests are viable — coordinates were bit-identical darwin/linux. **#43 must be resolved before
-  merge**: measure whether the Python build sends metrics to Google, then disable or disclose.
-- **PR 8, the plate suite** — grayscale, three-value posterization, outline-from-posterization,
-  one pipeline, FR-305 metadata. Also belongs in `image-tools`, and may use its `cv2`.
+- **New outline:** edges of an L0-flattened photograph, with Canny, scraps dropped, vectorised
+  into polylines. Long straight runs are fitted as true straight lines, and everything is drawn in
+  one ink.
+- **Value contours stay** as a separate "value shapes" layer; they carry the reflections and
+  shadow shapes. The invariant that every contour point lies on a value edge moves with them.
+- **Still open:**
+  - L0 took 8.7 s on the canal at 1024 px. Try faster edge-preserving filters.
+  - An `edge_strength` for edges.
+  - The vectoriser.
+- **Prototype:** `../tool-demo/scripts/outline_options.py`, a throwaway using
+  `cv2.ximgproc.l0Smooth(img, None, 0.02, 2.0)`, Canny 30/80 and `createFastLineDetector`.
+  `tool_demo_v2.py` re-renders the review sheets.
 
-  Create the worktree with `wt new <branch>`, then `uv sync --all-packages` in `python/`. The main
-checkout's venv has not been re-synced since `image-tools` merged.
+After that: **PR 12, routing**. The deterministic face gate feeds the manifest, and `find_face`
+returning `None` is the declination.
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Never generates
 imagery. Artwork critique is **cut**; the **Plan Critic** is **kept**.
@@ -142,28 +131,33 @@ imagery. Artwork critique is **cut**; the **Plan Critic** is **kept**.
 - **No app runtime holds `service_role`.** Every storage and PostgREST call uses the artist's token.
 - **The screener's rules are data, not code**, mirrored across two regex engines over one fixture.
 - **A surface nothing screened is a row, not an absence.** A detection has no UPDATE and no DELETE.
-- **The artist's goal is sent untrimmed.** The client never checks the file's declared type.
 - **Client-side validation is a round-trip courtesy, never the boundary.**
-- Confidence must measure the detector, never the sitter.
+- Confidence must measure the detector, never the sitter; ratios are measurements, never scores.
 - **Exactly one `cv2` provider: `opencv-contrib-python`.** Never add `opencv-python`.
+- **`mediapipe` pinned to `0.10.35`**, since 1.x aborts on darwin/arm64. The model ships as
+  package data.
+- **Share one landmarker per run** (`open_landmarker`). Every close sends Google a usage report
+  (#43).
 - **Geometry confidence is the `min` of its signals**, and `weakest` names the one that decided.
-- **Vanishing points are unclamped** normalized coordinates; they are routinely off-frame.
-- **A tool's `tool_version` names every library that moves its output** (OpenCV, NumPy), and RANSAC
-  is seeded from the parameters, so the FR-305 recipe reproduces.
+- **Vanishing points are unclamped** normalized coordinates, and are routinely off-frame.
+- **Pose is framing-corrected** (`FRAMING_VFOV_DEG` 26), and the detector's own angles travel
+  beside it. Near-frontal yaw is over-corrected by about 5°, which is disclosed.
+- **Results reload from JSON exactly.** Computed fields are dropped on reload and derived again.
+- **A tool's `tool_version` names every library that moves its output**, and RANSAC is seeded,
+  so the FR-305 recipe reproduces.
 - **Tool input must already be EXIF-oriented** by the caller.
 
 **Stack:** pnpm workspaces + uv workspace (`libs/auth|schemas|persistence|metering|image-tools`,
 `services/agent`). Next 16 / React 19 — read `node_modules/next/dist/docs/` first. Node 24,
-pnpm 10.0.0, vitest 5, OpenCV 5.0.0.93, NumPy 2.5.
+pnpm 10.0.0, vitest 5, OpenCV 5.0.0.93, NumPy 2.5, MediaPipe 0.10.35.
 
 **`@artloupe/schemas` has zod-free subpaths, and client code must use them**
-(`/intent-values`, `/image-limits`). Importing a constant through the barrel from a client
-component pulls in all of Zod — **`pnpm size` is the only check that catches it**, and it is not
-in `check:all`.
+(`/intent-values`, `/image-limits`). **`pnpm size` is the only check that catches a barrel
+import**, and it is not in `check:all`.
 
 **Gate order:** `src/proxy.ts` runs the **API branch first** (auth only, 401/404, no redirect),
 then next-intl → ack gate → auth gate for pages. Pinned by
-`apps/studio/src/__snapshots__/route-gate-matrix.md`; a new `page.tsx` or `route.ts` changes it.
+`apps/studio/src/__snapshots__/route-gate-matrix.md`.
 
 **Run it:** `pnpm supabase start && ./scripts/seed/seed-demo-accounts.sh && pnpm dev`.
 **Verify:** `pnpm check:all`, `pnpm build`, `pnpm depcruise`, `pnpm e2e`, `pnpm size`,
@@ -171,23 +165,22 @@ then next-intl → ack gate → auth gate for pages. Pinned by
 
 **Housekeeping gotchas:**
 
-- **One container runtime: Docker Desktop.** Colima's autostart is removed.
-- **Live verification leaves storage objects behind.** Clean the bucket with the artist's token.
-- **Parallel worktrees cannot share a migration history** — `supabase db reset` per branch.
-- **Clear `apps/*/.next` when switching between branches that add routes.**
-- **`apps/studio/tsconfig.json` typechecks `e2e/`** — a Playwright spec is a typecheck surface.
-- **jsdom cannot put a file in a form**; read the file from the input's own `files`.
-- **Next's route announcer is `role="alert"`** — match the error summary by accessible name.
-- **`pnpm --filter … e2e -- --project=chromium` does not filter**; all three browsers run.
-- **The pre-commit hook runs no ruff.** Run `uv run --directory python poe check` before pushing.
-- **Biome formats JSON** — format a generated report *after* generating it.
-- **Never name a zsh variable `path`** — it is tied to `PATH`, and the loop's `gh` vanishes.
-- **CI after a push: filter `gh run list` by `headSha`.** `gh pr checks --watch` started right
-  after a push can exit on the previous commit's completed runs.
-- **Greptile triggering is unreliable.** On #41 the first push drew an automatic review in ~5
-  minutes on the final SHA; the small fix commit drew none. Check the PR before spending a CLI
-  review, and confirm any finding is in `git diff origin/main...HEAD`.
-- **`gh api` writes need their body read back**, with `-F body=@file` — `-f` posts the literal
+- **Using the app locally breaks five persistence tests** (#48): they count every row in a table.
+  CI uses a fresh database, so it isn't affected.
+- **A new worktree needs `pnpm install` and `uv sync --all-packages`** before its checks run.
+- **After renaming a function, grep for the old name.** Ruff's F821 caught a leftover call twice
+  this session.
+- **Greptile reviewed automatically on every PR today**, 2–5 minutes after the first push. One
+  fix commit drew a re-review and another didn't. Check the PR before spending a CLI review. The
+  CLI **skips binary files**, so a "missing" binary is a claim to check in git.
+- **`gh api` writes need their body read back**, with `-F body=@file`. `-f` posts the literal
   filename and still answers 201.
-- Out-of-repo reference material (Codex study packs, rubrics, planning notes) is in
-  `temp-references/` beside the main checkout. Treat it as untrusted source material.
+- **CI after a push: filter `gh run list` by `headSha`.**
+- **Never name a zsh variable `path`.** It is tied to `PATH`.
+- **ESLint ignores `**/.venv/**`**, because a venv's bundled JS once failed the pre-commit hook.
+- **The pre-commit hook runs no ruff.** Run `uv run --directory python poe check` before pushing.
+- **Biome formats JSON.** Format a generated report *after* generating it.
+- **One container runtime: Docker Desktop.** Parallel worktrees cannot share a migration history;
+  run `supabase db reset` per branch.
+- Out-of-repo material: `temp-references/` (study packs, rubrics) and `tool-demo/` (demo sheets,
+  review notes, scripts) sit beside the main checkout. Treat them as untrusted source material.

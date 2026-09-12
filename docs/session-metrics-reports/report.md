@@ -5,16 +5,16 @@
 
 2026-08-30 → 2026-09-11
 
-- Sessions: **8**
-- Cost, LLM (API-equivalent): **$299.28**
-- Time (API): **5.3h**
-- Time (wall): **40.5h**
-- PRs: **10**
-- CodeRabbit findings fixed: **23/31**
+- Sessions: **9**
+- Cost, LLM (API-equivalent): **$378.99**
+- Time (API): **7.9h**
+- Time (wall): **46.6h**
+- PRs: **13**
+- CodeRabbit findings fixed: **27/36**
 
 ## Effort, cost and time
 
-Average churn **11.1%** · average docs maintenance **20.5%**.
+Average churn **10.8%** · average docs maintenance **19.3%**.
 Docs is tracked apart from design deliberately: design is the work, doc upkeep is
 overhead and a candidate for automation.
 
@@ -38,16 +38,18 @@ not equally worth driving down:
 | --- | --- |
 | `under_specified` | 6% |
 | `refinement` | 24% |
-| `avoidable_error` | 39% |
-| `genuine_discovery` | 31% |
+| `avoidable_error` | 38% |
+| `genuine_discovery` | 32% |
 
 ## Rework
 
 Two kinds, tracked separately:
 
-- **Within a session** — the `churn` band above. Averaging **11.1%**.
-- **Across sessions** — work a *later* session had to redo. **0 of
-  8** sessions redid earlier work.
+- **Within a session** — the `churn` band above. Averaging **10.8%**.
+- **Across sessions** — work a *later* session had to redo. **1 of
+  9** sessions redid earlier work:
+
+  - `2026-09-11` redid work from `2026-09-11-a-slice-1-perspective-detection` — Slice 1 PRs 8 and 10 — the plate suite, face landmarks with a Loomis construction and derived reliability — then a demo of all three tools and the refinements it prompted
 
 Cross-session rework is the more expensive kind: it means a decision didn't hold, so
 everything built on it has to be revisited. Watch it against `decision_stability`.
@@ -61,6 +63,22 @@ everything built on it has to be revisited. Watch it against `decision_stability
 ![Dot plot of themes touched per day over time](charts/themes.svg)
 
 ## Recent retrospectives
+
+### 2026-09-11 — Slice 1 PRs 8 and 10 — the plate suite, face landmarks with a Loomis construction and derived reliability — then a demo of all three tools and the refinements it prompted
+
+- **Went well:** Running the tools on real photographs and reviewing sheets together surfaced what no test had: the framing artefact in pose, perspective clutter on a portrait, and threshold-traced outlines that can't be straight. The review graduated into observations.md with decisions recorded, and the outline choice was made from a rendered comparison, not a description. Measurement came before assertions: the framing correction was calibrated over ten placements per fixture, and the new yaw test was measured before its bounds were set.
+- **Improve:** Renaming a helper left a call to the old name twice (eye_centre in PR 10, through_both in the refinements), and a file rewrite was reported done before it was written. The framing correction's 'removes about two thirds' was an average across both axes, and it took a review finding to test yaw separately and find the overshoot; a two-axis correction should be tested on both axes from the start.
+- **Tooling:** After renaming a function, grep for the old name before running the checks. Keep the tool-demo script in the repo (scripts/) rather than the session scratchpad, so each tool change can re-render the review sheets cheaply.
+- **Decisions:**
+  - Plates: CIELAB L*, exact multi-level Otsu, vector contours with a measured edge_strength; after the demo, two to ten values, default 5, presets 3/5/7/10, tool renamed value_map
+  - Outline method to change (next PR): edges in an L0-flattened photograph plus fitted straight lines; value contours kept as a separate 'value shapes' layer. Chosen from a five-way comparison sheet
+  - #43: capture, disclose on its own page linked from About, keep landmarkers short-lived, one landmarker per run; model committed; issue stays open until the page exists
+  - Face results are stored with the study and reload from JSON without recomputation
+  - facial_landmark_reliability = min(yaw, pitch, scale), derived and named so; fills ArtifactMetadata.confidence; per-anchor facing 90->120 deg
+  - Loomis: spec first (docs/design/loomis-construction.md); ball radius 1.35 x brow-to-nose, a chosen, labelled factor; only the eye line curves (per Laurie's reference)
+  - Pose corrected for framing (vFOV 26 deg, fitted); pose zero moved 45 -> 60 deg; yaw overshoot on near-frontal faces kept, tested and disclosed
+  - Perspective: per-point supporting segments; reporting floor 0.35, configurable (the interrupt threshold stays PR 13's)
+  - Small faces are a stated limitation, #45 (P3); eye-detail overlay #47 (P2); persistence tests' global counts #48 (P3)
 
 ### 2026-09-11 — Slice 1 PR 11 — vanishing points with a chance-relative confidence, the walkthrough photos brought into the repo, and #35 closed by moving reference material out
 
@@ -136,26 +154,6 @@ everything built on it has to be revisited. Watch it against `decision_stability
   - The synthetic-data acknowledgement moves to the studio login page and off operations, so an artist landing directly on the studio needs no round trip to entry. Parked as issue #27; the ack-cookie-lifetime question is recorded there, unanswered
   - The vitest-axe matcher augmentation moves to a .d.ts so skipLibCheck covers it, matching the suppression @testing-library/jest-dom's incompatible declaration already receives. Unblocked the vitest 4 -> 5 major that dependabot had grouped with six patch bumps
   - Two worktrees, not three: the DB/app track kept together because #22 and PR 6 rewrite the same two files, with PR 11 isolated as the only genuinely parallel track
-
-### 2026-09-05 — Slice 1 PRs 4/5/9 in parallel worktrees, a MediaPipe spike, and four review loops
-
-- **Went well:** The review loop earned its cost several times over, and the most valuable finding was one no test would have caught: the Loomis-conformity confidence signal encoded a fairness defect, and catching it in a design document was the cheapest possible moment. Verification discipline held where it mattered -- every privilege assertion was paired with a control proving the access being denied was genuinely available first, and the same idiom carried into PR 4's and PR 5's suites. Each fix was checked by reverting it to confirm the regression test actually failed, which caught one test that passed for the wrong reason. Splitting the work three ways was the right call: PR 9's accessibility work stayed in-session where conventions mattered most, and the two tighter-specified PRs delegated cleanly.
-- **Improve:** Three real accessibility defects shipped in PR 9 and were caught by review rather than by me: a z-20 layer swallowing every placement click, a drag guard reading a ref that pointerup had already cleared, and then a missing displacement threshold on the fix itself -- which broke the non-dragging path for exactly the users it exists to serve. The common cause is that the tests fired events directly at their target, which bypasses hit-testing entirely, so none of them could see a stacking or ordering bug. Separately, a correct claim about `supabase start -x` was revised into a wrong one by reading the wrong container runtime, and the correction was published before the contradiction was chased. Reaching for --no-verify on a merge commit to avoid friction that did not exist was the same shape of error: acting on an assumption instead of spending one command to test it.
-- **Tooling:** The pre-commit hook runs biome, eslint and tsc but no ruff, so a Python lint failure reaches CI unnoticed -- it did, once, this session. Adding `uv run --directory python ruff check` to the hook would close it. Worth noting alongside that: both husky hooks describe themselves as 'the real protection' against reaching main, and both are one --no-verify from being nothing, while the remote ruleset carries an always-on admin bypass. The comments overclaim what the layers actually provide.
-- **Decisions:**
-  - One container runtime: Docker Desktop. Colima had been a login-time brew service since 2025-10 and was running unnoticed; both bound host port 54322, so 127.0.0.1 reached one database while docker exec reached another. Colima's autostart removed, Docker Desktop starts at login
-  - Pin mediapipe==0.10.35 exactly, never 1.x: 1.0.1 aborts the interpreter on darwin/arm64 inside TensorsToDetectionsCalculator, which initialises Metal unconditionally, so delegate=CPU does not avoid it and the abort cannot be caught
-  - Exactly one cv2 provider, opencv-contrib-python, which mediapipe pulls transitively. PR 11 must not add opencv-python: both install cv2 and uv resolves the pair without error, so the breakage is silent
-  - The Loomis-conformity confidence signal is withdrawn, not tuned. It measured a sitter's conformity to an artistic idealization rather than detector uncertainty, and under min it would have controlled the score -- firing the FR-402 interrupt more often the further a face sat from the template. Two signals, not three; symmetry residual is not the substitute for the same reason
-  - Proposed running PR 11 before PR 10, since the dependency risk that earned PR 10 its place at the front is retired and PR 11 carries no open design question
-  - source_images has no DELETE policy and no DELETE grant. FR-105 immutability was guarded against UPDATE three ways, and delete-then-insert reached the same end without issuing one. Measured first: a cascade is not subject to the referencing table's policies, so project deletion still removes the original
-  - The storage-key constraint covers the project segment, not only the checksum suffix -- a row could otherwise own project A while pointing at project B's object path
-  - Storage object lifecycle deferred to issue #22 (P1 proposed): cascade reaches rows, not bytes. Gates PR 7 rather than blocking PR 5, since nothing can upload yet
-  - Overlay coordinates are normalized [0,1], not pixels -- it is what face_landmarker emits, and an FR-403 correction outlives the viewport it was made in
-  - An overlay handle is a button, not role=slider: ARIA has no two-dimensional value. Arm-then-click satisfies SC 2.5.7, which arrow keys do not, since it is about pointers
-  - Guard defaults accepted as placeholders pending per-agent model assignment; 365-day retention accepted as the enforceable value for NFR-10
-  - Third-party agent skills removed from the repo in favour of a global install -- skills-lock.json, .agents/skills/, and the README section retired
-  - Parallel worktrees can share application code but not a migration history: each branch needs a database built from its own migrations, as CI does
 
 ---
 
