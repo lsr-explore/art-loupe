@@ -31,10 +31,15 @@ POSITION_TOLERANCE = 3 / scenes.WIDTH
 
 
 def _plates(image: np.ndarray, **parameters: object) -> PlateSuite:
+    """Plates at three values unless a test says otherwise.
+
+    The drawn scenes are built from three bands, so three values is what makes their answers
+    exact. The tool's own default is five, and that is pinned on its own below.
+    """
     return make_plates(
         image,
         source_checksum=CHECKSUM,
-        parameters=PlateParameters(**parameters) if parameters else None,
+        parameters=PlateParameters(**{"levels": 3, **parameters}),
     )
 
 
@@ -44,6 +49,13 @@ def _only_contour_strength(image: np.ndarray) -> list[float]:
 
 
 # --- The value map ---------------------------------------------------------------------------
+
+
+def test_the_default_is_five_values() -> None:
+    values = make_plates(scenes.ramp(), source_checksum=CHECKSUM).values
+
+    assert PlateParameters().levels == 5
+    assert len(values.thresholds) == 4
 
 
 def test_fitted_thresholds_fall_between_the_bands() -> None:
@@ -80,17 +92,18 @@ def test_value_tones_are_evenly_spaced_lightness() -> None:
     assert tones == [scenes.grey_for(0.0), scenes.grey_for(50.0), scenes.grey_for(100.0)]
 
 
-def test_more_levels_divide_more_finely() -> None:
-    values = _plates(scenes.ramp(), levels=5).values
+@pytest.mark.parametrize("levels", [5, 10])
+def test_more_levels_divide_more_finely(levels: int) -> None:
+    values = _plates(scenes.ramp(), levels=levels).values
 
-    assert len(values.thresholds) == 4
+    assert len(values.thresholds) == levels - 1
     assert list(values.thresholds) == sorted(set(values.thresholds))
-    assert set(np.unique(values.labels).tolist()) == {0, 1, 2, 3, 4}
+    assert set(np.unique(values.labels).tolist()) == set(range(levels))
 
 
-def test_detail_presets_are_three_five_and_seven() -> None:
-    assert DETAIL_LEVELS == {"coarse": 3, "medium": 5, "fine": 7}
-    assert PlateParameters.for_detail("fine").levels == 7
+def test_detail_presets_are_three_five_seven_and_ten() -> None:
+    assert DETAIL_LEVELS == {"coarse": 3, "medium": 5, "fine": 7, "finest": 10}
+    assert PlateParameters.for_detail("finest").levels == 10
 
 
 def test_an_absent_value_is_stated_not_hidden() -> None:
@@ -183,7 +196,7 @@ def test_a_contour_clear_of_the_frame_is_closed() -> None:
 @pytest.mark.parametrize(
     "scene", [scenes.three_bands, scenes.speckled_bands, scenes.disc, scenes.ramp]
 )
-@pytest.mark.parametrize("levels", [2, 3, 5])
+@pytest.mark.parametrize("levels", [2, 3, 5, 10])
 def test_every_contour_point_lies_on_an_edge_of_the_value_map(scene, levels: int) -> None:
     plates = _plates(scene(), levels=levels, min_region=0.0)
 
@@ -229,9 +242,9 @@ def test_each_plate_carries_its_own_metadata() -> None:
     plates = make_plates(scenes.three_bands(), source_checksum=CHECKSUM, parameters=params)
     metadata = [plates.grayscale.metadata, plates.values.metadata, plates.outline.metadata]
 
-    assert [entry.tool for entry in metadata] == ["grayscale", "three_value", "outline"]
+    assert [entry.tool for entry in metadata] == ["grayscale", "value_map", "outline"]
     for entry in metadata:
-        assert entry.tool_version == f"1+opencv-{cv2.__version__}.numpy-{np.__version__}"
+        assert entry.tool_version == f"2+opencv-{cv2.__version__}.numpy-{np.__version__}"
         assert entry.parameters == params.model_dump()
         assert entry.source_checksum == CHECKSUM
         # Deterministic plates have no confidence to state; `None`, not 0.0.
@@ -266,7 +279,7 @@ def test_small_images_are_never_upscaled() -> None:
         {"levels": 2, "thresholds": (0.0,)},
         {"levels": 2, "thresholds": (100.0,)},
         {"levels": 1},
-        {"levels": 8},
+        {"levels": 11},
         {"colour": True},
     ],
 )

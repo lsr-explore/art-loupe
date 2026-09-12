@@ -42,15 +42,16 @@ from artloupe.schemas.artifact import ArtifactMetadata
 from artloupe.schemas.evidence import Checksum
 
 # Bump when the algorithm or any constant below changes what a given input produces.
-PLATES_ALGORITHM_VERSION = "1"
+PLATES_ALGORITHM_VERSION = "2"
 
 MIN_LEVELS = 2
-MAX_LEVELS = 7
+MAX_LEVELS = 10
 
-# FR-301's three detail presets. One parameter drives both plates, which is what keeps a
-# coarse outline and a coarse value map describing the same regions.
-OutlineDetail = Literal["coarse", "medium", "fine"]
-DETAIL_LEVELS: dict[OutlineDetail, int] = {"coarse": 3, "medium": 5, "fine": 7}
+# The detail presets. One parameter drives both plates, which is what keeps a coarse outline
+# and a coarse value map describing the same regions. Three is FR-301's three-value study, ten a
+# painter's full value scale; five is the default (Laurie, 2026-09-11).
+OutlineDetail = Literal["coarse", "medium", "fine", "finest"]
+DETAIL_LEVELS: dict[OutlineDetail, int] = {"coarse": 3, "medium": 5, "fine": 7, "finest": 10}
 
 # Thresholds are chosen from a histogram of this many bins over L* 0-100, so each resolves to
 # about 0.4 L* — well under a visible step.
@@ -127,8 +128,9 @@ class PlateParameters(BaseModel):
     # Contours are normalized, so their coordinates do not depend on it — how closely they follow
     # the photograph does.
     working_long_edge_px: int = Field(default=1024, ge=256, le=4096)
-    # Values in the value map, and so the outline's detail. 3 is the three-value study.
-    levels: int = Field(default=3, ge=MIN_LEVELS, le=MAX_LEVELS)
+    # Values in the value map, and so the outline's detail. 5 by default; 3 is FR-301's
+    # three-value study and 10 a painter's full value scale (`DETAIL_LEVELS`).
+    levels: int = Field(default=5, ge=MIN_LEVELS, le=MAX_LEVELS)
     # Explicit L* thresholds, darkest first, one fewer than `levels`. `None` fits them.
     thresholds: tuple[FiniteFloat, ...] | None = None
     # Gaussian smoothing of L* before it is classified, as a fraction of the long edge. It is
@@ -514,7 +516,7 @@ def make_plates(
         thresholds=tuple(float(threshold) for threshold in thresholds),
         shares=shares,
         metadata=ArtifactMetadata(
-            tool="three_value",
+            tool="value_map",
             tool_version=version,
             parameters=recorded,
             source_checksum=source_checksum,

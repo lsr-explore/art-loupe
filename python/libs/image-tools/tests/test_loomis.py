@@ -162,16 +162,51 @@ def test_proportions_are_measured_not_scored() -> None:
 def test_the_eye_line_passes_through_both_eye_corners() -> None:
     """Measured means through the sitter's own points, even when the eyes are not level."""
     uneven = (np.array([430.0, 440.0, -100.0]), np.array([570.0, 462.0, -100.0]))
-    construction = construct(_frontal(), uneven, width=WIDTH, height=HEIGHT)
-    start, end = _element(construction, "eye_line")
+    points = _element(construct(_frontal(), uneven, width=WIDTH, height=HEIGHT), "eye_line")
 
     for corner in uneven:
-        corner_x, corner_y = corner[0] / WIDTH, corner[1] / HEIGHT
-        off_line = (end[0] - start[0]) * (corner_y - start[1]) - (end[1] - start[1]) * (
-            corner_x - start[0]
+        assert any(
+            math.hypot(point_x - corner[0] / WIDTH, point_y - corner[1] / HEIGHT) < 1e-9
+            for point_x, point_y in points
         )
-        assert abs(off_line) < TOLERANCE
-        assert min(start[0], end[0]) <= corner_x <= max(start[0], end[0])
+
+
+def _pitched(degrees: float) -> tuple[dict[str, np.ndarray], tuple[np.ndarray, np.ndarray]]:
+    """The frontal head nodded about its horizontal axis, through the default ball's centre."""
+    angle = math.radians(degrees)
+    pivot = np.array([0.0, 400.0, -100.0 + DEFAULT_RADIUS])
+
+    def nod(point: np.ndarray) -> np.ndarray:
+        offset = point - pivot
+        return pivot + np.array(
+            [
+                offset[0],
+                offset[1] * math.cos(angle) - offset[2] * math.sin(angle),
+                offset[1] * math.sin(angle) + offset[2] * math.cos(angle),
+            ]
+        )
+
+    return {name: nod(point) for name, point in _frontal().items()}, (nod(EYES[0]), nod(EYES[1]))
+
+
+def test_the_eye_line_wraps_around_a_nodding_head() -> None:
+    """Level and seen straight on, the eye line is straight; nodded, it curves with the head.
+
+    The line is a circle around the head. Seen edge-on, from its own level, a circle is a line —
+    so the curve shows only when the head is seen from above or below, as in Loomis's drawings.
+    """
+    level = np.array(_element(_build(), "eye_line"))
+    anchors, eyes = _pitched(25.0)
+    nodded = np.array(_element(construct(anchors, eyes, width=WIDTH, height=HEIGHT), "eye_line"))
+
+    def sag(points: np.ndarray) -> float:
+        start, end = points[0], points[-1]
+        chord = end - start
+        offsets = chord[0] * (points[:, 1] - start[1]) - chord[1] * (points[:, 0] - start[0])
+        return float(np.abs(offsets).max() / np.hypot(*chord))
+
+    assert sag(level) < 1e-9
+    assert sag(nodded) > 0.005
 
 
 def test_the_construction_reloads_from_json_exactly() -> None:

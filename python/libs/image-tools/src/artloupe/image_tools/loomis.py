@@ -159,16 +159,33 @@ def construct(
     def across_line(through: NDArray) -> list:
         return [through - half * across, through + half * across]
 
-    def through_both(first: NDArray, second: NDArray) -> list:
-        """The line through two measured points, reaching at least out to the side planes.
+    def wrapped_through(first: NDArray, second: NDArray) -> list:
+        """A curve through two measured points that wraps around the head, as the brow line does.
 
-        A line in 3D through both points projects to a line through both projections, so the
-        drawn guide passes through each eye corner whatever the head's turn or the eyes' levels.
+        An arc of the ball's radius, in the plane through both points that faces the head's front,
+        bowing out toward the face. Both points are vertices of it, so the drawn guide passes
+        through each eye corner exactly, whatever the head's turn or the eyes' levels. Beyond them
+        it runs on out to the side planes, and stops where it turns away from the camera.
         """
-        direction = _unit(second - first, "an eye line")
-        middle = (first + second) / 2.0
-        reach = max(half, float(np.linalg.norm(second - first)) / 2.0)
-        return [middle - reach * direction, middle + reach * direction]
+        along = _unit(second - first, "an eye line")
+        bow = _unit(forward - float(np.dot(forward, along)) * along, "an eye line")
+        chord = float(np.linalg.norm(second - first))
+        # The ball's radius, or a semicircle if the eyes are somehow wider than the ball.
+        curve = max(radius, chord / 2.0)
+        arc_centre = (first + second) / 2.0 - bow * math.sqrt(curve**2 - (chord / 2.0) ** 2)
+        corner = math.asin(chord / (2.0 * curve))
+        angles = sorted(
+            set(np.linspace(-math.pi / 2, math.pi / 2, params.samples)) | {-corner, corner}
+        )
+        kept = []
+        for angle in angles:
+            point = arc_centre + curve * (math.cos(angle) * bow + math.sin(angle) * along)
+            between_corners = abs(angle) <= corner
+            inside_side_planes = abs(float(np.dot(point - centre, across))) <= half
+            facing_camera = (point - arc_centre)[2] <= 1e-6 * curve
+            if between_corners or (inside_side_planes and facing_camera):
+                kept.append(point)
+        return kept
 
     def visible(points: list) -> list:
         """The part of an arc on the ball's camera-facing half; the rest runs behind the head.
@@ -186,7 +203,7 @@ def construct(
         ("centre_line", "measured", [brow, nose, chin], False),
         # The front half of the ball's equator: through the measured brow, curved by the ball.
         ("brow_line", "measured", visible(arc(forward, across, centre, (-90.0, 90.0))), False),
-        ("eye_line", "measured", through_both(eye_corners_px[0], eye_corners_px[1]), False),
+        ("eye_line", "measured", wrapped_through(eye_corners_px[0], eye_corners_px[1]), False),
         ("nose_line", "measured", across_line(nose), False),
         ("chin_line", "measured", across_line(chin), False),
         # A sphere projects orthographically to a circle of its own radius.

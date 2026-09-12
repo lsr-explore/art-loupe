@@ -13,13 +13,13 @@ import { z } from 'zod';
 /**
  * Tools the graph can select in slice 1.
  *
- * The three plates share one pipeline — `three_value` posterises, and `outline` traces the
- * boundaries between those value regions rather than raw gradients, which is why the two
- * always correspond and why the outline carries no texture speckle.
+ * The three plates share one pipeline — `value_map` posterises into two to ten values, and
+ * `outline` traces the boundaries between those value regions rather than raw gradients, which
+ * is why the two always correspond and why the outline carries no texture speckle.
  */
 export const TOOLS = [
   'grayscale',
-  'three_value',
+  'value_map',
   'outline',
   'head_construction',
   'perspective',

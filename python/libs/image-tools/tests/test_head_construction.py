@@ -107,11 +107,11 @@ def test_a_frontal_close_up_is_fully_reliable(landmarker: OpenLandmarker) -> Non
     assert reliability.scale == 1.0
 
 
-def test_a_near_profile_scores_zero_and_names_the_yaw(landmarker: OpenLandmarker) -> None:
+def test_a_near_profile_scores_near_zero_and_names_the_yaw(landmarker: OpenLandmarker) -> None:
     reliability = _face(NEAR_PROFILE, landmarker).facial_landmark_reliability
 
-    assert abs(reliability.yaw_deg) > 45.0
-    assert reliability.value == 0.0
+    assert abs(reliability.yaw_deg) > 55.0
+    assert reliability.value <= 0.1
     assert reliability.weakest == "yaw"
 
 
@@ -170,6 +170,72 @@ def test_pose_signs_follow_the_documented_convention(landmarker: OpenLandmarker)
     assert _face(TURNED_LEFT, landmarker).pose.yaw_deg < 0
     assert _face(CHIN_UP, landmarker).pose.pitch_deg < 0  # chin raised
     assert _face(TILTED, landmarker).pose.roll_deg > 20  # toward the sitter's right shoulder
+
+
+def _placed(image: np.ndarray, face: DetectedFace, where: str) -> np.ndarray:
+    """A head-and-shoulders crop, padded flat on one side so the face sits high, low, left or right.
+
+    Nothing is cut from the face and nothing invented: the flat border only moves the face
+    within the frame, which cannot change the head's true pose.
+    """
+    height, width = image.shape[:2]
+    ys = [mark.y * height for mark in face.landmarks]
+    xs = [mark.x * width for mark in face.landmarks]
+    crop_height = int(min(height, (max(ys) - min(ys)) / 0.4))
+    crop_width = int(min(width, crop_height * 0.8))
+    top = int(min(max(0, (min(ys) + max(ys)) / 2 - crop_height / 2), height - crop_height))
+    left = int(min(max(0, (min(xs) + max(xs)) / 2 - crop_width / 2), width - crop_width))
+    crop = np.ascontiguousarray(image[top : top + crop_height, left : left + crop_width])
+    pad = int(0.6 * crop_height)
+    fill = [int(channel) for channel in crop.reshape(-1, 3).mean(axis=0)]
+    # The pad goes on the side opposite to where the face should end up.
+    above, below, before, after = (
+        pad * (where == side) for side in ("low", "high", "right", "left")
+    )
+    return cv2.copyMakeBorder(crop, above, below, before, after, cv2.BORDER_CONSTANT, value=fill)
+
+
+@pytest.mark.parametrize(
+    ("path", "placements", "angle", "remaining"),
+    [
+        (PORTRAIT, ("high", "low"), "pitch", 1 / 3),
+        (TURNED_LEFT, ("left", "right"), "yaw", 1 / 3),
+        # The detector's yaw error grows as the head turns and the correction does not, so on a
+        # near-frontal face it overshoots: measured 2026-09-11, 10.9° of shift became 4.8° the
+        # other way. Disclosed in the limitations, and bounded here.
+        (PORTRAIT, ("left", "right"), "yaw", 0.6),
+    ],
+    ids=["pitch-high-and-low", "yaw-turned-left-and-right", "yaw-frontal-left-and-right"],
+)
+def test_pose_barely_depends_on_where_the_face_sits(
+    path: Path,
+    placements: tuple[str, str],
+    angle: str,
+    remaining: float,
+    landmarker: OpenLandmarker,
+) -> None:
+    """The framing correction: the same face at opposite sides of the frame.
+
+    The detector's own angle moves several degrees between the two — pitch high and low, yaw left
+    and right — though the head has not moved; the corrected angle should move far less
+    (calibrated 2026-09-11, `FRAMING_VFOV_DEG`). A sign error in either direction of the
+    correction adds to the detector's shift instead of removing it, which every case here fails.
+    """
+    image = _image(path)
+    face = _face(path, landmarker)
+    first, second = (
+        find_face(_placed(image, face, where), landmarker=landmarker) for where in placements
+    )
+
+    assert first is not None and second is not None
+    detector_shift = abs(
+        getattr(first.pose, f"detector_{angle}_deg") - getattr(second.pose, f"detector_{angle}_deg")
+    )
+    corrected_shift = abs(
+        getattr(first.pose, f"{angle}_deg") - getattr(second.pose, f"{angle}_deg")
+    )
+    assert detector_shift > 5.0
+    assert corrected_shift < detector_shift * remaining
 
 
 # --- No face ----------------------------------------------------------------------------------

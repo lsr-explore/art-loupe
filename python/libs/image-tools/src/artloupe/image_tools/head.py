@@ -38,7 +38,7 @@ from artloupe.schemas.evidence import Checksum
 
 # Bump when the algorithm or any constant in `faces.py` or `loomis.py` changes what an input
 # produces. The runtime and the bundled model both move the landmarks, so both join the version.
-HEAD_ALGORITHM_VERSION = "1"
+HEAD_ALGORITHM_VERSION = "2"
 
 # The outer eye corners: the eye line's only inputs, measured and not draggable.
 _EYE_CORNERS = (33, 263)
@@ -69,6 +69,12 @@ LIMITATION_NO_FACE = (
     "No face was found. The bundled detector finds no head turned much past a three-quarter "
     "view, and no face whose landmarks would span less than about 15–18% of the frame's height; "
     "either comes back as no face."
+)
+LIMITATION_FRAMING = (
+    "Head pose is corrected for where the face sits in the frame, with a field of view "
+    "calibrated on the pose fixtures. Pitch, and the yaw of a turned head, are corrected closely; "
+    "a near-frontal face at the frame's edge has its yaw over-corrected by about 5°, and a "
+    "genuinely wide-angle photograph keeps its real perspective."
 )
 
 
@@ -196,6 +202,7 @@ def construct_head(
             face.facial_landmark_reliability.value,
             [
                 LIMITATION_DERIVED,
+                LIMITATION_FRAMING,
                 LIMITATION_CHOSEN_SCAFFOLD,
                 LIMITATION_RATIOS_ONLY,
                 LIMITATION_ORTHOGRAPHIC,
