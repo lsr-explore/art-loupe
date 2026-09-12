@@ -107,11 +107,11 @@ def test_a_frontal_close_up_is_fully_reliable(landmarker: OpenLandmarker) -> Non
     assert reliability.scale == 1.0
 
 
-def test_a_near_profile_scores_zero_and_names_the_yaw(landmarker: OpenLandmarker) -> None:
+def test_a_near_profile_scores_near_zero_and_names_the_yaw(landmarker: OpenLandmarker) -> None:
     reliability = _face(NEAR_PROFILE, landmarker).facial_landmark_reliability
 
-    assert abs(reliability.yaw_deg) > 45.0
-    assert reliability.value == 0.0
+    assert abs(reliability.yaw_deg) > 55.0
+    assert reliability.value <= 0.1
     assert reliability.weakest == "yaw"
 
 
@@ -170,6 +170,44 @@ def test_pose_signs_follow_the_documented_convention(landmarker: OpenLandmarker)
     assert _face(TURNED_LEFT, landmarker).pose.yaw_deg < 0
     assert _face(CHIN_UP, landmarker).pose.pitch_deg < 0  # chin raised
     assert _face(TILTED, landmarker).pose.roll_deg > 20  # toward the sitter's right shoulder
+
+
+def _placed(image: np.ndarray, face: DetectedFace, where: str) -> np.ndarray:
+    """A head-and-shoulders crop, padded flat above or below so the face sits high or low.
+
+    Nothing is cut from the face and nothing invented: the flat border only moves the face
+    within the frame, which cannot change the head's true pose.
+    """
+    height, width = image.shape[:2]
+    ys = [mark.y * height for mark in face.landmarks]
+    xs = [mark.x * width for mark in face.landmarks]
+    crop_height = int(min(height, (max(ys) - min(ys)) / 0.4))
+    crop_width = int(min(width, crop_height * 0.8))
+    top = int(min(max(0, (min(ys) + max(ys)) / 2 - crop_height / 2), height - crop_height))
+    left = int(min(max(0, (min(xs) + max(xs)) / 2 - crop_width / 2), width - crop_width))
+    crop = np.ascontiguousarray(image[top : top + crop_height, left : left + crop_width])
+    pad = int(0.6 * crop_height)
+    fill = [int(channel) for channel in crop.reshape(-1, 3).mean(axis=0)]
+    above, below = (0, pad) if where == "high" else (pad, 0)
+    return cv2.copyMakeBorder(crop, above, below, 0, 0, cv2.BORDER_CONSTANT, value=fill)
+
+
+def test_pose_barely_depends_on_where_the_face_sits(landmarker: OpenLandmarker) -> None:
+    """The framing correction: the same face high and low in the frame.
+
+    The detector's own pitch moves several degrees between the two, though the head has not
+    moved; the corrected pitch should move far less (calibrated 2026-09-11, `FRAMING_VFOV_DEG`).
+    """
+    image = _image(PORTRAIT)
+    face = _face(PORTRAIT, landmarker)
+    high = find_face(_placed(image, face, "high"), landmarker=landmarker)
+    low = find_face(_placed(image, face, "low"), landmarker=landmarker)
+
+    assert high is not None and low is not None
+    detector_shift = abs(high.pose.detector_pitch_deg - low.pose.detector_pitch_deg)
+    corrected_shift = abs(high.pose.pitch_deg - low.pose.pitch_deg)
+    assert detector_shift > 5.0
+    assert corrected_shift < detector_shift / 3
 
 
 # --- No face ----------------------------------------------------------------------------------

@@ -90,6 +90,9 @@ not the full-size originals — unaltered by this project, and eight of them com
 | `pexels-anderson-santos-883070-14086522.jpg` | `43123545d10a65e7b559b7bbe31b3ed961280c50a2f5e77d040e77703c1eda99` | 1400 × 933 | no face — a true profile |
 | `pexels-reneterp-325685.jpg` | `2197f410c03451895ae44706874c754fe25a3679c23433fe21e72ef6fef7ae39` | 1400 × 2100 | no face — too small in a full-length frame |
 
+- **The angles are the detector's own.** Head construction reports framing-corrected angles
+  beside them, several degrees apart: the three-quarter reads yaw 50.7° corrected, the near
+  profile 60.8°. The fixtures were chosen on the detector's angles, before the correction.
 - **Photographers:** Geezy Photography; Min An; Anh Nguyen; Roma Durkin; cottonbro studio; Ba
   Tik; Anderson Santos; Rene Terp — all via Pexels.
 - **License terms verified:** 2026-09-11 against <https://www.pexels.com/license/>, the same

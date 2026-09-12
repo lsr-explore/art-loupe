@@ -98,13 +98,20 @@ Each is a distinct failure mode, cheap, and explainable to an artist. The scalin
 (2026-09-11), set against eight pose fixtures measured with the detector itself
 ([`../media-assets.md`](../media-assets.md)):
 
-1. **Pose extremity** — yaw and pitch from the 4×4 facial transformation matrix, each 1 at a
-   measured 15° or less and 0 at 45°, linear between. A Loomis construction degrades as the
-   head turns or nods, because the far-side landmarks are then extrapolated rather than
-   observed. The thresholds are on *measured* angles, which flatten at steep turns: a
-   near-profile the eye reads as 70–80° measures 56.6°, and a three-quarter view that reads as
-   60° measures 37.6°. **Roll is excluded** — a tilt within the picture hides no landmark, the
-   detector corrects for it, and the construction simply rotates with the head.
+1. **Pose extremity** — yaw and pitch, each 1 at 15° or less and 0 at 60°, linear between, on
+   the pose **corrected for framing**. A Loomis construction degrades as the head turns or
+   nods, because the far-side landmarks are then extrapolated rather than observed. The
+   detector's own angles depend on where the face sits in the frame: placed high and then low
+   in a padded frame, the same face reads 8–10° more chin-down high, and a face near the edge of
+   a wide frame reads as turned less than it is. So the pose is rotated to the line of sight
+   through the face's centre, as if seen through a 26° vertical field of view — calibrated by
+   placing each fixture at ten positions, where the true pose cannot change, and choosing the
+   value that held it most still: the mean spread across positions fell from 12°, 13° and 10°
+   (yaw, pitch, roll) to 5°, 4° and 4°. Corrected, the three-quarter fixture reads 50.7° rather
+   than 37.6°, much closer to the ~60° the eye reads, so the zero moved from 45° to 60° to keep
+   meaning about 60° of real turn (Laurie, 2026-09-11). **Roll is excluded** — a tilt within the
+   picture hides no landmark, the detector corrects for it, and the construction simply rotates
+   with the head.
 2. **Scale** — the face's height in *source pixels*, 1 at 170 px or more and 0 at 64 px. The
    mesh model resizes each face crop, with a 25% margin on every side, to 256 px (FaceMesh-V2
    model card), so below about 170 px of face its landmarks are placed on upsampled pixels. A

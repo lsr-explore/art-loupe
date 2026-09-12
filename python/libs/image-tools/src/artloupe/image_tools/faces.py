@@ -8,6 +8,13 @@ here is **derived**, and named for what it is: `facial_landmark_reliability`, ne
 made under — how far the head is turned or nodded, how many source pixels the face covers, and
 whether an anchor's surface faces away from the camera — and never the face itself.
 
+**Pose is corrected for framing.** The detector's pose depends on where the face sits in the
+frame: the same face reads 8–10° more chin-down at the top of a photograph than at the bottom,
+and a face at the edge of a wide frame reads as turned less than it is — though a head's angle
+cannot change with its position in the picture. The pose reported here is the detector's,
+rotated to the line of sight through the face's centre (`FRAMING_VFOV_DEG`); the detector's own
+angles travel beside it.
+
 **Every close sends Google a usage report** (#43). The landmarker is created and closed per call
 unless the caller passes one in, so each photograph analysed sends one;
 `docs/about-site/data-sent-to-google.md` tells the artist.
@@ -37,11 +44,12 @@ from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, computed_field, 
 MODEL_PATH = Path(__file__).resolve().parent / "models" / "face_landmarker.task"
 
 # The scaling is Laurie's (2026-09-11), set against the pose fixtures in `fixtures/face-poses/`.
-# Pose: each of yaw and pitch scores 1 at a measured 15° or less and 0 at 45°. Measured angles
-# flatten at steep turns — a near-profile the eye reads as 70–80° measures 56.6° — so these are
-# thresholds on the detector's own estimate, not on the true angle.
+# Pose: each of yaw and pitch scores 1 at 15° or less and 0 at 60°, on the framing-corrected
+# pose below. The zero sits at about 60° of real turn, past which the far side of the face is
+# guessed rather than seen. (It was 45° before the framing correction, when measured angles ran
+# low: the three-quarter fixture measured 37.6° and now reads 50.7°, closer to what the eye sees.)
 POSE_FULL_DEG = 15.0
-POSE_ZERO_DEG = 45.0
+POSE_ZERO_DEG = 60.0
 # Scale: the mesh model resizes each face crop, with a 25% margin on every side, to 256 px
 # (FaceMesh-V2 model card), so below about 170 px of face its landmarks sit on upsampled pixels.
 SCALE_FULL_PX = 170.0
@@ -51,6 +59,15 @@ SCALE_ZERO_PX = 64.0
 # only a surface turned away from the camera is extrapolated rather than observed.
 FACING_FULL_DEG = 90.0
 FACING_ZERO_DEG = 120.0
+
+# Framing. The detector reads an off-centre face as turned toward the frame's centre. Rotating
+# its pose to the line of sight through the face's centre, as if seen by a camera with this
+# vertical field of view, removes most of that. Calibrated 2026-09-11 by placing each pose
+# fixture at ten positions in a padded frame — where the true pose cannot change — and choosing
+# the value that held it most still: the mean spread of yaw, pitch and roll across positions fell
+# from 12°, 13° and 10° to 5°, 4° and 4°. A calibrated judgement, not a property of any camera; a
+# genuinely wide-angle photograph keeps its real perspective, which this does not remove.
+FRAMING_VFOV_DEG = 26.0
 
 # The construction's draggable anchors (`docs/design/loomis-construction.md` §5). MediaPipe names
 # sides from the sitter's point of view: its "right" is the sitter's right, image-left in a
@@ -71,6 +88,9 @@ _CHIN = 152
 
 # The tessellated mesh covers the first 468 landmarks; the last ten are the irises.
 _MESH_LANDMARKS = 468
+
+# MediaPipe's camera looks along -z.
+_CAMERA_AXIS = np.array([0.0, 0.0, -1.0])
 
 ReliabilitySignal = Literal["yaw", "pitch", "scale"]
 
@@ -102,11 +122,13 @@ class Landmark(BaseModel):
 
 
 class HeadPose(BaseModel):
-    """The head's rotation, from the detector's facial transformation matrix, in degrees.
+    """The head's rotation relative to the line of sight through the face, in degrees.
 
-    Signs, checked against the pose fixtures: positive yaw turns the face toward the image's
-    right; positive pitch tips the chin down; positive roll tilts the head toward the sitter's
-    right shoulder.
+    `yaw_deg`, `pitch_deg` and `roll_deg` are corrected for where the face sits in the frame;
+    the `detector_*` angles are the detector's own, from its facial transformation matrix, kept
+    so the correction stays auditable. Signs, checked against the pose fixtures: positive yaw
+    turns the face toward the image's right; positive pitch tips the chin down; positive roll
+    tilts the head toward the sitter's right shoulder.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -114,6 +136,9 @@ class HeadPose(BaseModel):
     yaw_deg: FiniteFloat
     pitch_deg: FiniteFloat
     roll_deg: FiniteFloat
+    detector_yaw_deg: FiniteFloat
+    detector_pitch_deg: FiniteFloat
+    detector_roll_deg: FiniteFloat
 
 
 class FacialLandmarkReliability(BaseModel):
@@ -129,6 +154,7 @@ class FacialLandmarkReliability(BaseModel):
     pitch: float = Field(ge=0.0, le=1.0)
     scale: float = Field(ge=0.0, le=1.0)
 
+    # The framing-corrected angles the pose signals were scaled from.
     yaw_deg: FiniteFloat
     pitch_deg: FiniteFloat
     face_height_px: float = Field(ge=0.0)
@@ -245,12 +271,47 @@ def _facing_degrees(points_px: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.degrees(np.arccos(np.clip(toward_camera, -1.0, 1.0)))
 
 
-def _pose(matrix: NDArray[np.float64]) -> HeadPose:
+def _euler(rotation: NDArray[np.float64]) -> tuple[float, float, float]:
+    """Yaw, pitch and roll in degrees, in the convention `HeadPose` documents."""
+    return (
+        math.degrees(math.asin(float(np.clip(-rotation[2, 0], -1.0, 1.0)))),
+        math.degrees(math.atan2(rotation[2, 1], rotation[2, 2])),
+        math.degrees(math.atan2(rotation[1, 0], rotation[0, 0])),
+    )
+
+
+def _rotation_between(source: NDArray[np.float64], target: NDArray[np.float64]) -> NDArray:
+    """The smallest rotation taking the direction `source` onto the direction `target`."""
+    source = source / np.linalg.norm(source)
+    target = target / np.linalg.norm(target)
+    axis = np.cross(source, target)
+    sine = float(np.linalg.norm(axis))
+    cosine = float(np.dot(source, target))
+    if sine < 1e-12:
+        return np.eye(3)
+    skew = np.array([[0.0, -axis[2], axis[1]], [axis[2], 0.0, -axis[0]], [-axis[1], axis[0], 0.0]])
+    return np.eye(3) + skew + skew @ skew * ((1.0 - cosine) / sine**2)
+
+
+def _pose(
+    matrix: NDArray[np.float64], centre_x: float, centre_y: float, width: int, height: int
+) -> HeadPose:
+    """The detector's rotation, re-expressed relative to the line of sight through the face.
+
+    `centre_x` and `centre_y` are the face's centre in normalized image coordinates.
+    """
     rotation = matrix[:3, :3] / np.linalg.norm(matrix[:3, 0])
+    focal = (height / 2.0) / math.tan(math.radians(FRAMING_VFOV_DEG) / 2.0)
+    ray = np.array([(centre_x - 0.5) * width / focal, -(centre_y - 0.5) * height / focal, -1.0])
+    yaw, pitch, roll = _euler(_rotation_between(_CAMERA_AXIS, ray).T @ rotation)
+    detector_yaw, detector_pitch, detector_roll = _euler(rotation)
     return HeadPose(
-        yaw_deg=math.degrees(math.asin(float(np.clip(-rotation[2, 0], -1.0, 1.0)))),
-        pitch_deg=math.degrees(math.atan2(rotation[2, 1], rotation[2, 2])),
-        roll_deg=math.degrees(math.atan2(rotation[1, 0], rotation[0, 0])),
+        yaw_deg=yaw,
+        pitch_deg=pitch,
+        roll_deg=roll,
+        detector_yaw_deg=detector_yaw,
+        detector_pitch_deg=detector_pitch,
+        detector_roll_deg=detector_roll,
     )
 
 
@@ -321,7 +382,13 @@ def find_face(
     raw = result.face_landmarks[0]
     landmarks = [Landmark(x=point.x, y=point.y, z=point.z) for point in raw]
     points_px = np.array([[point.x * width, point.y * height, point.z * width] for point in raw])
-    pose = _pose(np.asarray(result.facial_transformation_matrixes[0], dtype=np.float64))
+    pose = _pose(
+        np.asarray(result.facial_transformation_matrixes[0], dtype=np.float64),
+        float(np.mean([point.x for point in raw])),
+        float(np.mean([point.y for point in raw])),
+        width,
+        height,
+    )
     face_height_px = float(np.linalg.norm(points_px[_FOREHEAD, :2] - points_px[_CHIN, :2]))
     reliability = FacialLandmarkReliability(
         yaw=_falling(abs(pose.yaw_deg), POSE_FULL_DEG, POSE_ZERO_DEG),

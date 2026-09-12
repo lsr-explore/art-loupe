@@ -35,10 +35,15 @@ POSITION_TOLERANCE = 0.01
 
 
 def _detect(image: np.ndarray, **parameters: object) -> PerspectiveResult:
+    """Detect with the reporting floor off unless a test sets it.
+
+    Most tests here examine the candidates themselves — phantoms, sparse and loose families —
+    which sit below any sensible floor by design. The floor has its own tests at the end.
+    """
     return detect_perspective(
         image,
         source_checksum=CHECKSUM,
-        parameters=PerspectiveParameters(**parameters) if parameters else None,
+        parameters=PerspectiveParameters(**{"min_confidence": 0.0, **parameters}),
     )
 
 
@@ -260,11 +265,75 @@ def test_metadata_records_the_recipe() -> None:
     )
 
     assert result.metadata.tool == "perspective"
-    assert result.metadata.tool_version == (f"1+opencv-{cv2.__version__}.numpy-{np.__version__}")
+    assert result.metadata.tool_version == (f"2+opencv-{cv2.__version__}.numpy-{np.__version__}")
     assert result.metadata.parameters == parameters.model_dump()
     assert result.metadata.source_checksum == CHECKSUM
     assert result.metadata.duration_ms >= 0
     assert LIMITATION_NOT_VALIDATED in result.metadata.limitations
+
+
+# --- The evidence behind each point ----------------------------------------------------------
+
+
+def test_each_point_carries_the_segments_that_converge_on_it() -> None:
+    """Every reported segment points at its vanishing point, within the inlier threshold."""
+    scene = scenes.two_point()
+    height, width = scene.image.shape[:2]
+    parameters = PerspectiveParameters()
+
+    for vp in _detect(scene.image).vanishing_points:
+        assert len(vp.segments) == vp.confidence.supporting_segments
+        target = np.array([vp.point.x * width, vp.point.y * height])
+        for segment in vp.segments:
+            start = np.array([segment.start.x * width, segment.start.y * height])
+            end = np.array([segment.end.x * width, segment.end.y * height])
+            along = (end - start) / np.linalg.norm(end - start)
+            towards = target - (start + end) / 2
+            towards /= np.linalg.norm(towards)
+            residual = np.degrees(np.arcsin(abs(along[0] * towards[1] - along[1] * towards[0])))
+            assert residual <= parameters.inlier_threshold_deg + 0.1
+
+
+# --- The reporting floor ---------------------------------------------------------------------
+
+
+def test_the_floor_defaults_to_the_agreed_value() -> None:
+    assert PerspectiveParameters().min_confidence == 0.35
+
+
+def test_the_floor_holds_clutter_back_and_says_so() -> None:
+    """Clutter's chance convergences score below the floor: held back, and counted, not lost."""
+    tested = 0
+    for seed in range(1, 6):
+        clutter = scenes.single_family(0, clutter=150, seed=seed).image
+        if not _detect(clutter).vanishing_points:
+            continue
+        tested += 1
+        held = detect_perspective(clutter, source_checksum=CHECKSUM)
+        assert held.vanishing_points == []
+        assert held.metadata.confidence == 0.0
+        assert any(
+            "below the reporting floor of 0.35" in text for text in held.metadata.limitations
+        )
+        # Candidates existed, so "nothing found" would be false.
+        assert LIMITATION_NONE_FOUND not in held.metadata.limitations
+    assert tested, "clutter produced no candidates, so this test proved nothing"
+
+
+def test_the_floor_keeps_real_structure() -> None:
+    result = detect_perspective(scenes.two_point().image, source_checksum=CHECKSUM)
+
+    assert len(result.vanishing_points) == 2
+    assert not any("reporting floor" in text for text in result.metadata.limitations)
+
+
+def test_the_floor_is_recorded_and_can_be_switched_off() -> None:
+    clutter = scenes.single_family(0, clutter=150, seed=1).image
+    parameters = PerspectiveParameters(min_confidence=0.0)
+    result = detect_perspective(clutter, source_checksum=CHECKSUM, parameters=parameters)
+
+    assert result.metadata.parameters["min_confidence"] == 0.0
+    assert result.vanishing_points == _detect(clutter).vanishing_points
 
 
 def test_the_same_recipe_reproduces_the_same_result() -> None:

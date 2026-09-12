@@ -6,7 +6,7 @@
         "text": "the darkest 12% of pixels sit in the lower-left quadrant",
         "evidence": {
           "kind": "measured",
-          "tool": "three_value",
+          "tool": "value_map",
           "tool_version": "0.1.0",
           "parameters": {
             "levels": 3,
@@ -99,7 +99,7 @@
             "reason": null
           },
           {
-            "tool": "three_value",
+            "tool": "value_map",
             "reason": "low-key reference; the value design is the whole problem"
           },
           {

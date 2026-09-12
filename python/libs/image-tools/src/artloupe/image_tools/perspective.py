@@ -23,6 +23,14 @@ that anyway. This is the same rule `geometry-confidence-plan.md` §3 sets for PR
 but the word differs deliberately: this number comes out of the estimation itself, so it is
 a confidence; the face path's is derived, and is not called one.
 
+**The evidence travels with each point.** Every vanishing point carries the detected segments
+that converge on it, so a correction screen can show the lines behind a point — along the docks,
+along the facades — not only the point itself.
+
+**Weak candidates are held back.** A point scoring below `PerspectiveParameters.min_confidence`
+is not reported, and the limitations say how many were held back. The floor is a parameter, so
+a caller can lower it, or set it to 0 to see every candidate (Laurie, 2026-09-11).
+
 **Coordinates** are in the overlay's normalized space — `[0, 1]` on each axis, origin top-left
 — and are **not clamped**. A two-point vanishing point is routinely outside the photograph;
 clamping it would report a different point. (The overlay primitives cannot yet show one there:
@@ -41,7 +49,7 @@ import numpy as np
 from numpy.typing import NDArray
 from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, computed_field, model_validator
 
-from artloupe.image_tools.segments import ImageFrame, detect_segments
+from artloupe.image_tools.segments import ImageFrame, Segments, detect_segments
 from artloupe.image_tools.vanishing import Family, find_families
 from artloupe.image_tools.versioning import tool_version
 from artloupe.schemas.artifact import ArtifactMetadata
@@ -50,7 +58,7 @@ from artloupe.schemas.evidence import Checksum
 # Bump when the algorithm or any constant below changes what a given input produces. The
 # OpenCV and NumPy versions are appended by `tool_version` — LSD's output can move between
 # OpenCV releases, and NumPy supplies both the seeded RANSAC generator and the eigensolver.
-PERSPECTIVE_ALGORITHM_VERSION = "1"
+PERSPECTIVE_ALGORITHM_VERSION = "2"
 
 
 # FR-302 covers one- and two-point perspective, so at most two points are reported.
@@ -110,6 +118,14 @@ LIMITATION_NO_HORIZON = (
 )
 
 
+def _limitation_withheld(count: int, floor: float) -> str:
+    noun = "candidate" if count == 1 else "candidates"
+    return (
+        f"{count} vanishing-point {noun} scored below the reporting floor of {floor:.2f} and "
+        "were held back; lower the floor to see them."
+    )
+
+
 class PerspectiveParameters(BaseModel):
     """What the tool runs with. Recorded verbatim, after validation, in the FR-305 metadata."""
 
@@ -126,6 +142,11 @@ class PerspectiveParameters(BaseModel):
     hypotheses: int = Field(default=2000, ge=100, le=20000)
     # RANSAC is random; the seed is part of the recipe, so the same input reproduces.
     seed: int = 0
+    # Candidates scoring below this are held back rather than reported. 0.35 drops the two
+    # phantom points the demo portrait produced (0.30 and 0.32) and keeps the canal's real
+    # bridge point (0.42) — a margin set against two photographs, which is why it is a parameter
+    # and not a constant: lower it, or set it to 0 to see every candidate (Laurie, 2026-09-11).
+    min_confidence: float = Field(default=0.35, ge=0.0, le=1.0)
 
 
 class NormalizedPoint(BaseModel):
@@ -188,11 +209,23 @@ class VanishingPointConfidence(BaseModel):
         return min(self.significance, self.angular_fit, self.support)
 
 
+class SupportingSegment(BaseModel):
+    """One detected line segment that converges on a vanishing point — the point's evidence."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    start: NormalizedPoint
+    end: NormalizedPoint
+
+
 class VanishingPoint(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     point: NormalizedPoint
     confidence: VanishingPointConfidence
+    # Every segment that converges on the point, in the overlay's normalized space: what a
+    # correction screen shows, and lets the artist toggle, as the lines behind the point.
+    segments: list[SupportingSegment]
 
 
 class Horizon(BaseModel):
@@ -230,6 +263,22 @@ def _score(family: Family, threshold: float) -> VanishingPointConfidence:
         chance_multiple=multiple,
         mean_residual_deg=math.degrees(family.mean_residual),
     )
+
+
+def _supporting_segments(
+    family: Family, segments: Segments, frame: ImageFrame
+) -> list[SupportingSegment]:
+    supporting = []
+    for index in family.inliers:
+        start = frame.to_normalized(*segments.start[index])
+        end = frame.to_normalized(*segments.end[index])
+        supporting.append(
+            SupportingSegment(
+                start=NormalizedPoint(x=start[0], y=start[1]),
+                end=NormalizedPoint(x=end[0], y=end[1]),
+            )
+        )
+    return supporting
 
 
 FamilyKind = Literal["vanishing", "vertical", "parallel"]
@@ -330,7 +379,9 @@ def detect_perspective(
         if _classify(family, frame) == "vanishing"
     ]
     scored.sort(key=lambda pair: pair[1].value, reverse=True)
-    reported = scored[:MAX_VANISHING_POINTS]
+    eligible = [pair for pair in scored if pair[1].value >= params.min_confidence]
+    withheld = len(scored) - len(eligible)
+    reported = eligible[:MAX_VANISHING_POINTS]
     isotropic = [
         (family.point[0] / family.point[2], family.point[1] / family.point[2])
         for family, _confidence in reported
@@ -339,9 +390,14 @@ def detect_perspective(
 
     vanishing_points: list[VanishingPoint] = []
     for index in order:
+        family, confidence = reported[index]
         x, y = frame.to_normalized(*isotropic[index])
         vanishing_points.append(
-            VanishingPoint(point=NormalizedPoint(x=x, y=y), confidence=reported[index][1])
+            VanishingPoint(
+                point=NormalizedPoint(x=x, y=y),
+                confidence=confidence,
+                segments=_supporting_segments(family, segments, frame),
+            )
         )
     confidences = [vp.confidence.value for vp in vanishing_points]
     horizon = (
@@ -351,8 +407,11 @@ def detect_perspective(
     )
 
     limitations = [LIMITATION_NOT_VALIDATED, LIMITATION_NO_VERTICAL, LIMITATION_PARALLEL]
+    if withheld:
+        limitations.append(_limitation_withheld(withheld, params.min_confidence))
     if not vanishing_points:
-        limitations.append(LIMITATION_NONE_FOUND)
+        if not withheld:
+            limitations.append(LIMITATION_NONE_FOUND)
     elif horizon is None:
         limitations.append(LIMITATION_NO_HORIZON)
     elif horizon.level_assumed:

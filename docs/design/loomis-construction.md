@@ -1,6 +1,7 @@
 # Loomis head construction — from landmarks to an artist-correctable overlay
 
-**Status:** designed, 2026-09-11; slice 1 PR 10 builds it. One scaling in §8 is still open.
+**Status:** built in slice 1 PR 10 (#46); refined 2026-09-11 after the tool demo — the eye line
+now wraps around the head, and pose is corrected for where the face sits in the frame.
 
 FR-302 asks for a head-construction overlay "from facial landmarks plus our own SVG geometry,
 artist-correctable". The landmarks come from MediaPipe's face landmarker; this document is
@@ -29,14 +30,15 @@ Every element is one of the two claim kinds the project already uses. A line thr
 landmark the detector placed is **measured**; a part of the scaffold the photograph cannot
 show is **chosen**, drawn from the method, and labelled as such.
 
-| Element | Anchored on (MediaPipe landmark index) | Claim | In PR 10 |
+| Element | Drawn through (MediaPipe landmark index) | Claim | Built |
 | --- | --- | --- | --- |
-| Centre line | the facial midline, 10 → 151 → 9 → 168 → 6 → 1 → 2 → 0 → 17 → 152 | measured | yes |
-| Brow line | 9, between the brows; across the head through the brow ends 70 and 300 | measured | yes |
-| Nose line | 2, the base of the nose | measured | yes |
-| Chin line | 152, the bottom of the chin | measured | yes |
-| Eye line | the outer eye corners, 33 and 263 | measured | yes |
+| Centre line | the anchors down the middle: 9 → 2 → 152 | measured | yes |
+| Brow line | 9, between the brows — the front half of the ball's equator | measured | yes |
+| Eye line | both outer eye corners, 33 and 263 — wrapped around the head like the brow line | measured | yes |
+| Nose line | 2, the base of the nose — straight across, out to the side planes | measured | yes |
+| Chin line | 152, the bottom of the chin — straight across, out to the side planes | measured | yes |
 | Cranial ball | sized from the brow-to-nose unit by a chosen factor | **chosen** | yes |
+| Cranial centre line | over the ball, from the brow up past the crown | **chosen** | yes |
 | Side plane | an ellipse on the ball's side, turned with the head | **chosen** | yes |
 | Hairline | one unit above the brow line | **chosen** | later |
 | Ear | on the side plane between brow and nose lines, its front edge near 234 / 454 | **chosen**, placed near a measured point | later |
@@ -72,11 +74,15 @@ close-up, the nose tip sits nearest (−310 px) and the sides of the face farthe
 
 So the construction is fitted in landmark space, in pixels (`x·W`, `y·H`, `z·W`):
 
-1. **A head frame from the landmarks themselves** — up along the centre line (152 → 10), across
-   from 234 to 454, and depth as their cross product.
-2. **Each line is a section of the ball in that frame** — the brow line is the circle where the
-   plane through 9, perpendicular to "up", cuts the ball; the nose and chin lines likewise
-   through 2 and 152. Sampled as points, they curve around the head as it turns.
+1. **A head frame from the anchors themselves** — up from the chin to the brow (152 → 9),
+   across from side to side (234 → 454), and depth as their cross product. The ball sits one
+   radius behind the brow, so the brow is its front.
+2. **The lines in that frame.** The brow line is the front half of the ball's equator, through
+   9. The eye line is an arc of the ball's radius through both eye corners, bowing toward the
+   face, so it wraps the head the way the brow line does: seen level and straight on it is
+   straight, and it curves once the head is seen from above or below, as in Loomis's drawings.
+   The nose and chin lines stay straight across the face, out to the side planes. Every arc is
+   clipped where it turns away from the camera.
 3. **Projected by dropping depth**, back to the overlay's normalized coordinates.
 
 That last step is orthographic: it assumes the head is far from the lens relative to its own
@@ -98,7 +104,8 @@ A pydantic model in `image-tools`, as `PerspectiveResult` is — a schema contra
 the agent and the studio need to exchange it (PR 12/13):
 
 - the 478 landmarks, normalized, with `z`;
-- the pose (yaw, pitch, roll) and the face's height in source pixels;
+- the pose (yaw, pitch, roll) corrected for where the face sits in the frame, with the
+  detector's own angles beside it, and the face's height in source pixels;
 - `facial_landmark_reliability` with its components and the one that decided (plan §3), also
   filling `ArtifactMetadata.confidence` with the derived-limitation string;
 - the five anchors by name, each with its own reliability (§8);
@@ -109,12 +116,17 @@ the agent and the studio need to exchange it (PR 12/13):
 
 It serializes to JSON and reloads exactly, so a stored result is never recomputed.
 
-## 7. What it needs from elsewhere
+## 7. What it needs from elsewhere, and what is not drawn yet
 
 - **fascia has no curve primitive.** `OverlayGuide` draws one straight segment between two
   points; the ball, the side plane and the curved lines need a polyline guide. That is PR 13's,
   alongside #40's off-frame work.
 - **A sourced ball proportion**, when the corpus has one, replaces the chosen default (§1).
+- **An eye-detail layer** — each eye's outline and iris centre — is #47.
+- **Compared with a Loomis reference** (the tool-demo review, 2026-09-11), the construction does
+  not yet draw the side plane's cross, the jaw lines boxing the lower face, the brow line carried
+  across the side plane, or a centre line that keeps curving down the face; and its nose line
+  runs out to the side planes where the reference draws a short tick.
 
 ## 8. Decisions
 
@@ -122,6 +134,9 @@ It serializes to JSON and reloads exactly, so a stored result is never recompute
   Hairline, ear and jaw wait.
 - **The ball is sized by a chosen, labelled factor** on the measured brow-to-nose unit, set by
   eye against the fixtures and recorded as a judgement (Laurie, 2026-09-11).
+- **The eye line wraps around the head; the nose and chin lines stay straight** (Laurie,
+  2026-09-11, after the tool demo, against a Loomis reference). The eye line still passes
+  through both eye corners exactly.
 - **Reliability is per anchor** (Laurie, 2026-09-11). Each anchor's value is the face-level
   `facial_landmark_reliability`, combined by `min` with how far that anchor's surface faces away
   from the camera — derived from the pose and the landmarks' own depth. An anchor on the far side
@@ -130,10 +145,10 @@ It serializes to JSON and reloads exactly, so a stored result is never recompute
   walkthrough's flagged jaw becomes the flagged far-side anchor (234 or 454).
 - **Five draggable anchors** — 9, 2, 152, 234 and 454 (Laurie, 2026-09-11).
 - **Per-anchor scaling: 1 up to 90° from the camera, 0 at 120°, linear between** (Laurie,
-  2026-09-11). Measured on the fixtures, a frontal face's chin and sides already sit at 78–91° —
+  2026-09-11). Measured on the fixtures, a frontal face's chin and sides already sit at 78–93° —
   where each point lies on the curve of the face, which says more about the face than about the
-  detector — while only the far side of a turned head passes edge-on (96–146°). So an anchor
+  detector — while only the far side of a turned head passes edge-on (102–153°). So an anchor
   loses reliability only once its surface is turned away from the camera, and a frontal chin is
-  never flagged. Three anchors (152, 234, 454) sit on the mesh's outer edge, where a surface
-  direction estimated from neighbouring points is one-sided; the implementation takes it from the
-  mesh's own triangles and re-measures the fixtures before the thresholds are trusted.
+  never flagged. The surface direction comes from the mesh's own triangles.
+- **Pose is corrected for framing, and scores 0 at 60°** (Laurie, 2026-09-11); the reasoning and
+  the calibration are in `geometry-confidence-plan.md` §3.
