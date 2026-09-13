@@ -7,14 +7,14 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-09-13**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **28** — **2** epics, **11** filed under an epic, **15** unparented
+- Open issues: **31** — **2** epics, **12** filed under an epic, **17** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 3 |
 | P1 | 3 |
-| P2 | 12 |
-| P3 | 10 |
+| P2 | 14 |
+| P3 | 11 |
 | — | 0 |
 
 Priority and Status are the [Project #3](https://github.com/users/lsr-explore/projects/3)
@@ -24,7 +24,7 @@ field values — there are no priority labels. `—` means the field is unset.
 
 ### [#57](https://github.com/lsr-explore/art-loupe/issues/57) — product: artist-facing policies, acknowledgements and disclosures
 
-**P0** · Backlog · 5 open sub-issues
+**P0** · Backlog · 6 open sub-issues
 
 | # | Title | Priority | Status |
 | --- | --- | --- | --- |
@@ -32,6 +32,7 @@ field values — there are no priority labels. `—` means the field is unset.
 | [#58](https://github.com/lsr-explore/art-loupe/issues/58) | product: artist terms and a retention policy — #56's reachable policy does not exist | P0 | Backlog |
 | [#43](https://github.com/lsr-explore/art-loupe/issues/43) | python: MediaPipe Tasks sends usage metrics to Google — measure, then disable or disclose before PR 10 merges | P1 | Backlog |
 | [#27](https://github.com/lsr-explore/art-loupe/issues/27) | studio: move the synthetic-data acknowledgement to the login page | P2 | Backlog |
+| [#63](https://github.com/lsr-explore/art-loupe/issues/63) | docs: amend FR-801 and FR-807 to the invented-pixels boundary | P2 | Backlog |
 | [#59](https://github.com/lsr-explore/art-loupe/issues/59) | product: provider record and copyrightability, if a vendor model is ever used | P3 | Backlog |
 
 ### [#5](https://github.com/lsr-explore/art-loupe/issues/5) — quality: static-analysis and prose-tooling follow-ups
@@ -59,6 +60,7 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | [#47](https://github.com/lsr-explore/art-loupe/issues/47) | python: an eye-detail overlay — eye outlines and iris centres | P2 | Backlog |
 | [#54](https://github.com/lsr-explore/art-loupe/issues/54) | python: a semantic inventory and omission check for the plate suite | P2 | Backlog |
 | [#55](https://github.com/lsr-explore/art-loupe/issues/55) | python: classify a line as form edge, value boundary, or texture | P2 | Backlog |
+| [#64](https://github.com/lsr-explore/art-loupe/issues/64) | python: a generated outline, as a labelled alternative to the measured one | P2 | Backlog |
 | [#45](https://github.com/lsr-explore/art-loupe/issues/45) | python: find faces smaller than the bundled detector's minimum | P3 | Backlog |
 
 ### studio
@@ -76,6 +78,7 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | --- | --- | --- | --- |
 | [#36](https://github.com/lsr-explore/art-loupe/issues/36) | test: adopt vitest browser mode for layout-dependent assertions | P3 | Backlog |
 | [#48](https://github.com/lsr-explore/art-loupe/issues/48) | test: persistence tests count every row, so using the app locally breaks them | P3 | Backlog |
+| [#62](https://github.com/lsr-explore/art-loupe/issues/62) | test: apply the requirements §7 flow restructure to flows.json | P3 | Backlog |
 
 ### auth
 
