@@ -83,7 +83,7 @@
     "typescript": "^6",
     "vitest": "^5.0.0",
     "vitest-axe": "^0.1.0",
-    "vitest-canvas-mock": "^1.1.4"
+    "vitest-canvas-mock": "^1.2.0"
   },
   "peerDependencies": {
     "react": "19.3.0",
