@@ -321,6 +321,39 @@ def test_min_chain_filters_fitted_lines_too() -> None:
         assert length >= floor - 1.0
 
 
+def test_dropping_a_fitted_line_yields_its_stretch_back_to_the_trace() -> None:
+    """Raising `min_chain` must simplify the outline, never delete geometry from it.
+
+    A fitted line tells the traced chains "this stretch is already drawn as a straight line". If
+    the stencil is built before `min_chain` filters, a line dropped from the output still erases
+    the edge underneath, so raising the floor deletes the edge rather than the line.
+
+    The disc is the case that exposes it: at radius 75 the fitter covers it with sixteen chords
+    of about 29 px, and a floor above that drops every one. What must survive is the disc — as
+    the traced loop it always was, carrying essentially its whole circumference.
+    """
+    circumference = 2 * math.pi * scenes.DISC_RADIUS
+    floor = 0.06  # 40 px here: above the chords, far below the loop
+
+    chorded = _plates(scenes.disc(), levels=2, min_chain=0.0).outline.chains
+    assert all(chain.straight for chain in chorded), "expected the disc to be chorded"
+
+    chains = _plates(scenes.disc(), levels=2, min_chain=floor).outline.chains
+    assert chains
+    assert not any(chain.straight for chain in chains)
+
+    drawn = 0.0
+    for chain in chains:
+        points = [(point.x * scenes.WIDTH, point.y * scenes.HEIGHT) for point in chain.points]
+        walk = [*points, points[0]] if chain.closed else points
+        drawn += sum(
+            math.hypot(nxt[0] - here[0], nxt[1] - here[1])
+            for here, nxt in zip(walk, walk[1:], strict=False)
+        )
+
+    assert drawn > 0.9 * circumference
+
+
 def test_a_closed_loop_is_reported_closed() -> None:
     """Edge Drawing walks a loop without repeating its first point.
 

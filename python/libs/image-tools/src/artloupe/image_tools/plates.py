@@ -722,11 +722,12 @@ def _outline_pass(
     """
     shape = grey.shape[:2]
     chains, lines = _detect_edges(grey)
-    claimed = _stencil(shape, [line.reshape(2, 2) for line in lines], _STRAIGHT_COVER_PX)
 
-    produced: list[EdgeChain] = []
-    drawn: list[NDArray[np.intc]] = []
-
+    # Decide which fitted lines survive *before* stencilling, and stencil only those. The stencil
+    # is what tells the traced chains "this stretch is already drawn as a straight line", so a
+    # line built into it but dropped from the output erases the edge underneath instead of
+    # yielding it back — raising `min_chain` would delete geometry rather than simplify it.
+    kept_lines: list[NDArray[np.intc]] = []
     for start_x, start_y, end_x, end_y in lines:
         ends = np.array([[start_x, start_y], [end_x, end_y]], dtype=np.intc)
         # `min_chain` is a floor on a whole outline chain, and a fitted line is a whole chain —
@@ -739,6 +740,14 @@ def _outline_pass(
         # into new fragments: half a fitted line is not a shorter fitted line.
         if already is not None and _uncovered_fraction(_along(ends[0], ends[1]), already) < 0.5:
             continue
+        kept_lines.append(ends)
+
+    claimed = _stencil(shape, kept_lines, _STRAIGHT_COVER_PX)
+
+    produced: list[EdgeChain] = []
+    drawn: list[NDArray[np.intc]] = []
+
+    for ends in kept_lines:
         # Measure along the whole fitted line, not at its two ends. `edge_gradient` promises the
         # median along the edge, and endpoints sit disproportionately at junctions and weak
         # terminations, so two endpoint samples describe the least representative part of it.
