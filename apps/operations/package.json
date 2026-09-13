@@ -61,7 +61,7 @@
     "size-limit": "^13.0.3",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "vite": "^8.2.1",
+    "vite": "^8.3.0",
     "vitest": "^5.0.0",
     "vitest-axe": "^0.1.0",
     "vitest-canvas-mock": "^1.2.0"
