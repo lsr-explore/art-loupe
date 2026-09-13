@@ -13,11 +13,11 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 102 (6 parametrized) |
-| **Covered** | a11y 9 · functionality 93 |
+| **Tests** | 109 (7 parametrized) |
+| **Covered** | a11y 9 · functionality 100 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## pytest — 59
+## pytest — 66
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -29,21 +29,22 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_a_point_at_infinity_is_supported_by_parallel_segments | `python/libs/image-tools/tests/test_geometry_primitives.py:52` |
 | functionality | test_residual_ignores_which_way_the_segment_was_drawn | `python/libs/image-tools/tests/test_geometry_primitives.py:63` |
 | functionality | test_a_frontal_close_up_is_fully_reliable | `python/libs/image-tools/tests/test_head_construction.py:103` |
-| functionality | test_a_near_profile_scores_zero_and_names_the_yaw | `python/libs/image-tools/tests/test_head_construction.py:110` |
+| functionality | test_a_near_profile_scores_near_zero_and_names_the_yaw | `python/libs/image-tools/tests/test_head_construction.py:110` |
 | functionality | test_the_artifact_confidence_is_the_derived_reliability | `python/libs/image-tools/tests/test_head_construction.py:118` |
 | functionality | test_a_small_image_of_a_face_loses_scale_reliability | `python/libs/image-tools/tests/test_head_construction.py:127` |
 | functionality | test_the_far_side_anchor_of_a_turned_head_is_flagged | `python/libs/image-tools/tests/test_head_construction.py:149` |
 | functionality | test_a_chin_facing_the_camera_is_never_flagged | `python/libs/image-tools/tests/test_head_construction.py:160` |
 | functionality | test_pose_signs_follow_the_documented_convention | `python/libs/image-tools/tests/test_head_construction.py:168` |
-| functionality | test_no_face_is_the_portrait_gates_answer | `python/libs/image-tools/tests/test_head_construction.py:179` |
-| functionality | test_the_detector_has_a_small_face_limit | `python/libs/image-tools/tests/test_head_construction.py:189` |
-| functionality | test_a_corrected_chin_moves_the_chin_line | `python/libs/image-tools/tests/test_head_construction.py:198` |
-| functionality | test_a_correction_to_something_that_is_not_an_anchor_is_refused | `python/libs/image-tools/tests/test_head_construction.py:219` |
-| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_head_construction.py:234` |
-| functionality | test_the_recipe_records_the_parameters_the_landmarker_ran_with | `python/libs/image-tools/tests/test_head_construction.py:241` |
-| functionality | test_a_landmarker_opened_with_other_parameters_is_refused | `python/libs/image-tools/tests/test_head_construction.py:249` |
-| functionality | test_the_version_names_the_runtime_and_the_model | `python/libs/image-tools/tests/test_head_construction.py:271` |
-| functionality | test_without_a_landmarker_one_is_opened_for_the_call | `python/libs/image-tools/tests/test_head_construction.py:278` |
+| functionality | test_pose_barely_depends_on_where_the_face_sits | `python/libs/image-tools/tests/test_head_construction.py:210` |
+| functionality | test_no_face_is_the_portrait_gates_answer | `python/libs/image-tools/tests/test_head_construction.py:245` |
+| functionality | test_the_detector_has_a_small_face_limit | `python/libs/image-tools/tests/test_head_construction.py:255` |
+| functionality | test_a_corrected_chin_moves_the_chin_line | `python/libs/image-tools/tests/test_head_construction.py:264` |
+| functionality | test_a_correction_to_something_that_is_not_an_anchor_is_refused | `python/libs/image-tools/tests/test_head_construction.py:285` |
+| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_head_construction.py:300` |
+| functionality | test_the_recipe_records_the_parameters_the_landmarker_ran_with | `python/libs/image-tools/tests/test_head_construction.py:307` |
+| functionality | test_a_landmarker_opened_with_other_parameters_is_refused | `python/libs/image-tools/tests/test_head_construction.py:315` |
+| functionality | test_the_version_names_the_runtime_and_the_model | `python/libs/image-tools/tests/test_head_construction.py:337` |
+| functionality | test_without_a_landmarker_one_is_opened_for_the_call | `python/libs/image-tools/tests/test_head_construction.py:344` |
 | functionality | test_measured_lines_run_level_through_their_anchors | `python/libs/image-tools/tests/test_loomis.py:78` |
 | functionality | test_the_ball_is_centred_on_the_brow_at_the_chosen_radius | `python/libs/image-tools/tests/test_loomis.py:91` |
 | functionality | test_the_ball_factor_is_a_parameter | `python/libs/image-tools/tests/test_loomis.py:100` |
@@ -53,33 +54,39 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_a_turned_head_shows_only_the_near_side_plane | `python/libs/image-tools/tests/test_loomis.py:145` |
 | functionality | test_proportions_are_measured_not_scored | `python/libs/image-tools/tests/test_loomis.py:154` |
 | functionality | test_the_eye_line_passes_through_both_eye_corners | `python/libs/image-tools/tests/test_loomis.py:162` |
-| functionality | test_the_construction_reloads_from_json_exactly | `python/libs/image-tools/tests/test_loomis.py:177` |
-| functionality | test_degenerate_anchors_are_refused | `python/libs/image-tools/tests/test_loomis.py:191` |
+| functionality | test_the_eye_line_wraps_around_a_nodding_head | `python/libs/image-tools/tests/test_loomis.py:192` |
+| functionality | test_the_construction_reloads_from_json_exactly | `python/libs/image-tools/tests/test_loomis.py:212` |
+| functionality | test_degenerate_anchors_are_refused | `python/libs/image-tools/tests/test_loomis.py:226` |
 | functionality | test_canal_finds_the_convergence_on_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:43` |
 | functionality | test_canal_horizon_sits_at_the_bridge | `python/libs/image-tools/tests/test_perspective_photographs.py:54` |
 | functionality | test_a_portrait_is_less_confident_than_an_architectural_scene | `python/libs/image-tools/tests/test_perspective_photographs.py:62` |
-| functionality | test_two_point_scene_finds_both_points_off_frame_and_unclamped | `python/libs/image-tools/tests/test_perspective.py:59` |
-| functionality | test_two_point_horizon_is_measured_through_both_points | `python/libs/image-tools/tests/test_perspective.py:74` |
-| functionality | test_verticals_and_parallels_are_not_reported_as_vanishing_points | `python/libs/image-tools/tests/test_perspective.py:86` |
-| functionality | test_one_point_horizon_is_level_and_says_it_was_assumed | `python/libs/image-tools/tests/test_perspective.py:93` |
-| functionality | test_portrait_orientation_converts_through_the_other_axis | `python/libs/image-tools/tests/test_perspective.py:106` |
-| functionality | test_output_does_not_depend_on_the_working_resolution | `python/libs/image-tools/tests/test_perspective.py:113` |
-| functionality | test_bgr_input_matches_grayscale | `python/libs/image-tools/tests/test_perspective.py:120` |
-| functionality | test_confidence_is_the_weakest_signal_and_names_it | `python/libs/image-tools/tests/test_perspective.py:129` |
-| functionality | test_a_clean_scene_is_confident | `python/libs/image-tools/tests/test_perspective.py:142` |
-| functionality | test_few_supporting_lines_lower_confidence_through_support | `python/libs/image-tools/tests/test_perspective.py:147` |
-| functionality | test_loose_convergence_lowers_confidence_through_angular_fit | `python/libs/image-tools/tests/test_perspective.py:157` |
-| functionality | test_clutter_alone_scores_far_below_real_structure | `python/libs/image-tools/tests/test_perspective.py:166` |
-| functionality | test_a_phantom_beside_real_structure_is_the_one_flagged | `python/libs/image-tools/tests/test_perspective.py:190` |
-| functionality | test_nothing_found_is_zero_confidence_not_none | `python/libs/image-tools/tests/test_perspective.py:213` |
-| functionality | test_artifact_confidence_is_its_weakest_feature | `python/libs/image-tools/tests/test_perspective.py:223` |
-| functionality | test_search_effort_does_not_buy_phantom_confidence | `python/libs/image-tools/tests/test_perspective.py:230` |
-| functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:256` |
-| functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:270` |
-| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_perspective.py:279` |
-| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:291` |
-| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:296` |
-| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:309` |
+| functionality | test_two_point_scene_finds_both_points_off_frame_and_unclamped | `python/libs/image-tools/tests/test_perspective.py:64` |
+| functionality | test_two_point_horizon_is_measured_through_both_points | `python/libs/image-tools/tests/test_perspective.py:79` |
+| functionality | test_verticals_and_parallels_are_not_reported_as_vanishing_points | `python/libs/image-tools/tests/test_perspective.py:91` |
+| functionality | test_one_point_horizon_is_level_and_says_it_was_assumed | `python/libs/image-tools/tests/test_perspective.py:98` |
+| functionality | test_portrait_orientation_converts_through_the_other_axis | `python/libs/image-tools/tests/test_perspective.py:111` |
+| functionality | test_output_does_not_depend_on_the_working_resolution | `python/libs/image-tools/tests/test_perspective.py:118` |
+| functionality | test_bgr_input_matches_grayscale | `python/libs/image-tools/tests/test_perspective.py:125` |
+| functionality | test_confidence_is_the_weakest_signal_and_names_it | `python/libs/image-tools/tests/test_perspective.py:134` |
+| functionality | test_a_clean_scene_is_confident | `python/libs/image-tools/tests/test_perspective.py:147` |
+| functionality | test_few_supporting_lines_lower_confidence_through_support | `python/libs/image-tools/tests/test_perspective.py:152` |
+| functionality | test_loose_convergence_lowers_confidence_through_angular_fit | `python/libs/image-tools/tests/test_perspective.py:162` |
+| functionality | test_clutter_alone_scores_far_below_real_structure | `python/libs/image-tools/tests/test_perspective.py:171` |
+| functionality | test_a_phantom_beside_real_structure_is_the_one_flagged | `python/libs/image-tools/tests/test_perspective.py:195` |
+| functionality | test_nothing_found_is_zero_confidence_not_none | `python/libs/image-tools/tests/test_perspective.py:218` |
+| functionality | test_artifact_confidence_is_its_weakest_feature | `python/libs/image-tools/tests/test_perspective.py:228` |
+| functionality | test_search_effort_does_not_buy_phantom_confidence | `python/libs/image-tools/tests/test_perspective.py:235` |
+| functionality | test_metadata_records_the_recipe | `python/libs/image-tools/tests/test_perspective.py:261` |
+| functionality | test_each_point_carries_the_segments_that_converge_on_it | `python/libs/image-tools/tests/test_perspective.py:278` |
+| functionality | test_the_floor_defaults_to_the_agreed_value | `python/libs/image-tools/tests/test_perspective.py:300` |
+| functionality | test_the_floor_holds_clutter_back_and_says_so | `python/libs/image-tools/tests/test_perspective.py:304` |
+| functionality | test_the_floor_keeps_real_structure | `python/libs/image-tools/tests/test_perspective.py:323` |
+| functionality | test_the_floor_is_recorded_and_can_be_switched_off | `python/libs/image-tools/tests/test_perspective.py:330` |
+| functionality | test_the_same_recipe_reproduces_the_same_result | `python/libs/image-tools/tests/test_perspective.py:339` |
+| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_perspective.py:348` |
+| functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:360` |
+| functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:365` |
+| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:378` |
 
 ## Vitest — 43
 

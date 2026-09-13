@@ -1,10 +1,16 @@
-"""The plate suite: one pipeline, three plates that correspond, and edges measured honestly.
+"""The plate suite: one pipeline, four plates, and edges measured honestly.
 
 Unlike detection, a plate is right or wrong by construction: a value map divides the photograph
-where its thresholds say, and an outline traces the value map's own boundaries or it has broken.
-So these assert exactly, on drawn scenes. The correspondence is asserted hardest — every contour
-point sits on an edge of the value map — because it is the guarantee the one-pipeline design
-exists to give, and an independent edge detector bolted on beside it would pass everything else.
+where its thresholds say, and value shapes trace the value map's own boundaries or they have
+broken. So these assert exactly, on drawn scenes. The correspondence is asserted hardest — every
+contour point sits on an edge of the value map — because it is the guarantee the one-pipeline
+design exists to give, and an independent edge detector bolted on beside it would pass
+everything else.
+
+The outline is the other half and is asserted differently, because it is allowed to miss things.
+What is pinned is that it misses the *right* things and says so: a straight edge comes back as a
+straight run rather than a trace, and a 2 L* silhouette comes back not at all while the
+value-shapes plate in the same suite still carries it. That pair is the reason both layers ship.
 """
 
 import cv2
@@ -17,7 +23,10 @@ from artloupe.image_tools import DETAIL_LEVELS, PlateParameters, PlateSuite, mak
 from artloupe.image_tools.plates import (
     LIMITATION_EMPTY_VALUE,
     LIMITATION_FITTED,
+    LIMITATION_LOW_CONTRAST,
     LIMITATION_NOTHING_ABSORBED,
+    LIMITATION_SHADOW_PASS,
+    LIMITATION_STRAIGHTENED,
     LIMITATION_SUPPLIED,
 )
 
@@ -44,7 +53,7 @@ def _plates(image: np.ndarray, **parameters: object) -> PlateSuite:
 
 
 def _only_contour_strength(image: np.ndarray) -> list[float]:
-    (contour,) = _plates(image, levels=2, thresholds=(50.0,)).outline.contours
+    (contour,) = _plates(image, levels=2, thresholds=(50.0,)).value_shapes.contours
     return contour.edge_strength
 
 
@@ -112,7 +121,7 @@ def test_an_absent_value_is_stated_not_hidden() -> None:
 
     assert 0.0 in plates.values.shares
     assert LIMITATION_EMPTY_VALUE in plates.values.metadata.limitations
-    assert plates.outline.contours == []
+    assert plates.value_shapes.contours == []
 
 
 def test_a_speck_below_min_region_is_absorbed() -> None:
@@ -120,7 +129,7 @@ def test_a_speck_below_min_region_is_absorbed() -> None:
     row, col = scenes.SPECK_CENTRE
 
     assert plates.values.labels[row, col] == 0
-    assert not any(contour.closed for contour in plates.outline.contours)
+    assert not any(contour.closed for contour in plates.value_shapes.contours)
 
 
 def test_min_region_zero_keeps_the_speck() -> None:
@@ -128,7 +137,7 @@ def test_min_region_zero_keeps_the_speck() -> None:
     row, col = scenes.SPECK_CENTRE
 
     assert plates.values.labels[row, col] == 2
-    assert any(contour.closed for contour in plates.outline.contours)
+    assert any(contour.closed for contour in plates.value_shapes.contours)
     # Nothing was absorbed, so nothing is claimed absorbed.
     assert not any(
         text.startswith("Value regions smaller") for text in plates.values.metadata.limitations
@@ -158,11 +167,11 @@ def test_grayscale_keeps_lightness_and_drops_colour() -> None:
     assert abs(int(np.median(red_side)) - int(np.median(grey_side))) <= 1
 
 
-# --- The outline -----------------------------------------------------------------------------
+# --- Value shapes ----------------------------------------------------------------------------
 
 
-def test_outline_lies_on_the_band_boundaries() -> None:
-    contours = _plates(scenes.three_bands()).outline.contours
+def test_value_shapes_lie_on_the_band_boundaries() -> None:
+    contours = _plates(scenes.three_bands()).value_shapes.contours
 
     assert sorted(contour.level for contour in contours) == [1, 2]
     for contour in contours:
@@ -173,7 +182,7 @@ def test_outline_lies_on_the_band_boundaries() -> None:
 
 def test_a_contour_meeting_the_frame_is_open_and_reaches_it() -> None:
     """The frame is not a value edge: a region that runs off the photograph stays open."""
-    for contour in _plates(scenes.three_bands()).outline.contours:
+    for contour in _plates(scenes.three_bands()).value_shapes.contours:
         assert not contour.closed
         top, bottom = sorted((contour.points[0].y, contour.points[-1].y))
         assert top == pytest.approx(0.5 / scenes.HEIGHT)
@@ -182,7 +191,7 @@ def test_a_contour_meeting_the_frame_is_open_and_reaches_it() -> None:
 
 
 def test_a_contour_clear_of_the_frame_is_closed() -> None:
-    (contour,) = _plates(scenes.disc(), levels=2).outline.contours
+    (contour,) = _plates(scenes.disc(), levels=2).value_shapes.contours
     cols = np.array([point.x * scenes.WIDTH for point in contour.points])
     rows = np.array([point.y * scenes.HEIGHT for point in contour.points])
     radii = np.hypot(cols - scenes.WIDTH / 2, rows - scenes.HEIGHT / 2)
@@ -200,9 +209,123 @@ def test_a_contour_clear_of_the_frame_is_closed() -> None:
 def test_every_contour_point_lies_on_an_edge_of_the_value_map(scene, levels: int) -> None:
     plates = _plates(scene(), levels=levels, min_region=0.0)
 
-    assert plates.outline.contours
-    for contour in plates.outline.contours:
+    assert plates.value_shapes.contours
+    for contour in plates.value_shapes.contours:
         assert scenes.off_boundary_points(plates.values.labels, contour) == []
+
+
+# --- The outline -----------------------------------------------------------------------------
+
+
+def test_a_straight_edge_is_reported_as_a_straight_run() -> None:
+    """A drawn rectangle's sides are straight, so the outline claims them rather than tracing."""
+    chains = _plates(scenes.straight_and_curved()).outline.chains
+    straight = [chain for chain in chains if chain.straight]
+
+    assert straight
+    for chain in straight:
+        # A straight run is a claim about geometry: two points, and the ends of a fitted line.
+        assert len(chain.points) == 2
+
+
+def test_a_tightly_curved_edge_is_traced_rather_than_straightened() -> None:
+    """The disc turns faster than a chord can follow, so it must come back traced.
+
+    Only a tight curve pins this. A large circle is legitimately chorded — see `TIGHT_RADIUS`.
+    """
+    chains = _plates(scenes.straight_and_curved()).outline.chains
+    around_the_disc = [chain for chain in chains if all(point.x > 0.5 for point in chain.points)]
+
+    assert around_the_disc
+    assert all(not chain.straight for chain in around_the_disc)
+    assert any(len(chain.points) > 2 for chain in around_the_disc)
+
+
+def test_straightening_is_declared_when_it_happened() -> None:
+    plates = _plates(scenes.straight_and_curved())
+
+    assert any(chain.straight for chain in plates.outline.chains)
+    assert LIMITATION_STRAIGHTENED in plates.outline.metadata.limitations
+
+
+def test_the_outline_cannot_see_a_two_lightness_step_and_says_so() -> None:
+    """The finding the two-layer design exists for, pinned as a test.
+
+    An edge detector needs a gradient. At the demo portrait's measured lightnesses — ground
+    L* 3.5, subject L* 5.4 — there is none to find, and the outline comes back empty over the
+    subject's edges. The value map's thresholds are fitted to the histogram, so the same suite
+    still carries the silhouette. If this test ever starts failing because the outline found the
+    box, the limitation it asserts is no longer true and must be rewritten, not deleted.
+    """
+    plates = _plates(scenes.low_contrast_subject(), levels=2)
+    left, top, width, height = scenes.LOW_CONTRAST_BOX
+    edges = {
+        "left": left / scenes.WIDTH,
+        "right": (left + width) / scenes.WIDTH,
+    }
+
+    # The value map found the subject: it is one of exactly two values, and it is traced.
+    assert plates.value_shapes.contours
+    traced_x = {
+        round(point.x, 2) for contour in plates.value_shapes.contours for point in contour.points
+    }
+    assert any(abs(found - edges["left"]) < 0.02 for found in traced_x)
+
+    # The outline did not, anywhere near either vertical edge of the box.
+    outline_x = [point.x for chain in plates.outline.chains for point in chain.points]
+    for edge in edges.values():
+        assert not any(abs(found - edge) < 0.02 for found in outline_x)
+    assert LIMITATION_LOW_CONTRAST in plates.outline.metadata.limitations
+
+
+def test_the_shadow_pass_is_off_at_gamma_one_and_declared_when_it_runs() -> None:
+    scene = scenes.straight_and_curved()
+
+    off = _plates(scene, shadow_gamma=1.0).outline
+    assert not any(chain.from_shadow_pass for chain in off.chains)
+    assert LIMITATION_SHADOW_PASS not in off.metadata.limitations
+
+    # The default runs the pass; whether it recovers anything on a given scene is the scene's
+    # business, but the claim and the flag must agree with each other.
+    on = _plates(scene).outline
+    recovered = [chain for chain in on.chains if chain.from_shadow_pass]
+    assert (LIMITATION_SHADOW_PASS in on.metadata.limitations) == bool(recovered)
+
+
+def test_a_scrap_shorter_than_min_chain_is_dropped() -> None:
+    """`min_chain` is the scrap filter: raise it and short chains go, long ones stay."""
+    scene = scenes.straight_and_curved()
+    kept = _plates(scene, min_chain=0.0).outline.chains
+    pruned = _plates(scene, min_chain=0.2).outline.chains
+
+    assert len(pruned) < len(kept)
+
+
+def test_every_flatten_filter_produces_an_outline() -> None:
+    for filter_name in ("domain_transform", "domain_transform_fast", "bilateral_texture", "none"):
+        chains = _plates(scenes.straight_and_curved(), flatten=filter_name).outline.chains
+
+        assert chains, f"{filter_name} produced no outline"
+
+
+def test_edge_strength_is_measured_on_the_photograph_not_the_flattened_copy() -> None:
+    """Flattening changes which edges are found; it must not change what they measure.
+
+    The step is a hard edge whatever filter precedes the trace, so a strength that moved with the
+    filter would be describing the filter. Compared on the value-shapes layer, which traces the
+    same photograph under every one of them.
+    """
+    strengths = {
+        name: max(
+            max(contour.edge_strength)
+            for contour in _plates(
+                scenes.step(), levels=2, thresholds=(50.0,), flatten=name
+            ).value_shapes.contours
+        )
+        for name in ("domain_transform", "bilateral_texture", "none")
+    }
+
+    assert len(set(strengths.values())) == 1
 
 
 # --- Edge measurement ------------------------------------------------------------------------
@@ -232,19 +355,32 @@ def test_the_recipe_reproduces_every_plate() -> None:
 
     assert np.array_equal(first.grayscale.image, second.grayscale.image)
     assert np.array_equal(first.values.labels, second.values.labels)
-    assert [contour.model_dump() for contour in first.outline.contours] == [
-        contour.model_dump() for contour in second.outline.contours
+    assert [contour.model_dump() for contour in first.value_shapes.contours] == [
+        contour.model_dump() for contour in second.value_shapes.contours
+    ]
+    assert [chain.model_dump() for chain in first.outline.chains] == [
+        chain.model_dump() for chain in second.outline.chains
     ]
 
 
 def test_each_plate_carries_its_own_metadata() -> None:
     params = PlateParameters(levels=5)
     plates = make_plates(scenes.three_bands(), source_checksum=CHECKSUM, parameters=params)
-    metadata = [plates.grayscale.metadata, plates.values.metadata, plates.outline.metadata]
+    metadata = [
+        plates.grayscale.metadata,
+        plates.values.metadata,
+        plates.value_shapes.metadata,
+        plates.outline.metadata,
+    ]
 
-    assert [entry.tool for entry in metadata] == ["grayscale", "value_map", "outline"]
+    assert [entry.tool for entry in metadata] == [
+        "grayscale",
+        "value_map",
+        "value_shapes",
+        "outline",
+    ]
     for entry in metadata:
-        assert entry.tool_version == f"2+opencv-{cv2.__version__}.numpy-{np.__version__}"
+        assert entry.tool_version == f"4+opencv-{cv2.__version__}.numpy-{np.__version__}"
         assert entry.parameters == params.model_dump()
         assert entry.source_checksum == CHECKSUM
         # Deterministic plates have no confidence to state; `None`, not 0.0.

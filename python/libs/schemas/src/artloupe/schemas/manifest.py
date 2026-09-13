@@ -13,12 +13,16 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 # Tools the graph can select in slice 1.
 #
-# The three plates share one pipeline — `value_map` posterises into two to ten values, and
-# `outline` traces the boundaries between those value regions rather than raw gradients, which
-# is why the two always correspond and why the outline carries no texture speckle.
+# The four plates share one pipeline. `value_map` posterises into two to ten values;
+# `value_shapes` traces the boundaries between those value regions, so it always corresponds to
+# the map and finds a boundary wherever the histogram has a gap, however shallow; `outline`
+# traces edges in a texture-flattened copy and fits straight runs as straight lines, so it is
+# clean where `value_shapes` wanders and blind where the photograph has no gradient to give.
+# They are selected separately because a run can want one and not the other.
 ToolName = Literal[
     "grayscale",
     "value_map",
+    "value_shapes",
     "outline",
     "head_construction",
     "perspective",
@@ -27,6 +31,7 @@ ToolName = Literal[
 TOOLS: tuple[str, ...] = (
     "grayscale",
     "value_map",
+    "value_shapes",
     "outline",
     "head_construction",
     "perspective",

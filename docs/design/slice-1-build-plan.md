@@ -50,8 +50,9 @@ policy promise.
 
 - **Deterministic plates only.** No image vendor, no second API key, no weights for plate
   generation, no terms-of-service surface, no ADR amendment.
-- **Slice 1 ships three plates from one pipeline**: grayscale, three-value posterization, and
-  **outline-derived-from-posterization**.
+- **Slice 1 ships four plates from one pipeline**: grayscale, a value map, **value shapes**
+  (the boundaries between values) and an **outline** (edges of a flattened copy, straight runs
+  fitted straight). The last two are separate layers because each sees what the other cannot.
 - **Full computer vision** for geometry: face landmarks and line/vanishing-point detection with
   per-feature confidence. Accuracy is **not** tuned or validated against a gold set — low
   accuracy is acceptable — but confidence values must be real, because they drive the interrupt.
@@ -63,17 +64,32 @@ policy promise.
 - **Backlog, not build:** the transfer grid, the proportion-overlay view, and the
   trace-then-paint use case an artist friend raised.
 
-## The outline-from-posterization idea
+## The two line layers
 
-Canny and XDoG disappoint because they trace *every* gradient, so texture, noise, and grain all
-become lines — the speckle Laurie had already hit. Instead: posterize to N values first, then
-trace the boundaries **between value regions**.
+Posterizing to N values and tracing the boundaries **between value regions** gives closed,
+registered, deterministic contours that follow where the light changes rather than where the
+texture does — and the detail presets fall out of the same parameter, so the value plate and the
+contours are guaranteed to correspond.
 
-The result is closed, clean, meaningful contours, because it traces where the light changes
-rather than where the texture does. Fully deterministic, perfectly registered, no weights, no
-vendor. The detail presets fall out of the same parameter — a 3-value map gives a coarse
-outline, a 7-value map a fine one — so one tool serves both the value plate and the outline
-plate, and the two are guaranteed to correspond.
+Built and reviewed, it had one flaw that tuning could not reach: **a threshold crossing on a
+smooth gradient is not an edge**, so buildings came out wiggly. Five alternatives were compared
+on both demo photographs and the review chose edge-tracing instead
+(`../tool-demo/observations.md` §8). Rebuilding it turned up why **both** layers ship
+(§9, 2026-09-13):
+
+- **Value shapes** — the original contours, kept. Thresholds are fitted to the photograph's own
+  histogram, so a boundary is found wherever that histogram has a gap, **however shallow**. This
+  is the layer that carries a low-key silhouette.
+- **The outline** — edges of a texture-flattened copy, vectorised, with long straight runs fitted
+  as true straight lines. Buildings straight, windows rectangular. An edge detector needs a
+  gradient, so a boundary of about **2 L\* or less is invisible to it**: measured on the demo
+  portrait, the silhouette it misses is ground L\* 3.5 against jacket 5.4 and hair 4.8.
+
+Neither replaces the other, and the outline records the blindness as a limitation rather than
+implying coverage it does not have. Implementation notes: OpenCV's Edge Drawing supplies chains
+and fitted lines in one 2–8 ms pass; the flattening filter is a parameter defaulting to the
+domain transform, whose cost — unlike the L0 smoothing first prototyped, which ranged 0.7 s to
+8.6 s on the same two photographs — does not depend on the picture.
 
 ## Transport and deployment — settled
 
@@ -128,7 +144,7 @@ must land before any handler carries a payload.
 | 5 | Storage + RLS + `projects` table + checksum + signed-URL helper (no HTTP path yet) | Done (#20) | Database-shaped and independently reviewable |
 | 6 | Route-handler gating — `api` matcher policy, per-handler `getSession()`, `route-gate-matrix.md` rows, read-through image route | Done (#29) | The first route handler is ungated by construction |
 | 7 | Upload + intake + EXIF/filename/OCR screening **at ingest** + fixture fallback when `ARTLOUPE_AGENT_URL` is unset | Done (#31, #37) | FR-106/803 require screening before any model sees the bytes; the fallback keeps Playwright hermetic |
-| 8 | Plate suite — grayscale, three-value posterization, outline-from-posterization, all from one pipeline, emitting FR-305 metadata | Done (#44, refined in #49); the outline method is being replaced | No dependency fight, no vendor, and the three plates visibly relate because they share a parameter |
+| 8 | Plate suite — grayscale, value map, value shapes, outline, all from one pipeline, emitting FR-305 metadata | Done (#44, refined in #49, outline rebuilt as its own layer) | No dependency fight, no vendor, and the plates visibly relate because they share a parameter |
 | 9 | Overlay primitives in `packages/fascia`, built against a fixture image — keyboard path, 24 px targets, non-drag alternative, own a11y tests | Done (#21) | Largest net-new UI in the slice, zero existing primitives, zero dependency on CV output |
 | 10 | Face landmarks + Loomis + confidence — MediaPipe Tasks, **no torch** | Done (#46, refined in #49) | Isolates the one dependency-resolution risk so a red CI means only that |
 | 11 | Line + VP detection + confidence — OpenCV LSD + sequential RANSAC, in `python/libs/image-tools` | Done (#41) | Independent of 10 |

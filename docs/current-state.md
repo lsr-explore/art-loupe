@@ -1,6 +1,6 @@
 # Current state
 
-**Updated:** 2026-09-11
+**Updated:** 2026-09-13
 
 ## 1. Snapshot
 
@@ -10,7 +10,7 @@
 - **face landmarks with a Loomis construction** (PR 10);
 - **perspective** (PR 11).
 
-A demo of all three drove one refinement pass (#49). None of the tools is wired into the run yet; PR 12 does that, and nothing draws them until PR 13.
+A demo of all three drove one refinement pass (#49), and the outline has since been rebuilt as its own layer beside the value contours. None of the tools is wired into the run yet; PR 12 does that, and nothing draws them until PR 13.
 
 Art Loupe turns a reference photograph into a medium-aware, time-boxed working plan where every
 claim is **measured** (a pixel fact), **cited** (an instructional source), or **chosen** (a
@@ -28,7 +28,7 @@ The same status lives in the ladder table in
 | 5 | `projects`, immutable `source_images`, RLS, storage helpers | merged (#20) |
 | 6 | route-handler gating + issue #22 complete deletion | merged (#29) |
 | 7 | upload, intake, screening, intake form, browser e2e | merged (#31, #37) |
-| 8 | plate suite: grayscale, value map, outline | merged (#44, #49); **outline method being replaced** |
+| 8 | plate suite: grayscale, value map, value shapes, outline | merged (#44, #49); **outline rebuilt, not yet in a PR** |
 | 9 | overlay primitives in `packages/fascia` | merged (#21) |
 | 10 | face landmarks + Loomis + `facial_landmark_reliability` | merged (#46, #49) |
 | 11 | line + vanishing-point detection with confidence | merged (#41, #49) |
@@ -42,7 +42,9 @@ The same status lives in the ladder table in
   are recorded as rows, not left out.
 - **`artloupe.image_tools` has three tools.** Each emits FR-305 metadata, and each result reloads
   from JSON exactly.
-  - `make_plates`: grayscale, a value map of 2 to 10 values (5 by default), and value contours.
+  - `make_plates`: grayscale, a value map of 2 to 10 values (5 by default), **value shapes**
+    (contours between the values) and an **outline** (edges of a flattened copy, long straight
+    runs fitted straight). Both line layers ship because each sees what the other cannot.
   - `detect_perspective`: up to two vanishing points, each with its supporting segments.
     Candidates below a 0.35 confidence floor are held back.
   - `construct_head`: MediaPipe face landmarks, a Loomis construction, and a derived
@@ -55,9 +57,6 @@ The same status lives in the ladder table in
 
 **The graph still runs no agent and calls no tool.** `graph.py` is `START → seed → END`. The
 tools run only from tests and the demo scripts. The project page is still a stub.
-
-**The outline plate traces value thresholds, so buildings come out wiggly.** Its replacement is
-chosen but not built.
 
 **Perspective confidence does not yet separate real structure from coincidence on photographs.**
 The floor holds the portrait's clutter back. The interrupt threshold is still PR 13's call, to be
@@ -96,24 +95,20 @@ set against photographs.
 **State:** slice 1, PRs 1-11 merged; `main` at `9d09bb8`. No open PRs, no worktrees. Filed
 2026-09-11: #45 (P3), #47 (P2), #48 (P3), #50 (P2).
 
-**Next step: the outline rework**, in `python/libs/image-tools` (Laurie, 2026-09-11, chosen from
-`../tool-demo/outline-options-*.png`):
+**The outline rework is done in the working tree, not yet a PR.** `make_plates` now returns four
+plates. `value_shapes` is the old contour layer under its own name and tool id; `outline` is new —
+Edge Drawing over a flattened copy, straight runs fitted straight, `edge_strength` measured on the
+photograph's own L\* rather than the flattened copy. `flatten` is a parameter
+(`domain_transform` default, 278 ms and content-independent; L0 was 0.7–8.6 s and is gone) and
+`shadow_gamma` runs a second pass over shadows expanded **before** flattening, flagged
+`from_shadow_pass`. `value_shapes` joins `ToolName` in both mirrored schemas. Algorithm version
+4; full suite ~950 ms on the canal, ~830 ms on the portrait.
+Verified: `pnpm check:all`, `depcruise`, `size`, `circular`, `uv run --directory python poe check`
+(only the five known #48 persistence failures).
 
-- **New outline:** edges of an L0-flattened photograph, with Canny, scraps dropped, vectorised
-  into polylines. Long straight runs are fitted as true straight lines, and everything is drawn in
-  one ink.
-- **Value contours stay** as a separate "value shapes" layer; they carry the reflections and
-  shadow shapes. The invariant that every contour point lies on a value edge moves with them.
-- **Still open:**
-  - L0 took 8.7 s on the canal at 1024 px. Try faster edge-preserving filters.
-  - An `edge_strength` for edges.
-  - The vectoriser.
-- **Prototype:** `../tool-demo/scripts/outline_options.py`, a throwaway using
-  `cv2.ximgproc.l0Smooth(img, None, 0.02, 2.0)`, Canny 30/80 and `createFastLineDetector`.
-  `tool_demo_v2.py` re-renders the review sheets.
-
-After that: **PR 12, routing**. The deterministic face gate feeds the manifest, and `find_face`
-returning `None` is the declination.
+**Next step: PR 12, routing.** The deterministic face gate feeds the manifest, and `find_face`
+returning `None` is the declination. The manifest can now select or decline the two line layers
+independently, which is a real FR-307 decision rather than a formality.
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Never generates
 imagery. Artwork critique is **cut**; the **Plan Critic** is **kept**.
@@ -140,6 +135,14 @@ imagery. Artwork critique is **cut**; the **Plan Critic** is **kept**.
   (#43).
 - **Geometry confidence is the `min` of its signals**, and `weakest` names the one that decided.
 - **Vanishing points are unclamped** normalized coordinates, and are routinely off-frame.
+- **Both line layers ship, because neither covers the other.** Value shapes find a boundary
+  wherever the fitted histogram has a gap, however shallow; the outline needs a gradient and is
+  blind below about 2 L\*. Measured on the demo portrait: ground 3.5, jacket 5.4, hair 4.8.
+- **Detect on the flattened copy, measure on the photograph.** An `edge_strength` that moved with
+  the flattening filter would be describing the filter.
+- **Expand shadows before flattening, never after.** Flattening is what erases a low-contrast
+  boundary; gamma applied to an already-flattened copy has nothing left to lift. Backwards, it
+  cost the demo portrait's shadowed eye outright.
 - **Pose is framing-corrected** (`FRAMING_VFOV_DEG` 26), and the detector's own angles travel
   beside it. Near-frontal yaw is over-corrected by about 5°, which is disclosed.
 - **Results reload from JSON exactly.** Computed fields are dropped on reload and derived again.

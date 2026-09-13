@@ -1,10 +1,31 @@
-"""The plate suite: grayscale, a value map, and value contours — three plates from one pipeline.
+"""The plate suite: grayscale, a value map, value shapes, and an outline — one pipeline.
 
-FR-301 asks for a grayscale study, value maps, and a structural outline at detail presets. Here
-they are one pipeline rather than three tools: the value map posterizes lightness into `levels`
-values, and the outline traces the boundaries *between* those values rather than raw gradients.
-So the outline carries no texture speckle, and the two always correspond — every contour is an
-edge of the value map it was traced from, by construction.
+FR-301 asks for a grayscale study, value maps, and a structural outline at detail presets. They
+are one pipeline rather than four tools, sharing one recorded recipe.
+
+**Two line layers, and they answer different questions.** The distinction is not taste; it is
+what each method can see.
+
+- **Value shapes** trace the boundaries *between* the value map's values. Every point sits on an
+  edge of the value map it was traced from, by construction, so the two always correspond. Because
+  the thresholds are fitted to this photograph's own histogram, a boundary is found wherever the
+  histogram has a gap — *however shallow*. That is what carries a low-key silhouette. The cost is
+  that a threshold crossing on a smooth gradient is not an edge in the photograph, so the lines
+  wander: a building traced this way comes out wiggly.
+- **The outline** traces edges in a flattened copy of the photograph and fits long straight runs
+  as true straight lines. Buildings come out straight and windows come out rectangular. The cost
+  is the mirror image: an edge detector needs a gradient, and below roughly 2 L* there is none to
+  find, so a low-key silhouette is invisible to it (`LIMITATION_LOW_CONTRAST`). A second pass over
+  gamma-expanded shadows recovers part of it — `shadow_gamma` — and is honest that it is partial.
+
+Measured on the demo portrait, the silhouette its outline misses is a 2 L* step: background 3.5,
+jacket 5.4, hair 4.8. That is about five 8-bit code values, which is why no threshold on the
+detector reaches it and why both layers ship (Laurie, 2026-09-13).
+
+**Detection and measurement run on different images, deliberately.** Edges are *found* in the
+flattened — and for the shadow pass, gamma-expanded — copy, because that is what suppresses
+texture. `edge_strength` is *measured* on the photograph's own unflattened L*, in the same units
+for both layers, so a measurement never describes the filter instead of the photograph.
 
 **Lightness is CIELAB L\\***, not luma. L* is close to what a painter means by value: equal steps
 look like equal steps. The grayscale plate keeps each pixel's L* and drops its colour, so a
@@ -42,7 +63,7 @@ from artloupe.schemas.artifact import ArtifactMetadata
 from artloupe.schemas.evidence import Checksum
 
 # Bump when the algorithm or any constant below changes what a given input produces.
-PLATES_ALGORITHM_VERSION = "2"
+PLATES_ALGORITHM_VERSION = "4"
 
 MIN_LEVELS = 2
 MAX_LEVELS = 10
@@ -71,6 +92,37 @@ _EDGE_SIGMA = 0.001
 # photographs, segments span roughly 2 to 180.
 SOFT_EDGE_GRADIENT = 1.0
 HARD_EDGE_GRADIENT = 100.0
+
+# How the outline's edges are flattened before they are traced. Texture — brick, ripple, grain,
+# fabric — is what an edge detector otherwise turns into hundreds of short chains, so the choice
+# is between how much of it goes and how long that takes. Measured on the canal at 1024 px, in
+# time and in the chains that survive (`../tool-demo/observations.md` §9):
+#
+#   domain_transform       278 ms   231 chains    the default
+#   domain_transform_fast  111 ms   244 chains
+#   bilateral_texture      523 ms   172 chains    suppresses the most
+#   none                     0 ms   345 chains
+#
+# `domain_transform` is the default because its cost does not depend on the picture. The L0
+# smoothing this replaced took 8.6 s on the canal and 0.7 s on the portrait — its iteration count
+# follows the content, so it could not be promised against NFR-01 at any size.
+FlattenFilter = Literal["domain_transform", "domain_transform_fast", "bilateral_texture", "none"]
+
+# Edge Drawing's parameters. It is used rather than Canny because it returns edge chains as
+# ordered point lists and fitted straight lines from one pass, which is the outline's whole
+# shape: no raster to re-trace, and no separate line detector to disagree with the chains.
+_EDGE_MIN_PATH_LENGTH = 40
+_EDGE_GRADIENT_THRESHOLD = 36
+_EDGE_ANCHOR_THRESHOLD = 8
+_EDGE_MIN_LINE_LENGTH = 20
+_EDGE_LINE_FIT_ERROR = 1.4
+
+# How wide a fitted straight line claims the chain beneath it, in pixels. A chain run under this
+# stencil is emitted as the straight line; everything else is emitted as the traced polyline.
+_STRAIGHT_COVER_PX = 7
+
+# A shadow-pass run must be this far clear of an already-drawn edge to count as new, in pixels.
+_SHADOW_CLEARANCE_PX = 4
 
 LIMITATION_SRGB = (
     "Lightness is computed as if the pixels are sRGB. An embedded colour profile is not visible "
@@ -109,6 +161,26 @@ LIMITATION_FRAME = (
     "Contours stop at the frame. A value region that continues beyond the photograph is left "
     "open rather than closed along its edge."
 )
+LIMITATION_LOW_CONTRAST = (
+    "The outline traces edges, so it finds a boundary only where lightness changes across it. A "
+    "boundary of about 2 L* or less — a dark subject against a dark ground — has no gradient to "
+    "find and is not traced. The value-shapes plate carries those boundaries instead."
+)
+LIMITATION_SHADOW_PASS = (
+    "Shadows were traced a second time from a copy whose dark end was gamma-expanded before "
+    "texture was flattened, so edges in the dark part of the photograph are found that a single "
+    "pass misses. The recovery is partial, and where a shadow is near the sensor's noise floor "
+    "the pass can trace noise as an edge."
+)
+LIMITATION_STRAIGHTENED = (
+    "A run the fitter judged straight is reported as a straight line between its ends, not as "
+    "the pixels traced. Its points are a fit to the photograph, not positions measured in it."
+)
+LIMITATION_FLATTENED = (
+    "Edges are found in a texture-flattened copy of the photograph, so a boundary carried only "
+    "by texture — one fabric against another at the same lightness — is not traced. "
+    "edge_strength is measured on the photograph itself, not on the flattened copy."
+)
 
 
 def _limitation_small_regions(min_region: float) -> str:
@@ -138,8 +210,17 @@ class PlateParameters(BaseModel):
     smoothing: float = Field(default=0.0025, ge=0.0, le=0.02)
     # Value regions smaller than this fraction of the image are absorbed into a neighbour.
     min_region: float = Field(default=0.0005, ge=0.0, le=0.05)
-    # Contours are simplified to within this distance, as a fraction of the long edge.
+    # Contours and chains are simplified to within this distance, as a fraction of the long edge.
     simplify: float = Field(default=0.001, ge=0.0, le=0.01)
+    # Which filter flattens texture before the outline's edges are traced (`FlattenFilter`).
+    flatten: FlattenFilter = "domain_transform"
+    # Gamma applied to the photograph before it is flattened for the outline's second, shadow
+    # pass: below 1 it expands the dark end, where a low-key boundary lives. 1.0 turns the pass
+    # off and the outline is one pass over the flattened photograph. 0.45 recovers the demo
+    # portrait's shadowed eye, hair mass and collar, and is the default.
+    shadow_gamma: float = Field(default=0.45, ge=0.1, le=1.0)
+    # An outline chain shorter than this fraction of the diagonal is dropped as a scrap.
+    min_chain: float = Field(default=0.03, ge=0.0, le=0.2)
 
     @model_validator(mode="after")
     def _thresholds_fit_levels(self) -> "PlateParameters":
@@ -210,10 +291,57 @@ class ValueContour(BaseModel):
         return self
 
 
-class OutlinePlate(BaseModel):
+class ValueShapesPlate(BaseModel):
+    """Boundaries between the value map's values: the reflections and the shadow shapes.
+
+    This is what the outline used to be. It keeps the correspondence guarantee — every point of
+    every contour lies on an edge of the value map in the same suite — and with it the ability to
+    find a boundary the outline's edge detector cannot see.
+    """
+
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     contours: list[ValueContour]
+    metadata: ArtifactMetadata
+
+
+class EdgeChain(BaseModel):
+    """One traced edge of the photograph, in the overlay's normalized coordinates."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    points: list[NormalizedPoint] = Field(min_length=2)
+    # True when the last point joins the first.
+    closed: bool
+    # True when the fitter judged this run straight, in which case it is two points and a claim
+    # about the photograph's geometry rather than a trace of it (`LIMITATION_STRAIGHTENED`).
+    straight: bool
+    # True when this chain was found only by the shadow pass (`shadow_gamma`), so a consumer can
+    # tell a boundary recovered from the dark end from one the photograph stated plainly.
+    from_shadow_pass: bool
+    # One per segment, in order; a closed chain's last segment joins its last point to its first.
+    # The median L* gradient along the edge, in L* per 1% of the long edge — measured on the
+    # photograph's own lightness, not the flattened copy the edge was found in — and the same
+    # scaled to `[0, 1]`. Same units and same scale as `ValueContour`, so the two compare.
+    edge_gradient: list[float]
+    edge_strength: list[float]
+
+    @model_validator(mode="after")
+    def _one_measurement_per_segment(self) -> "EdgeChain":
+        segments = len(self.points) if self.closed else len(self.points) - 1
+        if not len(self.edge_gradient) == len(self.edge_strength) == segments:
+            raise ValueError(f"expected {segments} segment measurements")
+        if self.closed and len(self.points) < 3:
+            raise ValueError("a closed chain needs at least three points")
+        if self.straight and len(self.points) != 2:
+            raise ValueError("a straight run is two points")
+        return self
+
+
+class OutlinePlate(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    chains: list[EdgeChain]
     metadata: ArtifactMetadata
 
 
@@ -222,6 +350,7 @@ class PlateSuite(BaseModel):
 
     grayscale: GrayscalePlate
     values: ValuePlate
+    value_shapes: ValueShapesPlate
     outline: OutlinePlate
 
 
@@ -453,6 +582,246 @@ def _trace(
     return contours
 
 
+def _flatten(bgr: NDArray[np.uint8], filter_name: FlattenFilter) -> NDArray[np.uint8]:
+    """Suppress texture while keeping edges where they are, so a trace follows form not grain."""
+    if filter_name == "domain_transform":
+        return cv2.edgePreservingFilter(bgr, flags=cv2.NORMCONV_FILTER, sigma_s=60, sigma_r=0.4)
+    if filter_name == "domain_transform_fast":
+        return cv2.edgePreservingFilter(bgr, flags=cv2.RECURS_FILTER, sigma_s=60, sigma_r=0.4)
+    if filter_name == "bilateral_texture":
+        return cv2.ximgproc.bilateralTextureFilter(bgr, 5, 3)
+    return bgr
+
+
+def _detect_edges(grey: NDArray[np.uint8]) -> tuple[list[NDArray[np.intc]], NDArray[np.float32]]:
+    """Edge Drawing: chains as ordered point lists, and the runs it fitted as straight lines."""
+    detector = cv2.ximgproc.createEdgeDrawing()
+    params = cv2.ximgproc.EdgeDrawing.Params()
+    params.MinPathLength = _EDGE_MIN_PATH_LENGTH
+    params.PFmode = False
+    params.GradientThresholdValue = _EDGE_GRADIENT_THRESHOLD
+    params.AnchorThresholdValue = _EDGE_ANCHOR_THRESHOLD
+    params.MinLineLength = _EDGE_MIN_LINE_LENGTH
+    params.LineFitErrorThreshold = _EDGE_LINE_FIT_ERROR
+    params.NFAValidation = True
+    detector.setParams(params)
+    detector.detectEdges(grey)
+    chains = [np.asarray(chain, dtype=np.intc) for chain in detector.getSegments()]
+    lines = detector.detectLines()
+    fitted = np.empty((0, 4), dtype=np.float32) if lines is None else lines.reshape(-1, 4)
+    return chains, fitted
+
+
+def _traced_length(chain: NDArray[np.intc]) -> float:
+    if len(chain) < 2:
+        return 0.0
+    return float(np.sum(np.hypot(*np.diff(chain.astype(np.float64), axis=0).T)))
+
+
+def _stencil(shape: tuple[int, int], strokes, width: int) -> NDArray[np.uint8]:
+    """A mask of everything already claimed, so the next pass only adds what is genuinely new."""
+    mask = np.zeros(shape, dtype=np.uint8)
+    for stroke in strokes:
+        cv2.polylines(mask, [np.asarray(stroke, dtype=np.intc)], False, 255, width)
+    return mask
+
+
+def _along(start: NDArray[np.intc], end: NDArray[np.intc]) -> NDArray[np.intc]:
+    """Every pixel a straight run passes through, so it can be tested against a stencil."""
+    steps = max(2, int(round(float(np.hypot(end[0] - start[0], end[1] - start[1]))))) + 1
+    return (
+        np.stack(
+            [np.linspace(start[0], end[0], steps), np.linspace(start[1], end[1], steps)], axis=1
+        )
+        .round()
+        .astype(np.intc)
+    )
+
+
+def _uncovered_fraction(points: NDArray[np.intc], covered: NDArray[np.uint8]) -> float:
+    height, width = covered.shape
+    inside = covered[np.clip(points[:, 1], 0, height - 1), np.clip(points[:, 0], 0, width - 1)] > 0
+    return float(np.mean(~inside))
+
+
+def _uncovered_runs(chain: NDArray[np.intc], covered: NDArray[np.uint8]) -> list[NDArray[np.intc]]:
+    """The stretches of a chain the stencil has not already claimed.
+
+    Split rather than accept-or-reject the whole chain: a chain that runs along an edge another
+    pass already drew and then on to one it missed is common — on the demo portrait it is most of
+    the silhouette — and judging it by its average coverage throws the new part away with it.
+    """
+    height, width = covered.shape
+    inside = covered[np.clip(chain[:, 1], 0, height - 1), np.clip(chain[:, 0], 0, width - 1)] > 0
+    edges = np.flatnonzero(np.diff(np.concatenate(([0], (~inside).astype(np.int8), [0]))))
+    return [chain[start:stop] for start, stop in zip(edges[0::2], edges[1::2], strict=True)]
+
+
+def _measure(
+    run: NDArray[np.intc], vertices: NDArray[np.intc], gradient: NDArray[np.float32], closed: bool
+) -> tuple[list[float], list[float]]:
+    """Each simplified segment's gradient, taken along the stretch of chain it stands for."""
+    indices = _vertex_indices(run, vertices, closed)
+    samples = gradient[run[:, 1], run[:, 0]]
+    gradients = _segment_gradients(samples, indices, closed)
+    return gradients, [_strength(value) for value in gradients]
+
+
+def _chain_from(
+    points: NDArray[np.intc],
+    run: NDArray[np.intc],
+    gradient: NDArray[np.float32],
+    shape: tuple[int, int],
+    *,
+    straight: bool,
+    closed: bool,
+    from_shadow_pass: bool,
+) -> EdgeChain | None:
+    height, width = shape
+    if len(points) < (3 if closed else 2):
+        return None
+    gradients, strengths = _measure(run, points, gradient, closed)
+    return EdgeChain(
+        points=[
+            NormalizedPoint(x=(col + 0.5) / width, y=(row + 0.5) / height)
+            for col, row in points.tolist()
+        ],
+        closed=closed,
+        straight=straight,
+        from_shadow_pass=from_shadow_pass,
+        edge_gradient=gradients,
+        edge_strength=strengths,
+    )
+
+
+def _outline_pass(
+    grey: NDArray[np.uint8],
+    gradient: NDArray[np.float32],
+    tolerance_px: float,
+    min_length: float,
+    *,
+    already: NDArray[np.uint8] | None,
+    from_shadow_pass: bool,
+) -> tuple[list[EdgeChain], list[NDArray[np.intc]]]:
+    """One detection pass, straight runs separated from traced ones.
+
+    A run under a fitted straight line is emitted as that line — two points, `straight` — and the
+    rest of the chain is emitted as the polyline it was traced as. That is the "one ink, straight
+    where the photograph is straight" the review settled on: straightness is a fit, not a colour.
+    """
+    shape = grey.shape[:2]
+    chains, lines = _detect_edges(grey)
+    claimed = _stencil(shape, [line.reshape(2, 2) for line in lines], _STRAIGHT_COVER_PX)
+
+    produced: list[EdgeChain] = []
+    drawn: list[NDArray[np.intc]] = []
+
+    for start_x, start_y, end_x, end_y in lines:
+        ends = np.array([[start_x, start_y], [end_x, end_y]], dtype=np.intc)
+        # A straight run is one geometric claim, so it is kept or dropped whole rather than cut
+        # into new fragments: half a fitted line is not a shorter fitted line.
+        if already is not None and _uncovered_fraction(_along(ends[0], ends[1]), already) < 0.5:
+            continue
+        # A straight run's own pixels are the line it was fitted to, so it measures itself.
+        line = _chain_from(
+            ends,
+            ends,
+            gradient,
+            shape,
+            straight=True,
+            closed=False,
+            from_shadow_pass=from_shadow_pass,
+        )
+        if line is not None:
+            produced.append(line)
+            drawn.append(ends)
+
+    for chain in chains:
+        # `min_chain` drops scraps — whole short chains — and is applied to the chain as traced,
+        # before it is cut at the straight runs. Applying it to the pieces instead would discard
+        # the short fragments that join one straight run to the next, which on the canal is the
+        # rigging, the mooring poles and the boats.
+        if _traced_length(chain) < min_length:
+            continue
+        for run in _uncovered_runs(chain, claimed):
+            # The shadow pass alone re-filters, because there its short new pieces are as likely
+            # to be sensor noise lifted by the gamma as they are to be edges.
+            parts = (
+                [run]
+                if already is None
+                else [
+                    part
+                    for part in _uncovered_runs(run, already)
+                    if _traced_length(part) >= min_length
+                ]
+            )
+            for part in parts:
+                closed = bool(np.array_equal(part[0], part[-1])) and len(part) >= 4
+                body = part[:-1] if closed else part
+                simplified = cv2.approxPolyDP(body.reshape(-1, 1, 2), tolerance_px, closed)
+                traced = _chain_from(
+                    simplified[:, 0, :],
+                    body,
+                    gradient,
+                    shape,
+                    straight=False,
+                    closed=closed,
+                    from_shadow_pass=from_shadow_pass,
+                )
+                if traced is not None:
+                    produced.append(traced)
+                    drawn.append(body)
+
+    return produced, drawn
+
+
+def _expand_shadows(bgr: NDArray[np.uint8], gamma: float) -> NDArray[np.uint8]:
+    """Lift the dark end before anything else looks at it.
+
+    Gamma rather than a linear stretch because it expands the shadows without clipping the
+    highlights, so a photograph that is not low-key is barely touched.
+    """
+    return np.clip(np.power(bgr.astype(np.float32) / 255.0, gamma) * 255.0, 0.0, 255.0).astype(
+        np.uint8
+    )
+
+
+def _outline(
+    bgr: NDArray[np.uint8],
+    gradient: NDArray[np.float32],
+    params: PlateParameters,
+    long_edge: int,
+    shape: tuple[int, int],
+) -> tuple[list[EdgeChain], bool]:
+    """The outline: one pass over the flattened photograph, then optionally over its shadows.
+
+    **The shadow pass expands the shadows _before_ flattening, not after.** The order is the
+    whole point of the pass and it was wrong once: flattening is what erases a low-contrast
+    boundary, so gamma applied to an already-flattened copy has nothing left to recover. On the
+    demo portrait that cost the sitter's shadowed eye — the lit eye drew in full, the shadowed
+    one produced no chain at all, while `flatten="none"` found it easily. Expanding first lets
+    the filter see the shadow's contrast and keep it.
+    """
+    tolerance_px = params.simplify * long_edge
+    min_length = params.min_chain * float(np.hypot(*shape))
+    grey = _grey_for_lightness(_lightness(_flatten(bgr, params.flatten)))
+
+    chains, drawn = _outline_pass(
+        grey, gradient, tolerance_px, min_length, already=None, from_shadow_pass=False
+    )
+    if params.shadow_gamma >= 1.0:
+        return chains, False
+
+    expanded = _grey_for_lightness(
+        _lightness(_flatten(_expand_shadows(bgr, params.shadow_gamma), params.flatten))
+    )
+    already = _stencil(shape, drawn, _SHADOW_CLEARANCE_PX * 2 + 1)
+    recovered, _ = _outline_pass(
+        expanded, gradient, tolerance_px, min_length, already=already, from_shadow_pass=True
+    )
+    return [*chains, *recovered], bool(recovered)
+
+
 def _elapsed_ms(started: float) -> int:
     return round((time.perf_counter() - started) * 1000)
 
@@ -463,7 +832,7 @@ def make_plates(
     source_checksum: Checksum,
     parameters: PlateParameters | None = None,
 ) -> PlateSuite:
-    """Grayscale, value map and outline, from one pass over the photograph.
+    """Grayscale, value map, value shapes and outline, from one pass over the photograph.
 
     `image` is a uint8 grayscale or BGR array, already in its displayed orientation.
     `source_checksum` is the FR-105 checksum of the upload it was decoded from. Each plate's
@@ -526,16 +895,16 @@ def make_plates(
         ),
     )
 
-    contours = _trace(
-        labels,
-        params.levels,
-        _edge_gradient(lightness, long_edge),
-        params.simplify * long_edge,
-    )
-    outline = OutlinePlate(
+    # One gradient field, measured on the photograph's own lightness, serves both line layers.
+    # Both therefore report edge_strength in the same units on the same scale, and neither
+    # reports a property of a filtered copy.
+    gradient = _edge_gradient(lightness, long_edge)
+
+    contours = _trace(labels, params.levels, gradient, params.simplify * long_edge)
+    value_shapes = ValueShapesPlate(
         contours=contours,
         metadata=ArtifactMetadata(
-            tool="outline",
+            tool="value_shapes",
             tool_version=version,
             parameters=recorded,
             source_checksum=source_checksum,
@@ -551,4 +920,31 @@ def make_plates(
             ],
         ),
     )
-    return PlateSuite(grayscale=grayscale, values=values, outline=outline)
+
+    chains, used_shadow_pass = _outline(bgr, gradient, params, long_edge, (height, width))
+    outline_limitations = [
+        LIMITATION_SRGB,
+        LIMITATION_FLATTENED,
+        LIMITATION_LOW_CONTRAST,
+        LIMITATION_STRENGTH_MIXES,
+        LIMITATION_NO_OBJECTS,
+    ]
+    if any(chain.straight for chain in chains):
+        outline_limitations.append(LIMITATION_STRAIGHTENED)
+    if used_shadow_pass:
+        outline_limitations.append(LIMITATION_SHADOW_PASS)
+    outline = OutlinePlate(
+        chains=chains,
+        metadata=ArtifactMetadata(
+            tool="outline",
+            tool_version=version,
+            parameters=recorded,
+            source_checksum=source_checksum,
+            duration_ms=_elapsed_ms(started),
+            confidence=None,
+            limitations=outline_limitations,
+        ),
+    )
+    return PlateSuite(
+        grayscale=grayscale, values=values, value_shapes=value_shapes, outline=outline
+    )
