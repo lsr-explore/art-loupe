@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-13",
+  "label": "Outline rebuilt from edges as its own layer beside value shapes; a flatten parameter and a shadow pass whose order was wrong; a licensing review that found the acknowledgement gate states none of FR-807",
+  "confidence": "measured",
+  "cost_usd": 47.02,
+  "api_minutes": 72.2,
+  "wall_minutes": 338.8,
+  "context_over_150k_pct": 91,
+  "parallel_agents": 1,
+  "themes": ["agent"],
+  "effort_split": {
+    "build": 30,
+    "setup": 0,
+    "design": 26,
+    "docs": 14,
+    "verify_ops": 18,
+    "churn": 12
+  },
+  "churn_attribution": {
+    "under_specified": 5,
+    "refinement": 25,
+    "avoidable_error": 50,
+    "genuine_discovery": 20
+  },
+  "ratings": {
+    "scoping_clarity": 3,
+    "decision_stability": 4,
+    "tooling_leverage": 3
+  },
+  "rework_of": ["2026-09-11-b-slice-1-plates-faces-demo-review"],
+  "delivered": {
+    "prs": [60],
+    "adrs": []
+  },
+  "review": {
+    "coderabbit_findings": 4,
+    "fixed": 4,
+    "deferred": 0,
+    "declined": 0
+  },
+  "decisions": [
+    "make_plates returns four plates: the old contour layer keeps its behaviour as value_shapes with its own tool id, and outline is new — Edge Drawing over a texture-flattened copy with long straight runs fitted straight",
+    "Both line layers ship because neither covers the other: value shapes fit thresholds to the photograph's own histogram so they find a boundary wherever it has a gap, however shallow, while the outline needs a gradient and is blind below about 2 L*. Measured on the demo portrait: ground 3.5, jacket 5.4, hair 4.8",
+    "flatten is a PlateParameters field (Laurie), defaulting to the domain transform because its cost does not depend on the picture; the L0 smoothing prototyped in 2026-09-11-b ran 0.7-8.6 s on the same two photographs and could not be promised against NFR-01",
+    "shadow_gamma second pass folded in (Laurie), and the expansion runs BEFORE flattening — flattening is what erases a low-contrast boundary, so gamma applied after it has nothing left to lift",
+    "edge_strength is measured on the photograph's own L*, never the flattened copy, in the same units for both layers, so a measurement never describes the filter",
+    "min_chain applies to every chain including a fitted straight run, and its default moved 0.03 -> 0.015 because the contract changed under it",
+    "Canva sketchify judged probably not generative: registration is preserved and the omissions are scrap-filter-shaped — our own deterministic tool drops the same cafe figures. The decisive registration-overlay test was not run because the screenshots were not on disk",
+    "FR-801's real line is invented pixels, not machine learning — MediaPipe already ships and is fine because its output is landmarks. A discriminative edge model would need no exception. The generative decision stays open",
+    "Semantic AI, if adopted, is a check before it is an input: never trace a model's mask, and no model-assigned importance — rank by measured properties, with importance deriving from the artist's stated intent",
+    "Six issues filed and epic #57 created for artist-facing policy: #56 and #58 at P0 as production gates (Laurie), #59 P3 as conditional on the generative decision, #54 and #55 P2",
+    "Demo sheets restructured to one per input photograph (Laurie); superseded sheets and their scripts archived to capstone/archive-docs/tool-demo-2026-09/"
+  ],
+  "retro": {
+    "went_well": "Measurement settled every contested call instead of argument. The flatten filter was a sweep, not a preference — L0 lost on every axis at once and its runtime turned out to be content-dependent, which is the finding that actually disqualified it. The 2 L* silhouette was measured before it was called a limitation. Whether sketchify is generative was answered by checking our own tool, which drops the same cafe figures, rather than by reasoning about the output. And reading the untrusted ChatGPT notes as source material turned up a real P0 defect nobody was looking for: the shipped acknowledgement gate states none of FR-807's three commitments and still carries pre-pivot copy.",
+    "improve": "Five defects I authored escaped the loop — four to the reviewer and one to Laurie. The shadow-pass ordering is the worst of them: I documented in the same session that flattening erases low-contrast boundaries, then applied gamma after flattening anyway, and it cost the sitter's shadowed eye until Laurie noticed it. Three of the four review findings were contracts I wrote without checking the library's actual behaviour; closure tested for identical endpoints and was never once true, on any photograph, because Edge Drawing does not repeat a loop's first point. And check:all was treated as the gate when current-state already records that ruff runs only under poe check.",
+    "tooling_suggestion": "Before writing a field whose value depends on a library's behaviour, probe that behaviour in three lines first — one print would have shown Edge Drawing leaves a loop's ends a pixel apart. When a review lands, re-read the threads immediately before replying rather than trusting an earlier count: the inline comments arrived after my first check returned zero, so a disposition got posted as a new comment and had to be deleted."
+  },
+  "note": "cost/api/wall from /usage, pasted after PR 60 merged. Its 'Total code changes: 0 lines added, 0 lines removed' is a measurement artefact — the merged squash e2337b7 is 16 files, +1300/-267. context_over_150k_pct 91 and the skills breakdown (/ship 35%, /backlog 6%) are last-24h across all local sessions, though this session ran both and no others. No subagents and no worktrees. Also filed: issues #54, #55, #56, #57 (epic), #58, #59 — the generator reads only delivered.prs, so they are recorded here. Greptile reviewed automatically three times without being asked: first pass 2/5 with 3 findings, second 4/5 with 1 finding that the first fix had introduced, third 5/5 on 1991ac4 with none. rework_of names 2026-09-11-b because this replaced the outline that record shipped, but that record planned the replacement — it is a decision executed, not one that failed. Dependabot #51, #52, #53 and #61 merged the same day and account for the pnpm-lock churn on main; none moved a version current-state names."
+}
