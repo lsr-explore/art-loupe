@@ -58,10 +58,15 @@ plates.grayscale.image            # uint8: each pixel's L*, colour dropped
 plates.values.image               # uint8: each value as a flat grey
 plates.values.thresholds          # the L* the values divide at — fitted, or supplied
 plates.values.shares              # fraction of the photograph in each value, darkest first
-for contour in plates.outline.contours:
+for contour in plates.value_shapes.contours:
     contour.level                 # the boundary between value `level - 1` and `level`
     contour.points                # normalized polyline; open where it meets the frame
     contour.edge_strength         # per segment: 0 a threshold through a gradient, 1 a hard edge
+for chain in plates.outline.chains:
+    chain.points                  # normalized polyline; two points when `straight`
+    chain.straight                # a run the fitter claimed straight, rather than traced pixels
+    chain.from_shadow_pass        # found only with the shadows gamma-expanded
+    chain.edge_strength           # per segment, same units and scale as a value contour
 ```
 
 - **Two to ten values, five by default.** The presets are coarse (3, FR-301's three-value
@@ -71,12 +76,37 @@ for contour in plates.outline.contours:
 - **Thresholds default to multi-level Otsu** on the photograph's own histogram, so a low-key
   portrait stays low-key. Equal-area thirds split the demo portrait's black ground at L\* 4 and
   5; equal L\* steps collapse its face into the dark value.
-- **The outline traces the value map, not raw gradients**, so the two always correspond, and
-  more values give it more to trace. A contour marks where lightness crosses a threshold, which
+- **Value shapes trace the value map, not raw gradients**, so the two always correspond, and
+  more values give them more to trace. A contour marks where lightness crosses a threshold, which
   on a soft gradient is not an edge in the photograph. `edge_strength` — the L\* gradient across
   it, on a log scale from `SOFT_EDGE_GRADIENT` to `HARD_EDGE_GRADIENT` — is how a consumer tells
   the two apart. It mixes contrast with abruptness: a faint hard edge and a strong soft one can
   measure alike.
+- **The outline is the other line layer, and it answers a different question.** It traces edges
+  in a texture-flattened copy and fits long straight runs as true straight lines, so buildings
+  come out straight and windows rectangular where value contours wander. The cost is the mirror
+  image: an edge detector needs a gradient, and a boundary of about 2 L\* or less has none to
+  find. On the demo portrait — ground L\* 3.5, jacket 5.4, hair 4.8 — the outline loses the
+  silhouette and the value-shapes layer still carries it. **Neither layer replaces the other**,
+  which is why both ship.
+- **`flatten` chooses the filter**, and it is a time-for-cleanliness trade measured on the canal
+  at 1024 px: `domain_transform` (278 ms, the default), `domain_transform_fast` (111 ms),
+  `bilateral_texture` (523 ms, suppresses the most), `none`. The default is the default because
+  its cost does not depend on the picture; the L0 smoothing this replaced ranged from 0.7 s to
+  8.6 s on the same two photographs.
+- **`shadow_gamma` runs a second pass over expanded shadows** and recovers part of what the first
+  misses in the dark — set it to 1.0 to turn the pass off. A chain it found is flagged
+  `from_shadow_pass`, because a boundary recovered from near the noise floor is a weaker claim
+  than one the photograph stated plainly. **The expansion happens before flattening, and the
+  order is the point:** flattening is what erases a low-contrast boundary, so gamma applied
+  afterwards has nothing left to lift. Getting it backwards cost the demo portrait's shadowed
+  eye entirely.
+- **A straight run is a fit, not a measurement.** Its two points are where the fitted line ends,
+  not pixels traced in the photograph, and the metadata says so. It is still a whole chain: it
+  measures its gradient along its length, and `min_chain` drops it like any other.
+- **`min_chain` is the scrap floor**, applied to a whole chain before it is cut at the straight
+  runs. Filtering the pieces instead would discard the short fragments joining one straight run
+  to the next — on the canal, the rigging, the mooring poles and the boats.
 - **Deterministic plates state no confidence** — `None`, which is a different claim from `0.0`.
 
 ## Head construction

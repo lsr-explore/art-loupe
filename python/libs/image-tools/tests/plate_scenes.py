@@ -78,6 +78,31 @@ def step(softness: float = 0.0) -> NDArray[np.uint8]:
     return image
 
 
+# The end bands and blur of `step_with_soft_ends`, and the strength the two measurements give.
+# Both are tuned: they are the only combination found that keeps Edge Drawing fitting one long
+# line while leaving its endpoints measurably softer than its middle. Measured 2026-09-13 —
+# sampling the two endpoints reports 0.90, sampling along the line reports 0.98. If this test
+# ever fails, check these numbers before assuming the measurement broke; a change in OpenCV's
+# Sobel or in Edge Drawing's line fitting can move them.
+SOFT_END_BAND = 0.25
+SOFT_END_SIGMA = 0.02
+SOFT_END_ENDPOINT_STRENGTH = 0.90
+SOFT_END_ALONG_STRENGTH = 0.98
+
+
+def step_with_soft_ends() -> NDArray[np.uint8]:
+    """A hard vertical step whose top and bottom bands are blurred.
+
+    A line fitted along it has weak gradient at its two endpoints and a hard edge between them,
+    which is what separates a measurement taken along the edge from one taken at its ends.
+    """
+    image = step()
+    band = int(HEIGHT * SOFT_END_BAND)
+    for rows in (slice(0, band), slice(HEIGHT - band, HEIGHT)):
+        image[rows] = cv2.GaussianBlur(image[rows], (0, 0), SOFT_END_SIGMA * WIDTH)
+    return image
+
+
 def ramp() -> NDArray[np.uint8]:
     """L* rising linearly from 20 to 80 across the whole width: a crossing with no edge at all."""
     row = np.array(
@@ -92,6 +117,37 @@ def colour_and_its_grey() -> NDArray[np.uint8]:
     image = np.empty((HEIGHT, WIDTH, 3), dtype=np.uint8)
     image[:, : WIDTH // 2] = red
     image[:, WIDTH // 2 :] = grey_for(lightness_of(red))
+    return image
+
+
+# A dark subject on a darker ground, at the lightnesses measured on the demo portrait: its
+# background is L* 3.5, its jacket 5.4 and its hair 4.8. The 2 L* step between them is about five
+# 8-bit code values, which is why an edge detector cannot find it and the value map can.
+LOW_CONTRAST_GROUND = 3.5
+LOW_CONTRAST_SUBJECT = 5.4
+LOW_CONTRAST_BOX = (WIDTH // 4, HEIGHT // 4, WIDTH // 2, HEIGHT // 2)
+
+
+def low_contrast_subject() -> NDArray[np.uint8]:
+    """An L* 5.4 rectangle on an L* 3.5 ground: a silhouette only a fitted threshold can see."""
+    image = np.full((HEIGHT, WIDTH), grey_for(LOW_CONTRAST_GROUND), dtype=np.uint8)
+    left, top, width, height = LOW_CONTRAST_BOX
+    image[top : top + height, left : left + width] = grey_for(LOW_CONTRAST_SUBJECT)
+    return image
+
+
+# The disc in `straight_and_curved` is deliberately small. A large circle is chorded: at radius
+# 75 the fitter covers it with sixteen straight runs, each inside its 1.4 px error, which is
+# geometrically honest rather than wrong. At radius 20 the edge turns faster than any chord can
+# follow, so it is the case that pins "a curve is traced, not straightened".
+TIGHT_RADIUS = 20
+
+
+def straight_and_curved() -> NDArray[np.uint8]:
+    """A light rectangle and a tightly curved disc: one edge to fit straight, one to trace."""
+    image = np.full((HEIGHT, WIDTH), grey_for(20.0), dtype=np.uint8)
+    cv2.rectangle(image, (40, 60), (WIDTH // 2 - 40, HEIGHT - 60), grey_for(80.0), thickness=-1)
+    cv2.circle(image, (3 * WIDTH // 4, HEIGHT // 2), TIGHT_RADIUS, grey_for(80.0), thickness=-1)
     return image
 
 
