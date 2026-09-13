@@ -13,6 +13,8 @@ straight run rather than a trace, and a 2 L* silhouette comes back not at all wh
 value-shapes plate in the same suite still carries it. That pair is the reason both layers ship.
 """
 
+import math
+
 import cv2
 import numpy as np
 import plate_scenes as scenes
@@ -299,6 +301,75 @@ def test_a_scrap_shorter_than_min_chain_is_dropped() -> None:
     pruned = _plates(scene, min_chain=0.2).outline.chains
 
     assert len(pruned) < len(kept)
+
+
+def test_min_chain_filters_fitted_lines_too() -> None:
+    """The floor is on a chain, and a fitted straight run is a whole chain.
+
+    It reached only traced chains once, so raising `min_chain` pruned one half of the outline
+    while Edge Drawing's own 20 px minimum went on emitting short straight scraps.
+    """
+    plates = _plates(scenes.straight_and_curved(), min_chain=0.2)
+    floor = 0.2 * math.hypot(scenes.HEIGHT, scenes.WIDTH)
+
+    for chain in plates.outline.chains:
+        if not chain.straight:
+            continue
+        (start, end) = chain.points
+        length = math.hypot((end.x - start.x) * scenes.WIDTH, (end.y - start.y) * scenes.HEIGHT)
+        # A pixel of slack: the points are stored normalized and round back to the pixel grid.
+        assert length >= floor - 1.0
+
+
+def test_a_closed_loop_is_reported_closed() -> None:
+    """Edge Drawing walks a loop without repeating its first point.
+
+    Testing endpoints for equality therefore marked every loop open — on the demo photographs
+    not one chain of 822 came back closed — and a consumer drawing only the stored segments
+    leaves a gap where the ends meet. Closure is proximity.
+    """
+    chains = _plates(scenes.straight_and_curved()).outline.chains
+    around_the_disc = [chain for chain in chains if all(point.x > 0.5 for point in chain.points)]
+
+    assert around_the_disc
+    assert any(chain.closed for chain in around_the_disc)
+    for chain in around_the_disc:
+        if chain.closed:
+            # A closed chain measures one segment per point, the last joining back to the first.
+            assert len(chain.edge_strength) == len(chain.points)
+
+
+def test_a_fitted_line_measures_along_its_length_not_at_its_ends() -> None:
+    """`edge_gradient` promises a median along the edge, so two endpoint samples will not do.
+
+    A fitted line once passed only its two endpoints as the run to measure, and an endpoint sits
+    disproportionately at a junction or a weak termination — the least representative part of the
+    edge. The scene blurs the step's two ends, so sampling only them reports it softer than it is.
+
+    The threshold sits between the two measurements, not near either: endpoints-only gives about
+    `SOFT_END_ENDPOINT_STRENGTH`, along-the-line about `SOFT_END_ALONG_STRENGTH`. That margin is
+    narrow and the scene is tuned to produce it — see the note in `plate_scenes`.
+    """
+    straight = [
+        chain
+        for chain in _plates(
+            scenes.step_with_soft_ends(), levels=2, thresholds=(50.0,)
+        ).outline.chains
+        if chain.straight
+    ]
+    assert straight
+    # The longest run is the one spanning the step, ends included.
+    longest = max(
+        straight,
+        key=lambda chain: math.hypot(
+            (chain.points[1].x - chain.points[0].x) * scenes.WIDTH,
+            (chain.points[1].y - chain.points[0].y) * scenes.HEIGHT,
+        ),
+    )
+
+    floor = (scenes.SOFT_END_ENDPOINT_STRENGTH + scenes.SOFT_END_ALONG_STRENGTH) / 2
+
+    assert max(longest.edge_strength) > floor
 
 
 def test_every_flatten_filter_produces_an_outline() -> None:

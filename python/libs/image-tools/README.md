@@ -102,7 +102,11 @@ for chain in plates.outline.chains:
   afterwards has nothing left to lift. Getting it backwards cost the demo portrait's shadowed
   eye entirely.
 - **A straight run is a fit, not a measurement.** Its two points are where the fitted line ends,
-  not pixels traced in the photograph, and the metadata says so.
+  not pixels traced in the photograph, and the metadata says so. It is still a whole chain: it
+  measures its gradient along its length, and `min_chain` drops it like any other.
+- **`min_chain` is the scrap floor**, applied to a whole chain before it is cut at the straight
+  runs. Filtering the pieces instead would discard the short fragments joining one straight run
+  to the next — on the canal, the rigging, the mooring poles and the boats.
 - **Deterministic plates state no confidence** — `None`, which is a different claim from `0.0`.
 
 ## Head construction

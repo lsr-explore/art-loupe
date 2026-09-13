@@ -124,6 +124,13 @@ _STRAIGHT_COVER_PX = 7
 # A shadow-pass run must be this far clear of an already-drawn edge to count as new, in pixels.
 _SHADOW_CLEARANCE_PX = 4
 
+# How near a chain's two ends must come before it counts as closed, in pixels. Edge Drawing walks
+# a closed contour without repeating its first point, so the ends of a loop land a step or two
+# apart rather than exactly together — testing for identical endpoints marks every loop open. A
+# chain must also be long enough that meeting itself means a loop and not a hairpin.
+_CLOSED_GAP_PX = 2.0
+_CLOSED_MIN_POINTS = 8
+
 LIMITATION_SRGB = (
     "Lightness is computed as if the pixels are sRGB. An embedded colour profile is not visible "
     "to the tool and is not applied."
@@ -219,8 +226,12 @@ class PlateParameters(BaseModel):
     # off and the outline is one pass over the flattened photograph. 0.45 recovers the demo
     # portrait's shadowed eye, hair mass and collar, and is the default.
     shadow_gamma: float = Field(default=0.45, ge=0.1, le=1.0)
-    # An outline chain shorter than this fraction of the diagonal is dropped as a scrap.
-    min_chain: float = Field(default=0.03, ge=0.0, le=0.2)
+    # An outline chain shorter than this fraction of the diagonal is dropped as a scrap. It
+    # applies to every chain, a fitted straight run included — a fitted line is one whole claim,
+    # not a fragment of one. The default moved from 0.03 to 0.015 when that became true: 0.03 was
+    # calibrated while the filter reached only traced chains, so applying it to both halves at
+    # the same number cut roughly a third of the canal's windows and most of the portrait's face.
+    min_chain: float = Field(default=0.015, ge=0.0, le=0.2)
 
     @model_validator(mode="after")
     def _thresholds_fit_levels(self) -> "PlateParameters":
@@ -718,14 +729,22 @@ def _outline_pass(
 
     for start_x, start_y, end_x, end_y in lines:
         ends = np.array([[start_x, start_y], [end_x, end_y]], dtype=np.intc)
+        # `min_chain` is a floor on a whole outline chain, and a fitted line is a whole chain —
+        # one geometric claim rather than a fragment of one. Filtering only traced chains left
+        # the parameter half-connected: raising it pruned the traced side while Edge Drawing's
+        # own 20 px minimum went on emitting short straight scraps.
+        if float(np.hypot(end_x - start_x, end_y - start_y)) < min_length:
+            continue
         # A straight run is one geometric claim, so it is kept or dropped whole rather than cut
         # into new fragments: half a fitted line is not a shorter fitted line.
         if already is not None and _uncovered_fraction(_along(ends[0], ends[1]), already) < 0.5:
             continue
-        # A straight run's own pixels are the line it was fitted to, so it measures itself.
+        # Measure along the whole fitted line, not at its two ends. `edge_gradient` promises the
+        # median along the edge, and endpoints sit disproportionately at junctions and weak
+        # terminations, so two endpoint samples describe the least representative part of it.
         line = _chain_from(
             ends,
-            ends,
+            _along(ends[0], ends[1]),
             gradient,
             shape,
             straight=True,
@@ -756,8 +775,13 @@ def _outline_pass(
                 ]
             )
             for part in parts:
-                closed = bool(np.array_equal(part[0], part[-1])) and len(part) >= 4
-                body = part[:-1] if closed else part
+                # Edge Drawing does not repeat a loop's first point, so closure is proximity,
+                # not identity. `_CLOSED_MIN_POINTS` keeps a short hairpin whose ends happen to
+                # meet from being reported as a loop.
+                duplicated = bool(np.array_equal(part[0], part[-1]))
+                gap = float(np.hypot(*(part[0].astype(np.float64) - part[-1].astype(np.float64))))
+                closed = gap <= _CLOSED_GAP_PX and len(part) >= _CLOSED_MIN_POINTS
+                body = part[:-1] if closed and duplicated else part
                 simplified = cv2.approxPolyDP(body.reshape(-1, 1, 2), tolerance_px, closed)
                 traced = _chain_from(
                     simplified[:, 0, :],

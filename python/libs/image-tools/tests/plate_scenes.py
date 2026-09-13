@@ -78,6 +78,31 @@ def step(softness: float = 0.0) -> NDArray[np.uint8]:
     return image
 
 
+# The end bands and blur of `step_with_soft_ends`, and the strength the two measurements give.
+# Both are tuned: they are the only combination found that keeps Edge Drawing fitting one long
+# line while leaving its endpoints measurably softer than its middle. Measured 2026-09-13 —
+# sampling the two endpoints reports 0.90, sampling along the line reports 0.98. If this test
+# ever fails, check these numbers before assuming the measurement broke; a change in OpenCV's
+# Sobel or in Edge Drawing's line fitting can move them.
+SOFT_END_BAND = 0.25
+SOFT_END_SIGMA = 0.02
+SOFT_END_ENDPOINT_STRENGTH = 0.90
+SOFT_END_ALONG_STRENGTH = 0.98
+
+
+def step_with_soft_ends() -> NDArray[np.uint8]:
+    """A hard vertical step whose top and bottom bands are blurred.
+
+    A line fitted along it has weak gradient at its two endpoints and a hard edge between them,
+    which is what separates a measurement taken along the edge from one taken at its ends.
+    """
+    image = step()
+    band = int(HEIGHT * SOFT_END_BAND)
+    for rows in (slice(0, band), slice(HEIGHT - band, HEIGHT)):
+        image[rows] = cv2.GaussianBlur(image[rows], (0, 0), SOFT_END_SIGMA * WIDTH)
+    return image
+
+
 def ramp() -> NDArray[np.uint8]:
     """L* rising linearly from 20 to 80 across the whole width: a crossing with no edge at all."""
     row = np.array(
