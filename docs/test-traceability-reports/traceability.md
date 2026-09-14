@@ -34,16 +34,16 @@ exists, the detail tells you what it covers.
 | **ops** | | 2 | 4 | – | – | 1 | – | 24 | **31** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 49 | – | – | 1 | 1 | 49 | 100 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 50 | – | – | 1 | 1 | 49 | 101 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 100 | – | – | – | – | 13 | 118 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 22 | – | – | 22 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 108 | 139 |
-| **platform** | | 36 | 149 | – | – | 23 | 1 | 170 | **379** |
+| **platform** | | 36 | 150 | – | – | 23 | 1 | 170 | **380** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **54** | **223** | **–** | **62** | **85** | **1** | **413** | **838** |
+| **all flows** | | **54** | **224** | **–** | **62** | **85** | **1** | **413** | **839** |
 
 ## Gaps
 
@@ -80,7 +80,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 369 | 0 | 369 |
+| pytest | 370 | 0 | 370 |
 | Vitest | 433 | 0 | 433 |
 | Playwright | 36 | 0 | 36 |
-| **All** | **838** | **0** | **838** |
+| **All** | **839** | **0** | **839** |

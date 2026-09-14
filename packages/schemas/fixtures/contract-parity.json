@@ -395,6 +395,37 @@
         }
       }
     },
+    "routing_decision_with_an_unknown_field": {
+      "$comment": "Both sides refuse an unknown field. Zod strips one by default, which is the drift this case pins.",
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "a face was found",
+        "gate": {
+          "face_found": true,
+          "reason": null
+        },
+        "confidence": 0.9
+      }
+    },
+    "routing_gate_with_an_unknown_field": {
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "a face was found",
+        "gate": {
+          "face_found": true,
+          "reason": null,
+          "face_height_px": 150
+        }
+      }
+    },
     "stopped_ledger_without_reason": {
       "schema": "budget_ledger",
       "value": {

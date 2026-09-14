@@ -10,13 +10,17 @@
  * Completeness, meaning every offered tool named exactly once, is deliberately not checked here.
  * It is judged against the tools a producer was offered, which this contract cannot know, and the
  * Python producer applies it (routing-plan §10, question 2).
+ *
+ * Both objects are strict, mirroring Pydantic's `extra="forbid"`: an unknown field is refused on
+ * both sides, rather than stripped here and rejected in Python. The nested `toolManifestSchema` is
+ * not strict yet, so an unknown field inside `manifest` is still stripped.
  */
 
 import { z } from 'zod';
 import { toolManifestSchema } from './manifest';
 
 export const routingGateSchema = z
-  .object({
+  .strictObject({
     face_found: z.boolean(),
     /** The gate's own reason, present exactly when it declined head construction. */
     reason: z.string().min(1).nullable().default(null),
@@ -27,7 +31,7 @@ export const routingGateSchema = z
   );
 
 export const routingDecisionSchema = z
-  .object({
+  .strictObject({
     manifest: toolManifestSchema,
     rationale: z.string().min(1),
     gate: routingGateSchema,

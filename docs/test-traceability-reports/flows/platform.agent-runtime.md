@@ -13,28 +13,29 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` · `python/libs/config` |
-| **Tests** | 100 (6 parametrized) |
-| **Covered** | security 49 · data 1 · performance 1 · functionality 49 |
+| **Tests** | 101 (6 parametrized) |
+| **Covered** | security 50 · data 1 · performance 1 · functionality 49 |
 | **Not covered** | a11y · privacy · safety |
 
-## pytest — 100
+## pytest — 101
 
 | Category | Test | Location |
 | --- | --- | --- |
 | security | test_app_env_defaults_to_local | `python/libs/config/tests/test_keys.py:67` |
 | security | test_an_unrecognised_app_env_fails_rather_than_falling_back_to_local | `python/libs/config/tests/test_keys.py:71` |
-| security | test_a_deployed_environment_needs_the_key_in_its_environment | `python/libs/config/tests/test_keys.py:80` |
-| security | test_a_deployed_environment_never_reads_the_keychain | `python/libs/config/tests/test_keys.py:93` |
-| security | test_a_deployed_environment_reads_no_env_file | `python/libs/config/tests/test_keys.py:103` |
-| security | test_locally_an_exported_key_wins_over_the_keychain | `python/libs/config/tests/test_keys.py:112` |
-| security | test_locally_the_key_is_read_from_the_keychain | `python/libs/config/tests/test_keys.py:120` |
-| security | test_a_keychain_key_is_never_exported | `python/libs/config/tests/test_keys.py:127` |
-| security | test_coordinates_come_from_the_env_files_and_env_local_wins | `python/libs/config/tests/test_keys.py:133` |
-| security | test_a_key_written_into_an_env_file_is_not_read | `python/libs/config/tests/test_keys.py:149` |
-| security | test_missing_coordinates_name_both_variables | `python/libs/config/tests/test_keys.py:155` |
-| security | test_a_failed_keychain_lookup_is_named | `python/libs/config/tests/test_keys.py:172` |
-| security | test_an_empty_keychain_item_is_refused | `python/libs/config/tests/test_keys.py:181` |
-| security | test_the_keychain_lookup_is_bounded_in_time | `python/libs/config/tests/test_keys.py:188` |
+| security | test_an_unrecognised_app_env_fails_even_with_an_exported_key | `python/libs/config/tests/test_keys.py:79` |
+| security | test_a_deployed_environment_needs_the_key_in_its_environment | `python/libs/config/tests/test_keys.py:90` |
+| security | test_a_deployed_environment_never_reads_the_keychain | `python/libs/config/tests/test_keys.py:103` |
+| security | test_a_deployed_environment_reads_no_env_file | `python/libs/config/tests/test_keys.py:113` |
+| security | test_locally_an_exported_key_wins_over_the_keychain | `python/libs/config/tests/test_keys.py:122` |
+| security | test_locally_the_key_is_read_from_the_keychain | `python/libs/config/tests/test_keys.py:130` |
+| security | test_a_keychain_key_is_never_exported | `python/libs/config/tests/test_keys.py:137` |
+| security | test_coordinates_come_from_the_env_files_and_env_local_wins | `python/libs/config/tests/test_keys.py:143` |
+| security | test_a_key_written_into_an_env_file_is_not_read | `python/libs/config/tests/test_keys.py:159` |
+| security | test_missing_coordinates_name_both_variables | `python/libs/config/tests/test_keys.py:165` |
+| security | test_a_failed_keychain_lookup_is_named | `python/libs/config/tests/test_keys.py:182` |
+| security | test_an_empty_keychain_item_is_refused | `python/libs/config/tests/test_keys.py:191` |
+| security | test_the_keychain_lookup_is_bounded_in_time | `python/libs/config/tests/test_keys.py:198` |
 | functionality | test_the_token_ceiling_stops_the_run | `python/libs/metering/tests/test_guards.py:36` |
 | functionality | test_a_stopped_run_refuses_to_start_another_node | `python/libs/metering/tests/test_guards.py:44` |
 | functionality | test_one_node_may_not_run_more_times_than_the_limit | `python/libs/metering/tests/test_guards.py:60` |

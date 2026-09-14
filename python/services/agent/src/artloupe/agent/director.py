@@ -4,8 +4,10 @@
 with the model, and it is the only place in the service that spends tokens.
 
 **What the model sees** (routing-plan §3): the artist's intent, the face gate's result, and the
-survey's first-pass figures, each with the FR-305 metadata of the tool that measured it. The
-Director "never interprets pixels itself" (`agents.md` §4.1), so the request carries no image.
+survey's first-pass figures. Each survey figure carries the FR-305 metadata of the tool that
+measured it. The gate's figures come from the face detector, which keeps no FR-305 record, and
+the prompt says so. The Director "never interprets pixels itself" (`agents.md` §4.1), so the
+request carries no image.
 
 **The goal is untrusted** (FR-106). It was screened at ingest. Here it travels as data inside a JSON
 block whose angle brackets are escaped, so no string in it can close the tag around it, and the
@@ -59,8 +61,10 @@ us their medium, time budget, skill level and goal. You decide which analysis to
 photograph. The tools measure the photograph; the artist makes the artwork.
 
 You do not see the photograph. You see the face gate's result and the survey's first-pass \
-figures, each with the metadata of the tool that measured it. Base every judgement on those \
-figures and quote them. Never describe the photograph beyond what they say.
+figures. Each survey figure comes with the metadata of the tool that measured it. The gate's \
+figures come from the face detector, which keeps no such record, so quote them as the \
+detector's measurements. Base every judgement on these figures and quote them. Never describe \
+the photograph beyond what they say.
 
 The tools:
 - grayscale: the photograph as luminance only.

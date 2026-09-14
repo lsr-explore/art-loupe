@@ -84,12 +84,16 @@ def get_settings() -> SecretSettings:
 
 
 def get_anthropic_api_key() -> str:
-    """The Anthropic API key, for the client's `api_key` argument and nowhere else."""
+    """The Anthropic API key, for the client's `api_key` argument and nowhere else.
+
+    The settings are validated first, even when an exported key would win. A mistyped `APP_ENV`
+    therefore fails whether or not a key is exported, and the strictness has no exception.
+    """
+    settings = get_settings()
     explicit = os.environ.get("ANTHROPIC_API_KEY")
     if explicit:
         return explicit
 
-    settings = get_settings()
     if settings.app_env != "local":
         raise SecretUnavailable(
             f"ANTHROPIC_API_KEY is not set. With APP_ENV={settings.app_env} it must come from the "

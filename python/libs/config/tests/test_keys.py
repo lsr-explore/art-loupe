@@ -76,6 +76,16 @@ def test_an_unrecognised_app_env_fails_rather_than_falling_back_to_local(
         get_settings()
 
 
+def test_an_unrecognised_app_env_fails_even_with_an_exported_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """An exported key must not be a way around the validation."""
+    monkeypatch.setenv("APP_ENV", "prod")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-exported")
+    with pytest.raises(ValidationError):
+        get_anthropic_api_key()
+
+
 @pytest.mark.parametrize("app_env", ["ci", "production"])
 def test_a_deployed_environment_needs_the_key_in_its_environment(
     monkeypatch: pytest.MonkeyPatch, app_env: str

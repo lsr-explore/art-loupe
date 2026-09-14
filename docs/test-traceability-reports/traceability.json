@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 369,
+      "pytest": 370,
       "vitest": 433,
       "playwright": 36,
-      "all": 838
+      "all": 839
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 369,
+      "pytest": 370,
       "vitest": 433,
       "playwright": 36,
-      "all": 838
+      "all": 839
     }
   },
   "by_flow": {
@@ -166,7 +166,7 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 49,
+        "security": 50,
         "privacy": 0,
         "safety": 0,
         "data": 1,
@@ -174,11 +174,11 @@
         "functionality": 49
       },
       "runners": {
-        "pytest": 100,
+        "pytest": 101,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 100,
+      "total": 101,
       "parametrized": 6
     },
     "platform.auth": {
@@ -3692,69 +3692,76 @@
     },
     {
       "id": "python/libs/config/tests/test_keys.py:103",
+      "name": "test_a_deployed_environment_never_reads_the_keychain",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:113",
       "name": "test_a_deployed_environment_reads_no_env_file",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:112",
+      "id": "python/libs/config/tests/test_keys.py:122",
       "name": "test_locally_an_exported_key_wins_over_the_keychain",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:120",
+      "id": "python/libs/config/tests/test_keys.py:130",
       "name": "test_locally_the_key_is_read_from_the_keychain",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:127",
+      "id": "python/libs/config/tests/test_keys.py:137",
       "name": "test_a_keychain_key_is_never_exported",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:133",
+      "id": "python/libs/config/tests/test_keys.py:143",
       "name": "test_coordinates_come_from_the_env_files_and_env_local_wins",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:149",
+      "id": "python/libs/config/tests/test_keys.py:159",
       "name": "test_a_key_written_into_an_env_file_is_not_read",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:155",
+      "id": "python/libs/config/tests/test_keys.py:165",
       "name": "test_missing_coordinates_name_both_variables",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:172",
+      "id": "python/libs/config/tests/test_keys.py:182",
       "name": "test_a_failed_keychain_lookup_is_named",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:181",
+      "id": "python/libs/config/tests/test_keys.py:191",
       "name": "test_an_empty_keychain_item_is_refused",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:188",
+      "id": "python/libs/config/tests/test_keys.py:198",
       "name": "test_the_keychain_lookup_is_bounded_in_time",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -3775,15 +3782,15 @@
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:80",
-      "name": "test_a_deployed_environment_needs_the_key_in_its_environment",
+      "id": "python/libs/config/tests/test_keys.py:79",
+      "name": "test_an_unrecognised_app_env_fails_even_with_an_exported_key",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:93",
-      "name": "test_a_deployed_environment_never_reads_the_keychain",
+      "id": "python/libs/config/tests/test_keys.py:90",
+      "name": "test_a_deployed_environment_needs_the_key_in_its_environment",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
