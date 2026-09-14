@@ -30,10 +30,12 @@ class AuthSettings(BaseSettings):
     supabase_jwt_secret: str | None = Field(
         default=None,
         description=(
-            "Legacy HS256 signing secret. When set, tokens are verified symmetrically — "
-            "which also means this process holds material that can SIGN tokens, not just "
-            "verify them. Leave unset to use the published JWKS instead, which is the "
-            "safer mode. A local `supabase start` still issues HS256, so local dev sets it."
+            "Legacy HS256 signing secret, for a project that still issues HS256 tokens. When "
+            "set, tokens are verified symmetrically — which also means this process holds "
+            "material that can SIGN tokens, not just verify them. Leave unset to use the "
+            "published JWKS instead, which is the safer mode. A local `supabase start` signs "
+            "with ES256 and publishes its key, so local development leaves this unset; "
+            "setting it there makes every locally issued token fail verification."
         ),
     )
 

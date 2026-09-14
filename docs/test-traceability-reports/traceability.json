@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 271,
+      "pytest": 336,
       "vitest": 432,
       "playwright": 36,
-      "all": 739
+      "all": 804
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 271,
+      "pytest": 336,
       "vitest": 432,
       "playwright": 36,
-      "all": 739
+      "all": 804
     }
   },
   "by_flow": {
@@ -28,18 +28,18 @@
         "a11y": 0,
         "security": 0,
         "privacy": 0,
-        "safety": 0,
+        "safety": 6,
         "data": 0,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 0,
+        "pytest": 6,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 0,
-      "parametrized": 0
+      "total": 6,
+      "parametrized": 2
     },
     "retrieval.grounding": {
       "severity": "P0",
@@ -91,14 +91,14 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 40
+        "functionality": 45
       },
       "runners": {
-        "pytest": 40,
+        "pytest": 45,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 40,
+      "total": 45,
       "parametrized": 6
     },
     "analysis.geometry": {
@@ -111,15 +111,15 @@
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 100
+        "functionality": 102
       },
       "runners": {
-        "pytest": 66,
+        "pytest": 68,
         "vitest": 43,
         "playwright": 0
       },
-      "total": 109,
-      "parametrized": 7
+      "total": 111,
+      "parametrized": 8
     },
     "critique.alignment": {
       "severity": "P1",
@@ -166,27 +166,27 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 7,
+        "security": 34,
         "privacy": 0,
         "safety": 0,
-        "data": 0,
+        "data": 1,
         "performance": 1,
-        "functionality": 33
+        "functionality": 48
       },
       "runners": {
-        "pytest": 41,
+        "pytest": 84,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 41,
-      "parametrized": 1
+      "total": 84,
+      "parametrized": 3
     },
     "platform.auth": {
       "severity": "P1",
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 96,
+        "security": 100,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -194,11 +194,11 @@
         "functionality": 13
       },
       "runners": {
-        "pytest": 14,
+        "pytest": 18,
         "vitest": 83,
         "playwright": 17
       },
-      "total": 114,
+      "total": 118,
       "parametrized": 3
     },
     "canvas.session-plan": {
@@ -231,15 +231,15 @@
         "safety": 1,
         "data": 61,
         "performance": 0,
-        "functionality": 53
+        "functionality": 57
       },
       "runners": {
-        "pytest": 42,
+        "pytest": 46,
         "vitest": 122,
         "playwright": 11
       },
-      "total": 175,
-      "parametrized": 17
+      "total": 179,
+      "parametrized": 18
     },
     "ops.observability": {
       "severity": "P2",
@@ -251,14 +251,14 @@
         "safety": 0,
         "data": 1,
         "performance": 0,
-        "functionality": 23
+        "functionality": 24
       },
       "runners": {
-        "pytest": 25,
+        "pytest": 26,
         "vitest": 5,
         "playwright": 0
       },
-      "total": 30,
+      "total": 31,
       "parametrized": 0
     },
     "palette.extraction": {
@@ -3600,70 +3600,70 @@
       "category": "safety"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:105",
+      "id": "python/libs/auth/tests/test_tokens.py:109",
       "name": "test_rejects_a_token_from_another_issuer",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:116",
+      "id": "python/libs/auth/tests/test_tokens.py:120",
       "name": "test_rejects_a_token_with_the_wrong_audience",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:131",
+      "id": "python/libs/auth/tests/test_tokens.py:135",
       "name": "test_rejects_algorithm_confusion",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:172",
+      "id": "python/libs/auth/tests/test_tokens.py:176",
       "name": "test_rejects_an_unknown_signing_key",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:187",
+      "id": "python/libs/auth/tests/test_tokens.py:191",
       "name": "test_unreachable_keys_are_an_outage_not_a_rejection",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:197",
+      "id": "python/libs/auth/tests/test_tokens.py:201",
       "name": "test_role_defaults_to_artist_without_app_metadata",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:208",
+      "id": "python/libs/auth/tests/test_tokens.py:212",
       "name": "test_ignores_a_role_claimed_in_user_metadata",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:224",
+      "id": "python/libs/auth/tests/test_tokens.py:228",
       "name": "test_reuses_the_cached_key_set",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:235",
+      "id": "python/libs/auth/tests/test_tokens.py:239",
       "name": "test_rejects_an_empty_token",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:242",
+      "id": "python/libs/auth/tests/test_tokens.py:246",
       "name": "test_asymmetric_mode_excludes_hmac",
       "runner": "pytest",
       "flow": "platform.auth",
@@ -3677,7 +3677,7 @@
       "category": "security"
     },
     {
-      "id": "python/libs/auth/tests/test_tokens.py:95",
+      "id": "python/libs/auth/tests/test_tokens.py:99",
       "name": "test_rejects_an_expired_token",
       "runner": "pytest",
       "flow": "platform.auth",
@@ -3733,119 +3733,126 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:103",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:104",
       "name": "test_a_frontal_close_up_is_fully_reliable",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:110",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:111",
       "name": "test_a_near_profile_scores_near_zero_and_names_the_yaw",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:118",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:119",
       "name": "test_the_artifact_confidence_is_the_derived_reliability",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:127",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:128",
       "name": "test_a_small_image_of_a_face_loses_scale_reliability",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:149",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:150",
       "name": "test_the_far_side_anchor_of_a_turned_head_is_flagged",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:160",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:161",
       "name": "test_a_chin_facing_the_camera_is_never_flagged",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:168",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:169",
       "name": "test_pose_signs_follow_the_documented_convention",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:210",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:211",
       "name": "test_pose_barely_depends_on_where_the_face_sits",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:245",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:246",
       "name": "test_no_face_is_the_portrait_gates_answer",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:255",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:256",
       "name": "test_the_detector_has_a_small_face_limit",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:264",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:265",
       "name": "test_a_corrected_chin_moves_the_chin_line",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:285",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:286",
       "name": "test_a_correction_to_something_that_is_not_an_anchor_is_refused",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:300",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:301",
       "name": "test_a_result_reloads_from_json_exactly",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:307",
-      "name": "test_the_recipe_records_the_parameters_the_landmarker_ran_with",
-      "runner": "pytest",
-      "flow": "analysis.geometry",
-      "category": "functionality"
-    },
-    {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:315",
-      "name": "test_a_landmarker_opened_with_other_parameters_is_refused",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:309",
+      "name": "test_building_from_a_stored_face_matches_detecting_it",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
       "id": "python/libs/image-tools/tests/test_head_construction.py:337",
+      "name": "test_the_recipe_records_the_parameters_the_landmarker_ran_with",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_head_construction.py:345",
+      "name": "test_a_landmarker_opened_with_other_parameters_is_refused",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_head_construction.py:367",
       "name": "test_the_version_names_the_runtime_and_the_model",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_head_construction.py:344",
+      "id": "python/libs/image-tools/tests/test_head_construction.py:374",
       "name": "test_without_a_landmarker_one_is_opened_for_the_call",
       "runner": "pytest",
       "flow": "analysis.geometry",
@@ -4195,231 +4202,259 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:105",
+      "id": "python/libs/image-tools/tests/test_plates.py:107",
       "name": "test_more_levels_divide_more_finely",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:113",
+      "id": "python/libs/image-tools/tests/test_plates.py:115",
       "name": "test_detail_presets_are_three_five_seven_and_ten",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:118",
+      "id": "python/libs/image-tools/tests/test_plates.py:120",
       "name": "test_an_absent_value_is_stated_not_hidden",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:127",
+      "id": "python/libs/image-tools/tests/test_plates.py:129",
       "name": "test_a_speck_below_min_region_is_absorbed",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:135",
+      "id": "python/libs/image-tools/tests/test_plates.py:137",
       "name": "test_min_region_zero_keeps_the_speck",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:147",
+      "id": "python/libs/image-tools/tests/test_plates.py:149",
       "name": "test_when_no_region_is_large_enough_nothing_is_claimed_absorbed",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:161",
+      "id": "python/libs/image-tools/tests/test_plates.py:163",
       "name": "test_grayscale_keeps_lightness_and_drops_colour",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:173",
+      "id": "python/libs/image-tools/tests/test_plates.py:175",
       "name": "test_value_shapes_lie_on_the_band_boundaries",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:183",
+      "id": "python/libs/image-tools/tests/test_plates.py:185",
       "name": "test_a_contour_meeting_the_frame_is_open_and_reaches_it",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:193",
+      "id": "python/libs/image-tools/tests/test_plates.py:195",
       "name": "test_a_contour_clear_of_the_frame_is_closed",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:209",
+      "id": "python/libs/image-tools/tests/test_plates.py:211",
       "name": "test_every_contour_point_lies_on_an_edge_of_the_value_map",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:220",
+      "id": "python/libs/image-tools/tests/test_plates.py:222",
       "name": "test_a_straight_edge_is_reported_as_a_straight_run",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:231",
+      "id": "python/libs/image-tools/tests/test_plates.py:233",
       "name": "test_a_tightly_curved_edge_is_traced_rather_than_straightened",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:244",
+      "id": "python/libs/image-tools/tests/test_plates.py:246",
       "name": "test_straightening_is_declared_when_it_happened",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:251",
+      "id": "python/libs/image-tools/tests/test_plates.py:253",
       "name": "test_the_outline_cannot_see_a_two_lightness_step_and_says_so",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:281",
+      "id": "python/libs/image-tools/tests/test_plates.py:283",
       "name": "test_the_shadow_pass_is_off_at_gamma_one_and_declared_when_it_runs",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:295",
+      "id": "python/libs/image-tools/tests/test_plates.py:297",
       "name": "test_a_scrap_shorter_than_min_chain_is_dropped",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:304",
+      "id": "python/libs/image-tools/tests/test_plates.py:306",
+      "name": "test_min_chain_filters_fitted_lines_too",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_plates.py:324",
+      "name": "test_dropping_a_fitted_line_yields_its_stretch_back_to_the_trace",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_plates.py:357",
+      "name": "test_a_closed_loop_is_reported_closed",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_plates.py:375",
+      "name": "test_a_fitted_line_measures_along_its_length_not_at_its_ends",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/image-tools/tests/test_plates.py:408",
       "name": "test_every_flatten_filter_produces_an_outline",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:311",
+      "id": "python/libs/image-tools/tests/test_plates.py:415",
       "name": "test_edge_strength_is_measured_on_the_photograph_not_the_flattened_copy",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:334",
+      "id": "python/libs/image-tools/tests/test_plates.py:438",
       "name": "test_a_hard_edge_measures_strong",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:338",
+      "id": "python/libs/image-tools/tests/test_plates.py:442",
       "name": "test_a_soft_edge_measures_weaker",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:345",
+      "id": "python/libs/image-tools/tests/test_plates.py:449",
       "name": "test_a_ramp_crossing_is_not_an_edge",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:353",
+      "id": "python/libs/image-tools/tests/test_plates.py:457",
       "name": "test_the_recipe_reproduces_every_plate",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:366",
+      "id": "python/libs/image-tools/tests/test_plates.py:470",
       "name": "test_each_plate_carries_its_own_metadata",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:392",
+      "id": "python/libs/image-tools/tests/test_plates.py:496",
       "name": "test_large_images_are_worked_at_the_working_size",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:400",
+      "id": "python/libs/image-tools/tests/test_plates.py:504",
       "name": "test_small_images_are_never_upscaled",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:422",
+      "id": "python/libs/image-tools/tests/test_plates.py:526",
       "name": "test_invalid_parameters_are_refused",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:431",
+      "id": "python/libs/image-tools/tests/test_plates.py:535",
       "name": "test_unsupported_images_are_refused",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:63",
+      "id": "python/libs/image-tools/tests/test_plates.py:65",
       "name": "test_the_default_is_five_values",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:70",
+      "id": "python/libs/image-tools/tests/test_plates.py:72",
       "name": "test_fitted_thresholds_fall_between_the_bands",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:80",
+      "id": "python/libs/image-tools/tests/test_plates.py:82",
       "name": "test_each_band_is_one_value",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:88",
+      "id": "python/libs/image-tools/tests/test_plates.py:90",
       "name": "test_supplied_thresholds_are_used_and_marked_a_choice",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/libs/image-tools/tests/test_plates.py:96",
+      "id": "python/libs/image-tools/tests/test_plates.py:98",
       "name": "test_value_tones_are_evenly_spaced_lightness",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
@@ -4567,6 +4602,13 @@
     },
     {
       "id": "python/libs/metering/tests/test_pricing.py:66",
+      "name": "test_the_refusal_fallback_target_is_priced",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/metering/tests/test_pricing.py:75",
       "name": "test_model_ids_carry_no_date_suffix",
       "runner": "pytest",
       "flow": "ops.observability",
@@ -4676,6 +4718,104 @@
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:103",
+      "name": "test_a_project_hidden_by_rls_reads_as_not_found",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:111",
+      "name": "test_a_project_with_no_original_yet_has_no_source",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:123",
+      "name": "test_a_refusal_reports_the_status_and_not_the_body",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:136",
+      "name": "test_a_cache_lookup_filters_on_the_whole_recipe",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:157",
+      "name": "test_a_rejected_token_is_its_own_error",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:165",
+      "name": "test_a_policy_refusal_is_not_a_credential_problem",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:175",
+      "name": "test_a_cache_miss_is_none",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:181",
+      "name": "test_storing_a_result_keeps_the_row_already_there_for_the_recipe",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:194",
+      "name": "test_the_client_never_prints_the_token",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:200",
+      "name": "test_the_settings_have_nowhere_to_put_a_service_role_key",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:208",
+      "name": "test_parameters_digest_is_canonical",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:218",
+      "name": "test_parameters_digest_refuses_nan",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:79",
+      "name": "test_every_rest_call_presents_the_anon_apikey_and_the_artists_bearer",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:93",
+      "name": "test_the_original_is_read_from_the_private_bucket_with_the_bearer_alone",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
     },
     {
       "id": "python/libs/persistence/tests/test_checkpointer.py:29",
@@ -5182,6 +5322,90 @@
       "category": "security"
     },
     {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:109",
+      "name": "test_an_artist_can_cache_a_result_for_their_own_original",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:119",
+      "name": "test_an_artist_cannot_see_another_artists_results",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:128",
+      "name": "test_an_artist_cannot_cache_a_result_under_another_artists_project",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:135",
+      "name": "test_a_result_must_cite_its_projects_own_original",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:145",
+      "name": "test_a_project_with_no_original_can_cache_nothing",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:156",
+      "name": "test_a_repeated_recipe_is_ignored_rather_than_refused",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:174",
+      "name": "test_a_result_is_immutable_even_with_rls_bypassed",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:185",
+      "name": "test_deleting_the_project_deletes_its_results",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:57",
+      "name": "test_authenticated_holds_select_and_insert",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:69",
+      "name": "test_the_cached_row_exists_when_no_policy_is_deciding",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:81",
+      "name": "test_anon_holds_nothing",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_tool_results_rls.py:91",
+      "name": "test_authenticated_cannot_change_or_remove_a_result",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
       "id": "python/libs/schemas/tests/test_parity.py:103",
       "name": "test_accepts_artifact_metadata",
       "runner": "pytest",
@@ -5364,38 +5588,227 @@
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:15",
-      "name": "test_graph_compiles_with_the_expected_nodes",
+      "id": "python/services/agent/tests/test_cache.py:32",
+      "name": "test_a_miss_detects_once_and_stores_the_face",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:20",
+      "id": "python/services/agent/tests/test_cache.py:50",
+      "name": "test_a_hit_reloads_the_face_exactly_and_detects_nothing",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_cache.py:63",
+      "name": "test_no_face_is_cached_too",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_cache.py:76",
+      "name": "test_perspective_round_trips_through_the_cache",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_cache.py:87",
+      "name": "test_a_failed_store_does_not_fail_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:101",
+      "name": "test_a_face_brings_head_construction_in_on_the_cached_face",
+      "runner": "pytest",
+      "flow": "analysis.geometry",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:117",
+      "name": "test_every_artifact_cites_the_projects_original",
+      "runner": "pytest",
+      "flow": "analysis.deterministic-studies",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:127",
+      "name": "test_the_photograph_is_downloaded_once_per_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:135",
+      "name": "test_a_second_run_rests_on_the_first_runs_cache",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:149",
+      "name": "test_the_state_holds_no_token_and_no_pixels",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:159",
+      "name": "test_a_project_with_no_photograph_is_not_ready",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:164",
+      "name": "test_a_project_with_no_intake_is_not_ready",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:52",
+      "name": "test_the_graph_is_the_five_nodes_in_order",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:59",
       "name": "test_graph_accepts_an_injected_checkpointer_slot",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:25",
-      "name": "test_running_the_graph_records_the_run",
+      "id": "python/services/agent/tests/test_graph.py:64",
+      "name": "test_a_run_visits_every_node_once_and_spends_nothing",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:32",
+      "id": "python/services/agent/tests/test_graph.py:75",
       "name": "test_node_trail_accumulates_rather_than_replaces",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:44",
-      "name": "test_seed_returns_a_partial_update_not_whole_state",
+      "id": "python/services/agent/tests/test_graph.py:85",
+      "name": "test_no_face_declines_head_construction_with_the_gates_reason",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:105",
+      "name": "test_an_installed_generator_is_caught",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:119",
+      "name": "test_a_generation_call_is_caught",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:132",
+      "name": "test_ordinary_calls_are_not_caught",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:76",
+      "name": "test_no_image_generation_sdk_is_installed",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:82",
+      "name": "test_the_scan_covers_the_code_that_ships",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_no_image_generation.py:90",
+      "name": "test_no_shipped_source_reaches_an_image_generation_endpoint",
+      "runner": "pytest",
+      "flow": "critique.no-generation",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:22",
+      "name": "test_bytes_that_do_not_match_the_checksum_are_refused",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
+      "category": "data"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:28",
+      "name": "test_bytes_that_are_not_an_image_are_refused",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:35",
+      "name": "test_decoding_applies_exif_orientation",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:50",
+      "name": "test_a_node_outside_a_run_cannot_reach_artist_data",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:55",
+      "name": "test_a_resumed_run_fetches_the_photograph_again_once",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_resources.py:66",
+      "name": "test_a_resumed_run_refuses_a_changed_original",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:24",
+      "name": "test_every_tool_is_accounted_for_exactly_once",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:34",
+      "name": "test_no_face_declines_head_construction_with_the_gates_reason",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:42",
+      "name": "test_a_face_makes_head_construction_eligible",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
@@ -5441,6 +5854,13 @@
       "category": "functionality"
     },
     {
+      "id": "python/services/agent/tests/test_runtime.py:210",
+      "name": "test_run_resources_reach_every_node_and_leave_with_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
       "id": "python/services/agent/tests/test_runtime.py:73",
       "name": "test_a_run_produces_a_row_per_node_carrying_its_run_id",
       "runner": "pytest",
@@ -5455,14 +5875,14 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:108",
-      "name": "test_owner_comes_from_the_token_not_the_request_body",
+      "id": "python/services/agent/tests/test_service.py:124",
+      "name": "test_health_needs_no_token",
       "runner": "pytest",
-      "flow": "platform.auth",
-      "category": "security"
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:124",
+      "id": "python/services/agent/tests/test_service.py:131",
       "name": "test_health_leaks_no_internal_detail",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -5470,28 +5890,63 @@
     },
     {
       "id": "python/services/agent/tests/test_service.py:138",
-      "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
-      "runner": "pytest",
-      "flow": "platform.agent-runtime",
-      "category": "functionality"
-    },
-    {
-      "id": "python/services/agent/tests/test_service.py:82",
-      "name": "test_health_needs_no_token",
-      "runner": "pytest",
-      "flow": "platform.agent-runtime",
-      "category": "functionality"
-    },
-    {
-      "id": "python/services/agent/tests/test_service.py:90",
       "name": "test_creating_a_run_without_a_token_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:96",
-      "name": "test_creating_a_run_returns_the_graph_result",
+      "id": "python/services/agent/tests/test_service.py:144",
+      "name": "test_a_run_names_its_project",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:153",
+      "name": "test_creating_a_run_returns_the_routing_and_the_artifacts",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:169",
+      "name": "test_owner_comes_from_the_token",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:181",
+      "name": "test_a_body_that_names_an_owner_is_refused",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:194",
+      "name": "test_the_run_reads_the_project_as_the_artist",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:207",
+      "name": "test_a_token_expiring_before_the_deadline_is_refused_before_any_work",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:223",
+      "name": "test_a_token_supabase_rejects_mid_run_asks_for_a_refresh",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:250",
+      "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
@@ -5499,7 +5954,6 @@
   ],
   "gaps": {
     "uncovered": [
-      "critique.no-generation",
       "retrieval.grounding",
       "critique.alignment",
       "critique.formal-analysis",
@@ -5507,6 +5961,11 @@
       "palette.extraction"
     ],
     "missingExpected": [
+      {
+        "id": "critique.no-generation",
+        "severity": "P0",
+        "missing": ["a11y"]
+      },
       {
         "id": "safety.untrusted-input",
         "severity": "P0",

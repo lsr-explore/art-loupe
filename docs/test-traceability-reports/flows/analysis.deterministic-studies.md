@@ -12,12 +12,12 @@ Grayscale, value maps, and value-contour outlines from one pipeline
 | --- | --- |
 | **Severity** | P1 |
 | **Why** | Deterministic image processing, not model output: every plate reproduces exactly from its FR-305 recipe or it has broken. Two failures look alike from outside — a value map whose thresholds silently moved with a library version, and an outline that no longer traces the value map it claims to come from. Each is wrong analysis handed to the artist as a measurement. |
-| **Surfaces** | `python/libs/image-tools` |
-| **Tests** | 40 (6 parametrized) |
-| **Covered** | functionality 40 |
+| **Surfaces** | `python/libs/image-tools` · `python/services/agent` |
+| **Tests** | 45 (6 parametrized) |
+| **Covered** | functionality 45 |
 | **Not covered** | a11y · security · privacy · safety · data · performance |
 
-## pytest — 40
+## pytest — 45
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -28,39 +28,44 @@ Grayscale, value maps, and value-contour outlines from one pipeline
 | functionality | test_the_canal_comes_back_mostly_straight | `python/libs/image-tools/tests/test_plates_photographs.py:81` |
 | functionality | test_the_low_key_portrait_is_where_the_two_layers_diverge | `python/libs/image-tools/tests/test_plates_photographs.py:88` |
 | functionality | test_the_suite_stays_within_its_time_budget | `python/libs/image-tools/tests/test_plates_photographs.py:107` |
-| functionality | test_the_default_is_five_values | `python/libs/image-tools/tests/test_plates.py:63` |
-| functionality | test_fitted_thresholds_fall_between_the_bands | `python/libs/image-tools/tests/test_plates.py:70` |
-| functionality | test_each_band_is_one_value | `python/libs/image-tools/tests/test_plates.py:80` |
-| functionality | test_supplied_thresholds_are_used_and_marked_a_choice | `python/libs/image-tools/tests/test_plates.py:88` |
-| functionality | test_value_tones_are_evenly_spaced_lightness | `python/libs/image-tools/tests/test_plates.py:96` |
-| functionality | test_more_levels_divide_more_finely | `python/libs/image-tools/tests/test_plates.py:105` |
-| functionality | test_detail_presets_are_three_five_seven_and_ten | `python/libs/image-tools/tests/test_plates.py:113` |
-| functionality | test_an_absent_value_is_stated_not_hidden | `python/libs/image-tools/tests/test_plates.py:118` |
-| functionality | test_a_speck_below_min_region_is_absorbed | `python/libs/image-tools/tests/test_plates.py:127` |
-| functionality | test_min_region_zero_keeps_the_speck | `python/libs/image-tools/tests/test_plates.py:135` |
-| functionality | test_when_no_region_is_large_enough_nothing_is_claimed_absorbed | `python/libs/image-tools/tests/test_plates.py:147` |
-| functionality | test_grayscale_keeps_lightness_and_drops_colour | `python/libs/image-tools/tests/test_plates.py:161` |
-| functionality | test_value_shapes_lie_on_the_band_boundaries | `python/libs/image-tools/tests/test_plates.py:173` |
-| functionality | test_a_contour_meeting_the_frame_is_open_and_reaches_it | `python/libs/image-tools/tests/test_plates.py:183` |
-| functionality | test_a_contour_clear_of_the_frame_is_closed | `python/libs/image-tools/tests/test_plates.py:193` |
-| functionality | test_every_contour_point_lies_on_an_edge_of_the_value_map | `python/libs/image-tools/tests/test_plates.py:209` |
-| functionality | test_a_straight_edge_is_reported_as_a_straight_run | `python/libs/image-tools/tests/test_plates.py:220` |
-| functionality | test_a_tightly_curved_edge_is_traced_rather_than_straightened | `python/libs/image-tools/tests/test_plates.py:231` |
-| functionality | test_straightening_is_declared_when_it_happened | `python/libs/image-tools/tests/test_plates.py:244` |
-| functionality | test_the_outline_cannot_see_a_two_lightness_step_and_says_so | `python/libs/image-tools/tests/test_plates.py:251` |
-| functionality | test_the_shadow_pass_is_off_at_gamma_one_and_declared_when_it_runs | `python/libs/image-tools/tests/test_plates.py:281` |
-| functionality | test_a_scrap_shorter_than_min_chain_is_dropped | `python/libs/image-tools/tests/test_plates.py:295` |
-| functionality | test_every_flatten_filter_produces_an_outline | `python/libs/image-tools/tests/test_plates.py:304` |
-| functionality | test_edge_strength_is_measured_on_the_photograph_not_the_flattened_copy | `python/libs/image-tools/tests/test_plates.py:311` |
-| functionality | test_a_hard_edge_measures_strong | `python/libs/image-tools/tests/test_plates.py:334` |
-| functionality | test_a_soft_edge_measures_weaker | `python/libs/image-tools/tests/test_plates.py:338` |
-| functionality | test_a_ramp_crossing_is_not_an_edge | `python/libs/image-tools/tests/test_plates.py:345` |
-| functionality | test_the_recipe_reproduces_every_plate | `python/libs/image-tools/tests/test_plates.py:353` |
-| functionality | test_each_plate_carries_its_own_metadata | `python/libs/image-tools/tests/test_plates.py:366` |
-| functionality | test_large_images_are_worked_at_the_working_size | `python/libs/image-tools/tests/test_plates.py:392` |
-| functionality | test_small_images_are_never_upscaled | `python/libs/image-tools/tests/test_plates.py:400` |
-| functionality | test_invalid_parameters_are_refused | `python/libs/image-tools/tests/test_plates.py:422` |
-| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_plates.py:431` |
+| functionality | test_the_default_is_five_values | `python/libs/image-tools/tests/test_plates.py:65` |
+| functionality | test_fitted_thresholds_fall_between_the_bands | `python/libs/image-tools/tests/test_plates.py:72` |
+| functionality | test_each_band_is_one_value | `python/libs/image-tools/tests/test_plates.py:82` |
+| functionality | test_supplied_thresholds_are_used_and_marked_a_choice | `python/libs/image-tools/tests/test_plates.py:90` |
+| functionality | test_value_tones_are_evenly_spaced_lightness | `python/libs/image-tools/tests/test_plates.py:98` |
+| functionality | test_more_levels_divide_more_finely | `python/libs/image-tools/tests/test_plates.py:107` |
+| functionality | test_detail_presets_are_three_five_seven_and_ten | `python/libs/image-tools/tests/test_plates.py:115` |
+| functionality | test_an_absent_value_is_stated_not_hidden | `python/libs/image-tools/tests/test_plates.py:120` |
+| functionality | test_a_speck_below_min_region_is_absorbed | `python/libs/image-tools/tests/test_plates.py:129` |
+| functionality | test_min_region_zero_keeps_the_speck | `python/libs/image-tools/tests/test_plates.py:137` |
+| functionality | test_when_no_region_is_large_enough_nothing_is_claimed_absorbed | `python/libs/image-tools/tests/test_plates.py:149` |
+| functionality | test_grayscale_keeps_lightness_and_drops_colour | `python/libs/image-tools/tests/test_plates.py:163` |
+| functionality | test_value_shapes_lie_on_the_band_boundaries | `python/libs/image-tools/tests/test_plates.py:175` |
+| functionality | test_a_contour_meeting_the_frame_is_open_and_reaches_it | `python/libs/image-tools/tests/test_plates.py:185` |
+| functionality | test_a_contour_clear_of_the_frame_is_closed | `python/libs/image-tools/tests/test_plates.py:195` |
+| functionality | test_every_contour_point_lies_on_an_edge_of_the_value_map | `python/libs/image-tools/tests/test_plates.py:211` |
+| functionality | test_a_straight_edge_is_reported_as_a_straight_run | `python/libs/image-tools/tests/test_plates.py:222` |
+| functionality | test_a_tightly_curved_edge_is_traced_rather_than_straightened | `python/libs/image-tools/tests/test_plates.py:233` |
+| functionality | test_straightening_is_declared_when_it_happened | `python/libs/image-tools/tests/test_plates.py:246` |
+| functionality | test_the_outline_cannot_see_a_two_lightness_step_and_says_so | `python/libs/image-tools/tests/test_plates.py:253` |
+| functionality | test_the_shadow_pass_is_off_at_gamma_one_and_declared_when_it_runs | `python/libs/image-tools/tests/test_plates.py:283` |
+| functionality | test_a_scrap_shorter_than_min_chain_is_dropped | `python/libs/image-tools/tests/test_plates.py:297` |
+| functionality | test_min_chain_filters_fitted_lines_too | `python/libs/image-tools/tests/test_plates.py:306` |
+| functionality | test_dropping_a_fitted_line_yields_its_stretch_back_to_the_trace | `python/libs/image-tools/tests/test_plates.py:324` |
+| functionality | test_a_closed_loop_is_reported_closed | `python/libs/image-tools/tests/test_plates.py:357` |
+| functionality | test_a_fitted_line_measures_along_its_length_not_at_its_ends | `python/libs/image-tools/tests/test_plates.py:375` |
+| functionality | test_every_flatten_filter_produces_an_outline | `python/libs/image-tools/tests/test_plates.py:408` |
+| functionality | test_edge_strength_is_measured_on_the_photograph_not_the_flattened_copy | `python/libs/image-tools/tests/test_plates.py:415` |
+| functionality | test_a_hard_edge_measures_strong | `python/libs/image-tools/tests/test_plates.py:438` |
+| functionality | test_a_soft_edge_measures_weaker | `python/libs/image-tools/tests/test_plates.py:442` |
+| functionality | test_a_ramp_crossing_is_not_an_edge | `python/libs/image-tools/tests/test_plates.py:449` |
+| functionality | test_the_recipe_reproduces_every_plate | `python/libs/image-tools/tests/test_plates.py:457` |
+| functionality | test_each_plate_carries_its_own_metadata | `python/libs/image-tools/tests/test_plates.py:470` |
+| functionality | test_large_images_are_worked_at_the_working_size | `python/libs/image-tools/tests/test_plates.py:496` |
+| functionality | test_small_images_are_never_upscaled | `python/libs/image-tools/tests/test_plates.py:504` |
+| functionality | test_invalid_parameters_are_refused | `python/libs/image-tools/tests/test_plates.py:526` |
+| functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_plates.py:535` |
+| functionality | test_every_artifact_cites_the_projects_original | `python/services/agent/tests/test_graph.py:117` |
 
 ---
 

@@ -23,12 +23,14 @@ out is invisible in exactly the situation the ledger exists for.
 
 import asyncio
 import logging
+from contextlib import nullcontext
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any
 
 from langgraph.errors import GraphRecursionError
 
+from artloupe.agent.resources import RunResources, use_run_resources
 from artloupe.metering import (
     NodeMetric,
     RecursionLimitExceeded,
@@ -62,8 +64,13 @@ async def execute_run(
     guards: RunGuards | None = None,
     sink: Any = None,
     config: dict[str, Any] | None = None,
+    resources: RunResources | None = None,
 ) -> RunOutcome:
     """Run `graph` to completion under `guards`, recording every node.
+
+    `resources` carries what the run holds outside its state — the artist's token-bearing client
+    and the decoded photograph (`artloupe.agent.resources`). A graph whose nodes read no artist
+    data, like the guard tests', runs without them.
 
     Raises `GuardTripped` (one of its subclasses) when a ceiling stops the run. The ledger is
     written either way.
@@ -76,8 +83,9 @@ async def execute_run(
     if config:
         invocation.update(config)
 
+    in_resources = use_run_resources(resources) if resources is not None else nullcontext()
     try:
-        with use_recorder(recorder):
+        with use_recorder(recorder), in_resources:
             async with asyncio.timeout(resolved_guards.wall_clock_seconds):
                 state = await graph.ainvoke(initial_state, config=invocation)
     except GraphRecursionError as error:

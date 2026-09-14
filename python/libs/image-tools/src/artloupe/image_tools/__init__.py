@@ -21,10 +21,13 @@ from artloupe.image_tools.faces import (
     open_landmarker,
 )
 from artloupe.image_tools.head import (
+    LIMITATION_NO_FACE,
     HeadConstructionParameters,
     HeadConstructionResult,
     construct_from_face,
     construct_head,
+    head_from_face,
+    head_tool_version,
 )
 from artloupe.image_tools.loomis import (
     ConstructionElement,
@@ -68,6 +71,7 @@ __all__ = [
     "FULL_SIGNIFICANCE_MULTIPLE",
     "FULL_SUPPORT_SEGMENTS",
     "HARD_EDGE_GRADIENT",
+    "LIMITATION_NO_FACE",
     "MAX_VANISHING_DISTANCE",
     "MAX_VANISHING_POINTS",
     "SOFT_EDGE_GRADIENT",
@@ -105,6 +109,8 @@ __all__ = [
     "construct_head",
     "detect_perspective",
     "find_face",
+    "head_from_face",
+    "head_tool_version",
     "make_plates",
     "open_landmarker",
 ]

@@ -13,11 +13,20 @@ The system refuses to generate imagery
 | **Severity** | P0 |
 | **Why** | The authorship and copyright commitment the whole design rests on. A regression here is silent by construction and would not look like a bug. |
 | **Surfaces** | `apps/studio` · `python/services/agent` |
-| **Tests** | 0 |
-| **Covered** | nothing yet |
-| **Not covered** | a11y · security · privacy · safety · data · performance · functionality |
+| **Tests** | 6 (2 parametrized) |
+| **Covered** | safety 6 |
+| **Not covered** | a11y · security · privacy · data · performance · functionality |
 
-No test currently claims this flow.
+## pytest — 6
+
+| Category | Test | Location |
+| --- | --- | --- |
+| safety | test_no_image_generation_sdk_is_installed | `python/services/agent/tests/test_no_image_generation.py:76` |
+| safety | test_the_scan_covers_the_code_that_ships | `python/services/agent/tests/test_no_image_generation.py:82` |
+| safety | test_no_shipped_source_reaches_an_image_generation_endpoint | `python/services/agent/tests/test_no_image_generation.py:90` |
+| safety | test_an_installed_generator_is_caught | `python/services/agent/tests/test_no_image_generation.py:105` |
+| safety | test_a_generation_call_is_caught | `python/services/agent/tests/test_no_image_generation.py:119` |
+| safety | test_ordinary_calls_are_not_caught | `python/services/agent/tests/test_no_image_generation.py:132` |
 
 ---
 

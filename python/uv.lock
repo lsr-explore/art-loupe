@@ -73,7 +73,9 @@ version = "0.1.0"
 source = { editable = "services/agent" }
 dependencies = [
     { name = "artloupe-auth" },
+    { name = "artloupe-image-tools" },
     { name = "artloupe-metering" },
+    { name = "artloupe-persistence" },
     { name = "artloupe-schemas" },
     { name = "fastapi" },
     { name = "langgraph" },
@@ -88,7 +90,9 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "artloupe-auth", editable = "libs/auth" },
+    { name = "artloupe-image-tools", editable = "libs/image-tools" },
     { name = "artloupe-metering", editable = "libs/metering" },
+    { name = "artloupe-persistence", editable = "libs/persistence" },
     { name = "artloupe-schemas", editable = "libs/schemas" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "langgraph", specifier = ">=0.2" },
@@ -176,6 +180,7 @@ name = "artloupe-persistence"
 version = "0.1.0"
 source = { editable = "libs/persistence" }
 dependencies = [
+    { name = "httpx" },
     { name = "langgraph-checkpoint-postgres" },
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "pydantic-settings" },
@@ -183,6 +188,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
     { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.2" },
     { name = "pydantic-settings", specifier = ">=2.6" },

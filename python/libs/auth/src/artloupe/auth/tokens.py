@@ -8,9 +8,13 @@ Two verification modes:
 - **Asymmetric (preferred).** Keys come from the project's published JWKS, so a service
   that only *verifies* holds no secret at all. A compromised agent service cannot mint a
   token, because it never had the private key.
-- **HS256 shared secret (legacy).** Used when `SUPABASE_JWT_SECRET` is set, which is what a
-  local `supabase start` and older hosted projects still hand out. Works, but every
-  verifier now holds material that can also *sign*. Migrate to signing keys when you can.
+- **HS256 shared secret (legacy).** Used when `SUPABASE_JWT_SECRET` is set, for older hosted
+  projects that still hand one out. Works, but every verifier now holds material that can
+  also *sign*. Migrate to signing keys when you can.
+
+A local `supabase start` is on the asymmetric path, measured rather than assumed: its tokens
+are ES256, with a `kid` matching the one key its JWKS publishes. So local development leaves
+`SUPABASE_JWT_SECRET` unset. Setting it forces HS256, and every local token then fails.
 
 The allowed algorithm is decided by the mode, never read from the token header. Trusting
 `alg` is the classic JWT confusion attack: an attacker re-signs a token as HS256 using the
@@ -18,7 +22,7 @@ public key as the HMAC secret, and a naive verifier accepts it.
 """
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
@@ -52,6 +56,15 @@ class VerifiedToken:
     role: str
     expires_at: int
     claims: dict[str, Any]
+
+    access_token: str = field(repr=False)
+    """The bearer token itself, so a service can call Supabase *as* this artist.
+
+    No app runtime holds `service_role`, so reading an artist's rows or objects means presenting
+    their own token, and RLS does the rest. Excluded from `repr` so that printing or logging a
+    principal never prints a credential. Never put it anywhere that is serialized — a LangGraph
+    checkpoint in particular would keep it long after the token itself expired.
+    """
 
 
 def clear_key_cache() -> None:
@@ -142,4 +155,5 @@ async def verify_access_token(
         role=role if isinstance(role, str) and role else "artist",
         expires_at=int(claims["exp"]),
         claims=claims,
+        access_token=token,
     )

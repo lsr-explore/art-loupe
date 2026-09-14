@@ -107,7 +107,13 @@ def _model_digest() -> str:
     return hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()[:12]
 
 
-def _tool_version() -> str:
+def head_tool_version() -> str:
+    """The `tool_version` head construction records, and the agent's face cache is keyed on.
+
+    It names the MediaPipe runtime and the bundled model as well as the algorithm, because those
+    are what move the landmarks. A cached face therefore goes stale exactly when a fresh detection
+    could differ.
+    """
     return tool_version(
         HEAD_ALGORITHM_VERSION,
         f"mediapipe-{mediapipe.__version__}",
@@ -170,11 +176,58 @@ def construct_head(
             raise ValueError("the landmarker was opened with different detection parameters")
         params = params.model_copy(update={"detection": landmarker.parameters})
     face = find_face(image, parameters=params.detection, landmarker=landmarker)
+    height, width = image.shape[:2]
+    return _result(
+        face,
+        width=width,
+        height=height,
+        source_checksum=source_checksum,
+        params=params,
+        started=started,
+    )
+
+
+def head_from_face(
+    face: DetectedFace | None,
+    *,
+    width: int,
+    height: int,
+    source_checksum: Checksum,
+    parameters: HeadConstructionParameters | None = None,
+) -> HeadConstructionResult:
+    """The result `construct_head` would give, from a face that was already detected.
+
+    For a caller holding a stored `DetectedFace` — the agent's face cache — which must not detect
+    again, because every detection closes a landmarker and sends Google a usage report (#43).
+    `parameters.detection` should be what the face was detected with; it is recorded, not re-run.
+    `width` and `height` are the source image's. `duration_ms` covers the construction alone,
+    since the detection it rests on ran earlier and was timed then.
+    """
+    return _result(
+        face,
+        width=width,
+        height=height,
+        source_checksum=source_checksum,
+        params=parameters or HeadConstructionParameters(),
+        started=time.perf_counter(),
+    )
+
+
+def _result(
+    face: DetectedFace | None,
+    *,
+    width: int,
+    height: int,
+    source_checksum: Checksum,
+    params: HeadConstructionParameters,
+    started: float,
+) -> HeadConstructionResult:
+    """The construction on `face` and the FR-305 metadata that states what it rests on."""
 
     def metadata(confidence: float, limitations: list[str]) -> ArtifactMetadata:
         return ArtifactMetadata(
             tool="head_construction",
-            tool_version=_tool_version(),
+            tool_version=head_tool_version(),
             parameters=params.model_dump(),
             source_checksum=source_checksum,
             duration_ms=round((time.perf_counter() - started) * 1000),
@@ -191,7 +244,6 @@ def construct_head(
             metadata=metadata(0.0, [LIMITATION_NO_FACE, LIMITATION_ONE_FACE]),
         )
 
-    height, width = image.shape[:2]
     construction = construct_from_face(
         face, width=width, height=height, parameters=params.construction
     )

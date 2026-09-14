@@ -19,35 +19,36 @@ exists, the detail tells you what it covers.
 
 | Flow | Sev | a11y | sec | priv | safety | data | perf | func | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [`analysis.deterministic-studies`](flows/analysis.deterministic-studies.md) | P1 | – | – | – | – | – | – | 40 | 40 |
-| [`analysis.geometry`](flows/analysis.geometry.md) | P1 | 9 | – | – | – | – | – | 100 | 109 |
-| **analysis** | | 9 | – | – | – | – | – | 140 | **149** |
+| [`analysis.deterministic-studies`](flows/analysis.deterministic-studies.md) | P1 | – | – | – | – | – | – | 45 | 45 |
+| [`analysis.geometry`](flows/analysis.geometry.md) | P1 | 9 | – | – | – | – | – | 102 | 111 |
+| **analysis** | | 9 | – | – | – | – | – | 147 | **156** |
 | `canvas.session-plan` | P2 | – | – | – | – | – | – | – | **none** |
 | **canvas** | | – | – | – | – | – | – | – | **0** |
-| `critique.no-generation` | P0 | – | – | – | – | – | – | – | **none** |
+| [`critique.no-generation`](flows/critique.no-generation.md) | P0 | – | – | – | 6 | – | – | – | 6 |
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
-| **critique** | | – | – | – | – | – | – | – | **0** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 7 | 53 | – | 1 | 61 | – | 53 | 175 |
-| **intake** | | 7 | 53 | – | 1 | 61 | – | 53 | **175** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 23 | 30 |
-| **ops** | | 2 | 4 | – | – | 1 | – | 23 | **30** |
+| **critique** | | – | – | – | 6 | – | – | – | **6** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 7 | 53 | – | 1 | 61 | – | 57 | 179 |
+| **intake** | | 7 | 53 | – | 1 | 61 | – | 57 | **179** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 24 | 31 |
+| **ops** | | 2 | 4 | – | – | 1 | – | 24 | **31** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 7 | – | – | – | 1 | 33 | 41 |
-| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 96 | – | – | – | – | 13 | 114 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 34 | – | – | 1 | 1 | 48 | 84 |
+| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 100 | – | – | – | – | 13 | 118 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 20 | – | – | 20 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 108 | 139 |
-| **platform** | | 36 | 103 | – | – | 20 | 1 | 154 | **314** |
+| **platform** | | 36 | 134 | – | – | 21 | 1 | 169 | **361** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 54 | – | – | – | 71 |
 | **safety** | | – | 17 | – | 54 | – | – | – | **71** |
-| **all flows** | | **54** | **177** | **–** | **55** | **82** | **1** | **370** | **739** |
+| **all flows** | | **54** | **208** | **–** | **61** | **83** | **1** | **397** | **804** |
 
 ## Gaps
 
-- **6 flow(s) with no covering test:** `critique.no-generation`, `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **5 flow(s) with no covering test:** `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **`critique.no-generation`** (P0) has tests but none categorised `a11y`.
 - **`safety.untrusted-input`** (P0) has tests but none categorised `a11y`.
 
 ## Untagged
@@ -79,7 +80,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 271 | 0 | 271 |
+| pytest | 336 | 0 | 336 |
 | Vitest | 432 | 0 | 432 |
 | Playwright | 36 | 0 | 36 |
-| **All** | **739** | **0** | **739** |
+| **All** | **804** | **0** | **804** |

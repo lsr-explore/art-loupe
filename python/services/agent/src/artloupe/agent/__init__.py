@@ -5,12 +5,12 @@ browser → Next.js route handler → this service; the browser never reaches it
 Python never handles a credential — only a forwarded Supabase access token it verifies
 through `artloupe-auth`.
 
-Currently a skeleton: one graph node, one authenticated endpoint, one health check. It exists
-so the transport, the auth guard, and a compiled graph are proven together before any of them
-carries real work.
+The graph loads a project as the artist, gates on a face, surveys the photograph, routes, and
+runs the selected deterministic tools (`docs/design/routing-plan.md`). The routing node is a
+labelled deterministic stand-in until PR 12b brings the model-driven Studio Director.
 """
 
-from artloupe.agent.graph import build_graph, seed
+from artloupe.agent.graph import build_graph
 from artloupe.agent.state import RunState
 
-__all__ = ["RunState", "build_graph", "seed"]
+__all__ = ["RunState", "build_graph"]

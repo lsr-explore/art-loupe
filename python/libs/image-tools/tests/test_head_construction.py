@@ -30,6 +30,7 @@ from artloupe.image_tools import (
     construct_from_face,
     construct_head,
     find_face,
+    head_from_face,
     open_landmarker,
 )
 from artloupe.image_tools.head import LIMITATION_DERIVED, LIMITATION_NO_FACE
@@ -302,6 +303,35 @@ def test_a_result_reloads_from_json_exactly(path: Path, landmarker: OpenLandmark
     result = _head(path, landmarker)
 
     assert HeadConstructionResult.model_validate_json(result.model_dump_json()) == result
+
+
+@pytest.mark.parametrize("path", [FRONTAL, PROFILE], ids=["face", "no-face"])
+def test_building_from_a_stored_face_matches_detecting_it(
+    path: Path, landmarker: OpenLandmarker
+) -> None:
+    """The agent's face cache rebuilds the construction without detecting again (#43).
+
+    Everything but the timing must match `construct_head`: the face, the construction, the
+    confidence and the limitations. `duration_ms` differs by design, because it covers the
+    construction alone.
+    """
+    image = _image(path)
+    height, width = image.shape[:2]
+    detected = construct_head(image, source_checksum=CHECKSUM, landmarker=landmarker)
+
+    rebuilt = head_from_face(
+        detected.face,
+        width=width,
+        height=height,
+        source_checksum=CHECKSUM,
+        parameters=HeadConstructionParameters(detection=landmarker.parameters),
+    )
+
+    assert rebuilt.face == detected.face
+    assert rebuilt.construction == detected.construction
+    assert rebuilt.metadata.model_dump(exclude={"duration_ms"}) == detected.metadata.model_dump(
+        exclude={"duration_ms"}
+    )
 
 
 def test_the_recipe_records_the_parameters_the_landmarker_ran_with(

@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` |
-| **Tests** | 41 (1 parametrized) |
-| **Covered** | security 7 · performance 1 · functionality 33 |
-| **Not covered** | a11y · privacy · safety · data |
+| **Tests** | 84 (3 parametrized) |
+| **Covered** | security 34 · data 1 · performance 1 · functionality 48 |
+| **Not covered** | a11y · privacy · safety |
 
-## pytest — 41
+## pytest — 84
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -32,6 +32,20 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_every_guard_shares_one_catchable_family | `python/libs/metering/tests/test_guards.py:150` |
 | functionality | test_guards_come_from_configuration_not_constants | `python/libs/metering/tests/test_guards.py:156` |
 | functionality | test_the_defaults_would_not_fire_on_a_normal_run | `python/libs/metering/tests/test_guards.py:170` |
+| security | test_every_rest_call_presents_the_anon_apikey_and_the_artists_bearer | `python/libs/persistence/tests/test_artist_api.py:79` |
+| security | test_the_original_is_read_from_the_private_bucket_with_the_bearer_alone | `python/libs/persistence/tests/test_artist_api.py:93` |
+| security | test_a_project_hidden_by_rls_reads_as_not_found | `python/libs/persistence/tests/test_artist_api.py:103` |
+| security | test_a_project_with_no_original_yet_has_no_source | `python/libs/persistence/tests/test_artist_api.py:111` |
+| security | test_a_refusal_reports_the_status_and_not_the_body | `python/libs/persistence/tests/test_artist_api.py:123` |
+| security | test_a_cache_lookup_filters_on_the_whole_recipe | `python/libs/persistence/tests/test_artist_api.py:136` |
+| security | test_a_rejected_token_is_its_own_error | `python/libs/persistence/tests/test_artist_api.py:157` |
+| security | test_a_policy_refusal_is_not_a_credential_problem | `python/libs/persistence/tests/test_artist_api.py:165` |
+| security | test_a_cache_miss_is_none | `python/libs/persistence/tests/test_artist_api.py:175` |
+| security | test_storing_a_result_keeps_the_row_already_there_for_the_recipe | `python/libs/persistence/tests/test_artist_api.py:181` |
+| security | test_the_client_never_prints_the_token | `python/libs/persistence/tests/test_artist_api.py:194` |
+| security | test_the_settings_have_nowhere_to_put_a_service_role_key | `python/libs/persistence/tests/test_artist_api.py:200` |
+| security | test_parameters_digest_is_canonical | `python/libs/persistence/tests/test_artist_api.py:208` |
+| security | test_parameters_digest_refuses_nan | `python/libs/persistence/tests/test_artist_api.py:218` |
 | functionality | test_defaults_to_memory_so_tests_stay_hermetic | `python/libs/persistence/tests/test_checkpointer.py:29` |
 | functionality | test_memory_mode_is_not_persistence | `python/libs/persistence/tests/test_checkpointer.py:36` |
 | security | test_connection_puts_checkpoints_in_their_own_schema | `python/libs/persistence/tests/test_checkpointer.py:42` |
@@ -45,11 +59,38 @@ Agent service transport, auth guard, and graph execution
 | security | test_api_roles_cannot_use_the_checkpoint_schema | `python/libs/persistence/tests/test_schema_privileges.py:102` |
 | security | test_api_roles_cannot_read_any_checkpoint_table | `python/libs/persistence/tests/test_schema_privileges.py:117` |
 | security | test_the_checkpoint_schema_is_absent_from_the_postgrest_surface | `python/libs/persistence/tests/test_schema_privileges.py:143` |
-| functionality | test_graph_compiles_with_the_expected_nodes | `python/services/agent/tests/test_graph.py:15` |
-| functionality | test_graph_accepts_an_injected_checkpointer_slot | `python/services/agent/tests/test_graph.py:20` |
-| functionality | test_running_the_graph_records_the_run | `python/services/agent/tests/test_graph.py:25` |
-| functionality | test_node_trail_accumulates_rather_than_replaces | `python/services/agent/tests/test_graph.py:32` |
-| functionality | test_seed_returns_a_partial_update_not_whole_state | `python/services/agent/tests/test_graph.py:44` |
+| security | test_authenticated_holds_select_and_insert | `python/libs/persistence/tests/test_tool_results_rls.py:57` |
+| security | test_the_cached_row_exists_when_no_policy_is_deciding | `python/libs/persistence/tests/test_tool_results_rls.py:69` |
+| security | test_anon_holds_nothing | `python/libs/persistence/tests/test_tool_results_rls.py:81` |
+| security | test_authenticated_cannot_change_or_remove_a_result | `python/libs/persistence/tests/test_tool_results_rls.py:91` |
+| security | test_an_artist_can_cache_a_result_for_their_own_original | `python/libs/persistence/tests/test_tool_results_rls.py:109` |
+| security | test_an_artist_cannot_see_another_artists_results | `python/libs/persistence/tests/test_tool_results_rls.py:119` |
+| security | test_an_artist_cannot_cache_a_result_under_another_artists_project | `python/libs/persistence/tests/test_tool_results_rls.py:128` |
+| security | test_a_result_must_cite_its_projects_own_original | `python/libs/persistence/tests/test_tool_results_rls.py:135` |
+| security | test_a_project_with_no_original_can_cache_nothing | `python/libs/persistence/tests/test_tool_results_rls.py:145` |
+| security | test_a_repeated_recipe_is_ignored_rather_than_refused | `python/libs/persistence/tests/test_tool_results_rls.py:156` |
+| security | test_a_result_is_immutable_even_with_rls_bypassed | `python/libs/persistence/tests/test_tool_results_rls.py:174` |
+| security | test_deleting_the_project_deletes_its_results | `python/libs/persistence/tests/test_tool_results_rls.py:185` |
+| functionality | test_a_miss_detects_once_and_stores_the_face | `python/services/agent/tests/test_cache.py:32` |
+| functionality | test_a_hit_reloads_the_face_exactly_and_detects_nothing | `python/services/agent/tests/test_cache.py:50` |
+| functionality | test_no_face_is_cached_too | `python/services/agent/tests/test_cache.py:63` |
+| functionality | test_perspective_round_trips_through_the_cache | `python/services/agent/tests/test_cache.py:76` |
+| functionality | test_a_failed_store_does_not_fail_the_run | `python/services/agent/tests/test_cache.py:87` |
+| functionality | test_the_graph_is_the_five_nodes_in_order | `python/services/agent/tests/test_graph.py:52` |
+| functionality | test_graph_accepts_an_injected_checkpointer_slot | `python/services/agent/tests/test_graph.py:59` |
+| functionality | test_a_run_visits_every_node_once_and_spends_nothing | `python/services/agent/tests/test_graph.py:64` |
+| functionality | test_node_trail_accumulates_rather_than_replaces | `python/services/agent/tests/test_graph.py:75` |
+| functionality | test_the_photograph_is_downloaded_once_per_run | `python/services/agent/tests/test_graph.py:127` |
+| functionality | test_a_second_run_rests_on_the_first_runs_cache | `python/services/agent/tests/test_graph.py:135` |
+| security | test_the_state_holds_no_token_and_no_pixels | `python/services/agent/tests/test_graph.py:149` |
+| functionality | test_a_project_with_no_photograph_is_not_ready | `python/services/agent/tests/test_graph.py:159` |
+| functionality | test_a_project_with_no_intake_is_not_ready | `python/services/agent/tests/test_graph.py:164` |
+| data | test_bytes_that_do_not_match_the_checksum_are_refused | `python/services/agent/tests/test_resources.py:22` |
+| functionality | test_bytes_that_are_not_an_image_are_refused | `python/services/agent/tests/test_resources.py:28` |
+| functionality | test_decoding_applies_exif_orientation | `python/services/agent/tests/test_resources.py:35` |
+| functionality | test_a_node_outside_a_run_cannot_reach_artist_data | `python/services/agent/tests/test_resources.py:50` |
+| functionality | test_a_resumed_run_fetches_the_photograph_again_once | `python/services/agent/tests/test_resources.py:55` |
+| functionality | test_a_resumed_run_refuses_a_changed_original | `python/services/agent/tests/test_resources.py:66` |
 | functionality | test_a_run_produces_a_row_per_node_carrying_its_run_id | `python/services/agent/tests/test_runtime.py:73` |
 | functionality | test_a_deterministic_run_costs_a_measured_zero | `python/services/agent/tests/test_runtime.py:95` |
 | functionality | test_usage_recorded_inside_a_node_reaches_the_run_ledger | `python/services/agent/tests/test_runtime.py:111` |
@@ -58,10 +99,12 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_the_ledger_is_written_even_when_the_run_fails | `python/services/agent/tests/test_runtime.py:165` |
 | functionality | test_a_sink_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_runtime.py:186` |
 | functionality | test_a_graph_invoked_without_a_recorder_still_runs | `python/services/agent/tests/test_runtime.py:204` |
-| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:82` |
-| functionality | test_creating_a_run_returns_the_graph_result | `python/services/agent/tests/test_service.py:96` |
-| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:124` |
-| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:138` |
+| functionality | test_run_resources_reach_every_node_and_leave_with_the_run | `python/services/agent/tests/test_runtime.py:210` |
+| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:124` |
+| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:131` |
+| functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:144` |
+| functionality | test_creating_a_run_returns_the_routing_and_the_artifacts | `python/services/agent/tests/test_service.py:153` |
+| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:250` |
 
 ---
 

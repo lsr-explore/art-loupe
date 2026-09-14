@@ -17,6 +17,9 @@ version = "0.1.0"
 description = "LangGraph checkpointing over Postgres, isolated in its own schema."
 requires-python = ">=3.12"
 dependencies = [
+  # The artist-scoped Supabase client (`artist_api`). Already in the lockfile through
+  # artloupe-auth; declared here because this package imports it directly.
+  "httpx>=0.28",
   "langgraph-checkpoint-postgres>=2.0",
   # psycopg 3. `binary` ships a wheel so no local libpq/compiler is needed; `pool` provides
   # the AsyncConnectionPool the saver runs on.
