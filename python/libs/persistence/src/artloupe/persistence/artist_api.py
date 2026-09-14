@@ -9,7 +9,7 @@ The request shapes mirror the studio's, so there is one way to talk to Supabase 
 
 - PostgREST requires an `apikey` header even when the bearer token is the real credential. The
   anon key fills it, as `apps/studio/src/lib/intake/ingest-upload.ts` does.
-- Storage takes the bearer alone, as `apps/studio/src/lib/storage/delete-project.ts` does.
+- Storage takes the bearer alone, as `apps/studio/src/lib/storage/upload-reference-image.ts` does.
 - The append-only cache table is written with `resolution=ignore-duplicates` and an explicit
   `on_conflict`, as `screening_detections` is. Two runs racing on one recipe both succeed, and
   the loser keeps the winner's row.
@@ -74,6 +74,19 @@ class ProjectNotFound(ArtistApiError):
     """No project with this id is visible to this artist: absent, or somebody else's."""
 
 
+class CredentialRejected(ArtistApiError):
+    """Supabase rejected the artist's token itself (HTTP 401).
+
+    Distinct from every other refusal because the remedy is the caller's: refresh the token and
+    retry. A run checks the token's expiry before it starts, so this is the rarer path — clock
+    skew between this service and Supabase, or a signing key rotated mid-run. Reporting it as an
+    upstream fault would invite a retry with the same unusable token.
+
+    A 403 is not this. PostgREST answers a row-policy refusal with 403, and a fresh token would
+    be refused exactly the same way.
+    """
+
+
 @dataclass(frozen=True)
 class SourceImage:
     """The project's immutable original, as `source_images` records it (FR-105)."""
@@ -133,6 +146,10 @@ def _raise_for(response: httpx.Response, doing: str) -> None:
     """
     if response.is_success:
         return
+    if response.status_code == 401:
+        raise CredentialRejected(
+            f"Supabase rejected the artist's token while trying to {doing}: HTTP 401"
+        )
     raise ArtistApiError(f"Supabase refused to {doing} as the artist: HTTP {response.status_code}")
 
 

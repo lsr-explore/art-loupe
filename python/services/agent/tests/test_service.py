@@ -29,7 +29,7 @@ from artloupe.metering import (
     RecursionLimitExceeded,
     WallClockExceeded,
 )
-from artloupe.persistence import ArtistApi, ArtistApiError, ProjectNotFound
+from artloupe.persistence import ArtistApi, ArtistApiError, CredentialRejected, ProjectNotFound
 from artloupe.schemas import BudgetLedger
 
 pytestmark = pytest.mark.trace(flow="platform.agent-runtime", category="functionality")
@@ -217,6 +217,22 @@ async def test_a_token_expiring_before_the_deadline_is_refused_before_any_work(
 
     assert response.status_code == 401
     assert recorded.calls == []
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_a_token_supabase_rejects_mid_run_asks_for_a_refresh(
+    client: httpx.AsyncClient, authenticated: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The same remedy as a token about to expire: 401 with the refresh signal, never a 502."""
+
+    async def rejected(*_args: object, **_kwargs: object) -> None:
+        raise CredentialRejected("Supabase rejected the artist's token while trying to read")
+
+    monkeypatch.setattr("artloupe.agent.service.execute_run", rejected)
+
+    response = await client.post("/runs", json=BODY)
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
 
 
 @pytest.mark.parametrize(

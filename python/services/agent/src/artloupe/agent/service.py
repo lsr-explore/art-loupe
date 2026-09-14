@@ -41,7 +41,7 @@ from artloupe.metering import (
     RunGuards,
     WallClockExceeded,
 )
-from artloupe.persistence import ArtistApi, ArtistApiError, ProjectNotFound
+from artloupe.persistence import ArtistApi, ArtistApiError, CredentialRejected, ProjectNotFound
 from artloupe.schemas import ArtifactMetadata, ToolManifest
 
 SERVICE_NAME = "artloupe-agent"
@@ -118,6 +118,22 @@ async def artist_api_error(_request: Request, _error: ArtistApiError) -> JSONRes
     The upstream detail is not forwarded. A PostgREST error can quote the policy that fired.
     """
     return JSONResponse(status_code=502, content={"detail": "The data service refused a call."})
+
+
+@app.exception_handler(CredentialRejected)
+async def credential_rejected(_request: Request, _error: CredentialRejected) -> JSONResponse:
+    """401 with the refresh signal: Supabase rejected the artist's token partway through a run.
+
+    The same answer a token expiring before the run gets, so a caller has one remedy for both. A
+    502 here would invite a retry with the same unusable token.
+    """
+    return JSONResponse(
+        status_code=401,
+        content={
+            "detail": "Supabase rejected the access token during the run. Refresh it and retry."
+        },
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 
 class HealthResponse(BaseModel):

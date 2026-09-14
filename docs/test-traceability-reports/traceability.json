@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 333,
+      "pytest": 336,
       "vitest": 432,
       "playwright": 36,
-      "all": 801
+      "all": 804
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 333,
+      "pytest": 336,
       "vitest": 432,
       "playwright": 36,
-      "all": 801
+      "all": 804
     }
   },
   "by_flow": {
@@ -166,7 +166,7 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 32,
+        "security": 34,
         "privacy": 0,
         "safety": 0,
         "data": 1,
@@ -174,11 +174,11 @@
         "functionality": 48
       },
       "runners": {
-        "pytest": 82,
+        "pytest": 84,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 82,
+      "total": 84,
       "parametrized": 3
     },
     "platform.auth": {
@@ -186,7 +186,7 @@
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 99,
+        "security": 100,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -194,11 +194,11 @@
         "functionality": 13
       },
       "runners": {
-        "pytest": 17,
+        "pytest": 18,
         "vitest": 83,
         "playwright": 17
       },
-      "total": 117,
+      "total": 118,
       "parametrized": 3
     },
     "canvas.session-plan": {
@@ -4720,84 +4720,98 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:102",
+      "id": "python/libs/persistence/tests/test_artist_api.py:103",
       "name": "test_a_project_hidden_by_rls_reads_as_not_found",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:110",
+      "id": "python/libs/persistence/tests/test_artist_api.py:111",
       "name": "test_a_project_with_no_original_yet_has_no_source",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:122",
+      "id": "python/libs/persistence/tests/test_artist_api.py:123",
       "name": "test_a_refusal_reports_the_status_and_not_the_body",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:135",
+      "id": "python/libs/persistence/tests/test_artist_api.py:136",
       "name": "test_a_cache_lookup_filters_on_the_whole_recipe",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:156",
-      "name": "test_a_cache_miss_is_none",
+      "id": "python/libs/persistence/tests/test_artist_api.py:157",
+      "name": "test_a_rejected_token_is_its_own_error",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:162",
-      "name": "test_storing_a_result_keeps_the_row_already_there_for_the_recipe",
+      "id": "python/libs/persistence/tests/test_artist_api.py:165",
+      "name": "test_a_policy_refusal_is_not_a_credential_problem",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
       "id": "python/libs/persistence/tests/test_artist_api.py:175",
-      "name": "test_the_client_never_prints_the_token",
+      "name": "test_a_cache_miss_is_none",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
       "id": "python/libs/persistence/tests/test_artist_api.py:181",
+      "name": "test_storing_a_result_keeps_the_row_already_there_for_the_recipe",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:194",
+      "name": "test_the_client_never_prints_the_token",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_artist_api.py:200",
       "name": "test_the_settings_have_nowhere_to_put_a_service_role_key",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:189",
+      "id": "python/libs/persistence/tests/test_artist_api.py:208",
       "name": "test_parameters_digest_is_canonical",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:199",
+      "id": "python/libs/persistence/tests/test_artist_api.py:218",
       "name": "test_parameters_digest_refuses_nan",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:78",
+      "id": "python/libs/persistence/tests/test_artist_api.py:79",
       "name": "test_every_rest_call_presents_the_anon_apikey_and_the_artists_bearer",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/persistence/tests/test_artist_api.py:92",
+      "id": "python/libs/persistence/tests/test_artist_api.py:93",
       "name": "test_the_original_is_read_from_the_private_bucket_with_the_bearer_alone",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -5924,7 +5938,14 @@
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:234",
+      "id": "python/services/agent/tests/test_service.py:223",
+      "name": "test_a_token_supabase_rejects_mid_run_asks_for_a_refresh",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:250",
       "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
       "runner": "pytest",
       "flow": "platform.agent-runtime",

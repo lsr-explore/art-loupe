@@ -13,11 +13,11 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 117 (3 parametrized) |
-| **Covered** | a11y 5 · security 99 · functionality 13 |
+| **Tests** | 118 (3 parametrized) |
+| **Covered** | a11y 5 · security 100 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
-## pytest — 17
+## pytest — 18
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -38,6 +38,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:181` |
 | security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:194` |
 | security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:207` |
+| security | test_a_token_supabase_rejects_mid_run_asks_for_a_refresh | `python/services/agent/tests/test_service.py:223` |
 
 ## Vitest — 83
 

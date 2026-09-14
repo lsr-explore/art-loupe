@@ -15,6 +15,7 @@ from artloupe.persistence import (
     ArtistApi,
     ArtistApiError,
     ArtistApiSettings,
+    CredentialRejected,
     ProjectNotFound,
     SourceImage,
     ToolResultKey,
@@ -151,6 +152,24 @@ async def test_a_cache_lookup_filters_on_the_whole_recipe() -> None:
         "parameters_digest": f"eq.{KEY.parameters_digest}",
         "select": "result",
     }
+
+
+async def test_a_rejected_token_is_its_own_error() -> None:
+    """A 401 means refresh and retry, so a caller must be able to tell it from other refusals."""
+    api, _seen = _api(lambda _request: httpx.Response(401))
+
+    with pytest.raises(CredentialRejected):
+        await api.find_tool_result(KEY)
+
+
+async def test_a_policy_refusal_is_not_a_credential_problem() -> None:
+    """PostgREST answers a row-policy refusal with 403, and a fresh token would change nothing."""
+    api, _seen = _api(lambda _request: httpx.Response(403))
+
+    with pytest.raises(ArtistApiError) as raised:
+        await api.store_tool_result(KEY, {"face": None})
+
+    assert not isinstance(raised.value, CredentialRejected)
 
 
 async def test_a_cache_miss_is_none() -> None:

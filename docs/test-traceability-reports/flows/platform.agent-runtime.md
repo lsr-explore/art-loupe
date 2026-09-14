@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` |
-| **Tests** | 82 (3 parametrized) |
-| **Covered** | security 32 · data 1 · performance 1 · functionality 48 |
+| **Tests** | 84 (3 parametrized) |
+| **Covered** | security 34 · data 1 · performance 1 · functionality 48 |
 | **Not covered** | a11y · privacy · safety |
 
-## pytest — 82
+## pytest — 84
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -32,18 +32,20 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_every_guard_shares_one_catchable_family | `python/libs/metering/tests/test_guards.py:150` |
 | functionality | test_guards_come_from_configuration_not_constants | `python/libs/metering/tests/test_guards.py:156` |
 | functionality | test_the_defaults_would_not_fire_on_a_normal_run | `python/libs/metering/tests/test_guards.py:170` |
-| security | test_every_rest_call_presents_the_anon_apikey_and_the_artists_bearer | `python/libs/persistence/tests/test_artist_api.py:78` |
-| security | test_the_original_is_read_from_the_private_bucket_with_the_bearer_alone | `python/libs/persistence/tests/test_artist_api.py:92` |
-| security | test_a_project_hidden_by_rls_reads_as_not_found | `python/libs/persistence/tests/test_artist_api.py:102` |
-| security | test_a_project_with_no_original_yet_has_no_source | `python/libs/persistence/tests/test_artist_api.py:110` |
-| security | test_a_refusal_reports_the_status_and_not_the_body | `python/libs/persistence/tests/test_artist_api.py:122` |
-| security | test_a_cache_lookup_filters_on_the_whole_recipe | `python/libs/persistence/tests/test_artist_api.py:135` |
-| security | test_a_cache_miss_is_none | `python/libs/persistence/tests/test_artist_api.py:156` |
-| security | test_storing_a_result_keeps_the_row_already_there_for_the_recipe | `python/libs/persistence/tests/test_artist_api.py:162` |
-| security | test_the_client_never_prints_the_token | `python/libs/persistence/tests/test_artist_api.py:175` |
-| security | test_the_settings_have_nowhere_to_put_a_service_role_key | `python/libs/persistence/tests/test_artist_api.py:181` |
-| security | test_parameters_digest_is_canonical | `python/libs/persistence/tests/test_artist_api.py:189` |
-| security | test_parameters_digest_refuses_nan | `python/libs/persistence/tests/test_artist_api.py:199` |
+| security | test_every_rest_call_presents_the_anon_apikey_and_the_artists_bearer | `python/libs/persistence/tests/test_artist_api.py:79` |
+| security | test_the_original_is_read_from_the_private_bucket_with_the_bearer_alone | `python/libs/persistence/tests/test_artist_api.py:93` |
+| security | test_a_project_hidden_by_rls_reads_as_not_found | `python/libs/persistence/tests/test_artist_api.py:103` |
+| security | test_a_project_with_no_original_yet_has_no_source | `python/libs/persistence/tests/test_artist_api.py:111` |
+| security | test_a_refusal_reports_the_status_and_not_the_body | `python/libs/persistence/tests/test_artist_api.py:123` |
+| security | test_a_cache_lookup_filters_on_the_whole_recipe | `python/libs/persistence/tests/test_artist_api.py:136` |
+| security | test_a_rejected_token_is_its_own_error | `python/libs/persistence/tests/test_artist_api.py:157` |
+| security | test_a_policy_refusal_is_not_a_credential_problem | `python/libs/persistence/tests/test_artist_api.py:165` |
+| security | test_a_cache_miss_is_none | `python/libs/persistence/tests/test_artist_api.py:175` |
+| security | test_storing_a_result_keeps_the_row_already_there_for_the_recipe | `python/libs/persistence/tests/test_artist_api.py:181` |
+| security | test_the_client_never_prints_the_token | `python/libs/persistence/tests/test_artist_api.py:194` |
+| security | test_the_settings_have_nowhere_to_put_a_service_role_key | `python/libs/persistence/tests/test_artist_api.py:200` |
+| security | test_parameters_digest_is_canonical | `python/libs/persistence/tests/test_artist_api.py:208` |
+| security | test_parameters_digest_refuses_nan | `python/libs/persistence/tests/test_artist_api.py:218` |
 | functionality | test_defaults_to_memory_so_tests_stay_hermetic | `python/libs/persistence/tests/test_checkpointer.py:29` |
 | functionality | test_memory_mode_is_not_persistence | `python/libs/persistence/tests/test_checkpointer.py:36` |
 | security | test_connection_puts_checkpoints_in_their_own_schema | `python/libs/persistence/tests/test_checkpointer.py:42` |
@@ -102,7 +104,7 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:131` |
 | functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:144` |
 | functionality | test_creating_a_run_returns_the_routing_and_the_artifacts | `python/services/agent/tests/test_service.py:153` |
-| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:234` |
+| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:250` |
 
 ---
 

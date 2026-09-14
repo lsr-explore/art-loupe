@@ -15,6 +15,12 @@ cached face.
 The key is the FR-305 recipe — tool, `tool_version`, and a digest of the validated parameters —
 scoped to the project. A library upgrade changes `tool_version`, so it is a miss rather than a
 stale hit.
+
+**What "once per recipe" means.** A run that follows another — reopening a study — never
+recomputes a cached result. Two runs racing on the same uncached project can both miss and both
+compute, and for the face that sends two usage reports; the unique key then keeps the first row.
+Nothing coordinates across runs, because this service is one process serving one artist, where
+that race is a double-click. A queued worker pool (NFR-02) would need per-recipe coordination.
 """
 
 import logging
@@ -69,7 +75,10 @@ async def _store(key: ToolResultKey, result: Mapping[str, Any]) -> None:
 
 
 async def cached_face(project_id: str, checksum: str) -> DetectedFace | None:
-    """The photograph's most prominent face, or `None` — detected at most once per recipe."""
+    """The photograph's most prominent face, or `None`, detected once per recipe.
+
+    "Once" holds for runs that follow one another; the module docstring describes the race.
+    """
     parameters = FaceDetectionParameters()
     key = _key(project_id, checksum, FACE, head_tool_version(), parameters.model_dump(mode="json"))
 
@@ -84,7 +93,7 @@ async def cached_face(project_id: str, checksum: str) -> DetectedFace | None:
 
 
 async def cached_perspective(project_id: str, checksum: str) -> PerspectiveResult:
-    """Vanishing points and the horizon, computed at most once per recipe."""
+    """Vanishing points and the horizon, computed once per recipe (see the module docstring)."""
     parameters = PerspectiveParameters()
     key = _key(
         project_id,
