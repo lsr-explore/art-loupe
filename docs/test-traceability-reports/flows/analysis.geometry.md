@@ -88,7 +88,7 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:360` |
 | functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:365` |
 | functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:378` |
-| functionality | test_a_face_brings_head_construction_in_on_the_cached_face | `python/services/agent/tests/test_graph.py:101` |
+| functionality | test_a_face_brings_head_construction_in_on_the_cached_face | `python/services/agent/tests/test_graph.py:119` |
 
 ## Vitest — 43
 

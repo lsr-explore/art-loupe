@@ -12,15 +12,29 @@ Agent service transport, auth guard, and graph execution
 | --- | --- |
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
-| **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` |
-| **Tests** | 84 (3 parametrized) |
-| **Covered** | security 34 · data 1 · performance 1 · functionality 48 |
+| **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` · `python/libs/config` |
+| **Tests** | 100 (6 parametrized) |
+| **Covered** | security 49 · data 1 · performance 1 · functionality 49 |
 | **Not covered** | a11y · privacy · safety |
 
-## pytest — 84
+## pytest — 100
 
 | Category | Test | Location |
 | --- | --- | --- |
+| security | test_app_env_defaults_to_local | `python/libs/config/tests/test_keys.py:67` |
+| security | test_an_unrecognised_app_env_fails_rather_than_falling_back_to_local | `python/libs/config/tests/test_keys.py:71` |
+| security | test_a_deployed_environment_needs_the_key_in_its_environment | `python/libs/config/tests/test_keys.py:80` |
+| security | test_a_deployed_environment_never_reads_the_keychain | `python/libs/config/tests/test_keys.py:93` |
+| security | test_a_deployed_environment_reads_no_env_file | `python/libs/config/tests/test_keys.py:103` |
+| security | test_locally_an_exported_key_wins_over_the_keychain | `python/libs/config/tests/test_keys.py:112` |
+| security | test_locally_the_key_is_read_from_the_keychain | `python/libs/config/tests/test_keys.py:120` |
+| security | test_a_keychain_key_is_never_exported | `python/libs/config/tests/test_keys.py:127` |
+| security | test_coordinates_come_from_the_env_files_and_env_local_wins | `python/libs/config/tests/test_keys.py:133` |
+| security | test_a_key_written_into_an_env_file_is_not_read | `python/libs/config/tests/test_keys.py:149` |
+| security | test_missing_coordinates_name_both_variables | `python/libs/config/tests/test_keys.py:155` |
+| security | test_a_failed_keychain_lookup_is_named | `python/libs/config/tests/test_keys.py:172` |
+| security | test_an_empty_keychain_item_is_refused | `python/libs/config/tests/test_keys.py:181` |
+| security | test_the_keychain_lookup_is_bounded_in_time | `python/libs/config/tests/test_keys.py:188` |
 | functionality | test_the_token_ceiling_stops_the_run | `python/libs/metering/tests/test_guards.py:36` |
 | functionality | test_a_stopped_run_refuses_to_start_another_node | `python/libs/metering/tests/test_guards.py:44` |
 | functionality | test_one_node_may_not_run_more_times_than_the_limit | `python/libs/metering/tests/test_guards.py:60` |
@@ -76,15 +90,15 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_no_face_is_cached_too | `python/services/agent/tests/test_cache.py:63` |
 | functionality | test_perspective_round_trips_through_the_cache | `python/services/agent/tests/test_cache.py:76` |
 | functionality | test_a_failed_store_does_not_fail_the_run | `python/services/agent/tests/test_cache.py:87` |
-| functionality | test_the_graph_is_the_five_nodes_in_order | `python/services/agent/tests/test_graph.py:52` |
-| functionality | test_graph_accepts_an_injected_checkpointer_slot | `python/services/agent/tests/test_graph.py:59` |
-| functionality | test_a_run_visits_every_node_once_and_spends_nothing | `python/services/agent/tests/test_graph.py:64` |
-| functionality | test_node_trail_accumulates_rather_than_replaces | `python/services/agent/tests/test_graph.py:75` |
-| functionality | test_the_photograph_is_downloaded_once_per_run | `python/services/agent/tests/test_graph.py:127` |
-| functionality | test_a_second_run_rests_on_the_first_runs_cache | `python/services/agent/tests/test_graph.py:135` |
-| security | test_the_state_holds_no_token_and_no_pixels | `python/services/agent/tests/test_graph.py:149` |
-| functionality | test_a_project_with_no_photograph_is_not_ready | `python/services/agent/tests/test_graph.py:159` |
-| functionality | test_a_project_with_no_intake_is_not_ready | `python/services/agent/tests/test_graph.py:164` |
+| functionality | test_the_graph_is_the_five_nodes_in_order | `python/services/agent/tests/test_graph.py:67` |
+| functionality | test_graph_accepts_an_injected_checkpointer_slot | `python/services/agent/tests/test_graph.py:74` |
+| functionality | test_a_run_visits_every_node_once_and_only_the_director_spends | `python/services/agent/tests/test_graph.py:79` |
+| functionality | test_node_trail_accumulates_rather_than_replaces | `python/services/agent/tests/test_graph.py:93` |
+| functionality | test_the_photograph_is_downloaded_once_per_run | `python/services/agent/tests/test_graph.py:149` |
+| functionality | test_a_second_run_rests_on_the_first_runs_cache | `python/services/agent/tests/test_graph.py:157` |
+| security | test_the_state_holds_no_credential_and_no_pixels | `python/services/agent/tests/test_graph.py:173` |
+| functionality | test_a_project_with_no_photograph_is_not_ready | `python/services/agent/tests/test_graph.py:184` |
+| functionality | test_a_project_with_no_intake_is_not_ready | `python/services/agent/tests/test_graph.py:191` |
 | data | test_bytes_that_do_not_match_the_checksum_are_refused | `python/services/agent/tests/test_resources.py:22` |
 | functionality | test_bytes_that_are_not_an_image_are_refused | `python/services/agent/tests/test_resources.py:28` |
 | functionality | test_decoding_applies_exif_orientation | `python/services/agent/tests/test_resources.py:35` |
@@ -100,11 +114,13 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_sink_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_runtime.py:186` |
 | functionality | test_a_graph_invoked_without_a_recorder_still_runs | `python/services/agent/tests/test_runtime.py:204` |
 | functionality | test_run_resources_reach_every_node_and_leave_with_the_run | `python/services/agent/tests/test_runtime.py:210` |
-| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:124` |
-| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:131` |
-| functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:144` |
-| functionality | test_creating_a_run_returns_the_routing_and_the_artifacts | `python/services/agent/tests/test_service.py:153` |
-| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:250` |
+| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:143` |
+| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:150` |
+| functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:163` |
+| functionality | test_creating_a_run_returns_the_routing_and_the_artifacts | `python/services/agent/tests/test_service.py:172` |
+| functionality | test_the_run_is_handed_the_director_client | `python/services/agent/tests/test_service.py:185` |
+| security | test_a_missing_director_key_is_a_503_that_names_nothing_it_tried | `python/services/agent/tests/test_service.py:195` |
+| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:301` |
 
 ---
 

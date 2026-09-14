@@ -52,7 +52,8 @@ class RunState(TypedDict):
     gate: NotRequired[dict[str, Any]]
     # `survey`: the first-pass figures the Director reads, each quoted from FR-305 metadata.
     survey: NotRequired[dict[str, Any]]
-    # `direct`: the `ToolManifest` — what runs, and what was declined and why (FR-307).
-    manifest: NotRequired[dict[str, Any]]
+    # `direct`: the `RoutingDecision` — what runs and what was declined and why (FR-307), the
+    # rationale the artist reads, and the gate's half kept apart from the model's.
+    routing: NotRequired[dict[str, Any]]
     # `analyse`: the FR-305 `ArtifactMetadata` of every selected tool, in `TOOLS` order.
     artifacts: NotRequired[list[dict[str, Any]]]

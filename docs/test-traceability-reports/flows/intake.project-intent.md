@@ -13,11 +13,11 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 179 (18 parametrized) |
-| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 57 |
+| **Tests** | 194 (19 parametrized) |
+| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 72 |
 | **Not covered** | privacy · performance |
 
-## pytest — 46
+## pytest — 61
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -63,10 +63,25 @@ Upload, intake, and the typed ProjectIntent
 | data | test_a_project_carries_a_retention_date | `python/libs/persistence/tests/test_projects_schema.py:324` |
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
-| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_graph.py:85` |
-| functionality | test_every_tool_is_accounted_for_exactly_once | `python/services/agent/tests/test_routing.py:24` |
-| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_routing.py:34` |
-| functionality | test_a_face_makes_head_construction_eligible | `python/services/agent/tests/test_routing.py:42` |
+| functionality | test_a_manifest_naming_every_offered_tool_once_passes | `python/libs/schemas/tests/test_manifest_completeness.py:31` |
+| functionality | test_completeness_is_judged_against_the_offer_not_every_tool | `python/libs/schemas/tests/test_manifest_completeness.py:35` |
+| functionality | test_an_omitted_tool_is_refused_and_named | `python/libs/schemas/tests/test_manifest_completeness.py:41` |
+| functionality | test_a_tool_named_twice_is_refused | `python/libs/schemas/tests/test_manifest_completeness.py:46` |
+| functionality | test_a_tool_that_was_not_offered_is_refused | `python/libs/schemas/tests/test_manifest_completeness.py:53` |
+| functionality | test_every_problem_is_reported_together | `python/libs/schemas/tests/test_manifest_completeness.py:60` |
+| functionality | test_the_director_routes_a_portrait_for_real | `python/services/agent/tests/test_director_live.py:26` |
+| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_graph.py:103` |
+| functionality | test_the_model_decides_every_tool_the_gate_left_open | `python/services/agent/tests/test_routing.py:70` |
+| functionality | test_every_tool_is_accounted_for_exactly_once | `python/services/agent/tests/test_routing.py:89` |
+| functionality | test_no_face_pre_declines_head_construction_and_never_offers_it | `python/services/agent/tests/test_routing.py:100` |
+| functionality | test_an_answer_that_does_not_account_for_its_tools_stops_the_run | `python/services/agent/tests/test_routing.py:126` |
+| functionality | test_a_refusal_stops_the_run_before_its_content_is_read | `python/services/agent/tests/test_routing.py:134` |
+| functionality | test_an_answer_that_misses_its_schema_stops_the_run_and_stays_on_the_ledger | `python/services/agent/tests/test_routing.py:160` |
+| functionality | test_a_truncated_answer_stops_the_run | `python/services/agent/tests/test_routing.py:178` |
+| functionality | test_the_ledger_prices_the_model_that_answered | `python/services/agent/tests/test_routing.py:185` |
+| functionality | test_the_request_asks_for_a_structured_decision_with_fallbacks_on | `python/services/agent/tests/test_routing.py:196` |
+| functionality | test_the_model_id_is_configuration | `python/services/agent/tests/test_routing.py:214` |
+| functionality | test_no_pixels_reach_the_model | `python/services/agent/tests/test_routing.py:225` |
 
 ## Vitest — 122
 

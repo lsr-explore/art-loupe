@@ -12,7 +12,13 @@ version = "0.1.0"
 description = "LangGraph orchestration service for the Art Loupe studio director (FastAPI)."
 requires-python = ">=3.12"
 dependencies = [
+  # The Studio Director's model call, and the workspace's first provider SDK. It is declared here
+  # and nowhere else, so the FR-801 check has exactly one provider to review.
+  "anthropic>=1.5.0",
   "artloupe-auth",
+  # Where the Director's provider key comes from: the keychain locally, the platform
+  # environment when deployed. The service asks for a key and never learns where it lives.
+  "artloupe-config",
   # The deterministic tools the graph routes to and runs. Brings MediaPipe and OpenCV into this
   # service — which is where they run, so that is the honest place for them.
   "artloupe-image-tools",
@@ -46,6 +52,7 @@ packages = ["src/artloupe"]
 
 [tool.uv.sources]
 artloupe-auth = { workspace = true }
+artloupe-config = { workspace = true }
 artloupe-image-tools = { workspace = true }
 artloupe-metering = { workspace = true }
 artloupe-persistence = { workspace = true }

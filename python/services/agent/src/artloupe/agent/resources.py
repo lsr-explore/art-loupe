@@ -1,13 +1,15 @@
 """What a run holds that must never enter its state.
 
 `RunState` is checkpointed, so anything in it is written to Postgres on every superstep and kept
-for as long as the checkpoint is. Two things a run needs therefore live beside the state rather
+for as long as the checkpoint is. Three things a run needs therefore live beside the state rather
 than in it:
 
 - **The artist's bearer token**, inside an `ArtistApi`. In a checkpoint it would outlive its own
   expiry, readable by anything that can read the checkpoint schema.
 - **The decoded photograph.** An original can be 25 MB before decoding (FR-101); written into
   every checkpoint, it would dwarf everything else the run stores.
+- **The Director's model client**, which holds the provider API key. In a checkpoint, the key would
+  be readable by anything that can read the checkpoint schema, for as long as the checkpoint is.
 
 Both travel in a `ContextVar`, the way `artloupe.metering` carries its recorder: asyncio tasks
 inherit the context they were created in, so every node sees the resources without the graph
@@ -26,6 +28,7 @@ from dataclasses import dataclass
 
 import cv2
 import numpy as np
+from anthropic import AsyncAnthropic
 from numpy.typing import NDArray
 
 from artloupe.image_tools import PlateSuite
@@ -38,13 +41,17 @@ class PhotographUnavailable(RuntimeError):
 
 @dataclass
 class RunResources:
-    """One run's token-bearing client, and what it has already fetched and computed.
+    """One run's token-bearing client, its Director client, and what it has fetched and computed.
 
     Mutable on purpose: `load_project` decodes the photograph once and every later node reuses it,
     and the survey's plates are reused by `analyse` rather than computed twice.
+
+    `director` is shared across runs, since it is one connection pool per process. It travels here
+    rather than in the state because it holds the provider key.
     """
 
     api: ArtistApi
+    director: AsyncAnthropic | None = None
     image: NDArray[np.uint8] | None = None
     plates: PlateSuite | None = None
 

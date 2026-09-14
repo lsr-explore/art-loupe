@@ -33,12 +33,12 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:228` |
 | security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:239` |
 | security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:246` |
-| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:138` |
-| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:169` |
-| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:181` |
-| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:194` |
-| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:207` |
-| security | test_a_token_supabase_rejects_mid_run_asks_for_a_refresh | `python/services/agent/tests/test_service.py:223` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:157` |
+| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:218` |
+| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:230` |
+| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:243` |
+| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:256` |
+| security | test_a_token_supabase_rejects_mid_run_asks_for_a_refresh | `python/services/agent/tests/test_service.py:272` |
 
 ## Vitest — 83
 

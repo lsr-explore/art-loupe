@@ -67,7 +67,8 @@
         "python/libs/auth",
         "python/libs/schemas",
         "python/libs/persistence",
-        "python/libs/metering"
+        "python/libs/metering",
+        "python/libs/config"
       ]
     },
     {
@@ -79,7 +80,8 @@
         "apps/studio",
         "packages/schemas",
         "python/libs/schemas",
-        "python/libs/persistence"
+        "python/libs/persistence",
+        "python/services/agent"
       ]
     },
     {

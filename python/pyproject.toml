@@ -33,6 +33,7 @@ asyncio_mode = "auto"
 testpaths = ["libs", "services"]
 markers = [
   "trace(flow, category): the application flow this test verifies, and what aspect of it — see docs/test-traceability-reports/README.md",
+  "live: calls a paid external API with a real key; skipped unless ARTLOUPE_LIVE_TESTS=1 (`poe test-live`)",
 ]
 
 # Task runner for the Python workspace — the package.json-scripts analog.
@@ -44,6 +45,9 @@ markers = [
 # suite silently stopped running, and swallowing that would hide it.
 test = { cmd = "pytest", help = "Run the test suite" }
 test-cov = { cmd = "pytest --cov=artloupe --cov-report=term-missing", help = "Run tests with coverage" }
+# The live smoke tests spend real money against a real key. Opt-in only: never part of `check`,
+# and never run in CI, which has no key.
+test-live = { cmd = "pytest -m live", env = { ARTLOUPE_LIVE_TESTS = "1" }, help = "Run the live smoke tests (spends real money)" }
 # The other half of traceability: `test-cov` says how MUCH of a module runs; this says WHICH
 # tests run each line, so "if I change rules.py:110, what should catch it?" has an answer.
 # Chains with the `trace` flow marks — line -> covering tests -> the flows those tests verify.

@@ -20,7 +20,7 @@ from artloupe.image_tools import (
     head_from_face,
     make_plates,
 )
-from artloupe.schemas import TOOLS, ProjectIntent, ToolManifest
+from artloupe.schemas import TOOLS, ProjectIntent, RoutingDecision
 
 # The four manifest tools one `make_plates` call produces.
 PLATE_TOOLS = frozenset({"grayscale", "value_map", "value_shapes", "outline"})
@@ -118,7 +118,7 @@ async def analyse(state: RunState) -> dict[str, Any]:
     into `VisualFindings` arrives with the plan. A declined tool contributes nothing here, even
     where the pipeline computed it anyway.
     """
-    manifest = ToolManifest.model_validate(state["manifest"])
+    manifest = RoutingDecision.model_validate(state["routing"]).manifest
     selected = {entry.tool for entry in manifest.selected}
     project_id, checksum = state["project_id"], state["source_checksum"]
 

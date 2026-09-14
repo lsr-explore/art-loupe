@@ -1,0 +1,25 @@
+# Art Loupe config — where a provider key comes from, and nothing else.
+#
+# Ported from veloce-trace's `veloce-config`, key resolution only (docs/design/routing-plan.md §6).
+# A library rather than a module inside the agent, because the key is a deployment concern the
+# agent should not have to know the shape of: locally it lives in the macOS keychain, and when
+# deployed the platform injects it. The agent asks for a key and gets one, or a named error.
+[project]
+name = "artloupe-config"
+version = "0.1.0"
+description = "Provider-secret resolution for Art Loupe: keychain locally, platform env when deployed."
+requires-python = ">=3.12"
+dependencies = [
+  "pydantic>=2.9",
+  # The same settings idiom as artloupe-auth, -metering and -persistence. It reads the env files
+  # without exporting them, which is what keeps a coordinate from becoming process environment.
+  "pydantic-settings>=2.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
+packages = ["src/artloupe"]

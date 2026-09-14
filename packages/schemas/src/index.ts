@@ -56,6 +56,12 @@ export {
   toolSelectionSchema,
 } from './manifest';
 export {
+  type RoutingDecision,
+  type RoutingGate,
+  routingDecisionSchema,
+  routingGateSchema,
+} from './routing';
+export {
   type Detection,
   type DetectionSeverity,
   EXCERPT_MAX_LENGTH,

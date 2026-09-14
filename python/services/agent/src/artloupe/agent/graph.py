@@ -4,8 +4,8 @@
 START → load_project → face_gate → survey → direct → analyse → END
 ```
 
-`direct` is the Studio Director's seat. Until PR 12b it holds a deterministic stand-in, and
-`artloupe.agent.routing` says plainly that the stand-in does not meet FR-307.
+`direct` is the Studio Director's seat, and the only node that spends tokens. The face gate
+decides head construction, and the model decides every other tool (`artloupe.agent.routing`).
 `docs/design/routing-plan.md` is the design this follows.
 
 The shape that matters and will not change:
