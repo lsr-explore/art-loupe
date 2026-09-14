@@ -1,16 +1,19 @@
-"""The studio graph.
+"""The studio graph: load the project, gate on a face, survey, route, analyse.
 
-One node, for now. This exists so the FastAPI surface, the auth guard, and a compiled
-LangGraph are wired together and proven end to end *before* any of them carries real work —
-the failure mode this avoids is discovering a transport or lifecycle problem while also
-debugging the Studio Director's routing.
+```text
+START → load_project → face_gate → survey → direct → analyse → END
+```
+
+`direct` is the Studio Director's seat. Until PR 12b it holds a deterministic stand-in, and
+`artloupe.agent.routing` says plainly that the stand-in does not meet FR-307.
+`docs/design/routing-plan.md` is the design this follows.
 
 The shape that matters and will not change:
 
 - `build_graph(checkpointer=None)` takes its checkpointer by injection rather than building
-  one. PR 3 introduces the Postgres saver, and it has to be a process-wide singleton owned
-  outside the graph — a graph that constructed its own would open a connection pool per call.
-  The sibling repo `veloce-trace` settled on this same signature for the same reason.
+  one. The Postgres saver is a process-wide singleton owned outside the graph — a graph that
+  constructed its own would open a connection pool per call. The sibling repo `veloce-trace`
+  settled on this same signature for the same reason.
 - Nodes return *partial* state. `RunState.node_trail` accumulates via its reducer; returning
   the whole state from a node would fight that.
 - Every node is registered through `instrumented(...)`. Wrapping at registration rather than
@@ -25,27 +28,33 @@ which is the only thing that should ever call `ainvoke` on this graph.
 
 from langgraph.graph import END, START, StateGraph
 
+from artloupe.agent.nodes import analyse, face_gate, load_project, survey
+from artloupe.agent.routing import direct
 from artloupe.agent.state import RunState
 from artloupe.metering import instrumented
 
-
-def seed(state: RunState) -> dict[str, list[str]]:
-    """Record that the graph ran.
-
-    The placeholder the Studio Director replaces in PR 12. It reads `run_id` rather than
-    ignoring state entirely, so the wiring proven here is the wiring the real node needs.
-    """
-    return {"node_trail": [f"seed:{state['run_id']}"]}
+# In execution order. The graph is a straight line in this slice; the order is the topology.
+NODES = (
+    ("load_project", load_project),
+    ("face_gate", face_gate),
+    ("survey", survey),
+    ("direct", direct),
+    ("analyse", analyse),
+)
 
 
 def build_graph(checkpointer=None):
     """Compile the studio graph.
 
-    `checkpointer` is `None` in tests and for stateless calls; PR 3 passes an
-    `AsyncPostgresSaver` so an interrupted run can resume in a different process.
+    `checkpointer` is `None` in tests and for stateless calls; a real interrupt passes an
+    `AsyncPostgresSaver` so the run can resume in a different process.
     """
     builder = StateGraph(RunState)
-    builder.add_node("seed", instrumented("seed", seed))
-    builder.add_edge(START, "seed")
-    builder.add_edge("seed", END)
+    for name, node in NODES:
+        builder.add_node(name, instrumented(name, node))
+
+    builder.add_edge(START, NODES[0][0])
+    for (earlier, _), (later, _) in zip(NODES, NODES[1:], strict=False):
+        builder.add_edge(earlier, later)
+    builder.add_edge(NODES[-1][0], END)
     return builder.compile(checkpointer=checkpointer)

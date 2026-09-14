@@ -13,11 +13,11 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 109 (7 parametrized) |
-| **Covered** | a11y 9 · functionality 100 |
+| **Tests** | 111 (8 parametrized) |
+| **Covered** | a11y 9 · functionality 102 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## pytest — 66
+## pytest — 68
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -28,23 +28,24 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_a_perpendicular_segment_has_a_right_angle_residual | `python/libs/image-tools/tests/test_geometry_primitives.py:45` |
 | functionality | test_a_point_at_infinity_is_supported_by_parallel_segments | `python/libs/image-tools/tests/test_geometry_primitives.py:52` |
 | functionality | test_residual_ignores_which_way_the_segment_was_drawn | `python/libs/image-tools/tests/test_geometry_primitives.py:63` |
-| functionality | test_a_frontal_close_up_is_fully_reliable | `python/libs/image-tools/tests/test_head_construction.py:103` |
-| functionality | test_a_near_profile_scores_near_zero_and_names_the_yaw | `python/libs/image-tools/tests/test_head_construction.py:110` |
-| functionality | test_the_artifact_confidence_is_the_derived_reliability | `python/libs/image-tools/tests/test_head_construction.py:118` |
-| functionality | test_a_small_image_of_a_face_loses_scale_reliability | `python/libs/image-tools/tests/test_head_construction.py:127` |
-| functionality | test_the_far_side_anchor_of_a_turned_head_is_flagged | `python/libs/image-tools/tests/test_head_construction.py:149` |
-| functionality | test_a_chin_facing_the_camera_is_never_flagged | `python/libs/image-tools/tests/test_head_construction.py:160` |
-| functionality | test_pose_signs_follow_the_documented_convention | `python/libs/image-tools/tests/test_head_construction.py:168` |
-| functionality | test_pose_barely_depends_on_where_the_face_sits | `python/libs/image-tools/tests/test_head_construction.py:210` |
-| functionality | test_no_face_is_the_portrait_gates_answer | `python/libs/image-tools/tests/test_head_construction.py:245` |
-| functionality | test_the_detector_has_a_small_face_limit | `python/libs/image-tools/tests/test_head_construction.py:255` |
-| functionality | test_a_corrected_chin_moves_the_chin_line | `python/libs/image-tools/tests/test_head_construction.py:264` |
-| functionality | test_a_correction_to_something_that_is_not_an_anchor_is_refused | `python/libs/image-tools/tests/test_head_construction.py:285` |
-| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_head_construction.py:300` |
-| functionality | test_the_recipe_records_the_parameters_the_landmarker_ran_with | `python/libs/image-tools/tests/test_head_construction.py:307` |
-| functionality | test_a_landmarker_opened_with_other_parameters_is_refused | `python/libs/image-tools/tests/test_head_construction.py:315` |
-| functionality | test_the_version_names_the_runtime_and_the_model | `python/libs/image-tools/tests/test_head_construction.py:337` |
-| functionality | test_without_a_landmarker_one_is_opened_for_the_call | `python/libs/image-tools/tests/test_head_construction.py:344` |
+| functionality | test_a_frontal_close_up_is_fully_reliable | `python/libs/image-tools/tests/test_head_construction.py:104` |
+| functionality | test_a_near_profile_scores_near_zero_and_names_the_yaw | `python/libs/image-tools/tests/test_head_construction.py:111` |
+| functionality | test_the_artifact_confidence_is_the_derived_reliability | `python/libs/image-tools/tests/test_head_construction.py:119` |
+| functionality | test_a_small_image_of_a_face_loses_scale_reliability | `python/libs/image-tools/tests/test_head_construction.py:128` |
+| functionality | test_the_far_side_anchor_of_a_turned_head_is_flagged | `python/libs/image-tools/tests/test_head_construction.py:150` |
+| functionality | test_a_chin_facing_the_camera_is_never_flagged | `python/libs/image-tools/tests/test_head_construction.py:161` |
+| functionality | test_pose_signs_follow_the_documented_convention | `python/libs/image-tools/tests/test_head_construction.py:169` |
+| functionality | test_pose_barely_depends_on_where_the_face_sits | `python/libs/image-tools/tests/test_head_construction.py:211` |
+| functionality | test_no_face_is_the_portrait_gates_answer | `python/libs/image-tools/tests/test_head_construction.py:246` |
+| functionality | test_the_detector_has_a_small_face_limit | `python/libs/image-tools/tests/test_head_construction.py:256` |
+| functionality | test_a_corrected_chin_moves_the_chin_line | `python/libs/image-tools/tests/test_head_construction.py:265` |
+| functionality | test_a_correction_to_something_that_is_not_an_anchor_is_refused | `python/libs/image-tools/tests/test_head_construction.py:286` |
+| functionality | test_a_result_reloads_from_json_exactly | `python/libs/image-tools/tests/test_head_construction.py:301` |
+| functionality | test_building_from_a_stored_face_matches_detecting_it | `python/libs/image-tools/tests/test_head_construction.py:309` |
+| functionality | test_the_recipe_records_the_parameters_the_landmarker_ran_with | `python/libs/image-tools/tests/test_head_construction.py:337` |
+| functionality | test_a_landmarker_opened_with_other_parameters_is_refused | `python/libs/image-tools/tests/test_head_construction.py:345` |
+| functionality | test_the_version_names_the_runtime_and_the_model | `python/libs/image-tools/tests/test_head_construction.py:367` |
+| functionality | test_without_a_landmarker_one_is_opened_for_the_call | `python/libs/image-tools/tests/test_head_construction.py:374` |
 | functionality | test_measured_lines_run_level_through_their_anchors | `python/libs/image-tools/tests/test_loomis.py:78` |
 | functionality | test_the_ball_is_centred_on_the_brow_at_the_chosen_radius | `python/libs/image-tools/tests/test_loomis.py:91` |
 | functionality | test_the_ball_factor_is_a_parameter | `python/libs/image-tools/tests/test_loomis.py:100` |
@@ -87,6 +88,7 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:360` |
 | functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:365` |
 | functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:378` |
+| functionality | test_a_face_brings_head_construction_in_on_the_cached_face | `python/services/agent/tests/test_graph.py:101` |
 
 ## Vitest — 43
 

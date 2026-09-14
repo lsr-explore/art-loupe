@@ -48,6 +48,10 @@ class ModelPrice:
 # are complete as written, and a suffixed key would simply never match.
 MODEL_PRICES: dict[str, ModelPrice] = {
     "claude-opus-5": ModelPrice(Decimal("5.00"), Decimal("25.00")),
+    # Not assigned to any node. It is here because a server-side refusal fallback can answer a
+    # request made to `claude-opus-5`, and the ledger prices the model that actually answered.
+    # Without this row a fallback-served node would record as unpriced.
+    "claude-opus-4-8": ModelPrice(Decimal("5.00"), Decimal("25.00")),
     "claude-sonnet-5": ModelPrice(Decimal("2.00"), Decimal("10.00")),
     "claude-haiku-4-5": ModelPrice(Decimal("1.00"), Decimal("5.00")),
 }

@@ -15,6 +15,17 @@ must be on it and are confined by row policies instead. The tests that hold thos
 account are in this package's suite.
 """
 
+from artloupe.persistence.artist_api import (
+    ArtistApi,
+    ArtistApiError,
+    ArtistApiSettings,
+    ArtistProject,
+    ProjectNotFound,
+    SourceImage,
+    ToolResultKey,
+    get_artist_api_settings,
+    parameters_digest,
+)
 from artloupe.persistence.checkpointer import (
     connection_kwargs,
     get_async_checkpointer,
@@ -31,6 +42,7 @@ from artloupe.persistence.tables import (
     REFERENCE_IMAGE_BUCKET,
     SCREENING_DETECTIONS_TABLE,
     SOURCE_IMAGES_TABLE,
+    TOOL_RESULTS_TABLE,
 )
 
 __all__ = [
@@ -39,10 +51,20 @@ __all__ = [
     "REFERENCE_IMAGE_BUCKET",
     "SCREENING_DETECTIONS_TABLE",
     "SOURCE_IMAGES_TABLE",
+    "TOOL_RESULTS_TABLE",
+    "ArtistApi",
+    "ArtistApiError",
+    "ArtistApiSettings",
+    "ArtistProject",
     "PersistenceMode",
     "PersistenceSettings",
+    "ProjectNotFound",
+    "SourceImage",
+    "ToolResultKey",
     "connection_kwargs",
+    "get_artist_api_settings",
     "get_async_checkpointer",
     "get_settings",
+    "parameters_digest",
     "reset_checkpointer",
 ]

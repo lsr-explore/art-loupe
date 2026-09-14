@@ -13,28 +13,31 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 114 (3 parametrized) |
-| **Covered** | a11y 5 · security 96 · functionality 13 |
+| **Tests** | 117 (3 parametrized) |
+| **Covered** | a11y 5 · security 99 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
-## pytest — 14
+## pytest — 17
 
 | Category | Test | Location |
 | --- | --- | --- |
 | security | test_accepts_a_well_formed_token | `python/libs/auth/tests/test_tokens.py:83` |
-| security | test_rejects_an_expired_token | `python/libs/auth/tests/test_tokens.py:95` |
-| security | test_rejects_a_token_from_another_issuer | `python/libs/auth/tests/test_tokens.py:105` |
-| security | test_rejects_a_token_with_the_wrong_audience | `python/libs/auth/tests/test_tokens.py:116` |
-| security | test_rejects_algorithm_confusion | `python/libs/auth/tests/test_tokens.py:131` |
-| security | test_rejects_an_unknown_signing_key | `python/libs/auth/tests/test_tokens.py:172` |
-| security | test_unreachable_keys_are_an_outage_not_a_rejection | `python/libs/auth/tests/test_tokens.py:187` |
-| security | test_role_defaults_to_artist_without_app_metadata | `python/libs/auth/tests/test_tokens.py:197` |
-| security | test_ignores_a_role_claimed_in_user_metadata | `python/libs/auth/tests/test_tokens.py:208` |
-| security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:224` |
-| security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:235` |
-| security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:242` |
-| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:90` |
-| security | test_owner_comes_from_the_token_not_the_request_body | `python/services/agent/tests/test_service.py:108` |
+| security | test_rejects_an_expired_token | `python/libs/auth/tests/test_tokens.py:99` |
+| security | test_rejects_a_token_from_another_issuer | `python/libs/auth/tests/test_tokens.py:109` |
+| security | test_rejects_a_token_with_the_wrong_audience | `python/libs/auth/tests/test_tokens.py:120` |
+| security | test_rejects_algorithm_confusion | `python/libs/auth/tests/test_tokens.py:135` |
+| security | test_rejects_an_unknown_signing_key | `python/libs/auth/tests/test_tokens.py:176` |
+| security | test_unreachable_keys_are_an_outage_not_a_rejection | `python/libs/auth/tests/test_tokens.py:191` |
+| security | test_role_defaults_to_artist_without_app_metadata | `python/libs/auth/tests/test_tokens.py:201` |
+| security | test_ignores_a_role_claimed_in_user_metadata | `python/libs/auth/tests/test_tokens.py:212` |
+| security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:228` |
+| security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:239` |
+| security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:246` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:138` |
+| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:169` |
+| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:181` |
+| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:194` |
+| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:207` |
 
 ## Vitest — 83
 

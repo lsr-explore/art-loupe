@@ -22,6 +22,10 @@ SOURCE_IMAGES_TABLE = "public.source_images"
 # Append-only by design: `authenticated` holds select and insert, and neither update nor delete.
 SCREENING_DETECTIONS_TABLE = "public.screening_detections"
 
+# The agent's node cache: one deterministic tool result per FR-305 recipe, per project. Select
+# and insert only; rows leave with their project.
+TOOL_RESULTS_TABLE = "public.tool_results"
+
 # The private Supabase Storage bucket holding the uploaded bytes. Object keys are
 # `{owner_id}/{project_id}/{checksum}`; the leading segment is what the storage policies match.
 REFERENCE_IMAGE_BUCKET = "reference-images"

@@ -13,11 +13,11 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 175 (17 parametrized) |
-| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 53 |
+| **Tests** | 179 (18 parametrized) |
+| **Covered** | a11y 7 · security 53 · safety 1 · data 61 · functionality 57 |
 | **Not covered** | privacy · performance |
 
-## pytest — 42
+## pytest — 46
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -63,6 +63,10 @@ Upload, intake, and the typed ProjectIntent
 | data | test_a_project_carries_a_retention_date | `python/libs/persistence/tests/test_projects_schema.py:324` |
 | data | test_deleting_a_project_takes_its_original_with_it | `python/libs/persistence/tests/test_projects_schema.py:336` |
 | data | test_deleting_the_artist_takes_their_projects_with_them | `python/libs/persistence/tests/test_projects_schema.py:346` |
+| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_graph.py:85` |
+| functionality | test_every_tool_is_accounted_for_exactly_once | `python/services/agent/tests/test_routing.py:24` |
+| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_routing.py:34` |
+| functionality | test_a_face_makes_head_construction_eligible | `python/services/agent/tests/test_routing.py:42` |
 
 ## Vitest — 122
 

@@ -63,6 +63,15 @@ def test_an_unknown_model_is_unpriced_rather_than_free() -> None:
     assert price_for("claude-not-yet-released") is None
 
 
+def test_the_refusal_fallback_target_is_priced() -> None:
+    """A refused `claude-opus-5` call can be answered by `claude-opus-4-8` inside the same request.
+
+    The ledger records the model that answered. If that model were missing from the table, every
+    fallback-served node would read as unpriced, and nothing in the run would say why.
+    """
+    assert price_for("claude-opus-4-8") is not None
+
+
 def test_model_ids_carry_no_date_suffix() -> None:
     """Current Claude model ids are complete as written; a dated key would never match.
 

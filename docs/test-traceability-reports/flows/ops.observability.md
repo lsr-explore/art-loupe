@@ -13,11 +13,11 @@ Cost, latency, evaluation health, and corpus ingestion
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
 | **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
-| **Tests** | 30 |
-| **Covered** | a11y 2 · security 4 · data 1 · functionality 23 |
+| **Tests** | 31 |
+| **Covered** | a11y 2 · security 4 · data 1 · functionality 24 |
 | **Not covered** | privacy · safety · performance |
 
-## pytest — 25
+## pytest — 26
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -30,7 +30,8 @@ Cost, latency, evaluation health, and corpus ingestion
 | functionality | test_cached_input_is_cheaper_and_writing_the_cache_is_dearer | `python/libs/metering/tests/test_pricing.py:40` |
 | functionality | test_a_node_with_no_model_costs_a_real_zero | `python/libs/metering/tests/test_pricing.py:49` |
 | functionality | test_an_unknown_model_is_unpriced_rather_than_free | `python/libs/metering/tests/test_pricing.py:54` |
-| functionality | test_model_ids_carry_no_date_suffix | `python/libs/metering/tests/test_pricing.py:66` |
+| functionality | test_the_refusal_fallback_target_is_priced | `python/libs/metering/tests/test_pricing.py:66` |
+| functionality | test_model_ids_carry_no_date_suffix | `python/libs/metering/tests/test_pricing.py:75` |
 | functionality | test_a_node_that_reports_nothing_still_produces_a_row | `python/libs/metering/tests/test_recorder.py:29` |
 | functionality | test_latency_is_measured_not_declared | `python/libs/metering/tests/test_recorder.py:47` |
 | functionality | test_usage_reported_from_inside_the_node_lands_on_that_node | `python/libs/metering/tests/test_recorder.py:55` |

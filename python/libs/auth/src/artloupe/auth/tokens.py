@@ -18,7 +18,7 @@ public key as the HMAC secret, and a naive verifier accepts it.
 """
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
@@ -52,6 +52,15 @@ class VerifiedToken:
     role: str
     expires_at: int
     claims: dict[str, Any]
+
+    access_token: str = field(repr=False)
+    """The bearer token itself, so a service can call Supabase *as* this artist.
+
+    No app runtime holds `service_role`, so reading an artist's rows or objects means presenting
+    their own token, and RLS does the rest. Excluded from `repr` so that printing or logging a
+    principal never prints a credential. Never put it anywhere that is serialized — a LangGraph
+    checkpoint in particular would keep it long after the token itself expired.
+    """
 
 
 def clear_key_cache() -> None:
@@ -142,4 +151,5 @@ async def verify_access_token(
         role=role if isinstance(role, str) and role else "artist",
         expires_at=int(claims["exp"]),
         claims=claims,
+        access_token=token,
     )

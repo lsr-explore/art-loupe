@@ -82,13 +82,17 @@ def make_token(
 @respx.mock
 async def test_accepts_a_well_formed_token(settings, signing_key, jwks):
     respx.get(JWKS_URL).mock(return_value=httpx.Response(200, json=jwks))
+    token = make_token(signing_key)
 
     async with httpx.AsyncClient() as client:
-        verified = await verify_access_token(make_token(signing_key), client, settings)
+        verified = await verify_access_token(token, client, settings)
 
     assert verified.subject == "3f1a0c6e-0000-4000-8000-000000000001"
     assert verified.email == "artist@example.test"
     assert verified.role == "operator"
+    # Kept so a service can call Supabase as this artist — and never printed while it is.
+    assert verified.access_token == token
+    assert token not in repr(verified)
 
 
 @respx.mock

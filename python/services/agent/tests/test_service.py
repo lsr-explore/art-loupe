@@ -1,28 +1,41 @@
-"""The HTTP surface: what it exposes without a token, and what it refuses.
+"""The HTTP surface: what it exposes without a token, what it refuses, and how a run reports.
 
 Exercised through ASGI in-process rather than against a running server — no port to bind and
 no lifespan race. Nothing here reaches Supabase: the anonymous cases run the real guard
 against throwaway settings, and the authenticated cases substitute an already-verified token,
-because verifying one is `libs/auth`'s job and is tested there.
+because verifying one is `libs/auth`'s job and is tested there. `execute_run` is replaced
+wherever a test is about the endpoint rather than the graph; `test_graph.py` covers the graph.
 """
 
+import time
 from collections.abc import AsyncIterator, Iterator
+from dataclasses import replace
+from decimal import Decimal
+from typing import Any
 
 import httpx
 import pytest
 
+from artloupe.agent.nodes import ProjectNotReady
+from artloupe.agent.resources import PhotographUnavailable
+from artloupe.agent.routing import direct
+from artloupe.agent.runtime import RunOutcome
 from artloupe.agent.service import app
 from artloupe.auth.config import get_settings
 from artloupe.auth.dependencies import require_token
 from artloupe.auth.tokens import VerifiedToken
 from artloupe.metering import (
     BudgetExceeded,
-    GuardTripped,
     RecursionLimitExceeded,
     WallClockExceeded,
 )
+from artloupe.persistence import ArtistApi, ArtistApiError, ProjectNotFound
+from artloupe.schemas import BudgetLedger
 
 pytestmark = pytest.mark.trace(flow="platform.agent-runtime", category="functionality")
+
+PROJECT = "aaaaaaaa-3333-4333-8333-aaaaaaaaaaaa"
+BODY = {"project_id": PROJECT}
 
 ARTIST = VerifiedToken(
     subject="4a1f0e2c-0000-4000-8000-000000000001",
@@ -30,6 +43,7 @@ ARTIST = VerifiedToken(
     role="artist",
     expires_at=4102444800,
     claims={},
+    access_token="artist-access-token-for-tests",
 )
 
 
@@ -79,46 +93,39 @@ def authenticated() -> Iterator[None]:
     app.dependency_overrides.pop(require_token, None)
 
 
+class RecordedRun:
+    """Replaces `execute_run`: records what the endpoint handed it, returns a finished run."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict[str, Any]] = []
+
+    async def __call__(self, _graph: object, initial: dict[str, Any], **kwargs: Any) -> RunOutcome:
+        self.calls.append({"initial": initial, **kwargs})
+        gate = {"face_found": False, "reason": "No face was found."}
+        state = {
+            **initial,
+            "node_trail": ["load_project", "face_gate", "survey", "direct", "analyse"],
+            "gate": gate,
+            "manifest": direct({"gate": gate})["manifest"],
+            "artifacts": [],
+        }
+        return RunOutcome(
+            state=state, ledger=BudgetLedger(token_ceiling=1), metrics=[], cost_usd=Decimal(0)
+        )
+
+
+@pytest.fixture
+def recorded(monkeypatch: pytest.MonkeyPatch) -> RecordedRun:
+    stub = RecordedRun()
+    monkeypatch.setattr("artloupe.agent.service.execute_run", stub)
+    return stub
+
+
 async def test_health_needs_no_token(client: httpx.AsyncClient) -> None:
     """A liveness probe has no token to present, and must not fail when auth is what broke."""
     response = await client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "service": "artloupe-agent", "version": "0.1.0"}
-
-
-@pytest.mark.trace(flow="platform.auth", category="security")
-async def test_creating_a_run_without_a_token_is_refused(client: httpx.AsyncClient) -> None:
-    response = await client.post("/runs")
-    assert response.status_code == 401
-    assert response.headers["www-authenticate"] == "Bearer"
-
-
-async def test_creating_a_run_returns_the_graph_result(
-    client: httpx.AsyncClient, authenticated: None
-) -> None:
-    response = await client.post("/runs")
-    assert response.status_code == 200
-
-    body = response.json()
-    assert body["owner"] == ARTIST.subject
-    assert body["node_trail"] == [f"seed:{body['run_id']}"]
-
-
-@pytest.mark.trace(flow="platform.auth", category="security")
-async def test_owner_comes_from_the_token_not_the_request_body(
-    client: httpx.AsyncClient, authenticated: None
-) -> None:
-    """A caller must not be able to create a run against someone else's identity.
-
-    `owner` is what Postgres RLS will read as `auth.uid()`, so a body-supplied value that
-    won the race here would be an authorization bypass rather than a cosmetic bug.
-    """
-    response = await client.post("/runs", json={"owner": "someone-else", "run_id": "attacker"})
-    assert response.status_code == 200
-
-    body = response.json()
-    assert body["owner"] == ARTIST.subject
-    assert body["run_id"] != "attacker"
 
 
 async def test_health_leaks_no_internal_detail(client: httpx.AsyncClient) -> None:
@@ -127,26 +134,115 @@ async def test_health_leaks_no_internal_detail(client: httpx.AsyncClient) -> Non
     assert set(body.json()) == {"status", "service", "version"}
 
 
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_creating_a_run_without_a_token_is_refused(client: httpx.AsyncClient) -> None:
+    response = await client.post("/runs", json=BODY)
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+async def test_a_run_names_its_project(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    response = await client.post("/runs", json={})
+
+    assert response.status_code == 422
+    assert recorded.calls == []
+
+
+async def test_creating_a_run_returns_the_routing_and_the_artifacts(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    response = await client.post("/runs", json=BODY)
+    assert response.status_code == 200
+
+    body = response.json()
+    assert body["owner"] == ARTIST.subject
+    assert body["project_id"] == PROJECT
+    assert body["manifest"]["declined"] == [
+        {"tool": "head_construction", "reason": "No face was found."}
+    ]
+    assert body["artifacts"] == []
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_owner_comes_from_the_token(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """`owner` is what Postgres RLS reads as `auth.uid()`; only the verified token may set it."""
+    await client.post("/runs", json=BODY)
+
+    (call,) = recorded.calls
+    assert call["initial"]["owner"] == ARTIST.subject
+    assert call["owner"] == ARTIST.subject
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_a_body_that_names_an_owner_is_refused(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """Refused outright, not ignored. Ignoring it is safe only until a field of that name exists."""
+    response = await client.post(
+        "/runs", json={**BODY, "owner": "someone-else", "run_id": "attacker"}
+    )
+
+    assert response.status_code == 422
+    assert recorded.calls == []
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_the_run_reads_the_project_as_the_artist(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """The run's only credential is the artist's own token, so RLS decides what it can reach."""
+    await client.post("/runs", json=BODY)
+
+    (call,) = recorded.calls
+    api = call["resources"].api
+    assert isinstance(api, ArtistApi)
+    assert api._token == ARTIST.access_token  # noqa: SLF001 — the credential is the assertion
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_a_token_expiring_before_the_deadline_is_refused_before_any_work(
+    client: httpx.AsyncClient, recorded: RecordedRun
+) -> None:
+    app.dependency_overrides[require_token] = lambda: replace(
+        ARTIST, expires_at=int(time.time()) + 5
+    )
+    try:
+        response = await client.post("/runs", json=BODY)
+    finally:
+        app.dependency_overrides.pop(require_token, None)
+
+    assert response.status_code == 401
+    assert recorded.calls == []
+
+
 @pytest.mark.parametrize(
-    ("failure", "status"),
+    ("failure", "status", "detail"),
     [
-        (BudgetExceeded("plan budget exhausted"), 429),
-        (WallClockExceeded("run exceeded its deadline"), 504),
-        (RecursionLimitExceeded("run exceeded its supersteps"), 500),
+        (BudgetExceeded("plan budget exhausted"), 429, "plan budget exhausted"),
+        (WallClockExceeded("run exceeded its deadline"), 504, "run exceeded its deadline"),
+        (RecursionLimitExceeded("run exceeded its supersteps"), 500, "run exceeded its supersteps"),
+        (ProjectNotFound("no project visible"), 404, "Project not found."),
+        (ProjectNotReady("the project has no reference photograph yet"), 409, None),
+        (PhotographUnavailable("the original could not be decoded as an image"), 422, None),
+        (ArtistApiError("refused: HTTP 500"), 502, "The data service refused a call."),
     ],
 )
 async def test_a_stopped_run_is_reported_as_what_stopped_it(
     client: httpx.AsyncClient,
     authenticated: None,
     monkeypatch: pytest.MonkeyPatch,
-    failure: GuardTripped,
+    failure: Exception,
     status: int,
+    detail: str | None,
 ) -> None:
-    """A ceiling being reached is not an internal error, and must not read as one.
+    """A ceiling being reached is not an internal error, and a missing project is not either.
 
-    Collapsing all three onto a 500 would make a budget working exactly as designed
-    indistinguishable from a fault — which is the distinction `agents.md` §8 draws by giving
-    `BUDGET_STOPPED` its own terminal state.
+    Collapsing these onto a 500 would make a budget working exactly as designed, or a project
+    the artist cannot see, indistinguishable from a fault.
     """
 
     async def stopped(*_args: object, **_kwargs: object) -> None:
@@ -154,6 +250,6 @@ async def test_a_stopped_run_is_reported_as_what_stopped_it(
 
     monkeypatch.setattr("artloupe.agent.service.execute_run", stopped)
 
-    response = await client.post("/runs")
+    response = await client.post("/runs", json=BODY)
     assert response.status_code == status
-    assert response.json() == {"detail": failure.reason}
+    assert response.json() == {"detail": detail if detail is not None else str(failure)}

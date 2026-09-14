@@ -13,9 +13,15 @@ description = "LangGraph orchestration service for the Art Loupe studio director
 requires-python = ">=3.12"
 dependencies = [
   "artloupe-auth",
+  # The deterministic tools the graph routes to and runs. Brings MediaPipe and OpenCV into this
+  # service — which is where they run, so that is the honest place for them.
+  "artloupe-image-tools",
   # The ledger and the run guards. A hard dependency, not an optional one: an unmetered,
   # uncapped run is the failure this service must not be able to produce.
   "artloupe-metering",
+  # The artist-scoped Supabase client and the table names. Every read and write goes through it
+  # as the signed-in artist; this service holds no key that bypasses RLS.
+  "artloupe-persistence",
   "artloupe-schemas",
   # Pinned at the majors the workspace already resolves; FastAPI arrives via artloupe-auth
   # but is declared here too, because this package imports it directly.
@@ -40,5 +46,7 @@ packages = ["src/artloupe"]
 
 [tool.uv.sources]
 artloupe-auth = { workspace = true }
+artloupe-image-tools = { workspace = true }
 artloupe-metering = { workspace = true }
+artloupe-persistence = { workspace = true }
 artloupe-schemas = { workspace = true }
