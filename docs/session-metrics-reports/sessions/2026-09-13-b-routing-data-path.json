@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-13",
+  "label": "PR 12a: the routing graph's deterministic path — the agent reads projects as the artist, a tool_results cache, the FR-801 check, and a labelled Director stand-in; PR 12 split into 12a and 12b",
+  "confidence": "measured",
+  "cost_usd": 30.37,
+  "api_minutes": 54.2,
+  "wall_minutes": 196.7,
+  "context_over_150k_pct": 94,
+  "parallel_agents": 1,
+  "themes": ["agent", "data"],
+  "effort_split": {
+    "build": 35,
+    "setup": 4,
+    "design": 25,
+    "docs": 8,
+    "verify_ops": 22,
+    "churn": 6
+  },
+  "churn_attribution": {
+    "under_specified": 0,
+    "refinement": 35,
+    "avoidable_error": 40,
+    "genuine_discovery": 25
+  },
+  "ratings": {
+    "scoping_clarity": 4,
+    "decision_stability": 4,
+    "tooling_leverage": 3
+  },
+  "rework_of": [],
+  "delivered": {
+    "prs": [65],
+    "adrs": []
+  },
+  "review": {
+    "coderabbit_findings": 3,
+    "fixed": 3,
+    "deferred": 0,
+    "declined": 0
+  },
+  "decisions": [
+    "PR 12 split: 12a is the deterministic path with no vendor, 12b is the model-driven Director (docs/design/routing-plan.md §9)",
+    "Director on claude-opus-5; it reads the intent, the gate, and deterministic summaries, never pixels (Laurie)",
+    "The survey runs the real detect_perspective, not a line probe, so the Director can cite FR-305 metadata (Laurie)",
+    "No ADR yet — the decisions live in routing-plan.md until they settle (Laurie)",
+    "12b: server-side refusal fallbacks on in 'default' mode; the completeness check at the producer rather than on the shared contract, because TOOLS grows and stored manifests must keep reloading (Laurie)",
+    "12b: port veloce-config's keychain seam as python/libs/config, and have it load .env.local too (Laurie)",
+    "The agent reaches Supabase only as the artist, over HTTP (ArtistApi), never through DATABASE_URL; the token and the decoded photograph live in a run-scoped ContextVar, never in RunState",
+    "tool_results is keyed per project, with ownership derived from the project, select and insert only, and an update-refusing trigger; its insert policy requires the row's checksum to equal the project's own original",
+    "Only the face and perspective are cached; PlateSuite holds three pixel arrays, so it cannot serialize to JSON (measured: 569 KiB even without pixels, under 1 s to recompute)",
+    "FR-801 check: a denylist of image-generation SDKs plus a source scan, with negative fixtures, landed before the first provider SDK (Laurie)",
+    "An upstream 401 becomes CredentialRejected, answered with 401 and WWW-Authenticate: Bearer; a 403 stays a 502 (review)",
+    "'Once per recipe' holds for sequential runs; racing runs may both compute; per-recipe coordination waits for the NFR-02 worker pool (review)",
+    "Local Supabase signs ES256 tokens against a published JWKS, so SUPABASE_JWT_SECRET stays unset locally; ADR 0002's factual bullet was corrected, not its decision (Laurie)",
+    "claude-opus-4-8 added to the price table as the refusal-fallback target (Laurie)"
+  ],
+  "retro": {
+    "went_well": "The design became a durable plan before any code. Every tradeoff went to Laurie as side-by-side options, and nothing was relitigated. Probing before relying paid three times: the imdecode EXIF probe, the result-size measurement that showed plates cannot be cached, and a live smoke test against real Supabase. The smoke test caught stale HS256 guidance that mocked tests never could, and it showed the cache working live, since the second run ran no detection. The terminal Greptile review found a P1 that the automatic review missed.",
+    "improve": "Three defects I authored reached review. A docstring cited delete-project.ts as bearer-only Storage access, although I had read that function's headers earlier in the same session. An 'at most once per recipe' guarantee ignored concurrent runs. An upstream 401 collapsed into a 502. I also moved the shell's working directory into a subdirectory twice, despite the workflow rule, and I removed `seed` from graph.py without first reading the package `__init__` that exported it.",
+    "tooling_suggestion": "Never `cd` inside a Bash call: prefix `cd <repo-root> &&` or use absolute paths. A PreToolUse hook could refuse a Bash command that changes into a subdirectory. And before writing 'X does Y, as Z does', grep Z for Y — it's one command."
+  },
+  "note": "cost, api and wall minutes from /usage, pasted after #65 merged; it also reports 3186 lines added and 251 removed. context_over_150k_pct 94 and the skills breakdown (/ship 20%) cover the last 24 hours across all local sessions, including the earlier 2026-09-13 session. No subagents and no worktrees. Greptile: an automatic review on c2874c8 (2 × P2), a terminal review on c2874c8 (1 × P1), and an automatic re-review of 994e7ca at 5/5 with no findings. The local database was reset and the demo accounts reseeded, both approved. rework_of is empty. The HS256 correction fixed a stale fact in ADR 0002 and .env.example rather than undoing a decision, so it counts as a fix, not rework."
+}

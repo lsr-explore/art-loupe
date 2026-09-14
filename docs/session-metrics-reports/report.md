@@ -5,16 +5,16 @@
 
 2026-08-30 → 2026-09-13
 
-- Sessions: **10**
-- Cost, LLM (API-equivalent): **$426.01**
-- Time (API): **9.1h**
-- Time (wall): **52.2h**
-- PRs: **14**
-- CodeRabbit findings fixed: **31/40**
+- Sessions: **11**
+- Cost, LLM (API-equivalent): **$456.38**
+- Time (API): **10.0h**
+- Time (wall): **55.5h**
+- PRs: **15**
+- CodeRabbit findings fixed: **34/43**
 
 ## Effort, cost and time
 
-Average churn **10.9%** · average docs maintenance **18.8%**.
+Average churn **10.5%** · average docs maintenance **17.8%**.
 Docs is tracked apart from design deliberately: design is the work, doc upkeep is
 overhead and a candidate for automation.
 
@@ -45,9 +45,9 @@ not equally worth driving down:
 
 Two kinds, tracked separately:
 
-- **Within a session** — the `churn` band above. Averaging **10.9%**.
+- **Within a session** — the `churn` band above. Averaging **10.5%**.
 - **Across sessions** — work a *later* session had to redo. **2 of
-  10** sessions redid earlier work:
+  11** sessions redid earlier work:
 
   - `2026-09-11` redid work from `2026-09-11-a-slice-1-perspective-detection` — Slice 1 PRs 8 and 10 — the plate suite, face landmarks with a Loomis construction and derived reliability — then a demo of all three tools and the refinements it prompted
   - `2026-09-13` redid work from `2026-09-11-b-slice-1-plates-faces-demo-review` — Outline rebuilt from edges as its own layer beside value shapes; a flatten parameter and a shadow pass whose order was wrong; a licensing review that found the acknowledgement gate states none of FR-807
@@ -64,6 +64,27 @@ everything built on it has to be revisited. Watch it against `decision_stability
 ![Dot plot of themes touched per day over time](charts/themes.svg)
 
 ## Recent retrospectives
+
+### 2026-09-13 — PR 12a: the routing graph's deterministic path — the agent reads projects as the artist, a tool_results cache, the FR-801 check, and a labelled Director stand-in; PR 12 split into 12a and 12b
+
+- **Went well:** The design became a durable plan before any code. Every tradeoff went to Laurie as side-by-side options, and nothing was relitigated. Probing before relying paid three times: the imdecode EXIF probe, the result-size measurement that showed plates cannot be cached, and a live smoke test against real Supabase. The smoke test caught stale HS256 guidance that mocked tests never could, and it showed the cache working live, since the second run ran no detection. The terminal Greptile review found a P1 that the automatic review missed.
+- **Improve:** Three defects I authored reached review. A docstring cited delete-project.ts as bearer-only Storage access, although I had read that function's headers earlier in the same session. An 'at most once per recipe' guarantee ignored concurrent runs. An upstream 401 collapsed into a 502. I also moved the shell's working directory into a subdirectory twice, despite the workflow rule, and I removed `seed` from graph.py without first reading the package `__init__` that exported it.
+- **Tooling:** Never `cd` inside a Bash call: prefix `cd <repo-root> &&` or use absolute paths. A PreToolUse hook could refuse a Bash command that changes into a subdirectory. And before writing 'X does Y, as Z does', grep Z for Y — it's one command.
+- **Decisions:**
+  - PR 12 split: 12a is the deterministic path with no vendor, 12b is the model-driven Director (docs/design/routing-plan.md §9)
+  - Director on claude-opus-5; it reads the intent, the gate, and deterministic summaries, never pixels (Laurie)
+  - The survey runs the real detect_perspective, not a line probe, so the Director can cite FR-305 metadata (Laurie)
+  - No ADR yet — the decisions live in routing-plan.md until they settle (Laurie)
+  - 12b: server-side refusal fallbacks on in 'default' mode; the completeness check at the producer rather than on the shared contract, because TOOLS grows and stored manifests must keep reloading (Laurie)
+  - 12b: port veloce-config's keychain seam as python/libs/config, and have it load .env.local too (Laurie)
+  - The agent reaches Supabase only as the artist, over HTTP (ArtistApi), never through DATABASE_URL; the token and the decoded photograph live in a run-scoped ContextVar, never in RunState
+  - tool_results is keyed per project, with ownership derived from the project, select and insert only, and an update-refusing trigger; its insert policy requires the row's checksum to equal the project's own original
+  - Only the face and perspective are cached; PlateSuite holds three pixel arrays, so it cannot serialize to JSON (measured: 569 KiB even without pixels, under 1 s to recompute)
+  - FR-801 check: a denylist of image-generation SDKs plus a source scan, with negative fixtures, landed before the first provider SDK (Laurie)
+  - An upstream 401 becomes CredentialRejected, answered with 401 and WWW-Authenticate: Bearer; a 403 stays a 502 (review)
+  - 'Once per recipe' holds for sequential runs; racing runs may both compute; per-recipe coordination waits for the NFR-02 worker pool (review)
+  - Local Supabase signs ES256 tokens against a published JWKS, so SUPABASE_JWT_SECRET stays unset locally; ADR 0002's factual bullet was corrected, not its decision (Laurie)
+  - claude-opus-4-8 added to the price table as the refusal-fallback target (Laurie)
 
 ### 2026-09-13 — Outline rebuilt from edges as its own layer beside value shapes; a flatten parameter and a shadow pass whose order was wrong; a licensing review that found the acknowledgement gate states none of FR-807
 
@@ -136,26 +157,6 @@ everything built on it has to be revisited. Watch it against `decision_stability
   - fascia gets a native <select> primitive rather than a base-ui listbox. Typeahead, closed-state arrow keys, the platform popup and the mobile wheel picker all come from the platform, as do the WCAG target-size and focus-appearance criteria. Option rows cannot be styled; that is the accepted trade, stated in the file
   - The undecodable-201 recovery gets its own message rather than reusing unavailable. The project was created -- the 201 says so -- and every POST makes a fresh project, so telling the artist it failed would invite a resubmit and leave them holding two
   - Two ingest findings deferred rather than fixed (#38 P3, #39 P2): ingest-upload.ts is not in this PR's diff, confirmed against git diff origin/main...HEAD before acting. #39 establishes that the module docblock's stated reason for tolerating a storage orphan -- 'overwritten by an identical retry, because the key ends in the content checksum' -- is false, because the key is scoped by projectId and every POST makes a new one
-
-### 2026-09-07 — Slice 1 PR 7a — the ingest path, a mirrored injection screener, and four review findings of which two were mine
-
-- **Went well:** The tests kept disagreeing with me, and were right every time. A fixture refusing to hold a faked File.size, a JPEG that image-size would not decode without a JFIF segment, and a ReadableStream pre-pulling one chunk each corrected an assertion that would otherwise have passed while testing nothing. Two genuine defects surfaced the same way and neither was findable by reading: exifr reports a malformed segment in-band as {errors: [RangeError]} rather than throwing, so an unserializable Error was headed for a jsonb column, and exifr leaves userComment off by default -- the single most important EXIF text field for screening, which would have made the block look covered and been the opposite. Verifying against the live stack rather than mocks is what proved the ordering trap real: reversed deliberately, storage answers 403 'new row violates row-level security policy', which is exactly the misleading error the pickup notes warned about. Splitting PR 7 kept the security surface in one reviewable diff.
-- **Improve:** Two of the four review findings were defects in my own fixes, and the second review is the only reason the worse one was caught -- bounding the EXIF ledger introduced a fallback that returned the retained fields with no truncation marker, so a trimmed block read as complete. That is worse than the overflow it replaced, because an over-large block is visible and a silent omission is not. I nearly did not run that second review at all. Separately, I reported four dispositions as posted and byte-verified when nothing had been posted: gh was not found inside a shell function, the ids came back empty, and comparing two empty strings returned true. That is the #29 lesson repeating almost exactly -- confirming that a write happened rather than what it wrote -- and the only reason it surfaced is that I then looked at the PR. My live verification also left orphaned storage objects that broke a pre-existing RLS test, in the session where I wrote the module explaining that deleting rows never deletes objects.
-- **Tooling:** A verification helper wrapped in a shell function silently lost gh from PATH and failed open, printing 'verified' for comments that did not exist. Any check whose failure mode is a false pass needs the empty case to be a hard error -- comparing two empty strings must not read as agreement. Also: greptile review errored server-side mid-run and left a resume id in stderr, which greptile review show recovered in full; the ship skill mentions --resume but not that show can recover a run that has already failed, and that is the cheaper recovery. Finally, a lot of wall-clock went on polling background watchers a few seconds apart; waiting on the completion notification rather than re-checking would have cost less and read better.
-- **Decisions:**
-  - PR 7 split into 7a (server side) and 7b (form + e2e), so every security boundary and the upload-before-row ordering trap get reviewed in one diff and 7b stays presentational
-  - The injection screener is mirrored TS + Python over one shared rules fixture, not a service call: Python screens retrieved documents later while Next screens filename and EXIF at ingest, so a screener in either would be reimplemented in the other. Same arrangement contract-parity.json already makes for Zod and Pydantic
-  - Both screener suites enforce a regex portability subset mechanically -- no lookbehind, named groups, inline flags, backreferences, or \d/\w. The likely failure of a hand-authored mirror is not a forgotten rule but a pattern that compiles on both sides and matches on only one, which the case corpus only catches for text somebody thought to write
-  - The rules live in packages/schemas rather than a new packages/screening: two new workspace packages, allowlist entries and depcruise rules for ~200 lines was the wrong trade
-  - Object before row on ingest, which is the opposite of deletion's order and forced by the same policy from its other side. Verified live rather than assumed: reversed, the upload is refused 403 'new row violates row-level security policy'
-  - screening_detections holds select and insert and neither update nor delete -- a detection is a record of what arrived, and the ops panel reads it
-  - A surface nothing screened is written down as a sentinel row rather than left absent, because an absent row is indistinguishable from a clean one and would let the panel imply coverage of a surface never read
-  - OCR deferred with the gap recorded (issue #32) rather than silently: Tesseract is a system binary and easyocr pulls the torch slice 1 cut
-  - project-goal added as a fifth screened surface, closing a promise intent.ts already made in prose. Untrusted because it is where pasted text arrives and it reaches a model prompt in PR 12; FR-1013 untouched
-  - EXIF GPS deliberately never decoded -- the one block that says where a person was, not needed to plan a painting, and not reading it is the cheapest way to not hold it
-  - subjectFromAccessToken reads the sub claim without verifying the signature: the token came from our own sealed cookie, and the storage policy independently checks the key prefix against auth.uid(), so a wrong sub is a refused write rather than a crossed boundary
-  - The refusal vocabulary widens from two codes to four. 401/404 describe the system's state where detail is an oracle; 422 invalid_upload describes the bytes the caller just sent, which FR-101 requires a reason for. An argued extension of the 2026-09-06 decision, not a reversal
-  - churn_attribution's claude_error split into refinement and avoidable_error, so iteration the loop catches stops being scored as a mistake while a cause that repeats across sessions stays visible
 
 ---
 
