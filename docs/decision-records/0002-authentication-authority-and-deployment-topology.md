@@ -118,9 +118,11 @@ implemented upstream and are all easy to get subtly wrong.
 - Verification lives in `python/libs/auth` as a shared library, not a service. Under this
   design it is a function every service calls in-process, so a network hop of its own would
   buy nothing.
-- Local development needs `SUPABASE_JWT_SECRET`, because a local `supabase start` still
-  issues legacy HS256 tokens. That mode gives every verifier material that can also sign;
-  it is a local-only concession, and hosted projects should use JWT signing keys.
+- Local development leaves `SUPABASE_JWT_SECRET` unset. A local `supabase start` signs with
+  an asymmetric key (ES256) and publishes it in its JWKS, so local verification takes the same
+  path a hosted project does. Setting the secret locally forces HS256 and fails every token.
+  The HS256 mode remains for legacy hosted projects only, and it gives every verifier material
+  that can also sign.
 - **A `NODE_ENV === 'test'` guard on the `AUTH_PROVIDER=demo` branch does not work, and was
   reverted.** Next inlines `process.env.NODE_ENV` at build time, so in a production build
   the comparison is folded away entirely — the compiled output became an unconditional

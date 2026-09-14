@@ -8,9 +8,13 @@ Two verification modes:
 - **Asymmetric (preferred).** Keys come from the project's published JWKS, so a service
   that only *verifies* holds no secret at all. A compromised agent service cannot mint a
   token, because it never had the private key.
-- **HS256 shared secret (legacy).** Used when `SUPABASE_JWT_SECRET` is set, which is what a
-  local `supabase start` and older hosted projects still hand out. Works, but every
-  verifier now holds material that can also *sign*. Migrate to signing keys when you can.
+- **HS256 shared secret (legacy).** Used when `SUPABASE_JWT_SECRET` is set, for older hosted
+  projects that still hand one out. Works, but every verifier now holds material that can
+  also *sign*. Migrate to signing keys when you can.
+
+A local `supabase start` is on the asymmetric path, measured rather than assumed: its tokens
+are ES256, with a `kid` matching the one key its JWKS publishes. So local development leaves
+`SUPABASE_JWT_SECRET` unset. Setting it forces HS256, and every local token then fails.
 
 The allowed algorithm is decided by the mode, never read from the token header. Trusting
 `alg` is the classic JWT confusion attack: an attacker re-signs a token as HS256 using the
