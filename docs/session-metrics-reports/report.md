@@ -5,16 +5,16 @@
 
 2026-08-30 → 2026-09-13
 
-- Sessions: **11**
-- Cost, LLM (API-equivalent): **$456.38**
-- Time (API): **10.0h**
-- Time (wall): **55.5h**
-- PRs: **15**
-- CodeRabbit findings fixed: **34/43**
+- Sessions: **12**
+- Cost, LLM (API-equivalent): **$479.41**
+- Time (API): **10.7h**
+- Time (wall): **56.9h**
+- PRs: **16**
+- CodeRabbit findings fixed: **37/46**
 
 ## Effort, cost and time
 
-Average churn **10.5%** · average docs maintenance **17.8%**.
+Average churn **10.3%** · average docs maintenance **17.3%**.
 Docs is tracked apart from design deliberately: design is the work, doc upkeep is
 overhead and a candidate for automation.
 
@@ -36,18 +36,18 @@ not equally worth driving down:
 
 | Cause | Share of all churn |
 | --- | --- |
-| `under_specified` | 6% |
+| `under_specified` | 5% |
 | `refinement` | 25% |
-| `avoidable_error` | 39% |
+| `avoidable_error` | 40% |
 | `genuine_discovery` | 30% |
 
 ## Rework
 
 Two kinds, tracked separately:
 
-- **Within a session** — the `churn` band above. Averaging **10.5%**.
+- **Within a session** — the `churn` band above. Averaging **10.3%**.
 - **Across sessions** — work a *later* session had to redo. **2 of
-  11** sessions redid earlier work:
+  12** sessions redid earlier work:
 
   - `2026-09-11` redid work from `2026-09-11-a-slice-1-perspective-detection` — Slice 1 PRs 8 and 10 — the plate suite, face landmarks with a Loomis construction and derived reliability — then a demo of all three tools and the refinements it prompted
   - `2026-09-13` redid work from `2026-09-11-b-slice-1-plates-faces-demo-review` — Outline rebuilt from edges as its own layer beside value shapes; a flatten parameter and a shadow pass whose order was wrong; a licensing review that found the acknowledgement gate states none of FR-807
@@ -64,6 +64,22 @@ everything built on it has to be revisited. Watch it against `decision_stability
 ![Dot plot of themes touched per day over time](charts/themes.svg)
 
 ## Recent retrospectives
+
+### 2026-09-13 — PR 12b: the model-driven Studio Director — the artloupe-config key seam, the RoutingDecision contract, and a structured-output Director with refusal fallbacks; Greptile's three findings fixed
+
+- **Went well:** Current-state §2 carried a seven-step plan, so the build started without a design detour. Probing the SDK before writing paid off: transform_schema's output showed minLength reaching the model only as a description, which grounded the switch away from messages.parse in evidence rather than preference. The recorded responder sits at the transport layer, so tests see the exact wire request, betas header included. Every outward-facing write was read back and compared exactly, and the review dispositions were shown to Laurie before posting, which kept their footer true. The live smoke test passed first time, and Greptile's re-review scored 5/5.
+- **Improve:** Two defects I authored reached review. The system prompt claimed FR-305 metadata for the gate's figures, although I had read routing-plan §3 and the gate node earlier in this session. get_anthropic_api_key skipped the APP_ENV validation its own docstring promised. I also moved the shell into a subdirectory once, the same slip the previous record flagged. Several Bash slips cost rounds: `==` in a zsh echo, an awk range that closed on its first line, and bash's PIPESTATUS in zsh. Long docstrings took three lint rounds.
+- **Tooling:** The PreToolUse hook that refuses `cd <subdir>` in Bash has now been suggested twice, and the slip has recurred. Before writing a prompt's claim about the data a node supplies, grep the node that builds it. In zsh, use $pipestatus and avoid a bare `==`.
+- **Decisions:**
+  - ARTLOUPE_SECRET_SOURCE dropped; key precedence is veloce's alone: an exported ANTHROPIC_API_KEY, else the keychain, and env-only in ci and production (Laurie)
+  - artloupe-config uses pydantic-settings, the siblings' idiom, with env files anchored to the workspace; it never reads a key from a file, never exports one, and rejects any APP_ENV other than local, ci or production
+  - The Director uses messages.create with output_config and validates in its own module, not messages.parse: transform_schema sends minLength only as a description, and parse loses usage when validation fails; routing-plan §6 corrected (Laurie)
+  - RunState and the POST /runs response carry `routing`, the whole RoutingDecision, in place of `manifest`
+  - RoutingDecision refuses a selected head_construction when the gate found no face; both routing objects are strict (review); the rest of @artloupe/schemas goes strict in #68, at P2 (Laurie)
+  - A bad or incomplete Director answer stops the run with a 502 and no retry; a missing key is a 503 before any work; the client allows 45 s and one retry
+  - The recorded responder is a real AsyncAnthropic client over httpx2.MockTransport with hand-written replies; one live smoke test runs opt-in via `poe test-live`
+  - The gate's figures carry no FR-305 record; the prompt now says they are the detector's own measurements (review, suggested fix inverted)
+  - #66 filed at P3 and #68 at P2, both unparented (Laurie)
 
 ### 2026-09-13 — PR 12a: the routing graph's deterministic path — the agent reads projects as the artist, a tool_results cache, the FR-801 check, and a labelled Director stand-in; PR 12 split into 12a and 12b
 
@@ -138,25 +154,6 @@ everything built on it has to be revisited. Watch it against `decision_stability
   - Greptile: search-effort inflation declined with measurements (flat across 200-20,000 hypotheses) and pinned by a test; in-frame vertical VP deferred to #42 (P2) with the limitation text corrected; NumPy added to tool_version
   - face_landmarker.task licence resolved: all three bundled models (BlazeFace, FaceMesh-V2, Blendshape V2) are Apache 2.0 per their model cards, whose text extracts fine despite the spike's 'scanned PDF' note. PR 10 pins the versioned /float16/1/ model URL, never /latest/
   - MediaPipe Tasks' privacy notice (usage metrics sent to Google, no documented opt-out, consent obligation on the app) filed as #43 at P1, gating PR 10's merge: measure whether the pinned Python build sends them, then disable or disclose
-
-### 2026-09-07 — Slice 1 PR 7b — the intake form, a Zod-free schemas split forced by the bundle budget, and two review findings that contradicted my own docblock
-
-- **Went well:** Running pnpm size unprompted is the only reason the Zod bundle regression never left the branch: importing seven medium names through the schemas barrel took the studio from 248 to 347 kB gzipped against a 300 kB budget, and nothing else in check:all would have said so. Measuring the baseline by stashing and rebuilding, rather than trusting a remembered figure, is what made the number arguable rather than asserted. Both in-scope review findings were verified against the source before acting, and both fixes were checked by reverting each one to confirm its test actually fails -- one failure for the first, two for the second. The two terminal-review findings were confirmed to sit outside git diff origin/main...HEAD before being dispositioned, which turned a stale-base review into two filed issues instead of two out-of-scope patches; the second is the more valuable half, because it establishes that an existing docblock tells the next reader a leak self-heals when it does not.
-- **Improve:** Both in-scope findings were self-contradictions inside a file I wrote this same session. The goal was trimmed by the same helper as every other field, breaking a rule that file's own docblock states in prose -- that this side sanitizes nothing, because sanitizing would hide from the screener exactly the text it exists to record. The unguarded response.json() on the 201 path sat eight lines above a .catch(() => null) doing the right thing on the 422 path. Neither needed information I did not have; both escaped to review, which is where iteration stops being refinement. I also spent a Greptile CLI review that was redundant: I checked for an automatic one, found none, and started the CLI -- the automatic review landed on the same SHA moments later, and the skill says explicitly to wait a few minutes and re-check rather than spend one. The Zod regression is scored refinement because my own check caught it, but the information was in hand: I had read packages/schemas/package.json listing zod as a dependency and the current-state doc's 242-248 kB figure, and did not connect them until the budget failed.
-- **Tooling:** pnpm --filter @artloupe/studio e2e -- --project=chromium silently ignored the passthrough and ran all three browsers anyway. The workflow rule says to pass extra args through the script rather than via exec, and for Playwright that does not work as written -- worth either correcting the rule or noting the exception. jsdom cost three probe iterations before yielding the actual constraint: fireEvent.change(input, {target:{files:[...]}}) sets the wrapper property but not the internal slot new FormData(form) reads, so the form appears to receive no file. That failure looks like a broken component rather than an environment limit and is worth recording in the testing rules. Finally, greptile config reports 'Rules (0): (none)' while greptile.json declares three customContext rules including the WCAG 2.2 AA one scoped to apps/*/src/**; neither review raised an accessibility finding on a PR that is almost entirely new UI, and the output cannot distinguish a clean bill from a rule that never loaded.
-- **Decisions:**
-  - The intake form gets its own route (/projects/new) rather than folding into /home, and a 201 navigates to a stub /projects/[id] rather than rendering an inline success panel. Both Laurie's calls, taken at the top of the session
-  - The stub project page reads nothing -- there is no GET for a project yet -- so it confirms the upload, which the redirect is evidence of, and never claims the project was loaded. The id is UUID-checked before rendering: React escapes it, so this is a correctness guard rather than an injection one, because echoing an arbitrary path segment back as 'your project' is a claim the page cannot support
-  - Validation stays server-authoritative. The two client-side checks are round-trip concerns rather than correctness: size, because route.ts refuses an over-sized body as it streams and cancels the reader, so the artist would push 40 MB to be told no and the cancelled request can surface as a transport failure rather than the 422 that explains itself; and the intent fields, because invalid_intent is one opaque reason by design, so naming which field is wrong has to happen client-side or nowhere
-  - The file's declared type is deliberately NOT checked client-side. inspect-image.ts sniffs the format from the bytes and never consults the client's claim, so a browser reporting an empty or wrong File.type -- which happens on Linux and some Android pickers -- would be refused locally for a photograph the server accepts. accept narrows the picker, which is a hint; the sniff is the answer
-  - The error surface is the GOV.UK error-summary pattern: a focused region listing every problem at once, each entry linking to its field, the message repeated inline, aria-invalid on the control. The error state carries its own axe assertion in both vitest and Playwright, because it only exists after a failed submit and a clean audit of the empty form says nothing about it
-  - packages/schemas splits its plain values out of the Zod modules into intent-values.ts and image-limits.ts with subpath exports. Importing MEDIA through the package barrel put the whole validator in the client bundle -- measured at 248.21 to 346.79 kB gzipped against a 300 kB size-limit budget, now 256.44 kB. The barrel's surface is unchanged, so nothing server-side moved. The Python mirror is deliberately not split: there is no bundle on that side and splitting it would make the parity comparison harder
-  - apps/studio/tsconfig.json now typechecks e2e/, which is what makes 'derive the Playwright stub from the same exported types' real rather than decorative -- without it a renamed field passes quietly against a hand-written fixture
-  - lib/api/project-contract.ts holds the endpoint, the multipart field names and both body shapes with no runtime imports, so route.ts, the intake form and the Playwright spec read one set of declarations. It exists separately from responses.ts because that module builds NextResponse objects and is unreachable from a client component or a test process
-  - proxy.test.ts discovers pages by walking for page.tsx rather than listing directories under [locale], the way discoverApiRoutes already walks for route.ts. Listing directories was right while every page was one segment deep; projects/new is the first that is not, and it would have been reported as its parent -- a path that does not exist
-  - fascia gets a native <select> primitive rather than a base-ui listbox. Typeahead, closed-state arrow keys, the platform popup and the mobile wheel picker all come from the platform, as do the WCAG target-size and focus-appearance criteria. Option rows cannot be styled; that is the accepted trade, stated in the file
-  - The undecodable-201 recovery gets its own message rather than reusing unavailable. The project was created -- the 201 says so -- and every POST makes a fresh project, so telling the artist it failed would invite a resubmit and leave them holding two
-  - Two ingest findings deferred rather than fixed (#38 P3, #39 P2): ingest-upload.ts is not in this PR's diff, confirmed against git diff origin/main...HEAD before acting. #39 establishes that the module docblock's stated reason for tolerating a storage orphan -- 'overwritten by an identical retry, because the key ends in the content checksum' -- is false, because the key is scoped by projectId and every POST makes a new one
 
 ---
 

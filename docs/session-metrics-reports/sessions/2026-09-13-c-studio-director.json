@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-13",
+  "label": "PR 12b: the model-driven Studio Director — the artloupe-config key seam, the RoutingDecision contract, and a structured-output Director with refusal fallbacks; Greptile's three findings fixed",
+  "confidence": "measured",
+  "cost_usd": 23.03,
+  "api_minutes": 42.5,
+  "wall_minutes": 83.0,
+  "context_over_150k_pct": 90,
+  "parallel_agents": 1,
+  "themes": ["agent", "devex"],
+  "effort_split": {
+    "build": 42,
+    "setup": 3,
+    "design": 14,
+    "docs": 12,
+    "verify_ops": 21,
+    "churn": 8
+  },
+  "churn_attribution": {
+    "under_specified": 0,
+    "refinement": 30,
+    "avoidable_error": 50,
+    "genuine_discovery": 20
+  },
+  "ratings": {
+    "scoping_clarity": 5,
+    "decision_stability": 4,
+    "tooling_leverage": 3
+  },
+  "rework_of": [],
+  "delivered": {
+    "prs": [67],
+    "adrs": []
+  },
+  "review": {
+    "coderabbit_findings": 3,
+    "fixed": 3,
+    "deferred": 0,
+    "declined": 0
+  },
+  "decisions": [
+    "ARTLOUPE_SECRET_SOURCE dropped; key precedence is veloce's alone: an exported ANTHROPIC_API_KEY, else the keychain, and env-only in ci and production (Laurie)",
+    "artloupe-config uses pydantic-settings, the siblings' idiom, with env files anchored to the workspace; it never reads a key from a file, never exports one, and rejects any APP_ENV other than local, ci or production",
+    "The Director uses messages.create with output_config and validates in its own module, not messages.parse: transform_schema sends minLength only as a description, and parse loses usage when validation fails; routing-plan §6 corrected (Laurie)",
+    "RunState and the POST /runs response carry `routing`, the whole RoutingDecision, in place of `manifest`",
+    "RoutingDecision refuses a selected head_construction when the gate found no face; both routing objects are strict (review); the rest of @artloupe/schemas goes strict in #68, at P2 (Laurie)",
+    "A bad or incomplete Director answer stops the run with a 502 and no retry; a missing key is a 503 before any work; the client allows 45 s and one retry",
+    "The recorded responder is a real AsyncAnthropic client over httpx2.MockTransport with hand-written replies; one live smoke test runs opt-in via `poe test-live`",
+    "The gate's figures carry no FR-305 record; the prompt now says they are the detector's own measurements (review, suggested fix inverted)",
+    "#66 filed at P3 and #68 at P2, both unparented (Laurie)"
+  ],
+  "retro": {
+    "went_well": "Current-state §2 carried a seven-step plan, so the build started without a design detour. Probing the SDK before writing paid off: transform_schema's output showed minLength reaching the model only as a description, which grounded the switch away from messages.parse in evidence rather than preference. The recorded responder sits at the transport layer, so tests see the exact wire request, betas header included. Every outward-facing write was read back and compared exactly, and the review dispositions were shown to Laurie before posting, which kept their footer true. The live smoke test passed first time, and Greptile's re-review scored 5/5.",
+    "improve": "Two defects I authored reached review. The system prompt claimed FR-305 metadata for the gate's figures, although I had read routing-plan §3 and the gate node earlier in this session. get_anthropic_api_key skipped the APP_ENV validation its own docstring promised. I also moved the shell into a subdirectory once, the same slip the previous record flagged. Several Bash slips cost rounds: `==` in a zsh echo, an awk range that closed on its first line, and bash's PIPESTATUS in zsh. Long docstrings took three lint rounds.",
+    "tooling_suggestion": "The PreToolUse hook that refuses `cd <subdir>` in Bash has now been suggested twice, and the slip has recurred. Before writing a prompt's claim about the data a node supplies, grep the node that builds it. In zsh, use $pipestatus and avoid a bare `==`."
+  },
+  "note": "cost, api and wall minutes from /usage, pasted after #67 merged; it also reports 1806 lines added and 134 removed. context_over_150k_pct 90 and the skills breakdown (/ship 16%, /claude-api 9%, /backlog) cover the last 24 hours across all local sessions, including 2026-09-13-a and -b. No subagents and no worktrees. Issues filed: #66 and #68. Greptile: an automatic review of ee5244f (1 × P1, 2 × P2), then an automatic re-review of e33ade9 at 5/5 with no findings. The P2 on routing strictness counts as fixed, since the routing schemas were fixed in the PR; its package-wide remainder became #68. Laurie ran the live smoke test (1 passed, 22.8 s); its spend is billed to the Anthropic API account and is not part of /usage."
+}
