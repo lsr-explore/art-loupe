@@ -15,6 +15,7 @@ import { claimSchema } from './evidence';
 import { imageRefSchema } from './image';
 import { projectIntentSchema } from './intent';
 import { toolManifestSchema } from './manifest';
+import { routingDecisionSchema } from './routing';
 
 interface ParityFixture {
   accepts: {
@@ -22,6 +23,7 @@ interface ParityFixture {
     image_refs: unknown[];
     project_intents: Record<string, { input: unknown; expected: unknown }>;
     tool_manifests: unknown[];
+    routing_decisions: unknown[];
     artifact_metadata: { tool: string }[];
     budget_ledgers: { stopped: boolean }[];
   };
@@ -57,6 +59,7 @@ const SCHEMAS: Record<string, ZodType> = {
   image_ref: imageRefSchema,
   project_intent: projectIntentSchema,
   tool_manifest: toolManifestSchema,
+  routing_decision: routingDecisionSchema,
   artifact_metadata: artifactMetadataSchema,
   budget_ledger: budgetLedgerSchema,
 };
@@ -89,6 +92,12 @@ describe('contract parity fixture — accepted values', () => {
   accepts.tool_manifests.forEach((manifest, index) => {
     it(`parses tool manifest ${index}`, () => {
       expect(() => toolManifestSchema.parse(manifest)).not.toThrow();
+    });
+  });
+
+  accepts.routing_decisions.forEach((decision, index) => {
+    it(`parses routing decision ${index}`, () => {
+      expect(() => routingDecisionSchema.parse(decision)).not.toThrow();
     });
   });
 

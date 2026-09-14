@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 336,
-      "vitest": 432,
+      "pytest": 370,
+      "vitest": 433,
       "playwright": 36,
-      "all": 804
+      "all": 839
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 336,
-      "vitest": 432,
+      "pytest": 370,
+      "vitest": 433,
       "playwright": 36,
-      "all": 804
+      "all": 839
     }
   },
   "by_flow": {
@@ -68,17 +68,17 @@
         "a11y": 0,
         "security": 17,
         "privacy": 0,
-        "safety": 54,
+        "safety": 55,
         "data": 0,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 33,
+        "pytest": 34,
         "vitest": 38,
         "playwright": 0
       },
-      "total": 71,
+      "total": 72,
       "parametrized": 5
     },
     "analysis.deterministic-studies": {
@@ -166,20 +166,20 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 34,
+        "security": 50,
         "privacy": 0,
         "safety": 0,
         "data": 1,
         "performance": 1,
-        "functionality": 48
+        "functionality": 49
       },
       "runners": {
-        "pytest": 84,
+        "pytest": 101,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 84,
-      "parametrized": 3
+      "total": 101,
+      "parametrized": 6
     },
     "platform.auth": {
       "severity": "P1",
@@ -231,15 +231,15 @@
         "safety": 1,
         "data": 61,
         "performance": 0,
-        "functionality": 57
+        "functionality": 72
       },
       "runners": {
-        "pytest": 46,
+        "pytest": 61,
         "vitest": 122,
         "playwright": 11
       },
-      "total": 179,
-      "parametrized": 18
+      "total": 194,
+      "parametrized": 19
     },
     "ops.observability": {
       "severity": "P2",
@@ -289,17 +289,17 @@
         "security": 0,
         "privacy": 0,
         "safety": 0,
-        "data": 20,
+        "data": 22,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 10,
-        "vitest": 10,
+        "pytest": 11,
+        "vitest": 11,
         "playwright": 0
       },
-      "total": 20,
-      "parametrized": 7
+      "total": 22,
+      "parametrized": 8
     },
     "platform.shell": {
       "severity": "P2",
@@ -3418,71 +3418,78 @@
       "category": "a11y"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:101",
+      "id": "packages/schemas/src/contract-parity.test.ts:105",
+      "name": "parses ${metadata.tool} artifact metadata",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:110",
       "name": "keeps a null confidence distinct from a zero one",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:107",
+      "id": "packages/schemas/src/contract-parity.test.ts:116",
       "name": "parses a ledger with stopped=${ledger.stopped}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:116",
+      "id": "packages/schemas/src/contract-parity.test.ts:125",
       "name": "rejects ${name}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:123",
+      "id": "packages/schemas/src/contract-parity.test.ts:132",
       "name": "names only schemas this suite knows how to validate",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:67",
+      "id": "packages/schemas/src/contract-parity.test.ts:70",
       "name": "parses a ${claim.evidence.kind} claim",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:72",
+      "id": "packages/schemas/src/contract-parity.test.ts:75",
       "name": "covers every evidence class the taxonomy defines",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:78",
+      "id": "packages/schemas/src/contract-parity.test.ts:81",
       "name": "parses image ref ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:84",
+      "id": "packages/schemas/src/contract-parity.test.ts:87",
       "name": "parses the ${name} project intent and fills the documented defaults",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:90",
+      "id": "packages/schemas/src/contract-parity.test.ts:93",
       "name": "parses tool manifest ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:96",
-      "name": "parses ${metadata.tool} artifact metadata",
+      "id": "packages/schemas/src/contract-parity.test.ts:99",
+      "name": "parses routing decision ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
@@ -3681,6 +3688,111 @@
       "name": "test_rejects_an_expired_token",
       "runner": "pytest",
       "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:103",
+      "name": "test_a_deployed_environment_never_reads_the_keychain",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:113",
+      "name": "test_a_deployed_environment_reads_no_env_file",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:122",
+      "name": "test_locally_an_exported_key_wins_over_the_keychain",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:130",
+      "name": "test_locally_the_key_is_read_from_the_keychain",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:137",
+      "name": "test_a_keychain_key_is_never_exported",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:143",
+      "name": "test_coordinates_come_from_the_env_files_and_env_local_wins",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:159",
+      "name": "test_a_key_written_into_an_env_file_is_not_read",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:165",
+      "name": "test_missing_coordinates_name_both_variables",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:182",
+      "name": "test_a_failed_keychain_lookup_is_named",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:191",
+      "name": "test_an_empty_keychain_item_is_refused",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:198",
+      "name": "test_the_keychain_lookup_is_bounded_in_time",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:67",
+      "name": "test_app_env_defaults_to_local",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:71",
+      "name": "test_an_unrecognised_app_env_fails_rather_than_falling_back_to_local",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:79",
+      "name": "test_an_unrecognised_app_env_fails_even_with_an_exported_key",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:90",
+      "name": "test_a_deployed_environment_needs_the_key_in_its_environment",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
@@ -5406,71 +5518,120 @@
       "category": "security"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:103",
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:31",
+      "name": "test_a_manifest_naming_every_offered_tool_once_passes",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:35",
+      "name": "test_completeness_is_judged_against_the_offer_not_every_tool",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:41",
+      "name": "test_an_omitted_tool_is_refused_and_named",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:46",
+      "name": "test_a_tool_named_twice_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:53",
+      "name": "test_a_tool_that_was_not_offered_is_refused",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_manifest_completeness.py:60",
+      "name": "test_every_problem_is_reported_together",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:100",
+      "name": "test_accepts_tool_manifests",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:105",
+      "name": "test_accepts_routing_decisions",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:110",
       "name": "test_accepts_artifact_metadata",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:107",
+      "id": "python/libs/schemas/tests/test_parity.py:114",
       "name": "test_null_confidence_is_not_collapsed_to_zero",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:117",
+      "id": "python/libs/schemas/tests/test_parity.py:124",
       "name": "test_accepts_budget_ledgers",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:122",
+      "id": "python/libs/schemas/tests/test_parity.py:129",
       "name": "test_rejects",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:129",
+      "id": "python/libs/schemas/tests/test_parity.py:136",
       "name": "test_reject_entries_name_only_known_schemas",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:74",
+      "id": "python/libs/schemas/tests/test_parity.py:76",
       "name": "test_accepts_every_evidence_class",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:78",
+      "id": "python/libs/schemas/tests/test_parity.py:80",
       "name": "test_fixture_covers_the_whole_taxonomy",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:84",
+      "id": "python/libs/schemas/tests/test_parity.py:86",
       "name": "test_accepts_image_refs",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:91",
+      "id": "python/libs/schemas/tests/test_parity.py:93",
       "name": "test_project_intent_defaults_match_the_mirror",
-      "runner": "pytest",
-      "flow": "platform.contracts",
-      "category": "data"
-    },
-    {
-      "id": "python/libs/schemas/tests/test_parity.py:98",
-      "name": "test_accepts_tool_manifests",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
@@ -5623,87 +5784,94 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:101",
+      "id": "python/services/agent/tests/test_director_live.py:26",
+      "name": "test_the_director_routes_a_portrait_for_real",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:103",
+      "name": "test_no_face_declines_head_construction_with_the_gates_reason",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_graph.py:119",
       "name": "test_a_face_brings_head_construction_in_on_the_cached_face",
       "runner": "pytest",
       "flow": "analysis.geometry",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:117",
+      "id": "python/services/agent/tests/test_graph.py:139",
       "name": "test_every_artifact_cites_the_projects_original",
       "runner": "pytest",
       "flow": "analysis.deterministic-studies",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:127",
+      "id": "python/services/agent/tests/test_graph.py:149",
       "name": "test_the_photograph_is_downloaded_once_per_run",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:135",
+      "id": "python/services/agent/tests/test_graph.py:157",
       "name": "test_a_second_run_rests_on_the_first_runs_cache",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:149",
-      "name": "test_the_state_holds_no_token_and_no_pixels",
+      "id": "python/services/agent/tests/test_graph.py:173",
+      "name": "test_the_state_holds_no_credential_and_no_pixels",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:159",
+      "id": "python/services/agent/tests/test_graph.py:184",
       "name": "test_a_project_with_no_photograph_is_not_ready",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:164",
+      "id": "python/services/agent/tests/test_graph.py:191",
       "name": "test_a_project_with_no_intake_is_not_ready",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:52",
+      "id": "python/services/agent/tests/test_graph.py:67",
       "name": "test_the_graph_is_the_five_nodes_in_order",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:59",
+      "id": "python/services/agent/tests/test_graph.py:74",
       "name": "test_graph_accepts_an_injected_checkpointer_slot",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:64",
-      "name": "test_a_run_visits_every_node_once_and_spends_nothing",
+      "id": "python/services/agent/tests/test_graph.py:79",
+      "name": "test_a_run_visits_every_node_once_and_only_the_director_spends",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_graph.py:75",
+      "id": "python/services/agent/tests/test_graph.py:93",
       "name": "test_node_trail_accumulates_rather_than_replaces",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
-      "category": "functionality"
-    },
-    {
-      "id": "python/services/agent/tests/test_graph.py:85",
-      "name": "test_no_face_declines_head_construction_with_the_gates_reason",
-      "runner": "pytest",
-      "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
@@ -5791,22 +5959,85 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_routing.py:24",
+      "id": "python/services/agent/tests/test_routing.py:100",
+      "name": "test_no_face_pre_declines_head_construction_and_never_offers_it",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:126",
+      "name": "test_an_answer_that_does_not_account_for_its_tools_stops_the_run",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:134",
+      "name": "test_a_refusal_stops_the_run_before_its_content_is_read",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:160",
+      "name": "test_an_answer_that_misses_its_schema_stops_the_run_and_stays_on_the_ledger",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:178",
+      "name": "test_a_truncated_answer_stops_the_run",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:185",
+      "name": "test_the_ledger_prices_the_model_that_answered",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:196",
+      "name": "test_the_request_asks_for_a_structured_decision_with_fallbacks_on",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:214",
+      "name": "test_the_model_id_is_configuration",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:225",
+      "name": "test_no_pixels_reach_the_model",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:238",
+      "name": "test_the_artists_goal_travels_as_data_and_cannot_close_its_block",
+      "runner": "pytest",
+      "flow": "safety.untrusted-input",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:70",
+      "name": "test_the_model_decides_every_tool_the_gate_left_open",
+      "runner": "pytest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_routing.py:89",
       "name": "test_every_tool_is_accounted_for_exactly_once",
-      "runner": "pytest",
-      "flow": "intake.project-intent",
-      "category": "functionality"
-    },
-    {
-      "id": "python/services/agent/tests/test_routing.py:34",
-      "name": "test_no_face_declines_head_construction_with_the_gates_reason",
-      "runner": "pytest",
-      "flow": "intake.project-intent",
-      "category": "functionality"
-    },
-    {
-      "id": "python/services/agent/tests/test_routing.py:42",
-      "name": "test_a_face_makes_head_construction_eligible",
       "runner": "pytest",
       "flow": "intake.project-intent",
       "category": "functionality"
@@ -5875,77 +6106,91 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:124",
+      "id": "python/services/agent/tests/test_service.py:143",
       "name": "test_health_needs_no_token",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:131",
+      "id": "python/services/agent/tests/test_service.py:150",
       "name": "test_health_leaks_no_internal_detail",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:138",
+      "id": "python/services/agent/tests/test_service.py:157",
       "name": "test_creating_a_run_without_a_token_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:144",
+      "id": "python/services/agent/tests/test_service.py:163",
       "name": "test_a_run_names_its_project",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:153",
+      "id": "python/services/agent/tests/test_service.py:172",
       "name": "test_creating_a_run_returns_the_routing_and_the_artifacts",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:169",
+      "id": "python/services/agent/tests/test_service.py:185",
+      "name": "test_the_run_is_handed_the_director_client",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:195",
+      "name": "test_a_missing_director_key_is_a_503_that_names_nothing_it_tried",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:218",
       "name": "test_owner_comes_from_the_token",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:181",
+      "id": "python/services/agent/tests/test_service.py:230",
       "name": "test_a_body_that_names_an_owner_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:194",
+      "id": "python/services/agent/tests/test_service.py:243",
       "name": "test_the_run_reads_the_project_as_the_artist",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:207",
+      "id": "python/services/agent/tests/test_service.py:256",
       "name": "test_a_token_expiring_before_the_deadline_is_refused_before_any_work",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:223",
+      "id": "python/services/agent/tests/test_service.py:272",
       "name": "test_a_token_supabase_rejects_mid_run_asks_for_a_refresh",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:250",
+      "id": "python/services/agent/tests/test_service.py:301",
       "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
       "runner": "pytest",
       "flow": "platform.agent-runtime",

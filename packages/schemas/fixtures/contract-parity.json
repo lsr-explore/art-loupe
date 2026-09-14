@@ -119,6 +119,84 @@
         ]
       }
     ],
+    "routing_decisions": [
+      {
+        "$comment": "A portrait. The gate found a face, so head construction was the model's to decide, and the model declined perspective.",
+        "manifest": {
+          "selected": [
+            {
+              "tool": "grayscale",
+              "reason": null
+            },
+            {
+              "tool": "value_map",
+              "reason": "low-key reference; the value design is the whole problem"
+            },
+            {
+              "tool": "value_shapes",
+              "reason": null
+            },
+            {
+              "tool": "outline",
+              "reason": null
+            },
+            {
+              "tool": "head_construction",
+              "reason": "one face, with a facial landmark reliability of 0.8"
+            }
+          ],
+          "declined": [
+            {
+              "tool": "perspective",
+              "reason": "no vanishing point cleared the 0.35 confidence floor, so a horizon here would be invented"
+            }
+          ]
+        },
+        "rationale": "This is a portrait with one clearly detected face, so the head construction is worth building. No vanishing point cleared the confidence floor, so perspective would only draw coincidental lines.",
+        "gate": {
+          "face_found": true,
+          "reason": null
+        }
+      },
+      {
+        "$comment": "No face. Head construction is declined with the gate's own reason, and the model was never offered it.",
+        "manifest": {
+          "selected": [
+            {
+              "tool": "grayscale",
+              "reason": null
+            },
+            {
+              "tool": "value_map",
+              "reason": null
+            },
+            {
+              "tool": "value_shapes",
+              "reason": null
+            },
+            {
+              "tool": "outline",
+              "reason": null
+            },
+            {
+              "tool": "perspective",
+              "reason": "two vanishing points cleared the floor, at 0.71 and 0.52"
+            }
+          ],
+          "declined": [
+            {
+              "tool": "head_construction",
+              "reason": "no face was detected; faces below the detector's minimum size are not found"
+            }
+          ]
+        },
+        "rationale": "Two vanishing points cleared the confidence floor, so the perspective study rests on real structure. The value plates carry the rest of the plan.",
+        "gate": {
+          "face_found": false,
+          "reason": "no face was detected; faces below the detector's minimum size are not found"
+        }
+      }
+    ],
     "artifact_metadata": [
       {
         "$comment": "Confidence null: a grayscale conversion either ran or it did not.",
@@ -247,6 +325,105 @@
             "reason": "too much texture"
           }
         ]
+      }
+    },
+    "routing_selects_head_construction_without_a_face": {
+      "$comment": "FR-307's deterministic half. No producer, model or otherwise, can select head construction past a gate that found no face.",
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [
+            {
+              "tool": "head_construction",
+              "reason": null
+            }
+          ],
+          "declined": []
+        },
+        "rationale": "the artist asked for a head study",
+        "gate": {
+          "face_found": false,
+          "reason": "no face was detected"
+        }
+      }
+    },
+    "routing_gate_declines_without_a_reason": {
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": [
+            {
+              "tool": "head_construction",
+              "reason": "no face was detected"
+            }
+          ]
+        },
+        "rationale": "nothing to construct",
+        "gate": {
+          "face_found": false,
+          "reason": null
+        }
+      }
+    },
+    "routing_gate_with_a_face_and_a_reason": {
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "a face was found",
+        "gate": {
+          "face_found": true,
+          "reason": "found a face"
+        }
+      }
+    },
+    "routing_without_a_rationale": {
+      "$comment": "The rationale is what the artist reads. An empty one is a routing summary that says nothing.",
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "",
+        "gate": {
+          "face_found": true,
+          "reason": null
+        }
+      }
+    },
+    "routing_decision_with_an_unknown_field": {
+      "$comment": "Both sides refuse an unknown field. Zod strips one by default, which is the drift this case pins.",
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "a face was found",
+        "gate": {
+          "face_found": true,
+          "reason": null
+        },
+        "confidence": 0.9
+      }
+    },
+    "routing_gate_with_an_unknown_field": {
+      "schema": "routing_decision",
+      "value": {
+        "manifest": {
+          "selected": [],
+          "declined": []
+        },
+        "rationale": "a face was found",
+        "gate": {
+          "face_found": true,
+          "reason": null,
+          "face_height_px": 150
+        }
       }
     },
     "stopped_ledger_without_reason": {

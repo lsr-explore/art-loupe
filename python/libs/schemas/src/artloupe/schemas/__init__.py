@@ -41,11 +41,14 @@ from artloupe.schemas.intent import (
 )
 from artloupe.schemas.manifest import (
     TOOLS,
+    IncompleteManifest,
     ToolDeclination,
     ToolManifest,
     ToolName,
     ToolSelection,
+    check_accounts_for,
 )
+from artloupe.schemas.routing import RoutingDecision, RoutingGate
 from artloupe.schemas.screening import (
     EXCERPT_MAX_LENGTH,
     SCREENED_SURFACES,
@@ -77,11 +80,14 @@ __all__ = [
     "DetectionSeverity",
     "Evidence",
     "ImageRef",
+    "IncompleteManifest",
     "Measured",
     "MeasurementUnit",
     "Medium",
     "PassageSpan",
     "ProjectIntent",
+    "RoutingDecision",
+    "RoutingGate",
     "ScreenedSurface",
     "SkillLevel",
     "SupportSize",
@@ -89,6 +95,7 @@ __all__ = [
     "ToolManifest",
     "ToolName",
     "ToolSelection",
+    "check_accounts_for",
     "screen_text",
     "screen_values",
 ]

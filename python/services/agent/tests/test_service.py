@@ -16,14 +16,15 @@ from typing import Any
 import httpx
 import pytest
 
+from artloupe.agent.director import DirectorRefused, RoutingFailed
 from artloupe.agent.nodes import ProjectNotReady
 from artloupe.agent.resources import PhotographUnavailable
-from artloupe.agent.routing import direct
 from artloupe.agent.runtime import RunOutcome
 from artloupe.agent.service import app
 from artloupe.auth.config import get_settings
 from artloupe.auth.dependencies import require_token
 from artloupe.auth.tokens import VerifiedToken
+from artloupe.config import SecretUnavailable
 from artloupe.metering import (
     BudgetExceeded,
     RecursionLimitExceeded,
@@ -45,6 +46,25 @@ ARTIST = VerifiedToken(
     claims={},
     access_token="artist-access-token-for-tests",
 )
+
+NO_FACE = "No face was found."
+ROUTING = {
+    "manifest": {
+        "selected": [{"tool": "grayscale", "reason": None}],
+        "declined": [{"tool": "head_construction", "reason": NO_FACE}],
+    },
+    "rationale": "The value plates carry this plan.",
+    "gate": {"face_found": False, "reason": NO_FACE},
+}
+
+# What the endpoint hands a run as its Director client. Never called: `execute_run` is replaced.
+DIRECTOR_CLIENT = object()
+
+
+@pytest.fixture(autouse=True)
+def director_stub(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stand in for the Director's client, so that no test here resolves a provider key."""
+    monkeypatch.setattr("artloupe.agent.service.director_client", lambda: DIRECTOR_CLIENT)
 
 
 @pytest.fixture(autouse=True)
@@ -101,12 +121,11 @@ class RecordedRun:
 
     async def __call__(self, _graph: object, initial: dict[str, Any], **kwargs: Any) -> RunOutcome:
         self.calls.append({"initial": initial, **kwargs})
-        gate = {"face_found": False, "reason": "No face was found."}
         state = {
             **initial,
             "node_trail": ["load_project", "face_gate", "survey", "direct", "analyse"],
-            "gate": gate,
-            "manifest": direct({"gate": gate})["manifest"],
+            "gate": {"face_found": False, "reason": NO_FACE},
+            "routing": ROUTING,
             "artifacts": [],
         }
         return RunOutcome(
@@ -159,10 +178,40 @@ async def test_creating_a_run_returns_the_routing_and_the_artifacts(
     body = response.json()
     assert body["owner"] == ARTIST.subject
     assert body["project_id"] == PROJECT
-    assert body["manifest"]["declined"] == [
-        {"tool": "head_construction", "reason": "No face was found."}
-    ]
+    assert body["routing"] == ROUTING
     assert body["artifacts"] == []
+
+
+async def test_the_run_is_handed_the_director_client(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    await client.post("/runs", json=BODY)
+
+    (call,) = recorded.calls
+    assert call["resources"].director is DIRECTOR_CLIENT
+
+
+@pytest.mark.trace(flow="platform.agent-runtime", category="security")
+async def test_a_missing_director_key_is_a_503_that_names_nothing_it_tried(
+    client: httpx.AsyncClient,
+    authenticated: None,
+    recorded: RecordedRun,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Refused before any work. The seam's message names a keychain item, which stays in the log."""
+
+    def unavailable() -> None:
+        raise SecretUnavailable(
+            "The keychain lookup for service 'art-loupe', account 'anthropic' failed"
+        )
+
+    monkeypatch.setattr("artloupe.agent.service.director_client", unavailable)
+
+    response = await client.post("/runs", json=BODY)
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "The routing model is not configured."}
+    assert recorded.calls == []
 
 
 @pytest.mark.trace(flow="platform.auth", category="security")
@@ -245,6 +294,8 @@ async def test_a_token_supabase_rejects_mid_run_asks_for_a_refresh(
         (ProjectNotReady("the project has no reference photograph yet"), 409, None),
         (PhotographUnavailable("the original could not be decoded as an image"), 422, None),
         (ArtistApiError("refused: HTTP 500"), 502, "The data service refused a call."),
+        (RoutingFailed("the Director returned no decision (stop reason: max_tokens)"), 502, None),
+        (DirectorRefused("cyber"), 502, None),
     ],
 )
 async def test_a_stopped_run_is_reported_as_what_stopped_it(

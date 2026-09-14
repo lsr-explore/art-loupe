@@ -211,9 +211,13 @@ reason over what the nodes hand it.
   SDK in the workspace, and adding it needs Laurie's approval before `uv add` runs.
 - **The model id is configuration.** `ARTLOUPE_DIRECTOR_MODEL` defaults to `claude-opus-5`. It is
   configuration because an eval should be able to compare models without a code change.
-- **Structured output uses `AsyncAnthropic().messages.parse`** with the `RoutingDecision` model.
-  The result is validated again against the Pydantic contract after parsing. The exact SDK binding
-  is checked against the SDK before the code is written.
+- **Structured output is requested through `output_config` and validated in the Director.** The
+  request constrains the reply to the JSON schema of `DirectorDecision`, which is the model's half
+  of a `RoutingDecision`: its selections, its declinations and its rationale. The reply is then
+  validated against that Pydantic model. The SDK's `messages.parse` would do both, but it raises
+  inside the call when validation fails, and the response's `usage` is lost with it. The schema
+  reaches the model with `minLength` only as a description, so that failure can happen, and
+  validating in the Director keeps a rejected answer on the ledger.
 - **Refusals are handled before content is read.** The node branches on `stop_reason`.
   Server-side fallbacks are on, as `fallbacks: "default"` with the beta header
   `server-side-fallback-2026-07-01` (§10, question 1). The substitute model can refuse too, so the
@@ -236,8 +240,8 @@ reason over what the nodes hand it.
   - The key is passed straight to the client and never exported. An exported key would be
     visible to every child process.
   - The port loads `python/.env.local` as well as `python/.env`, because veloce read only
-    `.env`. It also decides whether `ARTLOUPE_SECRET_SOURCE` survives, since veloce had no
-    such variable.
+    `.env`. `ARTLOUPE_SECRET_SOURCE` was dropped (Laurie, 2026-09-13), so the precedence above
+    is the whole rule.
   - Only key resolution is ported. Veloce's AI cache, LangSmith tracing, hard-stop mode and
     pre-LLM scrubbing are left behind. LangSmith would send run data to another third party,
     so adding it is a disclosure decision for epic #57, not a port.

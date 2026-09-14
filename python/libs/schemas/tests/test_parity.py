@@ -21,6 +21,7 @@ from artloupe.schemas import (
     Claim,
     ImageRef,
     ProjectIntent,
+    RoutingDecision,
     ToolManifest,
 )
 
@@ -65,6 +66,7 @@ SCHEMAS: dict[str, type[BaseModel]] = {
     "image_ref": ImageRef,
     "project_intent": ProjectIntent,
     "tool_manifest": ToolManifest,
+    "routing_decision": RoutingDecision,
     "artifact_metadata": ArtifactMetadata,
     "budget_ledger": BudgetLedger,
 }
@@ -97,6 +99,11 @@ def test_project_intent_defaults_match_the_mirror(name: str, entry: dict[str, An
 @pytest.mark.parametrize("manifest", ACCEPTS["tool_manifests"])
 def test_accepts_tool_manifests(manifest: dict[str, Any]) -> None:
     ToolManifest.model_validate(manifest)
+
+
+@pytest.mark.parametrize("decision", ACCEPTS["routing_decisions"])
+def test_accepts_routing_decisions(decision: dict[str, Any]) -> None:
+    RoutingDecision.model_validate(decision)
 
 
 @pytest.mark.parametrize("metadata", ACCEPTS["artifact_metadata"], ids=lambda entry: entry["tool"])

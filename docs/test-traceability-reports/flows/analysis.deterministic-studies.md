@@ -65,7 +65,7 @@ Grayscale, value maps, and value-contour outlines from one pipeline
 | functionality | test_small_images_are_never_upscaled | `python/libs/image-tools/tests/test_plates.py:504` |
 | functionality | test_invalid_parameters_are_refused | `python/libs/image-tools/tests/test_plates.py:526` |
 | functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_plates.py:535` |
-| functionality | test_every_artifact_cites_the_projects_original | `python/services/agent/tests/test_graph.py:117` |
+| functionality | test_every_artifact_cites_the_projects_original | `python/services/agent/tests/test_graph.py:139` |
 
 ---
 

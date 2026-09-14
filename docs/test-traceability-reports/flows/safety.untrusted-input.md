@@ -12,12 +12,12 @@ Injection screening on every untrusted surface
 | --- | --- |
 | **Severity** | P0 |
 | **Why** | Five surfaces carry text nobody in this system wrote — a filename, an uploaded photograph's EXIF block, whatever is legible in its pixels, the artist's own free-text goal, and the documents retrieval brings back. The screener is a hand-authored mirror across two regex engines, which fails quietly: both sides compile the same rule and match differently, and nothing says so until a real detection is missed. The shared rules fixture and its case corpus are what make that loud, so the tests here are the boundary itself rather than a check on it. |
-| **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/schemas` · `python/libs/persistence` |
-| **Tests** | 71 (5 parametrized) |
-| **Covered** | security 17 · safety 54 |
+| **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/schemas` · `python/libs/persistence` · `python/services/agent` |
+| **Tests** | 72 (5 parametrized) |
+| **Covered** | security 17 · safety 55 |
 | **Not covered** | a11y · privacy · data · performance · functionality |
 
-## pytest — 33
+## pytest — 34
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -54,6 +54,7 @@ Injection screening on every untrusted surface
 | safety | test_walking_a_block_reports_each_rule_once | `python/libs/schemas/tests/test_screening.py:131` |
 | safety | test_walking_survives_a_block_nested_deeper_than_it_will_walk | `python/libs/schemas/tests/test_screening.py:139` |
 | safety | test_walking_ignores_values_that_are_not_text | `python/libs/schemas/tests/test_screening.py:151` |
+| safety | test_the_artists_goal_travels_as_data_and_cannot_close_its_block | `python/services/agent/tests/test_routing.py:238` |
 
 ## Vitest — 38
 
