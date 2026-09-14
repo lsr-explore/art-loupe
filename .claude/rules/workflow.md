@@ -45,5 +45,5 @@ than filing by hand.
 
 ## Documentation discipline
 
-- When an architectural decision is made, capture it as a new ADR in `docs/decision-records/` (numbered, e.g. `0003-…md`).
+- When an architectural decision is made, propose an ADR for `docs/decision-records/` (numbered, e.g. `0003-…md`), and write it once Laurie agrees.
 - Record session outcomes via the `/wrap` skill: a metrics record in `docs/session-metrics-reports/sessions/` plus the living `docs/current-state.md`. See `.claude/rules/current-state.md`.
