@@ -113,16 +113,22 @@ export const PhotographDropZone = ({
     if (dropped === undefined) {
       return;
     }
+    // The drop is taken first. Everything after this is optional, and must not be able to lose it.
+    select(dropped);
+
     // Mirror the drop into the input where the browser allows it, so the input never holds a
     // stale pick that a later re-pick of the same file would fail to replace (no `change`).
     // jsdom has no `DataTransfer`; the form reads `file`, so the drop works without the mirror.
     const input = event.currentTarget.querySelector('input[type="file"]');
     if (input instanceof HTMLInputElement && typeof DataTransfer === 'function') {
-      const transfer = new DataTransfer();
-      transfer.items.add(dropped);
-      input.files = transfer.files;
+      try {
+        const transfer = new DataTransfer();
+        transfer.items.add(dropped);
+        input.files = transfer.files;
+      } catch {
+        // A browser that refuses the assignment keeps the stale pick; the form still holds the drop.
+      }
     }
-    select(dropped);
   };
 
   return (

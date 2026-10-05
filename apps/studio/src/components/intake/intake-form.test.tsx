@@ -403,6 +403,29 @@ describe('IntakeForm', () => {
     expect(screen.getByRole('img', { name: /preview of the chosen/i })).toBeInTheDocument();
   });
 
+  it('keeps a dropped photograph when the browser refuses to mirror it into the input', () => {
+    // Constructible, because Testing Library builds one for the event itself; it is the
+    // component's own `items.add` that refuses, as a browser without a writable list would.
+    class RefusingDataTransfer {
+      items = {
+        add: () => {
+          throw new Error('DataTransfer items are read-only here');
+        },
+      };
+    }
+    vi.stubGlobal('DataTransfer', RefusingDataTransfer);
+    renderForm();
+
+    // Only the drop: Testing Library makes the stub's `dropEffect` read-only, which the
+    // dragover handler writes, and the drop handler is the one under test.
+    const target = screen.getByText(/drag a photograph here/i).closest('label') as HTMLElement;
+    fireEvent.drop(target, {
+      dataTransfer: { types: ['Files'], files: [referencePhotograph('dropped.png')] },
+    });
+
+    expect(screen.getByText(/chosen: dropped\.png/i)).toBeInTheDocument();
+  });
+
   it('applies the same size check to a dropped photograph', () => {
     renderForm();
 
