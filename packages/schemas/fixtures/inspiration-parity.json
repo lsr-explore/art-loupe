@@ -1,0 +1,54 @@
+{
+  "accepts": [
+    {
+      "source": "pexels",
+      "query": " trees ",
+      "orientation": "portrait",
+      "color": "green"
+    },
+    {
+      "source": "met",
+      "artist": "Gogh",
+      "date_begin": 1800,
+      "date_end": 1900,
+      "highlights": true
+    }
+  ],
+  "rejects": [
+    {
+      "source": "met",
+      "query": "trees",
+      "color": "blue"
+    },
+    {
+      "source": "pexels",
+      "query": "trees",
+      "artist": "Gogh"
+    },
+    {
+      "source": "met",
+      "query": "trees",
+      "date_begin": 1900,
+      "date_end": 1800
+    },
+    {
+      "source": "met",
+      "query": "trees",
+      "date_begin": 1800
+    },
+    {
+      "source": "pexels",
+      "query": " "
+    },
+    {
+      "source": "met",
+      "query": "trees",
+      "page": 418
+    },
+    {
+      "source": "pexels",
+      "query": "trees",
+      "people": false
+    }
+  ]
+}

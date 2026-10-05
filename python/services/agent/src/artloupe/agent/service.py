@@ -32,6 +32,7 @@ from pydantic import BaseModel, ConfigDict
 
 from artloupe.agent.director import RoutingFailed, close_director_client, director_client
 from artloupe.agent.graph import build_graph
+from artloupe.agent.inspiration_routes import router as inspiration_router
 from artloupe.agent.nodes import ProjectNotReady
 from artloupe.agent.resources import PhotographUnavailable, RunResources
 from artloupe.agent.runtime import execute_run
@@ -68,6 +69,8 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title=SERVICE_NAME, version=SERVICE_VERSION, lifespan=lifespan)
+
+app.include_router(inspiration_router)
 
 # Compiled once at import rather than per request. The graph is stateless and immutable;
 # rebuilding it per call would re-validate the topology on every request for no benefit.
