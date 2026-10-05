@@ -8,6 +8,9 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    ARTLOUPE_AGENT_URL: z.url().optional(),
+    GCP_WIF_AUDIENCE: z.string().optional(),
+    GCP_SERVICE_ACCOUNT: z.string().email().optional(),
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
     // Auth provider selector. Defaults to Supabase artist auth (email/password).
     // `demo` swaps in the single-super-user demo provider and is intended ONLY for
@@ -54,6 +57,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    ARTLOUPE_AGENT_URL: process.env.ARTLOUPE_AGENT_URL,
+    GCP_WIF_AUDIENCE: process.env.GCP_WIF_AUDIENCE,
+    GCP_SERVICE_ACCOUNT: process.env.GCP_SERVICE_ACCOUNT,
     LOG_LEVEL: process.env.LOG_LEVEL,
     AUTH_PROVIDER: process.env.AUTH_PROVIDER,
     SUPABASE_URL: process.env.SUPABASE_URL,

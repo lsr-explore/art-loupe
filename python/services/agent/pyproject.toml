@@ -32,6 +32,8 @@ dependencies = [
   # Pinned at the majors the workspace already resolves; FastAPI arrives via artloupe-auth
   # but is declared here too, because this package imports it directly.
   "fastapi>=0.115",
+  "httpx>=0.28",
+  "psycopg[binary]>=3.2",
   "langgraph>=0.2",
   "uvicorn>=0.30",
 ]
