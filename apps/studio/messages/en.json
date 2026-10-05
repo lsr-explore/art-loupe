@@ -22,6 +22,14 @@
     "description": "Upload the reference photograph you are working from, and tell us what you are trying to make. Nothing here is generated — the plan is built around the work you do.",
     "fileLabel": "Reference photograph",
     "fileHint": "JPEG, PNG or WebP · up to {limitMb} MB · at least {minPx} px on the long edge.",
+    "dropZone": {
+      "prompt": "Drag a photograph here, or click to choose one",
+      "replacePrompt": "Drag another photograph here, or click to replace this one",
+      "browse": "Or use the file browser",
+      "release": "Release to use this photograph",
+      "previewAlt": "Preview of the chosen reference photograph",
+      "chosen": "Chosen: {name} ({sizeMb} MB)"
+    },
     "mediumLabel": "Medium",
     "mediumPlaceholder": "Choose a medium",
     "timeLabel": "Time available",

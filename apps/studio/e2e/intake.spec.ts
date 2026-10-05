@@ -124,6 +124,35 @@ test.describe('Intake', {
     });
   });
 
+  test('uploads a photograph dropped on the drop target', async ({ page }) => {
+    await openIntake(page);
+
+    // Playwright has no file-drop primitive, so the drop is a real `DataTransfer` built in the
+    // page and dispatched as the browser would: dragenter, dragover, then drop.
+    const dataTransfer = await page.evaluateHandle((bytes) => {
+      const transfer = new DataTransfer();
+      transfer.items.add(
+        new File([new Uint8Array(bytes)], 'dropped-reference.png', { type: 'image/png' }),
+      );
+      return transfer;
+    }, Array.from(PNG_BYTES));
+    const target = page.getByText('Drag a photograph here, or click to choose one');
+    for (const type of ['dragenter', 'dragover', 'drop']) {
+      await target.dispatchEvent(type, { dataTransfer });
+    }
+
+    await expect(page.getByRole('img', { name: /preview of the chosen/i })).toBeVisible();
+    await expect(page.getByText(/Chosen: dropped-reference\.png/)).toBeVisible();
+
+    const upload = page.waitForRequest((request) => request.url().includes(PROJECTS_ENDPOINT));
+    await stubUpload(page, 201, created());
+    await page.getByLabel('Medium').selectOption('graphite');
+    await page.getByLabel('Time available').fill('180');
+    await submit(page);
+
+    expect((await upload).postData() ?? '').toContain('filename="dropped-reference.png"');
+  });
+
   test('opens the created project on a 201', async ({ page }) => {
     await openIntake(page);
     await stubUpload(page, 201, created());

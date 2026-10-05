@@ -69,6 +69,23 @@ const fillIntent = (overrides: Partial<Entry> = {}) => {
   fireEvent.change(screen.getByLabelText(/what are you after/i), { target: { value: entry.goal } });
 };
 
+/**
+ * Drop a photograph on the drop target.
+ *
+ * jsdom has no `DataTransfer`, so the event carries a plain object with the two members the
+ * target reads: `types`, to recognise a file drag, and `files`.
+ */
+const drop = (file: File) => {
+  const target = screen.getByText(/drag a photograph here/i).closest('label');
+  if (target === null) {
+    throw new Error('drop target not rendered');
+  }
+  const dataTransfer = { types: ['Files'], files: [file], dropEffect: 'none' };
+  fireEvent.dragEnter(target, { dataTransfer });
+  fireEvent.dragOver(target, { dataTransfer });
+  fireEvent.drop(target, { dataTransfer });
+};
+
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Start the project' }));
 
 /** The `intent` part of the request the form actually sent, parsed back out of the FormData. */
@@ -87,6 +104,9 @@ describe('IntakeForm', () => {
     push.mockReset();
     fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
+    // jsdom implements neither. The preview only needs a URL to put in `src`.
+    URL.createObjectURL = vi.fn(() => 'blob:preview');
+    URL.revokeObjectURL = vi.fn();
   });
 
   afterEach(() => {
@@ -346,9 +366,84 @@ describe('IntakeForm', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it('previews a picked photograph and announces which file was chosen', () => {
+    renderForm();
+
+    attach(referencePhotograph());
+
+    expect(screen.getByRole('img', { name: /preview of the chosen/i })).toHaveAttribute(
+      'src',
+      'blob:preview',
+    );
+    expect(screen.getByText(/chosen: studio-reference\.png/i)).toBeInTheDocument();
+    expect(screen.getByText(/click to replace this one/i)).toBeInTheDocument();
+  });
+
+  it('keeps the file name but drops the thumbnail when the browser cannot draw the file', () => {
+    renderForm();
+
+    attach(referencePhotograph('portrait.heic'));
+    fireEvent.error(screen.getByRole('img', { name: /preview of the chosen/i }));
+
+    expect(screen.queryByRole('img', { name: /preview of the chosen/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/chosen: portrait\.heic/i)).toBeInTheDocument();
+  });
+
+  it('uploads a dropped photograph exactly as it would a picked one', async () => {
+    fetchMock.mockResolvedValue(createdResponse());
+    renderForm();
+
+    drop(referencePhotograph('dropped.png'));
+    fillIntent();
+    submit();
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    const body = fetchMock.mock.calls[0]?.[1]?.body as FormData;
+    expect((body.get('file') as File).name).toBe('dropped.png');
+    expect(screen.getByRole('img', { name: /preview of the chosen/i })).toBeInTheDocument();
+  });
+
+  it('applies the same size check to a dropped photograph', () => {
+    renderForm();
+
+    drop(oversizedPhotograph());
+    fillIntent();
+    submit();
+
+    expect(within(errorSummary()).getByText(/over 25 MB/i)).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('ignores a drag that carries no file', () => {
+    renderForm();
+    const target = screen.getByText(/drag a photograph here/i).closest('label') as HTMLElement;
+
+    fireEvent.drop(target, { dataTransfer: { types: ['text/plain'], files: [] } });
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByText(/drag a photograph here/i)).toBeInTheDocument();
+  });
+
+  it('keeps the file input as the labelled, keyboard-reachable control', () => {
+    renderForm();
+
+    const input = screen.getByLabelText('Reference photograph');
+    expect(input).toHaveAttribute('type', 'file');
+    expect(input).not.toHaveAttribute('tabindex', '-1');
+  });
+
   // @trace category=a11y
   it('has no accessibility violations', async () => {
     const { container } = renderForm();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  // @trace category=a11y
+  it('has no accessibility violations with a photograph previewed', async () => {
+    const { container } = renderForm();
+
+    attach(referencePhotograph());
+
     expect(await axe(container)).toHaveNoViolations();
   });
 
