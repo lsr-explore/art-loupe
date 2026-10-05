@@ -69,6 +69,15 @@ const fillIntent = (overrides: Partial<Entry> = {}) => {
   fireEvent.change(screen.getByLabelText(/what are you after/i), { target: { value: entry.goal } });
 };
 
+/** The drop target is the label that encloses the file input; its prompt changes once filled. */
+const dropTarget = (): HTMLElement => {
+  const target = screen.getByLabelText('Reference photograph').closest('label');
+  if (target === null) {
+    throw new Error('drop target not rendered');
+  }
+  return target;
+};
+
 /**
  * Drop a photograph on the drop target.
  *
@@ -76,15 +85,36 @@ const fillIntent = (overrides: Partial<Entry> = {}) => {
  * target reads: `types`, to recognise a file drag, and `files`.
  */
 const drop = (file: File) => {
-  const target = screen.getByText(/drag a photograph here/i).closest('label');
-  if (target === null) {
-    throw new Error('drop target not rendered');
-  }
+  const target = dropTarget();
   const dataTransfer = { types: ['Files'], files: [file], dropEffect: 'none' };
   fireEvent.dragEnter(target, { dataTransfer });
   fireEvent.dragOver(target, { dataTransfer });
   fireEvent.drop(target, { dataTransfer });
 };
+
+/**
+ * Drop without the dragenter and dragover that lead up to it.
+ *
+ * For the refusing stub below: Testing Library makes the stub's `dropEffect` read-only, which
+ * the dragover handler writes, and the drop handler is the one under test.
+ */
+const dropOnly = (file: File) => {
+  fireEvent.drop(dropTarget(), { dataTransfer: { types: ['Files'], files: [file] } });
+};
+
+/**
+ * A `DataTransfer` whose file list cannot be written, as in a browser that refuses the mirror.
+ *
+ * Constructible, because Testing Library builds one for the event itself; it is the component's
+ * own `items.add` that refuses.
+ */
+class RefusingDataTransfer {
+  items = {
+    add: () => {
+      throw new Error('DataTransfer items are read-only here');
+    },
+  };
+}
 
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Start the project' }));
 
@@ -404,25 +434,26 @@ describe('IntakeForm', () => {
   });
 
   it('keeps a dropped photograph when the browser refuses to mirror it into the input', () => {
-    // Constructible, because Testing Library builds one for the event itself; it is the
-    // component's own `items.add` that refuses, as a browser without a writable list would.
-    class RefusingDataTransfer {
-      items = {
-        add: () => {
-          throw new Error('DataTransfer items are read-only here');
-        },
-      };
-    }
     vi.stubGlobal('DataTransfer', RefusingDataTransfer);
     renderForm();
 
-    // Only the drop: Testing Library makes the stub's `dropEffect` read-only, which the
-    // dragover handler writes, and the drop handler is the one under test.
-    const target = screen.getByText(/drag a photograph here/i).closest('label') as HTMLElement;
-    fireEvent.drop(target, {
-      dataTransfer: { types: ['Files'], files: [referencePhotograph('dropped.png')] },
-    });
+    dropOnly(referencePhotograph('dropped.png'));
 
+    expect(screen.getByText(/chosen: dropped\.png/i)).toBeInTheDocument();
+  });
+
+  it('clears a stale pick from the input when a drop cannot be mirrored into it', () => {
+    vi.stubGlobal('DataTransfer', RefusingDataTransfer);
+    renderForm();
+    attach(referencePhotograph('picked.png'));
+
+    // jsdom keeps no real file list to observe, so the clear is observed at the setter.
+    const input = screen.getByLabelText('Reference photograph');
+    const cleared = vi.fn();
+    Object.defineProperty(input, 'value', { configurable: true, get: () => '', set: cleared });
+    dropOnly(referencePhotograph('dropped.png'));
+
+    expect(cleared).toHaveBeenCalledWith('');
     expect(screen.getByText(/chosen: dropped\.png/i)).toBeInTheDocument();
   });
 

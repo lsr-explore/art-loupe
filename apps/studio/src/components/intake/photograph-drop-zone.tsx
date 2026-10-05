@@ -137,7 +137,9 @@ export const PhotographDropZone = ({
         transfer.items.add(dropped);
         input.files = transfer.files;
       } catch {
-        // A browser that refuses the assignment keeps the stale pick; the form still holds the drop.
+        // The browser refused the mirror. Clear the input rather than leave a stale pick in it:
+        // re-picking that same file would then fire no `change`, and the drop would be uploaded.
+        input.value = '';
       }
     }
   };
