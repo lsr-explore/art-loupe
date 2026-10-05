@@ -46,6 +46,15 @@ const megabytes = (bytes: number): string => (bytes / 1024 / 1024).toFixed(1);
 const carriesFiles = (event: DragEvent<HTMLElement>): boolean =>
   Array.from(event.dataTransfer?.types ?? []).includes('Files');
 
+const sanitizeBlobUrl = (rawUrl: string): string | null => {
+  try {
+    const parsed = new URL(rawUrl);
+    return parsed.protocol === 'blob:' ? parsed.href : null;
+  } catch {
+    return null;
+  }
+};
+
 export const PhotographDropZone = ({
   id,
   name,
@@ -78,9 +87,11 @@ export const PhotographDropZone = ({
     if (previewUrlRef.current !== null) {
       URL.revokeObjectURL(previewUrlRef.current);
     }
-    const url = next === null ? null : URL.createObjectURL(next);
-    previewUrlRef.current = url;
-    setPreview(url === null ? null : { url, failed: false });
+    const rawUrl = next === null ? null : URL.createObjectURL(next);
+    const safeUrl = rawUrl ? sanitizeBlobUrl(rawUrl) : null;
+
+    previewUrlRef.current = safeUrl;
+    setPreview(safeUrl === null ? null : { url: safeUrl, failed: false });
     onFileChange(next);
   };
 
