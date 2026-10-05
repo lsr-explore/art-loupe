@@ -70,6 +70,7 @@ import {
   PROJECTS_ENDPOINT,
   type UploadRejection,
 } from '@/lib/api/project-contract';
+import { PhotographDropZone } from './photograph-drop-zone';
 
 /** FR-102: the goal is free text and the schema caps it. Kept in step with `intent.ts`. */
 const MAX_GOAL_LENGTH = 2000;
@@ -158,8 +159,9 @@ type Validation = { ok: true; value: ValidatedIntent } | { ok: false; errors: In
  *
  * The photograph arrives as an argument rather than being pulled back out of the `FormData`,
  * because `FormData.get` is typed `File | string | null` and a file input always yields *a*
- * `File` — an empty, nameless one when nothing is chosen. Taking it from the input's own
- * `files` list is both typed and unambiguous.
+ * `File` — an empty, nameless one when nothing is chosen. The form holds the chosen file in state
+ * instead, because a dropped file never passes through the input's `files` list in every browser,
+ * and one held value is what keeps a dropped and a picked photograph under the same checks.
  */
 const validate = (form: FormData, chosen: File | null): Validation => {
   const errors: IntakeError[] = [];
@@ -265,7 +267,7 @@ export const IntakeForm = () => {
   const [failures, setFailures] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
-  const photographRef = useRef<HTMLInputElement>(null);
+  const [photograph, setPhotograph] = useState<File | null>(null);
 
   /**
    * Focus lands on the summary, not on the first bad field: the artist hears how many things
@@ -298,7 +300,7 @@ export const IntakeForm = () => {
     }
 
     const form = new FormData(event.currentTarget);
-    const validated = validate(form, photographRef.current?.files?.[0] ?? null);
+    const validated = validate(form, photograph);
     if (!validated.ok) {
       fail(validated.errors);
       return;
@@ -419,20 +421,22 @@ export const IntakeForm = () => {
       ) : null}
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor={FIELD.file}>{ti('fileLabel')}</Label>
+        <Label id="intake-file-label" htmlFor={FIELD.file}>
+          {ti('fileLabel')}
+        </Label>
         <p id="intake-file-hint" className="text-sm text-muted-foreground">
           {ti('fileHint', { limitMb: MAX_UPLOAD_BYTES / 1024 / 1024, minPx: MIN_LONG_EDGE_PX })}
         </p>
-        <Input
-          ref={photographRef}
+        <PhotographDropZone
           id={FIELD.file}
           name={FILE_FIELD}
-          type="file"
+          labelledBy="intake-file-label"
           // A hint to the picker, never a check. The format is decided from the bytes.
           accept={ACCEPTED_MIME_TYPES.join(',')}
-          className="h-auto py-1.5"
-          aria-describedby={describedBy(FIELD.file, 'intake-file-hint')}
-          aria-invalid={errorFor(FIELD.file) !== undefined}
+          describedBy={describedBy(FIELD.file, 'intake-file-hint')}
+          invalid={errorFor(FIELD.file) !== undefined}
+          file={photograph}
+          onFileChange={setPhotograph}
         />
         {fieldError(FIELD.file)}
       </div>

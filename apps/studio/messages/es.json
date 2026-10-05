@@ -22,6 +22,14 @@
     "description": "Sube la fotografía de referencia con la que trabajas y cuéntanos qué quieres hacer. Aquí no se genera nada: el plan se construye en torno al trabajo que haces tú.",
     "fileLabel": "Fotografía de referencia",
     "fileHint": "JPEG, PNG o WebP · hasta {limitMb} MB · al menos {minPx} px en el lado largo.",
+    "dropZone": {
+      "prompt": "Arrastra una fotografía aquí o haz clic para elegirla",
+      "replacePrompt": "Arrastra otra fotografía aquí o haz clic para reemplazar esta",
+      "browse": "O usa el explorador de archivos",
+      "release": "Suelta para usar esta fotografía",
+      "previewAlt": "Vista previa de la fotografía de referencia elegida",
+      "chosen": "Elegida: {name} ({sizeMb} MB)"
+    },
     "mediumLabel": "Medio",
     "mediumPlaceholder": "Elige un medio",
     "timeLabel": "Tiempo disponible",
