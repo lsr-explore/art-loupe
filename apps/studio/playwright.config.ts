@@ -1,6 +1,11 @@
 import { ACK_COOKIE_NAME } from '@artloupe/auth/ack';
 import { defineConfig, devices } from '@playwright/test';
 
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 3001);
+if (!Number.isInteger(port) || port < 1024 || port > 65535)
+  throw new Error('Invalid PLAYWRIGHT_PORT');
+const origin = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -9,7 +14,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL: origin,
     trace: 'on-first-retry',
     /**
      * Arrive already acknowledged.
@@ -57,15 +62,16 @@ export default defineConfig({
     // DISABLE_HTTPS_UPGRADE belongs on the BUILD, not the server: `next build`
     // serializes `headers()` into routes-manifest.json, so the CSP and HSTS values are
     // fixed at build time and setting the flag on `next start` has no effect at all.
-    command: 'DISABLE_HTTPS_UPGRADE=true pnpm build && NODE_ENV=test pnpm start',
+    command: `DISABLE_HTTPS_UPGRADE=true pnpm build && NODE_ENV=test pnpm exec next start --port ${port}`,
     // A metadata route, not `/`. The acknowledgement gate redirects `/` to
     // the entry point on :3003, which this config never starts — the acknowledgement
     // probe carries no cookies, so it cannot satisfy the gate and would follow the
     // redirect to a dead port until it timed out. `robots.txt` contains a dot, so
     // the proxy matcher excludes it and it is served directly: a clean liveness
     // signal that does not depend on auth or acknowledgement state.
-    url: 'http://localhost:3001/robots.txt',
-    reuseExistingServer: !process.env.CI,
+    url: `${origin}/robots.txt`,
+    reuseExistingServer: !process.env.CI && !process.env.PLAYWRIGHT_PORT,
+    timeout: 180000,
     // `DISABLE_HTTPS_UPGRADE` lives in `.env.test`: the prod build is served over
     // plain HTTP, and WebKit otherwise upgrades the CSS/JS to https://localhost and
     // renders the page unstyled.
