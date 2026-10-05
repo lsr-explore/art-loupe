@@ -49,7 +49,9 @@
     "./components/blocks/theme-toggle": "./src/components/blocks/theme-toggle.tsx",
     "./components/blocks/user-chip": "./src/components/blocks/user-chip.tsx",
     "./i18n/locales": "./src/i18n/locales.ts",
-    "./styles/print.css": "./src/styles/print.css"
+    "./styles/print.css": "./src/styles/print.css",
+    "./components/ui/native-select": "./src/components/ui/native-select.tsx",
+    "./components/blocks/image-metadata-card": "./src/components/blocks/image-metadata-card.tsx"
   },
   "scripts": {
     "i18n:check": "i18n-check --locales messages --source en --format next-intl",
