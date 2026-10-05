@@ -15,12 +15,18 @@ const HomePage = async () => {
         something a keyboard opens in a new tab and a screen reader announces as a link.
         There is no project list to show yet, so this is the whole of the home page's job.
       */}
-      <div>
+      <div className="flex flex-wrap gap-4">
         <Link
           className="inline-flex h-9 items-center rounded-lg bg-primary px-4 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           href="/projects/new"
         >
           {th('startProject')}
+        </Link>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-lg border border-foreground px-4 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          href="/get-inspired"
+        >
+          {th('getInspired')}
         </Link>
       </div>
     </div>
