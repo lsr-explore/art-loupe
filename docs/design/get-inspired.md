@@ -198,7 +198,7 @@ sequenceDiagram
             Providers-->>API: Met: some details
             Note over API: Cancel the rest. Return what arrived,<br/>partial = true, and do not cache it.
             API-->>Bridge: 200 partial
-        else Provider error, 18 s timeout, or provider 429
+        else Provider error, 18 s timeout, or provider 429 (including on any Met detail call)
             Note over API: A provider 429 is logged as a spent shared quota
             alt Cached row from the last 7 days
                 API-->>Bridge: 200 cached response, stale = true
@@ -222,7 +222,7 @@ sequenceDiagram
 | 4, 12–13 | `studio/app/api/inspiration/route.ts` → `GET` | Maps statuses, passes `Retry-After` through, and returns 503 on its own failures. |
 | 5–6 | `agent/inspiration_cache.py` → `SharedCache._operation` | Applies the 3-second limit and turns any cache failure into a miss. |
 | 5–6 | `agent/inspiration_cache.py` → `POOL_WAIT_SECONDS` | Sets the 2-second wait for a pooled connection. |
-| 7–8 | `agent/inspiration_providers.py` → `search_met`, `MET_DETAIL_BUDGET_SECONDS` | Cancels pending detail calls at 10 seconds and marks the page partial. |
+| 7–8 | `agent/inspiration_providers.py` → `search_met`, `MET_DETAIL_BUDGET_SECONDS` | Cancels pending detail calls at 10 seconds and marks the page partial. A detail 429 cancels the rest and fails the page as an outage. |
 | 7 | `agent/inspiration_providers.py` → `get_json` | Logs a provider 429 and raises `ProviderUnavailable`. |
 | 7 | `agent/inspiration_providers.py` → `search_provider` | Applies the 18-second deadline and wraps errors as `ProviderUnavailable`. |
 | 9–11 | `agent/inspiration_cache.py` → `cached_search` | Skips caching partial pages and falls back to stale rows. |
@@ -235,7 +235,7 @@ sequenceDiagram
 
 | Piece | Code | Why it exists |
 | --- | --- | --- |
-| Draft versus committed input | `use-search-input.ts` | Typing is immediate; requests wait 600 ms, and only for terms of three or more characters. Submit commits immediately, whatever the length. Source changes clear incompatible filters and commit immediately. |
+| Draft versus committed input | `use-search-input.ts` | Typing is immediate; requests wait 600 ms, and only for terms of three or more characters. Submit commits immediately, whatever the length. While a short edit is held back, the status says which term the loaded results belong to. Source changes clear incompatible filters and commit immediately. |
 | Timer cleanup | `use-search-input.ts` | Every keystroke cancels the previous timer; unmount cancels the final one. |
 | Validation and normalization | `packages/schemas/src/inspiration.ts` | Trim whitespace, bound inputs and pages, reject filters for the wrong provider, require ordered date pairs. Python validates again at its own boundary. |
 | Query key | `inspiration-search.tsx` | Source and request filters identify server data. The same normalized search reuses its cache. |
@@ -328,6 +328,8 @@ spending the shared budget:
 - **Fewer automatic requests.** Typing searches only after 600 ms of quiet, and only once
   each term has at least three characters. Shorter terms still search on submit. Typing
   "sunflower" with pauses therefore no longer searches "sun", "sunfl", and "sunflow".
+  When an edit is too short to search, the loaded results stay, and the status names
+  the term they belong to and asks the artist to press Search.
 - **A per-artist limit.** FastAPI gives each verified user a burst of 10 searches that
   refills at one search every two seconds. Over the limit, the backend returns 429 with
   the exact `Retry-After`, and the bridge passes that wait through. The limit counts cache
@@ -338,7 +340,9 @@ spending the shared budget:
   applies.
 
 The limiter's state is in memory and per process. Each Cloud Run instance counts
-separately, so the effective limit scales with the instance count. That bounds ordinary
+separately, so the effective limit scales with the instance count. Memory is bounded at
+10,000 tracked artists per process by forgetting the least recently active; a forgotten
+artist starts again with a full burst. That bounds ordinary
 over-use, not a determined caller. A limit enforced across instances would need shared
 state, such as a database counter. Cache misses can also race across instances, so set
 Cloud Run's maximum instances with the provider quota in mind.

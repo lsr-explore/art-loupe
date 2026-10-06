@@ -130,6 +130,7 @@
     "start": "Enter keywords, or an artist for the Met, to begin. Terms shorter than three letters search when you press Search.",
     "loading": "Searching…",
     "count": "{count, plural, =0 {No images shown} one {# image shown} other {# images shown}}",
+    "earlierTerm": "These results are for “{previous}”. Press Search to search for “{next}”.",
     "sessionEnded": "Your session has ended. Sign in again to search.",
     "rateLimited": "You are searching faster than this page allows. Wait a few seconds, then try again.",
     "unavailable": "This collection is temporarily unavailable. Please try again.",

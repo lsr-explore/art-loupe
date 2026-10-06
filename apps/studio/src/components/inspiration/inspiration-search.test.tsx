@@ -35,6 +35,24 @@ afterEach(() => {
 });
 // @trace flow=inspiration.search category=functionality
 describe('inspiration search', () => {
+  it('labels loaded results when a short edit is held back from auto-search', async () => {
+    // A fresh Response per call: a body can only be read once.
+    const fetch = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async () => Response.json(response));
+    open();
+    const keywords = screen.getByLabelText('Keywords');
+    fireEvent.change(keywords, { target: { value: 'trees' } });
+    submit();
+    await screen.findByText('1 image shown');
+    fireEvent.change(keywords, { target: { value: 'tr' } });
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '1 image shown These results are for “trees”. Press Search to search for “tr”.',
+    );
+    submit();
+    await waitFor(() => expect(String(fetch.mock.lastCall?.[0])).toContain('query=tr&'));
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/^1 image shown$/));
+  });
   it('loads metadata, filters locally, and displays only source-specific controls', async () => {
     const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json(response));
     open();

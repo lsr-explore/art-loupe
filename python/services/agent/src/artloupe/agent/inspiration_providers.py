@@ -145,15 +145,22 @@ async def search_met(request, client):
                     client, f"{MET}/v1/objects/{int(object_id)}", headers=MET_HEADERS
                 )
                 return painting(obj, request.artist), False
-            except (httpx.HTTPError, ValueError, KeyError, TypeError, ProviderUnavailable):
+            # ProviderUnavailable (a Met 429) is deliberately not caught: a spent quota is
+            # an outage for the whole page, which may still be served from stale cache.
+            except (httpx.HTTPError, ValueError, KeyError, TypeError):
                 return None, True
 
     tasks = [asyncio.create_task(detail(object_id)) for object_id in ids[:limit]]
     if tasks:
-        done, pending = await asyncio.wait(tasks, timeout=MET_DETAIL_BUDGET_SECONDS)
+        done, pending = await asyncio.wait(
+            tasks, timeout=MET_DETAIL_BUDGET_SECONDS, return_when=asyncio.FIRST_EXCEPTION
+        )
         for task in pending:
             task.cancel()
         await asyncio.gather(*pending, return_exceptions=True)
+        for task in done:
+            if (error := task.exception()) is not None:
+                raise error
     else:
         done = set()
     # A detail still pending at the deadline counts as failed, so the page is partial.

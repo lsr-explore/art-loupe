@@ -154,6 +154,34 @@ async def test_provider_rate_limit_is_an_outage_not_an_empty_result(monkeypatch)
     assert error.value.status == 503
 
 
+async def test_met_detail_rate_limit_is_an_outage_not_a_partial_page():
+    def handle(request):
+        if request.url.path.endswith("search"):
+            return httpx.Response(200, json={"total": 2, "objectIDs": [1, 2]})
+        if request.url.path.endswith("2"):
+            return httpx.Response(429)
+        return httpx.Response(200, json=object_record())
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(ProviderUnavailable):
+            await search_provider(SearchRequest(source="met", query="sunflowers"), client)
+
+
+async def test_met_detail_rate_limit_serves_stale_cache(monkeypatch):
+    def handle(request):
+        if request.url.path.endswith("search"):
+            return httpx.Response(200, json={"total": 2, "objectIDs": [1, 2]})
+        if request.url.path.endswith("2"):
+            return httpx.Response(429)
+        return httpx.Response(200, json=object_record())
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        result = await cached_search(
+            SearchRequest(source="met", query="sunflowers"), client, MemoryCache(90000)
+        )
+    assert result.stale and not result.partial
+
+
 async def test_met_detail_deadline_returns_the_details_that_arrived(monkeypatch):
     monkeypatch.setattr(inspiration_providers, "MET_DETAIL_BUDGET_SECONDS", 0.2)
 
@@ -326,6 +354,16 @@ def test_rate_limiter_refills_and_reports_wait():
     assert limiter.acquire("a") == 2
     now[0] = 2.0
     assert limiter.acquire("a") == 0
+
+
+def test_rate_limiter_stays_bounded_by_evicting_the_least_recent():
+    limiter = RateLimiter(burst=1, refill_per_second=0.001, clock=lambda: 0.0, max_tracked=2)
+    assert limiter.acquire("a") == 0 and limiter.acquire("b") == 0
+    assert limiter.acquire("a") > 0  # refused, but still the most recent
+    assert limiter.acquire("c") == 0  # evicts "b", the least recent
+    assert len(limiter._buckets) == 2
+    assert limiter.acquire("a") > 0  # "a" kept its empty bucket
+    assert limiter.acquire("b") == 0  # "b" was forgotten and starts with a full burst
 
 
 def test_shared_typescript_python_request_fixture():
