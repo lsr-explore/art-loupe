@@ -11,7 +11,7 @@ describe('inspiration.search: debounce', () => {
     act(() => result.current.setDraft('t'));
     act(() => vi.advanceTimersByTime(200));
     act(() => result.current.setDraft('trees'));
-    act(() => vi.advanceTimersByTime(349));
+    act(() => vi.advanceTimersByTime(599));
     expect(result.current.committed).toBe('');
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.committed).toBe('trees');
@@ -20,6 +20,19 @@ describe('inspiration.search: debounce', () => {
     expect(result.current.committed).toBe('flowers');
     unmount();
     expect(vi.getTimerCount()).toBe(0);
+  });
+  it('typing a draft the caller rejects never commits, but submit still does', () => {
+    vi.useFakeTimers();
+    const longEnough = (value: string) => value.length >= 3;
+    const { result } = renderHook(() =>
+      useSearchInput<string>('', { shouldAutoCommit: longEnough }),
+    );
+    act(() => result.current.setDraft('ox'));
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current.committed).toBe('');
+    expect(vi.getTimerCount()).toBe(0);
+    act(() => result.current.commit());
+    expect(result.current.committed).toBe('ox');
   });
   it('source changes replace both values immediately', () => {
     const { result } = renderHook(() => useSearchInput('pexels'));

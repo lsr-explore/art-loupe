@@ -34,9 +34,19 @@ export const GET = async (request: Request) => {
     });
     if (!response.ok) {
       const status = [401, 403, 429, 503].includes(response.status) ? response.status : 502;
+      // 429 now means only this artist's own search limit; a spent provider quota is a 503.
+      const retryAfter = Number(response.headers.get('Retry-After'));
+      const wait = Number.isInteger(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 300) : 60;
       return Response.json(
-        { error: status === 401 ? 'unauthenticated' : 'search_unavailable' },
-        { status, headers: status === 429 ? { 'Retry-After': '60' } : {} },
+        {
+          error:
+            status === 401
+              ? 'unauthenticated'
+              : status === 429
+                ? 'rate_limited'
+                : 'search_unavailable',
+        },
+        { status, headers: status === 429 ? { 'Retry-After': String(wait) } : {} },
       );
     }
     const result = inspirationResponseSchema.safeParse(await response.json());

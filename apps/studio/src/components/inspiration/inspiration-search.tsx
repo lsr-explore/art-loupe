@@ -24,6 +24,15 @@ const initial: InspirationRequest = {
   highlights: false,
   page: 1,
 };
+// Automatic search waits for a term long enough to be meaningful; shorter terms still
+// search on submit. Every automatic request can spend the provider quota all artists share.
+const AUTO_SEARCH_MIN_LENGTH = 3;
+const longEnough = (value: string) => {
+  const length = value.trim().length;
+  return length === 0 || length >= AUTO_SEARCH_MIN_LENGTH;
+};
+const worthAutoSearch = (draft: InspirationRequest) =>
+  longEnough(draft.query) && longEnough(draft.artist);
 const linkClass =
   'inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground';
 const Field = ({
@@ -50,7 +59,9 @@ const TextInput = (props: ComponentProps<typeof Input>) => (
 export const InspirationSearch = () => {
   const translate = useTranslations('inspiration');
   const locale = useLocale();
-  const { draft, setDraft, committed, commit, replace } = useSearchInput(initial);
+  const { draft, setDraft, committed, commit, replace } = useSearchInput(initial, {
+    shouldAutoCommit: worthAutoSearch,
+  });
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState<ResultSort>('provider');
   const valid = inspirationRequestSchema.safeParse(committed);
