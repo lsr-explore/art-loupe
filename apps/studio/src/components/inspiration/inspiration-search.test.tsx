@@ -35,6 +35,22 @@ afterEach(() => {
 });
 // @trace flow=inspiration.search category=functionality
 describe('inspiration search', () => {
+  it('names the artist when only a shortened Met artist is held back', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
+      Response.json({ ...response, items: [] }),
+    );
+    open();
+    fireEvent.change(screen.getByLabelText('Collection'), { target: { value: 'met' } });
+    fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'trees' } });
+    const artist = screen.getByLabelText(messages.inspiration.artistSearch);
+    fireEvent.change(artist, { target: { value: 'Monet' } });
+    submit();
+    await screen.findByText('No images shown');
+    fireEvent.change(artist, { target: { value: 'Mo' } });
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'These results are for “trees by Monet”. Press Search to search for “trees by Mo”.',
+    );
+  });
   it('labels loaded results when a short edit is held back from auto-search', async () => {
     // A fresh Response per call: a body can only be read once.
     const fetch = vi

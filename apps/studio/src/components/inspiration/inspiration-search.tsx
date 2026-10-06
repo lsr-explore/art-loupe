@@ -33,7 +33,6 @@ const longEnough = (value: string) => {
 };
 const worthAutoSearch = (draft: InspirationRequest) =>
   longEnough(draft.query) && longEnough(draft.artist);
-const searchTerm = (request: InspirationRequest) => request.query.trim() || request.artist.trim();
 const linkClass =
   'inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground';
 const Field = ({
@@ -79,6 +78,12 @@ export const InspirationSearch = () => {
   const items = search.data?.pages.flatMap((page) => page.items) ?? [];
   const visible = visibleResults(items, filter, sort, locale);
   // A short edit is held back from auto-search, so say which term the results belong to.
+  // Name both fields when both are set, so editing only the artist still reads as a change.
+  const describe = (request: InspirationRequest) => {
+    const query = request.query.trim();
+    const artist = request.artist.trim();
+    return query && artist ? translate('termWithArtist', { query, artist }) : query || artist;
+  };
   const heldBack =
     valid.success &&
     !worthAutoSearch(draft) &&
@@ -310,7 +315,7 @@ export const InspirationSearch = () => {
               ? translate('loading')
               : translate('count', { count: visible.length })}
           {heldBack
-            ? ` ${translate('earlierTerm', { previous: searchTerm(committed), next: searchTerm(draft) })}`
+            ? ` ${translate('earlierTerm', { previous: describe(committed), next: describe(draft) })}`
             : null}
         </p>
         {search.isError ? (
