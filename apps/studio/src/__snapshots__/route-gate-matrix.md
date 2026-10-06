@@ -6,9 +6,11 @@ A new row means a new route joined the app: check its columns before accepting t
 | Route | anonymous | artist | operator | superuser | artist, no ack | anonymous, no ack |
 | --- | --- | --- | --- | --- | --- | --- |
 | `/en` | render | redirect → /en/home | render | redirect → /en/home | redirect → entry (acknowledgement gate) | redirect → entry (acknowledgement gate) |
+| `/en/get-inspired` | redirect → /en (login) | render | redirect → /en (login) | render | redirect → entry (acknowledgement gate) | redirect → entry (acknowledgement gate) |
 | `/en/home` | redirect → /en (login) | render | redirect → /en (login) | render | redirect → entry (acknowledgement gate) | redirect → entry (acknowledgement gate) |
 | `/en/projects/[id]` | redirect → /en (login) | render | redirect → /en (login) | render | redirect → entry (acknowledgement gate) | redirect → entry (acknowledgement gate) |
 | `/en/projects/new` | redirect → /en (login) | render | redirect → /en (login) | render | redirect → entry (acknowledgement gate) | redirect → entry (acknowledgement gate) |
 | `/api/images/[...key]` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
+| `/api/inspiration` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/projects` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/projects/[id]` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |

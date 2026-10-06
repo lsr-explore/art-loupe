@@ -99,7 +99,9 @@ dependencies = [
     { name = "artloupe-persistence" },
     { name = "artloupe-schemas" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "langgraph" },
+    { name = "psycopg", extra = ["binary"] },
     { name = "uvicorn" },
 ]
 
@@ -118,7 +120,9 @@ requires-dist = [
     { name = "artloupe-persistence", editable = "libs/persistence" },
     { name = "artloupe-schemas", editable = "libs/schemas" },
     { name = "fastapi", specifier = ">=0.115" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "langgraph", specifier = ">=0.2" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "uvicorn", specifier = ">=0.30" },
 ]
 
