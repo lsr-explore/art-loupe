@@ -17,8 +17,10 @@ The backend explicitly sets the restricted role before querying the table.
 
 The worker can read, insert, update and prune only catalog search results. It cannot read
 artist projects or authentication tables. Set Cloud Run instance limits to bound database
-connections and provider request load; the code caps simultaneous cache operations at four
-per process. Monitor provider quota usage and cache-unavailable warnings.
+connections and provider request load. Each process holds a lazily opened pool of at most
+four cache connections, so the database sees at most four connections per instance.
+Monitor provider quota usage, "Inspiration provider rate limit reached" warnings, and
+cache-unavailable warnings.
 
 ## Python backend
 
@@ -28,7 +30,9 @@ Existing Supabase JWT verification settings are required as usual. Local configu
 can supply the Pexels key in the process environment; this code does not read a key file.
 
 The endpoint is `POST /inspiration/search`, guarded by the existing verified Supabase
-user dependency and restricted to artist/superuser roles. Search is deterministic and
+user dependency and restricted to artist/superuser roles. Each artist is limited to a
+burst of 10 searches refilling at one every two seconds, counted per process. The
+effective limit therefore grows with the Cloud Run instance count. Search is deterministic and
 does not invoke a LangGraph agent or language model.
 
 For Cloud Run, keep IAM authentication required. Its HTTPS endpoint must be reachable
@@ -54,7 +58,8 @@ federated principal to generate ID tokens for this service account, and give the
 Follow the linked provider documentation for the exact identity bindings in your project.
 
 The bridge obtains Vercel's request-scoped OIDC token, exchanges it through Google STS,
-and requests a Google ID token targeted at the Cloud Run origin. It sends that token in
+and requests a Google ID token targeted at the Cloud Run origin. The ID token is cached
+per server instance until five minutes before it expires. It sends that token in
 `X-Serverless-Authorization`; `Authorization` separately carries the user's Supabase token.
 Cloud Run validates the service identity and Python validates the user identity. No
 service-account private key is required.

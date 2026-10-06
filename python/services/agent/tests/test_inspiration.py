@@ -1,5 +1,6 @@
 """No provider calls: exercise wire requests through httpx.MockTransport."""
 
+import asyncio
 import time
 from types import SimpleNamespace
 
@@ -8,9 +9,15 @@ import pytest
 from fastapi import FastAPI
 from pydantic import ValidationError
 
-from artloupe.agent.inspiration_cache import SharedCache, cache_key, cached_search
+from artloupe.agent import inspiration_providers
+from artloupe.agent.inspiration_cache import (
+    cache_key,
+    cached_search,
+    close_cache_pool,
+)
 from artloupe.agent.inspiration_models import SearchRequest, SearchResponse
 from artloupe.agent.inspiration_providers import ProviderUnavailable, painting, search_provider
+from artloupe.agent.inspiration_rate_limit import RateLimiter
 from artloupe.agent.inspiration_routes import router
 from artloupe.auth.dependencies import get_http_client, require_token
 
@@ -136,14 +143,62 @@ async def test_pexels_sends_only_supported_filters(monkeypatch):
     )
 
 
-async def test_rate_limit_is_not_an_empty_result(monkeypatch):
+async def test_provider_rate_limit_is_an_outage_not_an_empty_result(monkeypatch):
     monkeypatch.setenv("PEXELS_API_KEY", "test-key")
     async with httpx.AsyncClient(
         transport=httpx.MockTransport(lambda _: httpx.Response(429))
     ) as client:
         with pytest.raises(ProviderUnavailable) as error:
             await search_provider(SearchRequest(source="pexels", query="trees"), client)
-    assert error.value.status == 429
+    # The shared quota is spent for every artist, so this caller is not told to slow down.
+    assert error.value.status == 503
+
+
+async def test_met_detail_rate_limit_is_an_outage_not_a_partial_page():
+    def handle(request):
+        if request.url.path.endswith("search"):
+            return httpx.Response(200, json={"total": 2, "objectIDs": [1, 2]})
+        if request.url.path.endswith("2"):
+            return httpx.Response(429)
+        return httpx.Response(200, json=object_record())
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(ProviderUnavailable):
+            await search_provider(SearchRequest(source="met", query="sunflowers"), client)
+
+
+async def test_met_detail_rate_limit_serves_stale_cache(monkeypatch):
+    def handle(request):
+        if request.url.path.endswith("search"):
+            return httpx.Response(200, json={"total": 2, "objectIDs": [1, 2]})
+        if request.url.path.endswith("2"):
+            return httpx.Response(429)
+        return httpx.Response(200, json=object_record())
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        result = await cached_search(
+            SearchRequest(source="met", query="sunflowers"), client, MemoryCache(90000)
+        )
+    assert result.stale and not result.partial
+
+
+async def test_met_detail_deadline_returns_the_details_that_arrived(monkeypatch):
+    monkeypatch.setattr(inspiration_providers, "MET_DETAIL_BUDGET_SECONDS", 0.2)
+
+    async def handle(request):
+        if request.url.path.endswith("search"):
+            return httpx.Response(200, json={"total": 2, "objectIDs": [1, 2]})
+        if request.url.path.endswith("2"):
+            await asyncio.sleep(5)
+        return httpx.Response(
+            200, json=object_record(objectID=int(request.url.path.split("/")[-1]))
+        )
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        started = time.monotonic()
+        result = await search_provider(SearchRequest(source="met", query="sunflowers"), client)
+    assert time.monotonic() - started < 2
+    assert [item.id for item in result.items] == ["met:1"] and result.partial
 
 
 class MemoryCache:
@@ -179,9 +234,19 @@ async def test_stale_cache_survives_outage_but_not_beyond_seven_days(monkeypatch
 
 async def test_cache_write_failure_does_not_fail_provider_result(monkeypatch):
     monkeypatch.setenv("ARTLOUPE_INSPIRATION_DATABASE_URL", "not-a-dsn")
-    cache = SharedCache()
-    assert await cache.read("a" * 64) is None
-    await cache.write("a" * 64, SearchResponse(items=[], page=1, has_more=False))
+    monkeypatch.setattr("artloupe.agent.inspiration_cache.POOL_WAIT_SECONDS", 0.2)
+    response = SearchResponse(items=[], page=1, has_more=False)
+
+    async def provider(*_):
+        return response
+
+    monkeypatch.setattr("artloupe.agent.inspiration_cache.search_provider", provider)
+    try:
+        # The real SharedCache: its read is a miss and its failed write is swallowed.
+        result = await cached_search(SearchRequest(source="met", query="trees"), None)
+    finally:
+        await close_cache_pool()
+    assert result is response
 
 
 async def test_success_is_cached_and_partial_success_is_not(monkeypatch):
@@ -225,7 +290,9 @@ async def test_http_route_requires_auth_and_rejects_operator():
         assert (
             await client.post("/inspiration/search", json={"source": "met", "query": "trees"})
         ).status_code == 401
-        app.dependency_overrides[require_token] = lambda: SimpleNamespace(role="operator")
+        app.dependency_overrides[require_token] = lambda: SimpleNamespace(
+            role="operator", subject="operator-1"
+        )
         assert (
             await client.post("/inspiration/search", json={"source": "met", "query": "trees"})
         ).status_code == 403
@@ -234,11 +301,13 @@ async def test_http_route_requires_auth_and_rejects_operator():
 async def test_http_route_maps_outage(monkeypatch):
     app = FastAPI()
     app.include_router(router)
-    app.dependency_overrides[require_token] = lambda: SimpleNamespace(role="artist")
+    app.dependency_overrides[require_token] = lambda: SimpleNamespace(
+        role="artist", subject="artist-outage"
+    )
     app.dependency_overrides[get_http_client] = lambda: None
 
     async def unavailable(*_):
-        raise ProviderUnavailable(429)
+        raise ProviderUnavailable()
 
     monkeypatch.setattr("artloupe.agent.inspiration_routes.cached_search", unavailable)
     async with httpx.AsyncClient(
@@ -247,7 +316,54 @@ async def test_http_route_maps_outage(monkeypatch):
         response = await client.post(
             "/inspiration/search", json={"source": "met", "query": "trees"}
         )
-    assert response.status_code == 429 and response.headers["Retry-After"] == "60"
+    assert response.status_code == 503 and response.headers["Retry-After"] == "60"
+
+
+async def test_http_route_limits_each_artist_separately(monkeypatch):
+    app = FastAPI()
+    app.include_router(router)
+    caller = {"subject": "artist-a"}
+    app.dependency_overrides[require_token] = lambda: SimpleNamespace(
+        role="artist", subject=caller["subject"]
+    )
+    app.dependency_overrides[get_http_client] = lambda: None
+    monkeypatch.setattr(
+        "artloupe.agent.inspiration_routes.limiter", RateLimiter(burst=1, refill_per_second=0.5)
+    )
+
+    async def found(*_):
+        return SearchResponse(items=[], page=1, has_more=False)
+
+    monkeypatch.setattr("artloupe.agent.inspiration_routes.cached_search", found)
+    body = {"source": "met", "query": "trees"}
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        assert (await client.post("/inspiration/search", json=body)).status_code == 200
+        limited = await client.post("/inspiration/search", json=body)
+        caller["subject"] = "artist-b"
+        other = await client.post("/inspiration/search", json=body)
+    assert limited.status_code == 429 and limited.headers["Retry-After"] == "2"
+    assert other.status_code == 200
+
+
+def test_rate_limiter_refills_and_reports_wait():
+    now = [0.0]
+    limiter = RateLimiter(burst=2, refill_per_second=0.5, clock=lambda: now[0])
+    assert limiter.acquire("a") == 0 and limiter.acquire("a") == 0
+    assert limiter.acquire("a") == 2
+    now[0] = 2.0
+    assert limiter.acquire("a") == 0
+
+
+def test_rate_limiter_stays_bounded_by_evicting_the_least_recent():
+    limiter = RateLimiter(burst=1, refill_per_second=0.001, clock=lambda: 0.0, max_tracked=2)
+    assert limiter.acquire("a") == 0 and limiter.acquire("b") == 0
+    assert limiter.acquire("a") > 0  # refused, but still the most recent
+    assert limiter.acquire("c") == 0  # evicts "b", the least recent
+    assert len(limiter._buckets) == 2
+    assert limiter.acquire("a") > 0  # "a" kept its empty bucket
+    assert limiter.acquire("b") == 0  # "b" was forgotten and starts with a full burst
 
 
 def test_shared_typescript_python_request_fixture():

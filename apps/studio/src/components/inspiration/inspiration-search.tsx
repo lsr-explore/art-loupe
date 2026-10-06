@@ -24,6 +24,15 @@ const initial: InspirationRequest = {
   highlights: false,
   page: 1,
 };
+// Automatic search waits for a term long enough to be meaningful; shorter terms still
+// search on submit. Every automatic request can spend the provider quota all artists share.
+const AUTO_SEARCH_MIN_LENGTH = 3;
+const longEnough = (value: string) => {
+  const length = value.trim().length;
+  return length === 0 || length >= AUTO_SEARCH_MIN_LENGTH;
+};
+const worthAutoSearch = (draft: InspirationRequest) =>
+  longEnough(draft.query) && longEnough(draft.artist);
 const linkClass =
   'inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground';
 const Field = ({
@@ -50,7 +59,9 @@ const TextInput = (props: ComponentProps<typeof Input>) => (
 export const InspirationSearch = () => {
   const translate = useTranslations('inspiration');
   const locale = useLocale();
-  const { draft, setDraft, committed, commit, replace } = useSearchInput(initial);
+  const { draft, setDraft, committed, commit, replace } = useSearchInput(initial, {
+    shouldAutoCommit: worthAutoSearch,
+  });
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState<ResultSort>('provider');
   const valid = inspirationRequestSchema.safeParse(committed);
@@ -66,6 +77,18 @@ export const InspirationSearch = () => {
     setDraft((prev) => ({ ...prev, [key]: value }));
   const items = search.data?.pages.flatMap((page) => page.items) ?? [];
   const visible = visibleResults(items, filter, sort, locale);
+  // A short edit is held back from auto-search, so say which term the results belong to.
+  // Name both fields when both are set, so editing only the artist still reads as a change.
+  const describe = (request: InspirationRequest) => {
+    const query = request.query.trim();
+    const artist = request.artist.trim();
+    return query && artist ? translate('termWithArtist', { query, artist }) : query || artist;
+  };
+  const heldBack =
+    valid.success &&
+    !worthAutoSearch(draft) &&
+    (draft.query.trim() !== committed.query.trim() ||
+      draft.artist.trim() !== committed.artist.trim());
   const invalidDates =
     (draft.date_begin === null) !== (draft.date_end === null) ||
     (draft.date_begin !== null && draft.date_end !== null && draft.date_begin > draft.date_end);
@@ -291,6 +314,9 @@ export const InspirationSearch = () => {
             : search.isFetching
               ? translate('loading')
               : translate('count', { count: visible.length })}
+          {heldBack
+            ? ` ${translate('earlierTerm', { previous: describe(committed), next: describe(draft) })}`
+            : null}
         </p>
         {search.isError ? (
           <div role="alert" className="space-y-3 rounded-xl border border-foreground p-4">

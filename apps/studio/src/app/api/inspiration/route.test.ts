@@ -56,5 +56,16 @@ describe('inspiration.search: backend bridge', () => {
     const response = await GET(request());
     expect(response.status).toBe(429);
     expect(response.headers.get('Retry-After')).toBe('60');
+    expect(await response.json()).toEqual({ error: 'rate_limited' });
+  });
+  it("passes the artist's own wait through from the backend", async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 429, headers: { 'Retry-After': '4' } }),
+    );
+    expect((await GET(request())).headers.get('Retry-After')).toBe('4');
+  });
+  it('reports a spent provider quota as an outage', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 503 }));
+    expect(await (await GET(request())).json()).toEqual({ error: 'search_unavailable' });
   });
 });

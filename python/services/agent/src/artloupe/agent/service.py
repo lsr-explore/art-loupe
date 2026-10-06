@@ -32,6 +32,7 @@ from pydantic import BaseModel, ConfigDict
 
 from artloupe.agent.director import RoutingFailed, close_director_client, director_client
 from artloupe.agent.graph import build_graph
+from artloupe.agent.inspiration_cache import close_cache_pool
 from artloupe.agent.inspiration_routes import router as inspiration_router
 from artloupe.agent.nodes import ProjectNotReady
 from artloupe.agent.resources import PhotographUnavailable, RunResources
@@ -56,7 +57,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    """Compose the auth library's lifespan, and close the Director's client, on shutdown.
+    """Compose the auth library's lifespan; close the Director's client and cache pool on shutdown.
 
     `artloupe-auth` keeps one connection pool per process, and so does the Director's client. Runs
     reuse both, so each is closed once, here, rather than per request.
@@ -66,6 +67,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
             yield
         finally:
             await close_director_client()
+            await close_cache_pool()
 
 
 app = FastAPI(title=SERVICE_NAME, version=SERVICE_VERSION, lifespan=lifespan)

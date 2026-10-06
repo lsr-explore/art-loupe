@@ -1,6 +1,7 @@
 """Fixed provider URLs, bounded fan-out, and strict image eligibility."""
 
 import asyncio
+import logging
 import os
 from urllib.parse import urlparse
 
@@ -8,8 +9,13 @@ import httpx
 
 from artloupe.agent.inspiration_models import InspirationImage, SearchRequest, SearchResponse
 
+logger = logging.getLogger(__name__)
 MET = "https://collectionapi.metmuseum.org/public/collection"
 PAGE_SIZE = 24
+# Each Met detail call may take 5 s, four at a time, so a full batch can need ~30 s.
+# Stop waiting at this budget and return what arrived; it leaves room inside the
+# 18 s provider timeout for the search call itself.
+MET_DETAIL_BUDGET_SECONDS = 10
 # Identify the application: the Met rejects httpx's default User-Agent.
 MET_HEADERS = {
     "User-Agent": "ArtLoupe/1.0 (art inspiration; https://github.com/lsr-explore/art-loupe)"
@@ -40,7 +46,10 @@ def safe_url(value, hosts):
 async def get_json(client, url, **kwargs):
     response = await client.get(url, timeout=5, **kwargs)
     if response.status_code == 429:
-        raise ProviderUnavailable(429)
+        # The provider quota is shared by every artist, so its exhaustion is an outage
+        # (503), not a signal to this caller. 429 is reserved for our per-user limit.
+        logger.warning("Inspiration provider rate limit reached", extra={"host": response.url.host})
+        raise ProviderUnavailable()
     response.raise_for_status()
     return response.json()
 
@@ -136,10 +145,26 @@ async def search_met(request, client):
                     client, f"{MET}/v1/objects/{int(object_id)}", headers=MET_HEADERS
                 )
                 return painting(obj, request.artist), False
-            except (httpx.HTTPError, ValueError, KeyError, TypeError, ProviderUnavailable):
+            # ProviderUnavailable (a Met 429) is deliberately not caught: a spent quota is
+            # an outage for the whole page, which may still be served from stale cache.
+            except (httpx.HTTPError, ValueError, KeyError, TypeError):
                 return None, True
 
-    details = await asyncio.gather(*(detail(i) for i in ids[:limit]))
+    tasks = [asyncio.create_task(detail(object_id)) for object_id in ids[:limit]]
+    if tasks:
+        done, pending = await asyncio.wait(
+            tasks, timeout=MET_DETAIL_BUDGET_SECONDS, return_when=asyncio.FIRST_EXCEPTION
+        )
+        for task in pending:
+            task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
+        for task in done:
+            if (error := task.exception()) is not None:
+                raise error
+    else:
+        done = set()
+    # A detail still pending at the deadline counts as failed, so the page is partial.
+    details = [task.result() if task in done else (None, True) for task in tasks]
     failed = any(failure for _, failure in details)
     if details and all(failure for _, failure in details):
         raise ProviderUnavailable()
