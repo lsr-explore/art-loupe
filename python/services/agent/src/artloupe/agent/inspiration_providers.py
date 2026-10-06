@@ -10,6 +10,10 @@ from artloupe.agent.inspiration_models import InspirationImage, SearchRequest, S
 
 MET = "https://collectionapi.metmuseum.org/public/collection"
 PAGE_SIZE = 24
+# Identify the application: the Met rejects httpx's default User-Agent.
+MET_HEADERS = {
+    "User-Agent": "ArtLoupe/1.0 (art inspiration; https://github.com/lsr-explore/art-loupe)"
+}
 
 
 class ProviderUnavailable(RuntimeError):
@@ -121,14 +125,16 @@ async def search_met(request, client):
         params["isHighlight"] = "true"
     if request.date_begin is not None:
         params.update(dateBegin=request.date_begin, dateEnd=request.date_end)
-    data = await get_json(client, f"{MET}/v1.1/search", params=params)
+    data = await get_json(client, f"{MET}/v1.1/search", params=params, headers=MET_HEADERS)
     ids = data.get("objectIDs") or []
     semaphore = asyncio.Semaphore(4)
 
     async def detail(object_id):
         async with semaphore:
             try:
-                obj = await get_json(client, f"{MET}/v1/objects/{int(object_id)}")
+                obj = await get_json(
+                    client, f"{MET}/v1/objects/{int(object_id)}", headers=MET_HEADERS
+                )
                 return painting(obj, request.artist), False
             except (httpx.HTTPError, ValueError, KeyError, TypeError, ProviderUnavailable):
                 return None, True

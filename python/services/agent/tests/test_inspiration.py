@@ -73,6 +73,8 @@ async def test_met_uses_paginated_endpoint_and_preserves_partial_success():
 
     def handle(request):
         calls.append(request)
+        # Both search and object requests must identify our application.
+        assert request.headers["User-Agent"].startswith("ArtLoupe/1.0")
         if request.url.path.endswith("search"):
             return httpx.Response(200, json={"total": 60, "objectIDs": [1, 2, 3]})
         if request.url.path.endswith("2"):
