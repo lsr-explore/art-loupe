@@ -19,14 +19,14 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.1",
+    "@supabase/supabase-js": "^2.117.2",
     "iron-session": "^9.0.1",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^5.0.3",
-    "next": "16.3.6",
-    "typescript": "^6",
+    "next": "16.4.0",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.3"
   },
   "peerDependencies": {

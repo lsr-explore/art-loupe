@@ -4,11 +4,6 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    ignore:
-      # Hold TS at 6.x until the TS 7 upgrade is evaluated on its own. The original
-      # blocker, typescript-eslint, left with ESLint (ADR 0004); Oxlint does not need it.
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
     groups:
       production-dependencies:
         dependency-type: production
