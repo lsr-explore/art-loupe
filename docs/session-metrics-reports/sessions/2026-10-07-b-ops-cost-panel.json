@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-07",
+  "label": "PR 14a: the operations cost panel, reading the run ledger through a backend-only SELECT role (#89)",
+  "confidence": "measured",
+  "cost_usd": 8.73,
+  "api_minutes": 16.7,
+  "wall_minutes": 150.1,
+  "context_over_150k_pct": 90,
+  "parallel_agents": 2,
+  "themes": ["ops", "app", "data"],
+  "effort_split": {
+    "build": 45,
+    "setup": 5,
+    "design": 15,
+    "docs": 5,
+    "verify_ops": 22,
+    "churn": 8
+  },
+  "churn_attribution": {
+    "under_specified": 0,
+    "refinement": 50,
+    "avoidable_error": 30,
+    "genuine_discovery": 20
+  },
+  "ratings": {
+    "scoping_clarity": 3,
+    "decision_stability": 4,
+    "tooling_leverage": 4
+  },
+  "rework_of": [],
+  "delivered": {
+    "prs": [89],
+    "adrs": []
+  },
+  "review": {
+    "coderabbit_findings": 5,
+    "fixed": 5,
+    "deferred": 0,
+    "declined": 0
+  },
+  "decisions": [
+    "Frontends hold no credential, operations included; they pass the user's token through to auth (Laurie)",
+    "Database roles are defined only in the backend: the ops panel reads run_node_metrics through the agent as artloupe_ops_reader, SELECT on one table (Laurie)",
+    "Cost tables use a new fascia Table primitive with a focusable, named scroll region (Laurie)",
+    "Unpriced shows as the word 'Unpriced', and mixed sums as 'at least $X · N unpriced'; a real zero shows as $0.00 (plan, approved)",
+    "grant artloupe_ops_reader to postgres so the local DSN and the tests can step down into the role (mine, flagged in the PR)",
+    "No separate ADR yet: this is the same ADR 0002 amendment as Track 1's PoC note on Python-held roles (mine, open)",
+    "Each report reads one REPEATABLE READ, READ ONLY snapshot; recent runs show their true start time (review)"
+  ],
+  "retro": {
+    "went_well": "Before writing code, I caught that the brief's service_role premise contradicted the settled decisions and the ops env files, and I stopped to ask. Two exchanges turned that into a clearer rule than either document stated. The design reused the existing patterns (require_role, the inspiration-cache role, the studio's token pass-through), and an in-process live check confirmed the operator gets 200 and the artist 403. Every outward write was read back.",
+    "improve": "I resolved two Greptile threads before reading them, because the resolve loop took every unresolved thread and not just the ones I had posted. Two CI polling loops exited early, one from zsh word-splitting and one from a filter that silently returned nothing, which cost several round trips. I also committed a junk line into a test before running it.",
+    "tooling_suggestion": "Before a ship's resolve step, list the threads by author and resolve only the ones you posted or replied to. Poll CI with a headSha filter that has been checked against a known run, and use ${(f)…} for line lists in zsh."
+  },
+  "note": "cost, api and wall minutes from /usage, pasted at the end of the session; it reports 799 lines added and 14 removed (edit-tool changes only), plus $0.0002 of Haiku. Tokens from ccusage for this session: 292 input, 98.6k output, 22.95m cache read, 221k cache write. context_over_150k_pct 90 and the skills breakdown (/backlog 6%, /wrap 2%, /ship 1%) cover the last 24 hours across local sessions; this session did not use /backlog. Wall time is 2.5 h with 17 min of API time, run beside Track 1 (the walking skeleton) in another worktree. The service_role question took three exchanges before any code was written; that's counted as design, not churn. The migration was applied to the shared local database by hand, because the CLI refused while Track 1's runs migration was in the database but not on this branch. Main was merged into the branch after #87 landed. Greptile's on-PR review and the CLI review both read 363b4d0, and the P1 they share is counted twice. Five persistence tests fail locally because of shared database data (#48), not this branch."
+}
