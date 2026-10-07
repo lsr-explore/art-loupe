@@ -41,11 +41,11 @@ exists, the detail tells you what it covers.
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 26 | – | – | 26 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 34 | – | – | – | – | – | 110 | 144 |
 | **platform** | | 39 | 173 | 1 | – | 29 | 1 | 191 | **434** |
-| [`retrieval.grounding`](flows/retrieval.grounding.md) | P0 | 2 | 8 | – | 21 | 6 | – | 3 | 40 |
-| **retrieval** | | 2 | 8 | – | 21 | 6 | – | 3 | **40** |
+| [`retrieval.grounding`](flows/retrieval.grounding.md) | P0 | 2 | 8 | – | 29 | 8 | – | 4 | 51 |
+| **retrieval** | | 2 | 8 | – | 29 | 8 | – | 4 | **51** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **68** | **286** | **1** | **87** | **113** | **5** | **553** | **1113** |
+| **all flows** | | **68** | **286** | **1** | **95** | **115** | **5** | **554** | **1124** |
 
 ## Gaps
 
@@ -82,7 +82,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 462 | 0 | 462 |
-| Vitest | 610 | 0 | 610 |
+| pytest | 470 | 0 | 470 |
+| Vitest | 613 | 0 | 613 |
 | Playwright | 41 | 0 | 41 |
-| **All** | **1113** | **0** | **1113** |
+| **All** | **1124** | **0** | **1124** |

@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "mode": "live",
+  "retrieval_mode": "hybrid",
+  "corpus_version": "f89e50bd98c9e850c44b9be423c4d7369400061c53b3ca22aca5dd974dc20bcb",
+  "case_count": 2,
+  "positive_cases": 2,
+  "errors": 0,
+  "recall_at_6": 1.0,
+  "mrr_at_6": 0.625,
+  "answer_metrics": {
+    "correct_rate": 1.0,
+    "supported_rate": 1.0,
+    "medium_appropriate_rate": 1.0,
+    "abstention_rate": null
+  },
+  "limitations": "Offline eval does not measure answer quality or abstention. Live judgments are model-assisted and need human review.",
+  "answer_model": "claude-opus-5",
+  "judge_model": "claude-opus-5",
+  "embedding_model": "text-embedding-3-small",
+  "cases_sha256": "01bfb52aa4c4abab3a2a011ec87bc8329cf243d7b76e28e590462ecd771157f6",
+  "cases": [
+    {
+      "id": "hatching-followup",
+      "retrieval": {
+        "hit_at_6": true,
+        "reciprocal_rank": 1.0
+      },
+      "status_correct": true,
+      "judgment": {
+        "correct": true,
+        "supported": true,
+        "medium_appropriate": true,
+        "reason": "The answer directly addresses how to practise crosshatching, with exercises grounded in the cited definition (uniform intersecting lines following form) and Speed's description of hatching with varied line thickness/gradation for tone and correcting modelling. Claims track the excerpts and Speed is attributed by name; the practice adds no new factual or materials assertions. No medium was selected and no historical chemical advice is presented as current."
+      },
+      "latency_ms": 22851
+    },
+    {
+      "id": "short-topic-switch",
+      "retrieval": {
+        "hit_at_6": true,
+        "reciprocal_rank": 0.25
+      },
+      "status_correct": true,
+      "judgment": {
+        "correct": true,
+        "supported": true,
+        "medium_appropriate": true,
+        "reason": "The answer defines balance (not glazing) with visual-weight, symmetrical/asymmetrical examples (Dali, Hokusai) drawn directly from the cited textbook excerpts, and Speed's opposing-forces and variety/unity points match the cited historical passages. No invented image observations or material/chemical claims; the thumbnail practice adds no unsupported facts and the historical source is used only for compositional reasoning."
+      },
+      "latency_ms": 15601
+    }
+  ]
+}

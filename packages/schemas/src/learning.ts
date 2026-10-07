@@ -30,36 +30,47 @@ export const learningResponseSchema = z
       .array(
         z.strictObject({
           text: z.string().trim().min(1).max(1500),
-          citation_ids: z.array(z.string()).min(1).max(4),
+          citation_ids: z.array(z.string().trim()).min(1).max(4),
         }),
       )
       .max(8),
-    practice: z.string().max(1500).nullable(),
-    gap: z.string().max(800).nullable(),
+    practice: z.string().trim().max(1500).nullable().default(null),
+    gap: z.string().trim().max(800).nullable().default(null),
     sources: z
       .array(
         z.strictObject({
-          id: z.string(),
-          title: z.string(),
-          author: z.string(),
-          locator: z.string(),
-          url: z.url().refine((value) => {
-            const url = new URL(value);
-            return url.protocol === 'https:' && !url.username && !url.password;
-          }),
-          license: z.string(),
+          id: z.string().trim(),
+          title: z.string().trim(),
+          author: z.string().trim(),
+          locator: z.string().trim(),
+          url: z
+            .string()
+            .trim()
+            .pipe(z.url())
+            .refine((value) => {
+              try {
+                const url = new URL(value);
+                return url.protocol === 'https:' && !url.username && !url.password;
+              } catch {
+                return false;
+              }
+            }),
+          license: z.string().trim(),
           historical: z.boolean(),
-          excerpt: z.string().min(1).max(12000),
+          excerpt: z.string().trim().min(1).max(12000),
         }),
       )
-      .max(12),
+      .max(12)
+      .default([]),
     retrieval_mode: z.enum(['keyword', 'hybrid']),
-    corpus_version: z.string().min(1),
-    usage: z.strictObject({
-      input_tokens: z.number().int().nonnegative(),
-      output_tokens: z.number().int().nonnegative(),
-      embedding_tokens: z.number().int().nonnegative(),
-    }),
+    corpus_version: z.string().trim().min(1),
+    usage: z
+      .strictObject({
+        input_tokens: z.number().int().nonnegative().default(0),
+        output_tokens: z.number().int().nonnegative().default(0),
+        embedding_tokens: z.number().int().nonnegative().default(0),
+      })
+      .default({ input_tokens: 0, output_tokens: 0, embedding_tokens: 0 }),
   })
   .superRefine((answer, context) => {
     const available = new Set(answer.sources.map((source) => source.id));

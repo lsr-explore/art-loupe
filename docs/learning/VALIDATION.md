@@ -12,7 +12,7 @@ ignored by Git.
 - Vector indexing completed with `text-embedding-3-small`, 1,536 dimensions,
   and 344,042 embedding tokens.
 - Keyword retrieval: hit-at-six 85% (17/20), MRR 0.7375, zero execution errors.
-- Learning and keychain unit tests: 52 passing.
+- Learning and keychain unit tests: 71 passing after review fixes.
 - All TypeScript workspace tests passed after updating the route-gate snapshot
   for the authenticated learning page and API.
 - TypeScript type checks, lint, translation checks, and Python lint passed.
@@ -44,8 +44,7 @@ for a short reason, preserve intermediate results when judging fails, and replac
 model-written gap explanations with localized fixed text. Regression tests cover
 uncited facts in gaps and preservation of retrieval results on judge truncation.
 The original full report is retained locally at `python/learning-eval-reports/live.json`.
-The revised full run is recorded separately at `live-v2.json`. Its repository
-[baseline summary](live-baseline.json) records per-case scores and source-set hashes.
+The revised full run is recorded separately at `live-v2.json`.
 It passed all gates: 20/20 gold retrieval hits, MRR 0.7767, zero execution errors,
 and all 32 cases passed correctness, support, medium, and expected-status checks.
 All 12 expected evidence gaps abstained. These scores are model-assisted results
@@ -54,3 +53,35 @@ on a small curated regression set, not a guarantee for arbitrary questions.
 The run used `claude-opus-5` for both synthesis and judging and
 `text-embedding-3-small` for retrieval. The same-model judge can share mistakes
 with synthesis; review cited excerpts manually before broader rollout.
+
+## PR review fixes
+
+Automatic and CLI Greptile review identified nine distinct issues. Fixes bound the
+metrics flush, move keychain lookup off the request thread, support interrupted
+vector rebuilds, avoid duplicate nested quotations, align Python/Zod response
+validation and defaults, evaluate conversational retrieval, suppress stale success
+announcements, handle token stops deliberately, and name the example group with
+semantic HTML. Focused regression tests cover these paths.
+
+Re-ingestion after the quotation fix produced the same corpus checksum and counts
+for the downloaded editions. The original 32 cases have no history, so their query
+strings and retrieval results are unchanged. The new follow-up suite is evaluated
+separately. A first topic-switch run exposed history overwhelming an explicit new
+topic; the shared query helper now carries history only for underspecified follow-ups.
+
+A subsequent follow-up run found one unsupported detail in an overlong comparative
+answer. The synthesis prompt now asks for one supported point per claim, checks
+all list details against their specific citations, and prefers direct evidence
+over optional historical comparisons. Earlier failed reports remain local for audit.
+
+The [follow-up baseline](followup-baseline.json) passes both live cases: 2/2 gold
+retrieval hits, MRR 0.625, zero errors, and both answers pass correctness, support,
+and medium checks. Neither case expects abstention, so that metric is unmeasured.
+
+After the review changes, a fresh 32-case run (`pr-review-final.json`) passed the
+existing gates: 20/20 retrieval hits, MRR 0.7767, zero errors, 100% correctness
+and support, 96.875% medium appropriateness, and all 12 expected gaps abstaining.
+The [current baseline](live-baseline.json) records that run, including the judge
+flagging one charcoal answer for repeating a historical shellac-fixing technique
+without a caveat. This remains a POC limitation: a passing aggregate gate does not
+mean every answer is appropriate. Human review is required before broader rollout.

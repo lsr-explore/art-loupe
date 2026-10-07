@@ -110,6 +110,12 @@ uv run --all-packages python -m artloupe.agent.learning.cli eval \
   --corpus learning-corpus \
   --cases ../docs/learning/eval-cases.json \
   --output learning-eval-reports/live.json --live
+
+# Also check history-dependent follow-ups and short topic switches.
+uv run --all-packages python -m artloupe.agent.learning.cli eval \
+  --corpus learning-corpus \
+  --cases ../docs/learning/eval-followups.json \
+  --output learning-eval-reports/followups.json --live
 ```
 
 Embedding adds `vectors.npy` and `vectors.json`. Vector metadata must match the
@@ -119,9 +125,11 @@ can take several minutes, and fail the command if any quality gate fails. Review
 the resulting answers and cited excerpts manually as well as reading the scores.
 
 If interrupted during embedding, rerun the embedding command against the same
-unchanged text corpus. If a previous vector bundle is stale, build in a new output
-directory. Do not reuse vectors from another book revision. If changing a build
-while the agent runs, finish the new bundle first and then switch its configuration.
+unchanged text corpus. The embedding builder reads only the verified text corpus,
+so it can recover from missing or partial vector files. New files are completed
+through temporary files before publication. For a changed book revision, prefer
+a new output directory. Do not reuse vectors from another book revision. If changing
+a build while the agent runs, finish the new bundle first and then switch its configuration.
 
 ## 6. Point the local agent at the completed bundle
 

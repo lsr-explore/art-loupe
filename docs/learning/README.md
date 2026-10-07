@@ -31,7 +31,10 @@ exchanges. It stores no chat transcript. Answer synthesis sends questions, recen
 turns, and excerpts to Anthropic. Hybrid search sends the retrieval query to OpenAI.
 Operational metering records token usage separately from project-plan credits.
 A process-local rate limiter permits three questions in a burst, replenishing one
-slot every 20 seconds. Requests have a 60-second deadline and a bounded output.
+slot every 20 seconds. Answer work has a 55-second deadline, reserving time inside
+Studio's 60-second timeout for the proxy and a metrics flush capped at 0.5 seconds.
+Token-ceiling stops return a deliberate limit response and a localized notice.
+Requests have bounded output.
 This is not a persistent account-credit system or a distributed rate limiter.
 
 For a complete clean setup, follow [ingestion from scratch](INGESTION.md).
@@ -98,7 +101,7 @@ uv run --all-packages python -m artloupe.agent.learning.cli eval \
   --output learning-eval-reports/live.json --live
 ```
 
-The 32 cases include 20 questions with gold passage anchors, plus 12 evidence-gap,
+The main 32 cases include 20 questions with gold passage anchors, plus 12 evidence-gap,
 injection, and medium cases. Gold anchors must exist in the selected corpus or the
 run fails. Offline mode measures keyword retrieval even when vectors are installed;
 it does not claim to test generated answers, semantic search, or abstention.
@@ -106,7 +109,11 @@ it does not claim to test generated answers, semantic search, or abstention.
 Retrieval gates are hit-at-six at least 85%, MRR at least 0.5, and zero execution
 errors. Live gates additionally require at least 85% correct answers, 95% supported
 answers, 95% medium-appropriate answers, and 100% abstention on expected gaps.
-Failed gates exit nonzero. Reports include per-case source IDs, source locations,
+Failed gates exit nonzero. The separate `eval-followups.json` suite tests a
+history-dependent practice question and an explicit short topic switch using the
+same retrieval-query helper as the HTTP route. When a suite has no expected gaps,
+its abstention metric is unmeasured rather than a failed zero. Reports include
+per-case source IDs, source locations,
 latency, and (live) answers, excerpts, token usage, and rubric judgments. The judge
 uses the same default model family as synthesis; human review remains necessary.
 This small curated set is a regression baseline, not an independent quality study.

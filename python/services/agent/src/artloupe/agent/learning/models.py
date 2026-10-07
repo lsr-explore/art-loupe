@@ -1,8 +1,18 @@
 """Bounded requests and answers. Citation metadata is resolved by the server, never the model."""
 
 from typing import Literal
+from urllib.parse import urlsplit
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictInt,
+    TypeAdapter,
+    field_validator,
+    model_validator,
+)
 
 
 class StrictModel(BaseModel):
@@ -45,7 +55,17 @@ class Citation(StrictModel):
     url: str
     license: str
     historical: bool
-    excerpt: str
+    excerpt: str = Field(min_length=1, max_length=12000)
+
+    @field_validator("url")
+    @classmethod
+    def safe_url(cls, value: str) -> str:
+        TypeAdapter(AnyHttpUrl).validate_python(value)
+        parsed = urlsplit(value)
+        _ = parsed.port
+        if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+            raise ValueError("A source URL must be HTTPS without credentials")
+        return value
 
 
 class Claim(StrictModel):
@@ -72,9 +92,9 @@ class Draft(StrictModel):
 
 
 class Usage(StrictModel):
-    input_tokens: int = Field(default=0, ge=0)
-    output_tokens: int = Field(default=0, ge=0)
-    embedding_tokens: int = Field(default=0, ge=0)
+    input_tokens: StrictInt = Field(default=0, ge=0)
+    output_tokens: StrictInt = Field(default=0, ge=0)
+    embedding_tokens: StrictInt = Field(default=0, ge=0)
 
 
 class Answer(Draft):
@@ -82,3 +102,11 @@ class Answer(Draft):
     retrieval_mode: Literal["keyword", "hybrid"]
     corpus_version: str
     usage: Usage = Field(default_factory=Usage)
+
+    @model_validator(mode="after")
+    def citations_match_claims(self):
+        available = {source.id for source in self.sources}
+        used = {identity for claim in self.claims for identity in claim.citation_ids}
+        if len(available) != len(self.sources) or available != used:
+            raise ValueError("Invalid citation mapping")
+        return self

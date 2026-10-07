@@ -73,7 +73,12 @@ def epub_sections(path: Path) -> Iterator[tuple[str, str]]:
                     if text.strip().lower() == "index":
                         indexing = True
                 elif local in {"p", "blockquote"} and text:
-                    if not indexing:
+                    nested_blocks = local == "blockquote" and any(
+                        descendant is not element
+                        and descendant.tag.split("}")[-1] in {"p", "blockquote"}
+                        for descendant in element.iter()
+                    )
+                    if not indexing and not nested_blocks:
                         paragraphs.append(text)
         if paragraphs:
             yield heading, "\n\n".join(paragraphs)
@@ -83,7 +88,7 @@ def pdf_sections(path: Path) -> Iterator[tuple[str, str]]:
     from pypdf import PdfReader
 
     reader = PdfReader(path)
-    # The source is a two-column textbook. Layout mode retains the reading layout for cleanup.
+    # Extract the textbook text, then remove recurring headers and credit lines.
     pages = [page.extract_text() or "" for page in reader.pages]
     repeated = Counter(
         line.strip() for page in pages for line in set(page.splitlines()) if line.strip()

@@ -13,11 +13,11 @@ Art-historical context is carried back to a real citation
 | **Severity** | P0 |
 | **Why** | A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent. |
 | **Surfaces** | `apps/studio` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 40 (4 parametrized) |
-| **Covered** | a11y 2 · security 8 · safety 21 · data 6 · functionality 3 |
+| **Tests** | 51 (6 parametrized) |
+| **Covered** | a11y 2 · security 8 · safety 29 · data 8 · functionality 4 |
 | **Not covered** | privacy · performance |
 
-## pytest — 21
+## pytest — 29
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -34,16 +34,24 @@ Art-historical context is carried back to a real citation
 | safety | test_model_refusal_and_truncation_are_not_answers | `python/services/agent/tests/test_learning.py:123` |
 | safety | test_no_evidence_abstains_without_a_model_call | `python/services/agent/tests/test_learning.py:134` |
 | safety | test_embedding_response_order_and_dimensions | `python/services/agent/tests/test_learning.py:151` |
-| safety | test_corpus_tampering_and_stale_embeddings_fail_closed | `python/services/agent/tests/test_learning.py:178` |
-| safety | test_eval_retrieval_metrics_fail_for_the_wrong_passage | `python/services/agent/tests/test_learning.py:196` |
-| safety | test_offline_eval_does_not_claim_to_measure_answers | `python/services/agent/tests/test_learning.py:215` |
-| safety | test_authenticated_endpoint_rejects_other_roles | `python/services/agent/tests/test_learning.py:239` |
-| safety | test_endpoint_returns_cited_answer_with_verified_artist | `python/services/agent/tests/test_learning.py:254` |
-| safety | test_provider_verification_reports_only_authentication_metadata | `python/services/agent/tests/test_learning.py:280` |
-| safety | test_gap_explanation_cannot_smuggle_uncited_model_facts | `python/services/agent/tests/test_learning.py:308` |
-| safety | test_live_eval_preserves_retrieval_when_judge_truncates | `python/services/agent/tests/test_learning.py:332` |
+| safety | test_corpus_tampering_and_stale_embeddings_fail_closed | `python/services/agent/tests/test_learning.py:184` |
+| safety | test_eval_retrieval_metrics_fail_for_the_wrong_passage | `python/services/agent/tests/test_learning.py:202` |
+| safety | test_offline_eval_does_not_claim_to_measure_answers | `python/services/agent/tests/test_learning.py:221` |
+| safety | test_authenticated_endpoint_rejects_other_roles | `python/services/agent/tests/test_learning.py:245` |
+| safety | test_endpoint_returns_cited_answer_with_verified_artist | `python/services/agent/tests/test_learning.py:260` |
+| safety | test_provider_verification_reports_only_authentication_metadata | `python/services/agent/tests/test_learning.py:286` |
+| safety | test_gap_explanation_cannot_smuggle_uncited_model_facts | `python/services/agent/tests/test_learning.py:314` |
+| safety | test_live_eval_preserves_retrieval_when_judge_truncates | `python/services/agent/tests/test_learning.py:338` |
+| safety | test_response_contract_rejects_shared_invalid_examples | `python/services/agent/tests/test_learning.py:387` |
+| safety | test_epub_nested_quote_is_extracted_once | `python/services/agent/tests/test_learning.py:394` |
+| safety | test_vector_rebuild_recovers_incomplete_previous_bundle | `python/services/agent/tests/test_learning.py:415` |
+| safety | test_followup_query_shares_retrieval_context | `python/services/agent/tests/test_learning.py:435` |
+| safety | test_slow_metrics_sink_does_not_block_an_answer | `python/services/agent/tests/test_learning.py:449` |
+| safety | test_response_contract_accepts_shared_defaults | `python/services/agent/tests/test_learning.py:477` |
+| safety | test_budget_stop_returns_deliberate_limit_response | `python/services/agent/tests/test_learning.py:483` |
+| safety | test_short_explicit_topic_switch_does_not_carry_old_topic | `python/services/agent/tests/test_learning.py:505` |
 
-## Vitest — 18
+## Vitest — 21
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -56,15 +64,18 @@ Art-historical context is carried back to a real citation
 | security | does not expose provider errors | `apps/studio/src/app/api/learning/route.test.ts:52` |
 | security | preserves a bounded retry delay | `apps/studio/src/app/api/learning/route.test.ts:60` |
 | functionality | renders cited evidence and keeps follow-up context bounded | `apps/studio/src/components/learning/learning-chat.test.tsx:25` |
-| functionality | retains the draft when the service fails | `apps/studio/src/components/learning/learning-chat.test.tsx:46` |
-| functionality | shows an evidence gap without invented citations | `apps/studio/src/components/learning/learning-chat.test.tsx:53` |
-| a11y | has accessible question controls | `apps/studio/src/components/learning/learning-chat.test.tsx:70` |
+| functionality | does not announce a previous answer as ready after a failed follow-up | `apps/studio/src/components/learning/learning-chat.test.tsx:46` |
+| functionality | retains the draft when the service fails | `apps/studio/src/components/learning/learning-chat.test.tsx:57` |
+| functionality | shows an evidence gap without invented citations | `apps/studio/src/components/learning/learning-chat.test.tsx:64` |
+| a11y | has accessible question controls | `apps/studio/src/components/learning/learning-chat.test.tsx:81` |
 | data | accepts ${JSON.stringify(value)} | `packages/schemas/src/learning.test.ts:9` |
 | data | rejects ${JSON.stringify(value)} | `packages/schemas/src/learning.test.ts:12` |
-| data | accepts a server-resolved citation | `packages/schemas/src/learning.test.ts:14` |
-| data | rejects citations absent from the evidence | `packages/schemas/src/learning.test.ts:16` |
-| data | rejects an answer disguised as an evidence gap | `packages/schemas/src/learning.test.ts:20` |
-| data | rejects unsafe source URLs | `packages/schemas/src/learning.test.ts:25` |
+| data | accepts response ${index} | `packages/schemas/src/learning.test.ts:15` |
+| data | rejects response ${value.name} | `packages/schemas/src/learning.test.ts:18` |
+| data | accepts a server-resolved citation | `packages/schemas/src/learning.test.ts:20` |
+| data | rejects citations absent from the evidence | `packages/schemas/src/learning.test.ts:22` |
+| data | rejects an answer disguised as an evidence gap | `packages/schemas/src/learning.test.ts:26` |
+| data | rejects unsafe source URLs | `packages/schemas/src/learning.test.ts:31` |
 
 ## Playwright — 1
 

@@ -14,8 +14,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from artloupe.agent.director import close_director_client, director_client
 from artloupe.agent.learning.answering import synthesize
 from artloupe.agent.learning.embeddings import embed
-from artloupe.agent.learning.models import Question
-from artloupe.agent.learning.retrieval import Index
+from artloupe.agent.learning.models import Question, Turn
+from artloupe.agent.learning.retrieval import Index, retrieval_query
 
 
 class Gold(BaseModel):
@@ -31,6 +31,7 @@ class Case(BaseModel):
     question: str
     expected_status: Literal["answered", "insufficient_evidence"]
     medium: str | None = None
+    history: list[Turn] = Field(default_factory=list, max_length=6)
     rubric: str
     gold: list[Gold] = Field(default_factory=list)
 
@@ -110,11 +111,15 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
                 start = time.perf_counter()
                 row = {"id": case.id, "category": case.category}
                 try:
+                    question = Question(
+                        question=case.question, medium=case.medium, history=case.history
+                    )
+                    query = retrieval_query(question)
                     vector, tokens = None, 0
                     if mode == "hybrid":
-                        vectors, tokens = await embed(transport, [case.question])
+                        vectors, tokens = await embed(transport, [query])
                         vector = vectors[0]
-                    passages = index.search(case.question, vector)
+                    passages = index.search(query, vector)
                     row = {
                         "id": case.id,
                         "category": case.category,
@@ -131,7 +136,7 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
                     if live:
                         answer = await synthesize(
                             director_client(),
-                            Question(question=case.question, medium=case.medium),
+                            question,
                             passages,
                             mode,
                             index.version,
@@ -194,7 +199,7 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
             / denominator,
             "abstention_rate": sum(row.get("status_correct", False) for row in gaps) / expected_gaps
             if expected_gaps
-            else 0,
+            else None,
         }
     passed = errors == 0 and recall >= 0.85 and mrr >= 0.5
     if live:
@@ -203,7 +208,7 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
             and answer_metrics["correct_rate"] >= 0.85
             and answer_metrics["supported_rate"] >= 0.95
             and answer_metrics["medium_appropriate_rate"] >= 0.95
-            and answer_metrics["abstention_rate"] == 1
+            and (expected_gaps == 0 or answer_metrics["abstention_rate"] == 1)
         )
     summary = {
         "passed": passed,

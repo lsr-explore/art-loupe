@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 462,
-      "vitest": 610,
+      "pytest": 470,
+      "vitest": 613,
       "playwright": 41,
-      "all": 1113
+      "all": 1124
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 462,
-      "vitest": 610,
+      "pytest": 470,
+      "vitest": 613,
       "playwright": 41,
-      "all": 1113
+      "all": 1124
     }
   },
   "by_flow": {
@@ -48,18 +48,18 @@
         "a11y": 2,
         "security": 8,
         "privacy": 0,
-        "safety": 21,
-        "data": 6,
+        "safety": 29,
+        "data": 8,
         "performance": 0,
-        "functionality": 3
+        "functionality": 4
       },
       "runners": {
-        "pytest": 21,
-        "vitest": 18,
+        "pytest": 29,
+        "vitest": 21,
         "playwright": 1
       },
-      "total": 40,
-      "parametrized": 4
+      "total": 51,
+      "parametrized": 6
     },
     "safety.untrusted-input": {
       "severity": "P0",
@@ -2088,20 +2088,27 @@
     },
     {
       "id": "apps/studio/src/components/learning/learning-chat.test.tsx:46",
+      "name": "does not announce a previous answer as ready after a failed follow-up",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:57",
       "name": "retains the draft when the service fails",
       "runner": "vitest",
       "flow": "retrieval.grounding",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:53",
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:64",
       "name": "shows an evidence gap without invented citations",
       "runner": "vitest",
       "flow": "retrieval.grounding",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:70",
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:81",
       "name": "has accessible question controls",
       "runner": "vitest",
       "flow": "retrieval.grounding",
@@ -4733,28 +4740,42 @@
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/learning.test.ts:14",
-      "name": "accepts a server-resolved citation",
+      "id": "packages/schemas/src/learning.test.ts:15",
+      "name": "accepts response ${index}",
       "runner": "vitest",
       "flow": "retrieval.grounding",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/learning.test.ts:16",
-      "name": "rejects citations absent from the evidence",
+      "id": "packages/schemas/src/learning.test.ts:18",
+      "name": "rejects response ${value.name}",
       "runner": "vitest",
       "flow": "retrieval.grounding",
       "category": "data"
     },
     {
       "id": "packages/schemas/src/learning.test.ts:20",
+      "name": "accepts a server-resolved citation",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:22",
+      "name": "rejects citations absent from the evidence",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:26",
       "name": "rejects an answer disguised as an evidence gap",
       "runner": "vitest",
       "flow": "retrieval.grounding",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/learning.test.ts:25",
+      "id": "packages/schemas/src/learning.test.ts:31",
       "name": "rejects unsafe source URLs",
       "runner": "vitest",
       "flow": "retrieval.grounding",
@@ -7540,35 +7561,35 @@
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:178",
+      "id": "python/services/agent/tests/test_learning.py:184",
       "name": "test_corpus_tampering_and_stale_embeddings_fail_closed",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:196",
+      "id": "python/services/agent/tests/test_learning.py:202",
       "name": "test_eval_retrieval_metrics_fail_for_the_wrong_passage",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:215",
+      "id": "python/services/agent/tests/test_learning.py:221",
       "name": "test_offline_eval_does_not_claim_to_measure_answers",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:239",
+      "id": "python/services/agent/tests/test_learning.py:245",
       "name": "test_authenticated_endpoint_rejects_other_roles",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:254",
+      "id": "python/services/agent/tests/test_learning.py:260",
       "name": "test_endpoint_returns_cited_answer_with_verified_artist",
       "runner": "pytest",
       "flow": "retrieval.grounding",
@@ -7582,14 +7603,14 @@
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:280",
+      "id": "python/services/agent/tests/test_learning.py:286",
       "name": "test_provider_verification_reports_only_authentication_metadata",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:308",
+      "id": "python/services/agent/tests/test_learning.py:314",
       "name": "test_gap_explanation_cannot_smuggle_uncited_model_facts",
       "runner": "pytest",
       "flow": "retrieval.grounding",
@@ -7603,7 +7624,7 @@
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_learning.py:332",
+      "id": "python/services/agent/tests/test_learning.py:338",
       "name": "test_live_eval_preserves_retrieval_when_judge_truncates",
       "runner": "pytest",
       "flow": "retrieval.grounding",
@@ -7617,8 +7638,64 @@
       "category": "safety"
     },
     {
+      "id": "python/services/agent/tests/test_learning.py:387",
+      "name": "test_response_contract_rejects_shared_invalid_examples",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:394",
+      "name": "test_epub_nested_quote_is_extracted_once",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:415",
+      "name": "test_vector_rebuild_recovers_incomplete_previous_bundle",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:435",
+      "name": "test_followup_query_shares_retrieval_context",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:449",
+      "name": "test_slow_metrics_sink_does_not_block_an_answer",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:477",
+      "name": "test_response_contract_accepts_shared_defaults",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
       "id": "python/services/agent/tests/test_learning.py:48",
       "name": "test_insufficient_evidence_cannot_contain_a_factual_answer",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:483",
+      "name": "test_budget_stop_returns_deliberate_limit_response",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:505",
+      "name": "test_short_explicit_topic_switch_does_not_carry_old_topic",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"

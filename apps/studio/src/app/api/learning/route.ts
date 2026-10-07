@@ -66,7 +66,9 @@ export const POST = async (request: Request) => {
       body: JSON.stringify(parsed.data),
     });
     if (!response.ok) {
-      const status = [401, 403, 429, 503, 504].includes(response.status) ? response.status : 502;
+      const status = [401, 403, 413, 429, 503, 504].includes(response.status)
+        ? response.status
+        : 502;
       const rawWait = Number(response.headers.get('Retry-After'));
       const wait = Number.isInteger(rawWait) && rawWait > 0 ? Math.min(rawWait, 300) : 60;
       return Response.json(

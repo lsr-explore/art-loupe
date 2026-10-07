@@ -11,6 +11,12 @@ describe('learning contract parity', () => {
   for (const value of fixture.request_rejects)
     it(`rejects ${JSON.stringify(value)}`, () =>
       expect(learningRequestSchema.safeParse(value).success).toBe(false));
+  for (const [index, value] of fixture.response_accepts.entries())
+    it(`accepts response ${index}`, () =>
+      expect(learningResponseSchema.safeParse(value).success).toBe(true));
+  for (const value of fixture.response_rejects)
+    it(`rejects response ${value.name}`, () =>
+      expect(learningResponseSchema.safeParse(value.answer).success).toBe(false));
   it('accepts a server-resolved citation', () =>
     expect(learningResponseSchema.safeParse(fixture.answer).success).toBe(true));
   it('rejects citations absent from the evidence', () =>

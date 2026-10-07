@@ -149,9 +149,15 @@ async def test_no_evidence_abstains_without_a_model_call():
 
 
 async def test_embedding_response_order_and_dimensions(monkeypatch):
-    monkeypatch.setattr(
-        "artloupe.agent.learning.embeddings.get_openai_api_key", lambda: "test-only"
-    )
+    import threading
+
+    request_thread = threading.get_ident()
+
+    def key():
+        assert threading.get_ident() != request_thread
+        return "test-only"
+
+    monkeypatch.setattr("artloupe.agent.learning.embeddings.get_openai_api_key", key)
     vector = [1.0] + [0.0] * 1535
     async with httpx.AsyncClient(
         transport=httpx.MockTransport(
@@ -375,3 +381,133 @@ async def test_live_eval_preserves_retrieval_when_judge_truncates(tmp_path, monk
     assert row["retrieval"]["hit_at_6"]
     assert row["answer"]["status"] == "answered"
     assert row["error_reason"] == "Judge did not complete: max_tokens"
+
+
+@pytest.mark.parametrize("value", PARITY["response_rejects"], ids=lambda value: value["name"])
+def test_response_contract_rejects_shared_invalid_examples(value):
+    from artloupe.agent.learning.models import Answer
+
+    with pytest.raises(ValidationError):
+        Answer.model_validate(value["answer"])
+
+
+def test_epub_nested_quote_is_extracted_once(tmp_path):
+    from zipfile import ZipFile
+
+    path = tmp_path / "nested.epub"
+    epub(path)
+    with ZipFile(path) as archive:
+        entries = {name: archive.read(name) for name in archive.namelist()}
+    with ZipFile(path, "w") as archive:
+        for name, content in entries.items():
+            if name != "OEBPS/first.xhtml":
+                archive.writestr(name, content)
+        archive.writestr(
+            "OEBPS/first.xhtml",
+            "<html><body><h2>Value</h2><blockquote><p>Quoted sentence.</p></blockquote>"
+            "<blockquote>Bare quotation.</blockquote></body></html>",
+        )
+    text = " ".join(value for heading, value in epub_sections(path))
+    assert text.count("Quoted sentence.") == 1
+    assert text.count("Bare quotation.") == 1
+
+
+async def test_vector_rebuild_recovers_incomplete_previous_bundle(tmp_path, monkeypatch):
+    import hashlib
+
+    from artloupe.agent.learning import embeddings
+
+    raw = passage().model_dump_json() + "\n"
+    (tmp_path / "corpus.jsonl").write_text(raw)
+    (tmp_path / "manifest.json").write_text(
+        json.dumps({"corpus_version": hashlib.sha256(raw.encode()).hexdigest()})
+    )
+    (tmp_path / "vectors.npy").write_bytes(b"incomplete")
+
+    async def fake_embed(client, texts):
+        return [[1.0] + [0.0] * 1535 for text in texts], len(texts)
+
+    monkeypatch.setattr(embeddings, "embed", fake_embed)
+    await embeddings.build_vectors(tmp_path)
+    assert Index.load(tmp_path).vectors.shape == (1, 1536)
+
+
+def test_followup_query_shares_retrieval_context():
+    from artloupe.agent.learning.models import Turn
+    from artloupe.agent.learning.retrieval import retrieval_query
+
+    question = Question(
+        question="How do I practise it?",
+        history=[
+            Turn(role="user", content="What is glazing in oil painting?"),
+            Turn(role="assistant", content="Not retrieval evidence"),
+        ],
+    )
+    assert retrieval_query(question) == "What is glazing in oil painting? How do I practise it?"
+
+
+async def test_slow_metrics_sink_does_not_block_an_answer(monkeypatch):
+    import asyncio
+
+    app = FastAPI()
+    app.include_router(routes.router)
+    app.dependency_overrides[require_token] = lambda: SimpleNamespace(
+        subject="slow-metrics-test", role="artist"
+    )
+    monkeypatch.setattr(routes, "configured_index", lambda: Index([passage()], "fixture"))
+    monkeypatch.setattr(routes, "METRICS_TIMEOUT_SECONDS", 0.01)
+
+    async def slow_flush(metrics):
+        await asyncio.sleep(10)
+
+    monkeypatch.setattr(routes, "get_metrics_sink", lambda: SimpleNamespace(flush=slow_flush))
+    async with httpx.AsyncClient() as upstream:
+        app.dependency_overrides[get_http_client] = lambda: upstream
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            async with asyncio.timeout(0.5):
+                response = await client.post(
+                    "/learning/ask", json={"question": "xylophoneunmatched"}
+                )
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("value", PARITY["response_accepts"])
+def test_response_contract_accepts_shared_defaults(value):
+    from artloupe.agent.learning.models import Answer
+
+    Answer.model_validate(value)
+
+
+async def test_budget_stop_returns_deliberate_limit_response(monkeypatch):
+    from artloupe.metering import BudgetExceeded
+
+    app = FastAPI()
+    app.include_router(routes.router)
+    app.dependency_overrides[require_token] = lambda: SimpleNamespace(
+        subject="budget-stop", role="artist"
+    )
+
+    def stop():
+        raise BudgetExceeded("Synthetic budget stop")
+
+    monkeypatch.setattr(routes, "configured_index", stop)
+    async with httpx.AsyncClient() as upstream:
+        app.dependency_overrides[get_http_client] = lambda: upstream
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            response = await client.post("/learning/ask", json={"question": "What is value?"})
+    assert response.status_code == 413
+
+
+def test_short_explicit_topic_switch_does_not_carry_old_topic():
+    from artloupe.agent.learning.models import Turn
+    from artloupe.agent.learning.retrieval import retrieval_query
+
+    question = Question(
+        question="What is balance?",
+        history=[Turn(role="user", content="What is glazing in oil painting?")],
+    )
+    assert retrieval_query(question) == "What is balance?"

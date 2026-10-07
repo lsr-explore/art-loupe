@@ -254,6 +254,7 @@
     "unavailable": "Learning is temporarily unavailable. Your question is still here; please try again.",
     "citation": "Read supporting passage {number}",
     "ready": "Answer ready.",
-    "link": "Ask the learning assistant"
+    "link": "Ask the learning assistant",
+    "tokenLimit": "This question and its context exceed the learning limit. Clear the conversation or ask a shorter question."
   }
 }

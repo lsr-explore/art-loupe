@@ -43,6 +43,17 @@ describe('learning chat', () => {
     expect(payload.history).toHaveLength(2);
     expect(payload.history[0].role).toBe('user');
   });
+  it('does not announce a previous answer as ready after a failed follow-up', async () => {
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(Response.json(fixture.answer))
+      .mockRejectedValueOnce(new Error('offline'));
+    open();
+    ask();
+    await screen.findByText('Value describes relative lightness or darkness.');
+    ask();
+    await screen.findByRole('alert');
+    expect(screen.getByRole('status')).not.toHaveTextContent('Answer ready.');
+  });
   it('retains the draft when the service fails', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline'));
     open();

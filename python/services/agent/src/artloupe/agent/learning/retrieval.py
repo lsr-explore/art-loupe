@@ -110,7 +110,7 @@ class Index:
         self.average = sum(self.lengths) / len(self.lengths)
 
     @classmethod
-    def load(cls, directory: Path):
+    def load(cls, directory: Path, *, include_vectors: bool = True):
         try:
             raw = (directory / "corpus.jsonl").read_bytes()
             version = hashlib.sha256(raw).hexdigest()
@@ -123,7 +123,7 @@ class Index:
             if len({part.id for part in passages}) != len(passages):
                 raise ValueError("Duplicate passage identifiers")
             vectors = None
-            if (directory / "vectors.npy").exists():
+            if include_vectors and (directory / "vectors.npy").exists():
                 meta = json.loads((directory / "vectors.json").read_text())
                 if meta["corpus_version"] != version or meta["model"] != "text-embedding-3-small":
                     raise ValueError("Embeddings do not match this corpus")
@@ -198,3 +198,47 @@ def configured_index() -> Index:
     if not directory:
         raise CorpusUnavailable("Learning corpus not configured")
     return load_index(directory)
+
+
+def retrieval_query(question) -> str:
+    """Use the last artist question as context for short follow-ups, identically in evals."""
+    previous = next(
+        (turn.content for turn in reversed(question.history) if turn.role == "user"), ""
+    )
+    words = set(re.findall(r"[a-záéíóúñ]+", question.question.lower()))
+    refers_back = bool(
+        words
+        & {
+            "it",
+            "its",
+            "that",
+            "this",
+            "these",
+            "those",
+            "them",
+            "eso",
+            "esa",
+            "esto",
+            "este",
+            "estos",
+            "estas",
+            "esas",
+            "esos",
+        }
+    )
+    generic_followup = bool(words) and words <= {
+        "how",
+        "can",
+        "i",
+        "do",
+        "practice",
+        "practise",
+        "more",
+        "examples",
+        "example",
+        "why",
+        "please",
+    }
+    if previous and len(question.question.split()) < 8 and (refers_back or generic_followup):
+        return previous + " " + question.question
+    return question.question

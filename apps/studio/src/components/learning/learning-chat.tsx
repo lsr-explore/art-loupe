@@ -61,9 +61,11 @@ export const LearningChat = () => {
           translate(
             response.status === 401
               ? 'sessionEnded'
-              : response.status === 429
-                ? 'rateLimited'
-                : 'unavailable',
+              : response.status === 413
+                ? 'tokenLimit'
+                : response.status === 429
+                  ? 'rateLimited'
+                  : 'unavailable',
           ),
         );
         return;
@@ -89,7 +91,8 @@ export const LearningChat = () => {
         <p className="text-muted-foreground">{translate('description')}</p>
         <p className="text-sm text-muted-foreground">{translate('privacy')}</p>
       </header>
-      <div className="flex flex-wrap gap-2" aria-label={translate('examples')}>
+      <fieldset className="flex flex-wrap gap-2">
+        <legend className="sr-only">{translate('examples')}</legend>
         {(['exampleValue', 'exampleSpace', 'exampleImpressionism'] as const).map((key) => (
           <Button
             key={key}
@@ -101,7 +104,7 @@ export const LearningChat = () => {
             {translate(key)}
           </Button>
         ))}
-      </div>
+      </fieldset>
       <section aria-label={translate('conversation')} className="space-y-6">
         {exchanges.map((exchange) => (
           <article key={exchange.id} className="space-y-4 rounded-xl border border-border p-5">
@@ -251,7 +254,7 @@ export const LearningChat = () => {
           </Button>
         </div>
         <output className="block" aria-live="polite">
-          {pending ? translate('asking') : exchanges.length ? translate('ready') : ''}
+          {pending ? translate('asking') : !error && exchanges.length ? translate('ready') : ''}
         </output>
         {error && <p role="alert">{error}</p>}
       </form>

@@ -254,6 +254,7 @@
     "unavailable": "El aprendizaje no está disponible temporalmente. Tu pregunta sigue aquí; inténtalo de nuevo.",
     "citation": "Leer el pasaje de apoyo {number}",
     "ready": "Respuesta lista.",
-    "link": "Pregunta al asistente de aprendizaje"
+    "link": "Pregunta al asistente de aprendizaje",
+    "tokenLimit": "Esta pregunta y su contexto superan el límite de aprendizaje. Borra la conversación o haz una pregunta más breve."
   }
 }

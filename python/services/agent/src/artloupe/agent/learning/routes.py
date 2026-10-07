@@ -14,14 +14,24 @@ from artloupe.agent.inspiration_routes import Searcher
 from artloupe.agent.learning.answering import AnswerUnavailable, evidence_gap, synthesize, usable
 from artloupe.agent.learning.embeddings import embed
 from artloupe.agent.learning.models import Answer, Question
-from artloupe.agent.learning.retrieval import CorpusUnavailable, configured_index
+from artloupe.agent.learning.retrieval import CorpusUnavailable, configured_index, retrieval_query
 from artloupe.auth.dependencies import HttpClient
 from artloupe.config import SecretUnavailable
-from artloupe.metering import RunGuards, RunRecorder, get_metrics_sink, record_usage, use_recorder
+from artloupe.metering import (
+    BudgetExceeded,
+    RunGuards,
+    RunRecorder,
+    get_metrics_sink,
+    record_usage,
+    use_recorder,
+)
 
 router = APIRouter()
 limiter = RateLimiter(burst=3, refill_per_second=1 / 20)
 logger = logging.getLogger(__name__)
+METRICS_TIMEOUT_SECONDS = 0.5
+# Reserve time for the proxy and optional telemetry inside Studio's 60-second timeout.
+WORK_TIMEOUT_SECONDS = 55.0
 
 
 @router.post("/learning/ask", response_model=Answer)
@@ -33,18 +43,12 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
     # Separate chat recorder and ceiling: never uses a project plan's credit ledger.
     recorder = RunRecorder(str(uuid4()), user.subject, RunGuards(3, 1, 60, 20000))
     try:
-        async with asyncio.timeout(60):
+        async with asyncio.timeout(WORK_TIMEOUT_SECONDS):
             with use_recorder(recorder):
                 index = await asyncio.to_thread(configured_index)
                 mode = "hybrid" if index.vectors is not None else "keyword"
                 embedding_tokens = 0
-                query = question.question
-                # Carry only the last artist question for underspecified follow-ups.
-                previous = next(
-                    (turn.content for turn in reversed(question.history) if turn.role == "user"), ""
-                )
-                if len(query.split()) < 8 and previous:
-                    query = previous + " " + query
+                query = retrieval_query(question)
                 async with recorder.node("learning-retrieval"):
                     vector = None
                     if mode == "hybrid":
@@ -59,9 +63,16 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
                     return result
                 async with recorder.node("learning-answer"):
                     result = await synthesize(
-                        director_client(), question, passages, mode, index.version, embedding_tokens
+                        await asyncio.to_thread(director_client),
+                        question,
+                        passages,
+                        mode,
+                        index.version,
+                        embedding_tokens,
                     )
                 return result
+    except BudgetExceeded as error:
+        raise HTTPException(413, "Learning question exceeded its token limit.") from error
     except (CorpusUnavailable, SecretUnavailable) as error:
         logger.warning("Learning is not configured: %s", type(error).__name__)
         raise HTTPException(503, "Learning is not configured.") from error
@@ -82,6 +93,7 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
         )
 
         try:
-            await get_metrics_sink().flush(recorder.metrics)
+            async with asyncio.timeout(METRICS_TIMEOUT_SECONDS):
+                await get_metrics_sink().flush(recorder.metrics)
         except Exception:
             logger.warning("Could not store learning telemetry", extra={"run_id": recorder.run_id})
