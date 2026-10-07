@@ -35,6 +35,7 @@ from artloupe.persistence import (
     ProjectNotFound,
     RunEventKind,
     RunLog,
+    RunTransitionRefused,
 )
 from artloupe.schemas import ArtifactMetadata, RoutingDecision
 
@@ -142,7 +143,7 @@ async def run_job(
             routing=RoutingDecision.model_validate(state["routing"]),
             artifacts=[ArtifactMetadata.model_validate(entry) for entry in state["artifacts"]],
         )
-        await log.record(run_id, "succeeded", result.model_dump(mode="json"))
+        await record_terminal(log, run_id, "succeeded", result.model_dump(mode="json"))
     except asyncio.CancelledError:
         await _record_failure(
             log,
@@ -159,10 +160,39 @@ async def run_job(
         await _record_failure(log, run_id, failure)
 
 
+# Delays before each retry of a run's final event. Short, because the artist is watching.
+TERMINAL_RETRY_DELAYS = (0.5, 1.0, 2.0)
+
+
+async def record_terminal(
+    log: RunLog, run_id: str, kind: RunEventKind, payload: dict[str, Any]
+) -> None:
+    """Record a run's final event, retrying a transient failure.
+
+    The final event is the one write a run cannot lose: without it the run stays `running` and
+    its followers never learn how it ended. A refused transition is not retried. It means the
+    run already finished, which is what a retry after a lost commit acknowledgement sees.
+
+    A run whose final write fails every attempt is still stranded. Recovering those belongs to
+    the NFR-02 worker pool, which knows which runs it owns.
+    """
+    for delay in (*TERMINAL_RETRY_DELAYS, None):
+        try:
+            await log.record(run_id, kind, payload)
+            return
+        except RunTransitionRefused:
+            return
+        except Exception:
+            if delay is None:
+                raise
+            logger.warning("retrying a run's final event", extra={"run_id": run_id, "kind": kind})
+            await asyncio.sleep(delay)
+
+
 async def _record_failure(log: RunLog, run_id: str, failure: RunFailure) -> None:
     """Record the end of a run that stopped. If even that fails, the log is all that is left."""
     try:
-        await log.record(run_id, "failed", failure.model_dump())
+        await record_terminal(log, run_id, "failed", failure.model_dump())
     except Exception:
         logger.exception(
             "failed to record a run's failure", extra={"run_id": run_id, "reason": failure.reason}

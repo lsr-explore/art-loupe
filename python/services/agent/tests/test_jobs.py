@@ -160,3 +160,39 @@ async def test_shutdown_cancels_pending_runs() -> None:
 
     assert log.runs[RUN].events[-1].payload["reason"] == "interrupted"
     assert not jobs._PENDING  # noqa: SLF001
+
+
+async def test_a_final_event_that_fails_transiently_is_retried(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Without its final event a run stays `running`, and its followers never learn the end."""
+    monkeypatch.setattr(jobs, "TERMINAL_RETRY_DELAYS", (0, 0, 0))
+    failures = {"left": 2}
+
+    class FlakyFinish(InMemoryRunLog):
+        async def record(self, run_id, kind, payload=None):  # type: ignore[override]
+            if kind == "failed" and failures["left"]:
+                failures["left"] -= 1
+                raise ConnectionError("database blinked")
+            return await super().record(run_id, kind, payload)
+
+    log = FlakyFinish()
+    await log.create(run_id=RUN, project_id="project", owner=OWNER)
+    await jobs.run_job(two_node_graph(), initial(), log=log, guards=GUARDS, resources=resources())
+
+    assert failures["left"] == 0
+    assert log.runs[RUN].status == "failed"
+
+
+async def test_a_final_event_already_recorded_is_not_retried(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A refused transition after a lost commit acknowledgement means the write landed."""
+    monkeypatch.setattr(jobs, "TERMINAL_RETRY_DELAYS", (0, 0, 0))
+    log = await queued_log()
+    await log.record(RUN, "started")
+    await log.record(RUN, "failed", {"reason": "first"})
+
+    await jobs.record_terminal(log, RUN, "failed", {"reason": "second"})
+
+    assert [event.payload.get("reason") for event in log.runs[RUN].events] == [None, "first"]

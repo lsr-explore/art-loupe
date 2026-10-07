@@ -474,6 +474,17 @@ async def test_following_resumes_after_the_last_event_id(
     assert [event["event"] for event in parse_stream(response.text)] == ["succeeded"]
 
 
+async def test_a_client_holding_the_final_event_is_told_to_stop_reconnecting(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """204 is how SSE stops an `EventSource`. Streaming instead would poll a finished run."""
+    run_id = await start_run(client)
+
+    response = await client.get(f"/runs/{run_id}/events", headers={"Last-Event-ID": "2"})
+
+    assert response.status_code == 204
+
+
 @pytest.mark.trace(flow="platform.auth", category="security")
 async def test_another_artists_run_is_not_found(
     client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun

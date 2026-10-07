@@ -21,6 +21,7 @@ anything a client sees.
 
 import asyncio
 import json
+import re
 import time
 from collections.abc import AsyncIterator
 
@@ -36,6 +37,10 @@ HEARTBEAT_SECONDS = 15.0
 TOKEN_MARGIN_SECONDS = 30.0
 
 MAX_STREAM_SECONDS = 300.0
+
+# ASCII digits only: `str.isdigit` also accepts characters like "²" that `int` refuses. Capped,
+# because no run has anywhere near a billion events and an unbounded string is not a cursor.
+_CURSOR = re.compile(r"[0-9]{1,9}")
 
 # Sent first: how long `EventSource` waits before reconnecting, in milliseconds.
 RETRY_MILLISECONDS = 1000
@@ -53,9 +58,22 @@ def parse_cursor(last_event_id: str | None) -> int:
     Anything that is not a non-negative integer replays from the start. That is always safe: the
     log is append-only, so a replay shows the artist nothing that did not happen.
     """
-    if last_event_id is None or not last_event_id.strip().isdigit():
+    if last_event_id is None or not _CURSOR.fullmatch(last_event_id.strip()):
         return 0
     return int(last_event_id.strip())
+
+
+async def fully_consumed(reader: RunReader, run_id: str, after: int) -> bool:
+    """Whether the client's cursor already sits on the run's terminal event.
+
+    Such a client has everything. Streaming to it would only poll a finished run until the
+    deadline, and it would then reconnect and do the same again. The endpoint answers it with
+    204, which is how SSE tells an `EventSource` to stop reconnecting.
+    """
+    if after < 1:
+        return False
+    events = await reader.run_events_after(run_id, after - 1)
+    return bool(events) and events[0].seq == after and events[0].kind in TERMINAL_KINDS
 
 
 def closes_at(token_expires_at: float, *, now: float | None = None) -> float:

@@ -33,7 +33,7 @@ from uuid import UUID, uuid4
 
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request, status
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
 from artloupe.agent.director import close_director_client, director_client
@@ -43,7 +43,7 @@ from artloupe.agent.inspiration_routes import router as inspiration_router
 from artloupe.agent.jobs import cancel_pending_runs, dispatch_run, run_job
 from artloupe.agent.resources import RunResources
 from artloupe.agent.state import RunState
-from artloupe.agent.stream import closes_at, follow, parse_cursor
+from artloupe.agent.stream import closes_at, follow, fully_consumed, parse_cursor
 from artloupe.auth.dependencies import CurrentUser, HttpClient, auth_lifespan
 from artloupe.auth.tokens import VerifiedToken
 from artloupe.config import SecretUnavailable
@@ -229,21 +229,26 @@ async def run_events(
     user: CurrentUser,
     client: HttpClient,
     last_event_id: Annotated[str | None, Header()] = None,
-) -> StreamingResponse:
+) -> Response:
     """Stream the run's log as Server-Sent Events, from after `Last-Event-ID`.
 
     Visibility is checked before the stream opens, so a run that is absent or somebody else's is
-    a plain 404 rather than a stream that never says anything.
+    a plain 404 rather than a stream that never says anything. A client that already holds the
+    run's final event gets 204, which stops its `EventSource` from reconnecting.
     """
     reader = _reader_for(user, client)
     if not await reader.run_visible(str(run_id)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found.")
 
+    after = parse_cursor(last_event_id)
+    if await fully_consumed(reader, str(run_id), after):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
     return StreamingResponse(
         follow(
             reader,
             str(run_id),
-            after=parse_cursor(last_event_id),
+            after=after,
             until=closes_at(user.expires_at),
         ),
         media_type="text/event-stream",

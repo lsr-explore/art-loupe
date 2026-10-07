@@ -34,6 +34,10 @@ from artloupe.persistence.run_events import RunEvent, RunEventKind
 
 RECORDER_ROLE = "artloupe_run_recorder"
 
+# Every recorder call is bounded, end to end. A stalled database must not hold a run open past its
+# deadline, or hold shutdown open in `cancel_pending_runs`.
+RECORDER_TIMEOUT_SECONDS = 5.0
+
 
 class RunTransitionRefused(RuntimeError):
     """The log refused an event the run's current status does not allow."""
@@ -150,9 +154,22 @@ class PostgresRunLog:
         self, statement: str, params: tuple[Any, ...], *, missing: Callable[[], Exception]
     ) -> Any:
         """Run one recorder function. `missing` is what its `no_data_found` means to a caller."""
+        async with asyncio.timeout(RECORDER_TIMEOUT_SECONDS):
+            return await self._call_unbounded(statement, params, missing=missing)
+
+    async def _call_unbounded(
+        self, statement: str, params: tuple[Any, ...], *, missing: Callable[[], Exception]
+    ) -> Any:
         from psycopg import AsyncConnection, errors
 
-        async with await AsyncConnection.connect(self._database_url, connect_timeout=5) as conn:
+        # `statement_timeout` bounds the query on the server too, so a timed-out call does not
+        # leave a statement running there after the client has given up on it.
+        timeout_ms = int(RECORDER_TIMEOUT_SECONDS * 1000)
+        async with await AsyncConnection.connect(
+            self._database_url,
+            connect_timeout=int(RECORDER_TIMEOUT_SECONDS),
+            options=f"-c statement_timeout={timeout_ms}",
+        ) as conn:
             try:
                 # Transaction-scoped, so the narrowing cannot outlive this call.
                 await conn.execute(f"set local role {RECORDER_ROLE}")

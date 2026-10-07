@@ -49,7 +49,19 @@ def test_an_event_is_framed_with_its_sequence_as_the_id() -> None:
 
 @pytest.mark.parametrize(
     ("header", "cursor"),
-    [(None, 0), ("", 0), ("7", 7), (" 7 ", 7), ("-1", 0), ("abc", 0), ("1.5", 0)],
+    [
+        (None, 0),
+        ("", 0),
+        ("7", 7),
+        (" 7 ", 7),
+        ("-1", 0),
+        ("abc", 0),
+        ("1.5", 0),
+        # `str.isdigit` accepts these, and `int` refuses them.
+        ("²", 0),
+        ("٣", 0),
+        ("9" * 5000, 0),
+    ],
 )
 def test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start(
     header: str | None, cursor: int
