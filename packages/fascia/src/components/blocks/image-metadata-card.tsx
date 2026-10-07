@@ -10,6 +10,12 @@ export interface ImageMetadataCardProps {
   unavailableLabel: string;
   metadata: { label: string; value: string }[];
   credit?: ReactNode;
+  /**
+   * `frame` (default) shows every image in the same 4:3 box, so rows line up.
+   * `natural` keeps each image's own proportions, for masonry layouts. The width and
+   * height attributes still reserve a 4:3 box until the image loads.
+   */
+  fit?: 'frame' | 'natural';
 }
 
 /** A figure is intentionally non-interactive until an actual destination exists. */
@@ -20,11 +26,18 @@ export const ImageMetadataCard = ({
   unavailableLabel,
   metadata,
   credit,
+  fit = 'frame',
 }: ImageMetadataCardProps) => {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   return (
     <figure className="min-w-0 overflow-hidden rounded-xl border border-border bg-card text-card-foreground">
-      <div className="flex aspect-[4/3] items-center justify-center bg-muted p-2">
+      <div
+        className={
+          fit === 'frame'
+            ? 'flex aspect-[4/3] items-center justify-center bg-muted p-2'
+            : 'flex min-h-24 items-center justify-center bg-muted p-2'
+        }
+      >
         {failedUrl === imageUrl ? (
           <p className="p-4 text-center">{unavailableLabel}</p>
         ) : (
@@ -36,7 +49,7 @@ export const ImageMetadataCard = ({
             decoding="async"
             width={480}
             height={360}
-            className="h-full w-full object-contain"
+            className={fit === 'frame' ? 'h-full w-full object-contain' : 'h-auto w-full'}
             onError={() => setFailedUrl(imageUrl)}
           />
         )}

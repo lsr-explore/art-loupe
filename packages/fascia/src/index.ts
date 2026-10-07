@@ -1,3 +1,5 @@
+export type { GalleryEngine, GalleryLayout } from './components/blocks/gallery-layout';
+export { ImageGallery, type ImageGalleryProps } from './components/blocks/image-gallery';
 export {
   ImageMetadataCard,
   type ImageMetadataCardProps,

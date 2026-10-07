@@ -91,7 +91,7 @@ sequenceDiagram
 | 1 | `studio/components/inspiration/inspiration-search.tsx` → `worthAutoSearch` | Applies the three-character rule to automatic commits. |
 | 1 | `packages/schemas/src/inspiration.ts` → `inspirationRequestSchema` | Validates and normalizes the request in the browser. |
 | 2 | `studio/components/inspiration/inspiration-page.tsx` → `QueryClient` options | Sets the 5-minute freshness and 30-minute retention. |
-| 2–3 | `studio/components/inspiration/inspiration-search.tsx` → `useInfiniteQuery` | Owns the query key, pagination, and refetch. |
+| 2–3 | `studio/components/inspiration/use-inspiration-results.ts` → `useInspirationResults` | Owns the query key, pagination, and refetch. |
 | 3, 17 | `studio/lib/inspiration/search.ts` → `fetchInspiration` | Calls the bridge, then validates the response, page, and source. |
 | 4 | `studio/app/api/inspiration/route.ts` → `GET` | Validates again, then forwards to FastAPI. |
 | 4 | `agent/inspiration_routes.py` → `search` | The FastAPI endpoint. |
@@ -106,7 +106,12 @@ sequenceDiagram
 | 8–13 | `agent/inspiration_providers.py` → `get_json` | Makes every provider HTTP call, with a 5-second timeout. |
 | 16 | `studio/app/api/inspiration/route.ts` → `inspirationResponseSchema` | Validates the backend response before returning it. |
 | 17 | `studio/lib/inspiration/results.ts` → `visibleResults` | Removes duplicates, then filters and sorts loaded results. |
-| 18 | `studio/components/inspiration/inspiration-search.tsx` → `InspirationSearch` | Renders the form, notices, and result grid. |
+| 1, 18 | `studio/components/inspiration/inspiration-search.tsx` → `InspirationSearch` | The container: owns request, server, and view state and composes the pieces. |
+| 1 | `studio/components/inspiration/inspiration-search-form.tsx` → `InspirationSearchForm` | Renders the request form; edits only the draft. |
+| 17 | `studio/components/inspiration/results-toolbar.tsx` → `ResultsToolbar` | Filter, sort, layout engine, and masonry controls. None makes a request. |
+| 18 | `studio/components/inspiration/inspiration-results.tsx` → `InspirationResults` | Renders the status, notices, gallery, and Load more. |
+| 18 | `packages/fascia/src/components/blocks/image-gallery.tsx` → `ImageGallery` | Lays out the result list in grid or flex, with masonry on or off. |
+| 18 | `packages/fascia/src/components/blocks/gallery-layout.ts` | The layout arithmetic: column count, grid spans, flex columns. |
 | 18–20 | `packages/fascia/src/components/blocks/image-metadata-card.tsx` → `ImageMetadataCard` | Renders each figure and handles a broken image. |
 | 19–20 | `apps/studio/next.config.ts` → CSP `img-src` | Allows only the two image hosts. |
 
@@ -228,7 +233,8 @@ sequenceDiagram
 | 9–11 | `agent/inspiration_cache.py` → `cached_search` | Skips caching partial pages and falls back to stale rows. |
 | 10–11 | `agent/inspiration_routes.py` → `search` | Turns `ProviderUnavailable` into 503 with `Retry-After: 60`. |
 | 12–13 | `studio/lib/inspiration/search.ts` → `SearchError` | Carries the status into React Query. |
-| 12–13 | `studio/components/inspiration/inspiration-search.tsx` → `errors`, notices | Chooses the message, retry, and partial or stale notices. |
+| 12–13 | `studio/components/inspiration/inspiration-results.tsx` → `error`, notices | Chooses the message, retry, and partial or stale notices. |
+| 12–13 | `studio/components/inspiration/inspiration-search.tsx` → `status` | Composes the polite status line, including the held-back label. |
 | 12–13 | `apps/studio/messages/en.json` → `inspiration.*` | Holds the copy for each outcome. |
 
 ## Pieces to remember
@@ -238,9 +244,9 @@ sequenceDiagram
 | Draft versus committed input | `use-search-input.ts` | Typing is immediate; requests wait 600 ms, and only for terms of three or more characters. Submit commits immediately, whatever the length. While a short edit is held back, the status says which term the loaded results belong to. Source changes clear incompatible filters and commit immediately. |
 | Timer cleanup | `use-search-input.ts` | Every keystroke cancels the previous timer; unmount cancels the final one. |
 | Validation and normalization | `packages/schemas/src/inspiration.ts` | Trim whitespace, bound inputs and pages, reject filters for the wrong provider, require ordered date pairs. Python validates again at its own boundary. |
-| Query key | `inspiration-search.tsx` | Source and request filters identify server data. The same normalized search reuses its cache. |
+| Query key | `use-inspiration-results.ts` | Source and request filters identify server data. The same normalized search reuses its cache. |
 | Cancellation | `search.ts` | React Query supplies an AbortSignal. Obsolete fetches are cancelled and cannot overwrite a newer query. |
-| Infinite query | `inspiration-search.tsx` | Explicit Load more keeps pagination under user control. A changed query starts at page one. A failed next page retains prior pages. |
+| Infinite query | `use-inspiration-results.ts` | Explicit Load more keeps pagination under user control. A changed query starts at page one. A failed next page retains prior pages. |
 | Server versus view state | `results.ts` | Query pages are server state; title/creator filtering and sorting are derived view state. Local controls do not make requests. |
 | Immutable sorting | `results.ts` | `toSorted` leaves cached arrays intact; unknown dates sort last in either direction. Duplicate IDs across pages are removed. |
 | Two cache layers | Page QueryClient and `inspiration_cache.py` | Browser cache improves revisits; shared database cache avoids repeated provider calls across Cloud Run instances. |
@@ -248,7 +254,8 @@ sequenceDiagram
 | Connection pool | `inspiration_cache.py` | One small pool per process reuses database connections instead of connecting per operation. |
 | Identity token cache | `cloud-run.ts` | One Google ID token per server instance is reused until shortly before it expires. |
 | Detail deadline | `inspiration_providers.py` | A slow Met batch returns the details that arrived, marked partial, instead of failing whole. |
-| Layout | fascia `ImageMetadataCard` | Fixed image space limits layout shift; `object-contain` preserves the whole painting. Metadata survives a broken image. |
+| Card | fascia `ImageMetadataCard` | `frame` fit gives every image the same 4:3 box with `object-contain`, which limits layout shift and preserves the whole painting. `natural` fit keeps each image's proportions for masonry. Metadata survives a broken image. |
+| Gallery layouts | fascia `ImageGallery`, `gallery-layout.ts` | Grid or flex, masonry on or off, with DOM order always the sorted order. See Gallery layouts below. |
 | Accessibility | fascia primitives and Playwright | Native selects, associated labels, visible focus, 44px controls, polite status, semantic figures, and error announcements. |
 
 Start with this recall exercise: name each state variable, classify it as draft input,
@@ -257,6 +264,57 @@ Next explain what happens when the user types "tree", changes it to "flowers", a
 first response arrives last. Finally explain an outage with and without a cached result.
 Then explain why typing "sunflower" costs one provider request rather than four, and
 what an artist sees when they search too quickly versus when the provider quota is spent.
+
+## Component structure
+
+The page is split by responsibility. One container owns the state, and the children
+only render and report changes:
+
+| Component | Owns | Renders |
+| --- | --- | --- |
+| `InspirationSearch` | Draft and committed request, view state (filter, sort, layout) | Composes the rest; computes the status line |
+| `useInspirationResults` | Server state (the infinite query) | Nothing |
+| `InspirationSearchForm` | Nothing | The request form and provider credit |
+| `ResultsToolbar` | Nothing | Filter, sort, layout, and masonry controls |
+| `InspirationResults` | Nothing | Status, notices, gallery, Load more |
+| `ImageGallery` (fascia) | Measured widths and heights | The list in the chosen layout |
+
+`ImageGallery` and `ImageMetadataCard` live in fascia and know nothing about inspiration
+data. The planned "use this image as a project reference" flow can reuse both.
+
+## Gallery layouts
+
+Two independent controls make four layouts. **Layout** picks the CSS engine: grid or
+flexbox. **Masonry** decides whether rows line up (off) or each image keeps its own
+height and items pack upward (on). Changing either is view state; neither makes a request.
+
+| | Masonry off | Masonry on |
+| --- | --- | --- |
+| **Grid** | `grid-template-columns: repeat(n, 1fr)`; every card is a 4:3 frame | 1 px implicit rows; each item spans its measured height plus one gap |
+| **Flex** | `flex-wrap: wrap`; each item is `(100% − gaps) / n` wide | Column-direction wrap at a computed height; `order` sends item `i` to column `i % n` |
+
+The column count `n` comes from the measured list width: as many 288 px columns as
+fit, from one to three.
+
+**DOM order is always the sorted order.** Keyboard focus and screen readers follow the
+DOM, and a sort by title or date is meaningful. Both masonry techniques keep that order
+and change only where items are drawn. In grid masonry, items still flow row by row. In
+flex masonry, reading across the columns follows the DOM order. Plain CSS `columns` was
+rejected because it fills the first column top to bottom, so a sorted list would read
+down instead of across.
+
+**Masonry needs measurements.** It engages only once the list width and every item height
+are known. A layout effect measures before the first paint, and a ResizeObserver
+re-measures as images load. Until then, or where ResizeObserver is missing, the same
+engine shows plain rows. Measuring there is valid, because an item's width is the same
+in both modes. Flex masonry ends each column with a zero-width, `aria-hidden` break item,
+so no column can overflow into the next.
+
+**Known costs.** Masonry cards use the image's natural proportions. The image's width
+and height attributes reserve a 4:3 box until it loads, so the layout shifts once per
+image as real proportions arrive. Provider image dimensions in the contract would remove
+that shift. The list keeps an explicit `role="list"`, because Safari drops list
+semantics from an unbulleted list. The layout choice is not persisted between visits.
 
 ## Provider semantics
 
