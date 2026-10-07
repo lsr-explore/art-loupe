@@ -156,7 +156,7 @@ jobs:
       # together.
       - uses: supabase/setup-cli@v3
         with:
-          version: 2.116.0
+          version: 2.120.0
 
       # The same stack `pnpm supabase start` runs locally, minus every service the tests do
       # not touch. A plain `postgres:` service container is lighter and was what this job used
