@@ -3,6 +3,7 @@
 
 import { MAX_UPLOAD_BYTES } from '@artloupe/schemas';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   ACCESS_TOKEN_WITH_SUBJECT,
   ACCESS_TOKEN_WITHOUT_SUBJECT,

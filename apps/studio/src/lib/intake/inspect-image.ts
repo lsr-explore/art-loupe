@@ -1,5 +1,4 @@
 import 'server-only';
-
 /**
  * What an uploaded photograph actually is, decided from its bytes.
  *
@@ -19,7 +18,6 @@ import 'server-only';
  * is what makes the refusal load bearing rather than advisory — this module exists so the
  * artist gets a reason they can read *before* Postgres gives them one they cannot.
  */
-
 import {
   ACCEPTED_MIME_TYPES,
   type AcceptedMimeType,

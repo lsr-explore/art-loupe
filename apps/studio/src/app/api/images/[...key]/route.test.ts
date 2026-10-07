@@ -1,6 +1,7 @@
 // @vitest-environment node
 // A route handler runs on the server and returns a web `Response`; there is no DOM in it.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   ACCESS_TOKEN,
   IMAGE_BYTES,

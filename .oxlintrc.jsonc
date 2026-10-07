@@ -7,28 +7,28 @@
   // Oxlint's native port has every Next.js rule except one; the Next.js ESLint plugin runs
   // through the JS plugin API for that rule alone. Aliased, because `nextjs` is native.
   "jsPlugins": [{ "name": "next-js", "specifier": "@next/eslint-plugin-next" }],
-  // High-confidence rules, on by default in oxlint. This replaces Biome's recommended set.
+  // High-confidence rules, on by default in oxlint. It replaced Biome's recommended set (ADR 0004).
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
   },
   // Browser and Node globals, as eslint-config-next declared them. Without `browser`, the
   // Next.js JS plugin cannot resolve `window` as a global and its rule never fires.
   "env": {
     "builtin": true,
     "browser": true,
-    "node": true
+    "node": true,
   },
   "settings": {
     "react": {
-      "version": "19.3.0"
-    }
+      "version": "19.3.0",
+    },
   },
   "rules": {
     // ---- House rules (.claude/rules/coding-standards.md) -------------------------------
     // Oxlint also checks type parameters, which ESLint's id-length did not: `<T>` fails.
     "id-length": [
       "error",
-      { "min": 2, "exceptions": ["_"], "exceptionPatterns": ["^_"], "properties": "never" }
+      { "min": 2, "exceptions": ["_"], "exceptionPatterns": ["^_"], "properties": "never" },
     ],
     "func-style": ["error", "expression", { "allowArrowFunctions": true }],
     "prefer-const": "error",
@@ -147,7 +147,7 @@
     // A typing preference never enforced here; untyped vi.fn() mocks are the norm.
     "vitest/require-mock-type-parameters": "off",
     // Helpers that assert internally count as assertions.
-    "vitest/expect-expect": ["error", { "assertFunctionNames": ["expect", "closeOverlay"] }]
+    "vitest/expect-expect": ["error", { "assertFunctionNames": ["expect", "closeOverlay"] }],
   },
   "ignorePatterns": [
     "**/.next/**",
@@ -164,6 +164,6 @@
     "**/test-results/**",
     "**/.agents/skills/**",
     // Supabase CLI runtime state, including a minified edge-runtime bootstrap.
-    "supabase/.temp/**"
-  ]
+    "supabase/.temp/**",
+  ],
 }

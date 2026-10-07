@@ -9,6 +9,7 @@
 
 import { getAccessToken } from '@artloupe/auth/server';
 import type { NextRequest } from 'next/server';
+
 import { env } from '@/env';
 import { notFound } from '@/lib/api/responses';
 import { deleteProject } from '@/lib/storage/delete-project';

@@ -1,11 +1,11 @@
 {
   "provenance": {
-    "generated_on": "2026-08-30",
+    "generated_on": "2026-10-07",
     "generated_by": "scripts/reports/contrast-report.mjs",
     "version": "0.1.0",
-    "head_commit": null,
-    "inputs_dirty": null,
-    "inputs_fingerprint": "3122b533a9f072c6",
+    "head_commit": "3f0a055860aa3b6dd017447a03025d6c9652d811",
+    "inputs_dirty": true,
+    "inputs_fingerprint": "cc007930a3c49bf5",
     "inputs": [
       {
         "path": "apps/entry/src/app/globals.css",
@@ -25,7 +25,7 @@
       },
       {
         "path": "scripts/reports/contrast-report.mjs",
-        "sha256": "1eacc530531606733eb81c1f3d07a5cd45266a5df276267e04c30afa3d87fc91"
+        "sha256": "fe20bfaf9db8585069cc1b7fc03234b4c0a5032512e7de46fa4093ea81c61a92"
       }
     ]
   },

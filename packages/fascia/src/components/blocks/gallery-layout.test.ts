@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { columnCount, flexColumnOf, flexMasonryHeight, gridRowSpan } from './gallery-layout';
 
 // @trace flow=inspiration.search category=functionality

@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { describe, expect, it } from 'vitest';
+
 import { ACK_COOKIE_NAME, acknowledgementRedirectUrl, hasAcknowledged } from './ack';
 
 /** Minimal stand-in — middleware only ever reads `cookies` and `nextUrl`. */

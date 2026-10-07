@@ -3,6 +3,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { Menu, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+
 import { cn } from '../../lib/utils';
 
 export interface AppSidebarLabels {
@@ -56,7 +57,7 @@ export const AppSidebar = ({ labels, children }: AppSidebarProps) => {
    * A **callback ref** rather than an effect, because the listener's lifetime is
    * the popup node's: the popup only exists while open, so an effect would need
    * `isOpen` in its dependencies purely to re-run once the node exists — which
-   * Biome correctly reads as an unnecessary dependency. React 19 lets a ref
+   * the exhaustive-deps rule correctly reads as an unnecessary dependency. React 19 lets a ref
    * callback return its own cleanup, which is exactly this shape.
    *
    * Delegated from the container rather than bound per link, because the nav

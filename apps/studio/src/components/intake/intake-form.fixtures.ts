@@ -7,6 +7,7 @@
  */
 
 import { MAX_UPLOAD_BYTES } from '@artloupe/schemas/image-limits';
+
 import type { CreateProjectResponse, UploadRejection } from '@/lib/api/project-contract';
 
 /** A real, if minimal, PNG signature. The form never decodes it; the server does. */

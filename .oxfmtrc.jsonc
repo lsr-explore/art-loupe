@@ -1,0 +1,48 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // Oxfmt is the only formatter (docs/decision-records/0005). Generated with
+  // `oxfmt --migrate=biome`, then matched to what Biome actually formatted and sorted.
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "semi": true,
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  // Biome sorted imports as part of `biome check`; keep that.
+  "sortImports": true,
+  // Biome never reordered package.json keys, and oxfmt does by default.
+  "sortPackageJson": false,
+  // Biome kept double quotes in CSS; `singleQuote` would otherwise apply there too.
+  "overrides": [{ "files": ["**/*.css"], "options": { "singleQuote": false } }],
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/.next",
+    "**/dist",
+    "**/coverage",
+    "**/test-output",
+    "**/storybook-static",
+    "**/test-results",
+    "**/playwright-report",
+    "**/next-env.d.ts",
+    ".vercel",
+    ".VSCodeCounter",
+    ".agents/skills",
+    ".claude",
+    "python",
+    "supabase/.temp",
+    // Biome never formatted these, and other tools own them: markdownlint checks Markdown,
+    // and the report scripts keep their own style. Formatting them is a separate decision.
+    "**/*.md",
+    "**/*.mdx",
+    "**/*.yml",
+    "**/*.yaml",
+    "**/*.toml",
+    "**/*.html",
+    "scripts/**",
+  ],
+}

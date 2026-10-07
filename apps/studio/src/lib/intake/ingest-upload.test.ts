@@ -2,7 +2,9 @@
 // Two systems, a checksum over real bytes, and no DOM anywhere in it.
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { computeChecksum } from '@/lib/storage/checksum';
+
 import { ingestUpload, NOT_SCREENED_RULE_ID } from './ingest-upload';
 import {
   ACCESS_TOKEN,

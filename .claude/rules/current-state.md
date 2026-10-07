@@ -25,7 +25,7 @@ Run the **`/wrap` skill**, which does all of this. Manually, it is:
 2. **Regenerate** — `pnpm session-metrics:report`.
 3. **Overwrite `docs/current-state.md`** — both §1 and §2, as a snapshot of the present.
    This is a replace, not an append. It carries no history and is never dated as history.
-4. **Run `pnpm format`, then `pnpm lint:md`.** Biome formats JSON, so a hand-written
+4. **Run `pnpm format`, then `pnpm lint:md`.** Oxfmt formats JSON, so a hand-written
    record fails `format:check` — and husky blocks the commit — until it's normalized.
 
 ## What goes where

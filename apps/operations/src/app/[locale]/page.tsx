@@ -1,5 +1,6 @@
 import { LoginCard } from '@artloupe/fascia/components/blocks/login-card';
 import { getLocale, getTranslations } from 'next-intl/server';
+
 import { LoginSection } from '@/components/auth/login-section';
 
 const LandingPage = async () => {

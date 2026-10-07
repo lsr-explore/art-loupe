@@ -3,7 +3,9 @@ import type { GalleryLayout } from '@artloupe/fascia/components/blocks/gallery-l
 import type { InspirationRequest } from '@artloupe/schemas/inspiration';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
+
 import { type ResultSort, visibleResults } from '@/lib/inspiration/results';
+
 import { InspirationResults } from './inspiration-results';
 import { datesInvalid, InspirationSearchForm } from './inspiration-search-form';
 import { ResultsToolbar } from './results-toolbar';

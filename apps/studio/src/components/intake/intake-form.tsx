@@ -62,6 +62,7 @@ import {
 import { MEDIA, type Medium, SKILL_LEVELS, type SkillLevel } from '@artloupe/schemas/intent-values';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
+
 import { useRouter } from '@/i18n/navigation';
 import {
   type CreateProjectResponse,
@@ -70,6 +71,7 @@ import {
   PROJECTS_ENDPOINT,
   type UploadRejection,
 } from '@/lib/api/project-contract';
+
 import { PhotographDropZone } from './photograph-drop-zone';
 
 /** FR-102: the goal is free text and the schema caps it. Kept in step with `intent.ts`. */

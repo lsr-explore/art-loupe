@@ -2,6 +2,7 @@
 
 import { type AuthProvider, createSupabaseAuthProvider, demoAuthProvider } from '@artloupe/auth';
 import { signIn, signOut } from '@artloupe/auth/server';
+
 import { env } from '@/env';
 import { redirect } from '@/i18n/navigation';
 

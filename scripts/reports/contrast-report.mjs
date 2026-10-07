@@ -495,7 +495,7 @@ writeFileSync(
         severity: rr.severity,
       })),
       // Named fields rather than a positional pair, so `JSON.stringify` output is
-      // already biome-canonical — biome inlines a short array that stringify always
+      // already formatter-canonical — the formatter inlines a short array that stringify always
       // expands, which would make every regeneration a formatting diff as well.
       separation: separation.map((ss) => ({
         token: ss.token,

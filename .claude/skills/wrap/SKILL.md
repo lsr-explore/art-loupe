@@ -150,7 +150,7 @@ Show the drafted record and ask for corrections **before** writing. Then:
    notes) — per `.claude/rules/current-state.md`. Replace, don't append: it holds no
    history. Keep it short; if it grows every session, something in it belongs in the
    metrics record, an ADR, or `settled-decisions.md`.
-4. Run `pnpm format` then `pnpm lint:md`. Biome formats JSON, so a hand-written record
+4. Run `pnpm format` then `pnpm lint:md`. Oxfmt formats JSON, so a hand-written record
    will fail `format:check` (and block the commit via husky) until it's normalized.
 
 Do not commit unless asked.

@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import { AppShell, type AppShellLabels } from './app-shell';
 import { UserChip } from './user-chip';
 

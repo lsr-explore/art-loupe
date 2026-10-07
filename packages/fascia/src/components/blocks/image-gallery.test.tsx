@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import type { GalleryLayout } from './gallery-layout';
 import { ImageGallery } from './image-gallery';
 

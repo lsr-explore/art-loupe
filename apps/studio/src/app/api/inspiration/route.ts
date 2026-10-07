@@ -1,5 +1,6 @@
 import { getAccessToken } from '@artloupe/auth/server';
 import { inspirationRequestSchema, inspirationResponseSchema } from '@artloupe/schemas/inspiration';
+
 import { env } from '@/env';
 import { cloudRunHeaders } from '@/lib/inspiration/cloud-run';
 

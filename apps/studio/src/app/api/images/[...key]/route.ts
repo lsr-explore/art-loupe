@@ -17,6 +17,7 @@
 import { getAccessToken } from '@artloupe/auth/server';
 import { ACCEPTED_MIME_TYPES, type AcceptedMimeType } from '@artloupe/schemas';
 import type { NextRequest } from 'next/server';
+
 import { env } from '@/env';
 import { notFound } from '@/lib/api/responses';
 import { parseReferenceImageKey } from '@/lib/storage/reference-images';

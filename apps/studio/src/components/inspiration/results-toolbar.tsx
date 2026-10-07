@@ -7,7 +7,9 @@ import { Label } from '@artloupe/fascia/components/ui/label';
 import { NativeSelect } from '@artloupe/fascia/components/ui/native-select';
 import type { InspirationRequest } from '@artloupe/schemas/inspiration';
 import { useTranslations } from 'next-intl';
+
 import type { ResultSort } from '@/lib/inspiration/results';
+
 import { Field, TextInput } from './form-fields';
 
 interface ResultsToolbarProps {

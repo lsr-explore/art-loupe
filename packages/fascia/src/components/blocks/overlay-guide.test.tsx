@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import { OverlayGuide } from './overlay-guide';
 
 const HORIZON = { from: { x: 0, y: 0.42 }, to: { x: 1, y: 0.44 } };

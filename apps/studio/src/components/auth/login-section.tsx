@@ -3,6 +3,7 @@
 import { LoginForm } from '@artloupe/fascia/components/blocks/login-form';
 import { useTranslations } from 'next-intl';
 import { useActionState } from 'react';
+
 import { type LoginState, login } from '@/app/[locale]/actions';
 
 const INITIAL_STATE: LoginState = { error: false };

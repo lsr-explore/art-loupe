@@ -11,6 +11,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
+
 import rawFixture from '../fixtures/screening-rules.json';
 import {
   type Detection,

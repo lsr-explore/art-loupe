@@ -1,7 +1,7 @@
 import 'server-only';
-
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
+
 import { getSessionOptions } from './options';
 import { type AuthProvider, demoAuthProvider, type TokenRefresher } from './provider';
 import type { Credentials, Role, Session, SessionData } from './types';

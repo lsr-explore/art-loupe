@@ -51,7 +51,7 @@ product + platform calls.
   iron-session cookie; the client sees an opaque value. Session lifetime is set explicitly
   (8h default, 1h for operations) — never left to iron-session's 14-day default.
 - **a11y enforced** by Oxlint's native jsx-a11y rules: all 31 of jsx-a11y's recommended
-  rules, plus `prefer-tag-over-role` (ADR 0004). Biome formats only; its linter is off.
+  rules, plus `prefer-tag-over-role` (ADR 0004). Oxfmt formats (ADR 0005).
 - **Cross-browser** — e2e runs chromium + firefox + WebKit; real deploys keep HSTS /
   `upgrade-insecure-requests` / `Secure` cookies, with a `DISABLE_HTTPS_UPGRADE` opt-out
   for HTTP-localhost serving.

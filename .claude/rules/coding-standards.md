@@ -6,7 +6,7 @@
 - Avoid `function` declarations unless there is a clear reason to use one.
 - **No single-character variables** — minimum 2 characters. Use descriptive names in callbacks.
 - Prefer `const` over `let` unless reassignment is required.
-- Follow Biome defaults for import ordering and formatting.
+- Follow Oxfmt (`.oxfmtrc.jsonc`) for import ordering and formatting.
 - Use kebab-case for file and directory names unless framework conventions require otherwise.
 
 ## TypeScript

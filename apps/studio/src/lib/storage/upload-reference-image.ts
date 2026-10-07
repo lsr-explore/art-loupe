@@ -1,5 +1,4 @@
 import 'server-only';
-
 /**
  * Put one original into the private bucket, and take it back out if the row that should cite
  * it never gets written.
@@ -21,7 +20,6 @@ import 'server-only';
  * The credential is the artist's own token, never `service_role`, on the same grounds as every
  * other storage call in this app (ADR 0002).
  */
-
 import {
   buildReferenceImageKey,
   parseReferenceImageKey,

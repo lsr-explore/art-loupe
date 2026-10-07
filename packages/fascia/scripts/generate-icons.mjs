@@ -19,6 +19,7 @@ import { Buffer } from 'node:buffer';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import sharp from 'sharp';
 
 const HERE = dirname(fileURLToPath(import.meta.url));

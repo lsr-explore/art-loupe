@@ -5,6 +5,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import type { Role } from '@artloupe/auth';
 import { ACK_COOKIE_NAME } from '@artloupe/auth/ack';
 import { NextRequest, NextResponse } from 'next/server';

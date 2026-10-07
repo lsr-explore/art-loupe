@@ -102,11 +102,11 @@ regression, so they should never sit above a pairing that is one anchor nudge fr
 
 | | |
 | --- | --- |
-| Generated | 2026-08-30 |
+| Generated | 2026-10-07 |
 | Repo version | `0.1.0` |
-| HEAD | *not a git checkout* |
-| Working tree | *unknown* |
-| Inputs fingerprint | `3122b533a9f072c6` |
+| HEAD | `3f0a055860aa3b6dd017447a03025d6c9652d811` |
+| Working tree | **dirty** — inputs differ from HEAD |
+| Inputs fingerprint | `cc007930a3c49bf5` |
 
 The fingerprint is a SHA-256 over the exact bytes of every file that can change a
 number below. It is what makes staleness detectable: `pnpm contrast:check` recomputes
@@ -120,7 +120,7 @@ it moves on commits that touch none of these files, so it is not the staleness s
 | `apps/studio/src/app/globals.css` | `ebf273eade213344` |
 | `apps/operations/src/app/globals.css` | `7ea9f5604e156b3b` |
 | `packages/fascia/src/theme/contrast.ts` | `a3081af6ddaca7e7` |
-| `scripts/reports/contrast-report.mjs` | `1eacc53053160673` |
+| `scripts/reports/contrast-report.mjs` | `fe20bfaf9db85850` |
 
 `docs/contrast-report/contrast.json` carries the same provenance plus every measured ratio, for
 anything that wants the numbers without parsing markdown.

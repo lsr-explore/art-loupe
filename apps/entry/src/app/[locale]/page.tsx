@@ -1,6 +1,7 @@
 import { BrandLogo } from '@artloupe/fascia/components/blocks/brand-logo';
-import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
+import { cookies } from 'next/headers';
+
 import { LaunchPanels } from '@/components/entry/launch-panels';
 import { ACK_COOKIE_NAME } from '@/lib/ack-cookie';
 import { resolveNextUrl } from '@/lib/app-origins';

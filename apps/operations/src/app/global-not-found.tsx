@@ -1,9 +1,11 @@
 import { StandaloneMessage } from '@artloupe/fascia/components/blocks/standalone-message';
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
 import { getTranslations } from 'next-intl/server';
+import { Geist } from 'next/font/google';
+
 import { env } from '@/env';
 import { routing } from '@/i18n/routing';
+
 import './globals.css';
 
 const geistSans = Geist({

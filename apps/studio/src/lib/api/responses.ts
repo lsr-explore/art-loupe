@@ -38,6 +38,7 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import type { ApiErrorBody, UploadRejection } from './project-contract';
 
 /**

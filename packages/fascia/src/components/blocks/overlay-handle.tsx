@@ -2,6 +2,7 @@
 
 import { cn } from '@artloupe/fascia/lib/utils';
 import { type KeyboardEvent, type PointerEvent, useCallback, useId, useRef } from 'react';
+
 import { useOverlayCanvas } from './overlay-canvas';
 import {
   clampPoint,

@@ -4,15 +4,18 @@ import { shellLabels } from '@artloupe/fascia/components/blocks/shell-labels';
 import { ThemeProvider } from '@artloupe/fascia/components/blocks/theme-provider';
 import { UserChip } from '@artloupe/fascia/components/blocks/user-chip';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { notFound } from 'next/navigation';
+
 import { LanguageToggle } from '@/components/layout/language-toggle';
-import { Link } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
-import '../globals.css';
 import { env } from '@/env';
+import { Link } from '@/i18n/navigation';
+
+import '../globals.css';
+import { routing } from '@/i18n/routing';
+
 import { logout } from './actions';
 
 const geistSans = Geist({

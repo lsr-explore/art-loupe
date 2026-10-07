@@ -5,6 +5,7 @@ import { Badge } from '@artloupe/fascia/components/ui/badge';
 import { Button } from '@artloupe/fascia/components/ui/button';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useId, useRef, useState } from 'react';
+
 import { acknowledgeAndLaunch } from '@/app/[locale]/actions';
 import { LAUNCH_TARGETS, type LaunchTarget } from '@/lib/launch-targets';
 

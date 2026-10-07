@@ -1,5 +1,6 @@
 import { Button } from '@artloupe/fascia/components/ui/button';
 import { getTranslations } from 'next-intl/server';
+
 import { Link } from '@/i18n/navigation';
 
 const NotFound = async () => {

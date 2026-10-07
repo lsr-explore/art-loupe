@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@artloupe/fascia/lib/utils';
+
 import type { OverlayPoint, OverlayStatus } from './overlay-geometry';
 
 interface OverlayGuideProps {

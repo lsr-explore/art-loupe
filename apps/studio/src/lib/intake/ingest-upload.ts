@@ -1,5 +1,4 @@
 import 'server-only';
-
 /**
  * Take one uploaded photograph from bytes to a project the artist owns.
  *
@@ -33,14 +32,15 @@ import 'server-only';
  * because the key ends in the content checksum. That is cheaper than the alternative, which is
  * holding `service_role` to guarantee cleanup — and no app runtime holds `service_role`.
  */
-
 import { type Detection, type ProjectIntent, screenText, screenValues } from '@artloupe/schemas';
+
 import { computeChecksum } from '@/lib/storage/checksum';
 import { buildReferenceImageKey } from '@/lib/storage/reference-images';
 import {
   deleteReferenceImageObject,
   uploadReferenceImage,
 } from '@/lib/storage/upload-reference-image';
+
 import { type ImageRejection, inspectImage } from './inspect-image';
 
 /**

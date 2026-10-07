@@ -1,5 +1,6 @@
-import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+
 import { Link } from '@/i18n/navigation';
 
 /**

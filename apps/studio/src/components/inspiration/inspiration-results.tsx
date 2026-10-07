@@ -6,7 +6,9 @@ import { Button } from '@artloupe/fascia/components/ui/button';
 import type { InspirationImage } from '@artloupe/schemas/inspiration';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
+
 import { SearchError } from '@/lib/inspiration/search';
+
 import { linkClass } from './form-fields';
 import type { InspirationResults as Results } from './use-inspiration-results';
 

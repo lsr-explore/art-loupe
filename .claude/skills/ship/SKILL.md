@@ -29,7 +29,7 @@ Each of these has cost a real session. Run them before staging anything.
 ```sh
 git status --short                       # know everything you're about to stage
 git check-ignore -v <new-file>           # see below — this one is the sneaky one
-pnpm format                              # Biome formats JSON too; format:check blocks the commit
+pnpm format                              # Oxfmt formats JSON too; format:check blocks the commit
 pnpm check:all                           # or the subset the change touches
 ```
 
@@ -38,7 +38,7 @@ pnpm check:all                           # or the subset the change touches
   would have shipped as a dangling reference. `git status` won't show it — it just isn't there.
 - **Are there stale generated artifacts?** If a chart, report, or fixture was dropped during
   the work, its output file may still be on disk and will get staged. Regenerate and diff.
-- **Run `pnpm format` before committing**, not just `format:check`. Biome formats JSON, so
+- **Run `pnpm format` before committing**, not just `format:check`. Oxfmt formats JSON, so
   hand-written records fail the check and block the commit.
 - **Never commit to `main`** — it's ruleset-protected and PR-only. Branch first.
 

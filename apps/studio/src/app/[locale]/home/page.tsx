@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+
 import { Link } from '@/i18n/navigation';
 
 const HomePage = async () => {

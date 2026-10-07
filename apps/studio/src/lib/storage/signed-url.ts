@@ -1,5 +1,4 @@
 import 'server-only';
-
 /**
  * A short-lived URL for one original upload, minted with the artist's own token.
  *
@@ -16,7 +15,6 @@ import 'server-only';
  *
  * There is no HTTP path in this pull request. This module is the seam PR 6 and PR 7 call into.
  */
-
 import { parseReferenceImageKey, REFERENCE_IMAGE_BUCKET } from './reference-images';
 
 /**

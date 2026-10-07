@@ -7,7 +7,7 @@
     "MD024": { "siblings_only": true },
     "MD033": false,
     "MD040": false,
-    "MD060": false
+    "MD060": false,
   },
   "ignores": [
     "**/node_modules/**",
@@ -28,6 +28,6 @@
     // Per-app agent config, not prose: a one-line `@AGENTS.md` import has no heading
     // to give it. The root CLAUDE.md is a real document and stays linted.
     "apps/*/CLAUDE.md",
-    "packages/*/CLAUDE.md"
-  ]
+    "packages/*/CLAUDE.md",
+  ],
 }

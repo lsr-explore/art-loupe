@@ -109,8 +109,8 @@ pnpm lint:md                                         # the generated pages must 
 ```
 
 **`pnpm format` must come after `traceability:report`, not before.** The report writes
-`traceability.json`, and the generator's JSON is not in Biome's canonical shape — a short
-array it prints expanded, Biome collapses to one line. Formatting first therefore leaves a
+`traceability.json`, and the generator's JSON is not in Oxfmt's canonical shape — a short
+array it prints expanded, Oxfmt collapses to one line. Formatting first therefore leaves a
 tree that fails `format:check`, and husky blocks the commit on it. Formatting last also
 means the freshly-written `traceability.json` is the thing being normalized.
 
