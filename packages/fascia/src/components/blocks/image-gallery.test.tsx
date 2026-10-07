@@ -87,10 +87,15 @@ describe('inspiration.search: image gallery', () => {
     expect(container.querySelectorAll('li[aria-hidden="true"]')).toHaveLength(2);
   });
   it('falls back to plain rows until every item is measured', () => {
-    vi.unstubAllGlobals();
     vi.restoreAllMocks();
     gallery({ engine: 'grid', masonry: true });
     expect(screen.getByRole('list')).toHaveAttribute('data-layout', 'grid');
+  });
+  it('falls back to plain rows without ResizeObserver, even when measured once', () => {
+    // Heights are measurable here, but nothing would re-measure as images load.
+    vi.unstubAllGlobals();
+    gallery({ engine: 'flex', masonry: true });
+    expect(screen.getByRole('list')).toHaveAttribute('data-layout', 'flex');
   });
   // @trace category=a11y
   it('has no axe violations in flex masonry, breaks included', async () => {

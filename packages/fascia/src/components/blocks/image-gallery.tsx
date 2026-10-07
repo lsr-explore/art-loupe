@@ -57,7 +57,9 @@ const useGalleryMeasurements = (keySignature: string) => {
     for (const element of itemElements()) observer.observe(element);
     return () => observer.disconnect();
   }, [keySignature]);
-  return { listRef, width, heights };
+  // Without an observer, heights are a one-off snapshot that goes stale as lazy images load.
+  const canObserve = typeof ResizeObserver !== 'undefined';
+  return { listRef, width, heights, canObserve };
 };
 
 /**
@@ -79,9 +81,9 @@ export const ImageGallery = <T,>({
   gap = 20,
 }: ImageGalleryProps<T>) => {
   const keys = items.map(getKey);
-  const { listRef, width, heights } = useGalleryMeasurements(keys.join('\n'));
+  const { listRef, width, heights, canObserve } = useGalleryMeasurements(keys.join('\n'));
   const columns = columnCount(width, minColumnWidth, gap, maxColumns);
-  const measured = width > 0 && keys.every((key) => (heights[key] ?? 0) > 0);
+  const measured = canObserve && width > 0 && keys.every((key) => (heights[key] ?? 0) > 0);
   const masonry = layout.masonry && measured;
   const itemWidth = `calc((100% - ${(columns - 1) * gap}px) / ${columns})`;
 
