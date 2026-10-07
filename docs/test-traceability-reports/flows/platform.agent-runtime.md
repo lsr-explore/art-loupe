@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` · `python/libs/config` |
-| **Tests** | 101 (6 parametrized) |
-| **Covered** | security 50 · data 1 · performance 1 · functionality 49 |
-| **Not covered** | a11y · privacy · safety |
+| **Tests** | 136 (14 parametrized) |
+| **Covered** | security 63 · privacy 1 · data 3 · performance 1 · functionality 68 |
+| **Not covered** | a11y · safety |
 
-## pytest — 101
+## pytest — 136
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -70,6 +70,22 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_resume_does_not_re_run_the_node_before_the_interrupt | `python/libs/persistence/tests/test_interrupt_resume.py:84` |
 | functionality | test_the_artist_correction_is_what_the_run_continues_with | `python/libs/persistence/tests/test_interrupt_resume.py:101` |
 | security | test_checkpoints_are_written_outside_the_api_exposed_schemas | `python/libs/persistence/tests/test_interrupt_resume.py:110` |
+| data | test_transitions | `python/libs/persistence/tests/test_run_log.py:34` |
+| data | test_an_unknown_run_cannot_be_recorded | `python/libs/persistence/tests/test_run_log.py:47` |
+| security | test_a_reader_sees_only_its_owners_runs | `python/libs/persistence/tests/test_run_log.py:53` |
+| security | test_the_recorder_creates_a_queued_run_for_the_owners_project | `python/libs/persistence/tests/test_runs_rls.py:81` |
+| security | test_a_project_that_is_not_the_owners_is_refused_like_an_absent_one | `python/libs/persistence/tests/test_runs_rls.py:95` |
+| security | test_a_finished_run_records_its_events_gaplessly_and_its_result | `python/libs/persistence/tests/test_runs_rls.py:101` |
+| security | test_transitions_match_the_in_memory_log | `python/libs/persistence/tests/test_runs_rls.py:121` |
+| security | test_the_recorder_holds_no_table_privilege | `python/libs/persistence/tests/test_runs_rls.py:138` |
+| security | test_no_api_role_can_execute_the_recorder_functions | `python/libs/persistence/tests/test_runs_rls.py:156` |
+| security | test_the_recorder_can_execute_them | `python/libs/persistence/tests/test_runs_rls.py:164` |
+| security | test_authenticated_may_select_and_nothing_else | `python/libs/persistence/tests/test_runs_rls.py:175` |
+| security | test_anon_holds_nothing | `python/libs/persistence/tests/test_runs_rls.py:186` |
+| security | test_an_artist_cannot_rewrite_their_own_runs_result | `python/libs/persistence/tests/test_runs_rls.py:191` |
+| security | test_an_artist_sees_their_own_run_and_its_events | `python/libs/persistence/tests/test_runs_rls.py:200` |
+| security | test_another_artist_sees_neither | `python/libs/persistence/tests/test_runs_rls.py:212` |
+| privacy | test_runs_and_events_leave_with_their_project | `python/libs/persistence/tests/test_runs_rls.py:225` |
 | security | test_the_grants_this_schema_is_protected_from_are_live_here | `python/libs/persistence/tests/test_schema_privileges.py:75` |
 | security | test_api_roles_cannot_use_the_checkpoint_schema | `python/libs/persistence/tests/test_schema_privileges.py:102` |
 | security | test_api_roles_cannot_read_any_checkpoint_table | `python/libs/persistence/tests/test_schema_privileges.py:117` |
@@ -100,6 +116,14 @@ Agent service transport, auth guard, and graph execution
 | security | test_the_state_holds_no_credential_and_no_pixels | `python/services/agent/tests/test_graph.py:173` |
 | functionality | test_a_project_with_no_photograph_is_not_ready | `python/services/agent/tests/test_graph.py:184` |
 | functionality | test_a_project_with_no_intake_is_not_ready | `python/services/agent/tests/test_graph.py:191` |
+| functionality | test_each_node_reports_its_start_and_finish_in_order | `python/services/agent/tests/test_jobs.py:65` |
+| functionality | test_a_node_that_raises_reports_no_finish_and_the_run_fails | `python/services/agent/tests/test_jobs.py:84` |
+| functionality | test_a_cancelled_run_records_itself_as_interrupted | `python/services/agent/tests/test_jobs.py:99` |
+| functionality | test_a_progress_write_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_jobs.py:123` |
+| functionality | test_shutdown_cancels_pending_runs | `python/services/agent/tests/test_jobs.py:143` |
+| functionality | test_a_final_event_that_fails_transiently_is_retried | `python/services/agent/tests/test_jobs.py:165` |
+| functionality | test_a_final_event_already_recorded_is_not_retried | `python/services/agent/tests/test_jobs.py:187` |
+| functionality | test_a_slow_progress_write_is_abandoned_and_the_run_continues | `python/services/agent/tests/test_jobs.py:201` |
 | data | test_bytes_that_do_not_match_the_checksum_are_refused | `python/services/agent/tests/test_resources.py:22` |
 | functionality | test_bytes_that_are_not_an_image_are_refused | `python/services/agent/tests/test_resources.py:28` |
 | functionality | test_decoding_applies_exif_orientation | `python/services/agent/tests/test_resources.py:35` |
@@ -115,13 +139,24 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_sink_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_runtime.py:186` |
 | functionality | test_a_graph_invoked_without_a_recorder_still_runs | `python/services/agent/tests/test_runtime.py:204` |
 | functionality | test_run_resources_reach_every_node_and_leave_with_the_run | `python/services/agent/tests/test_runtime.py:210` |
-| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:143` |
-| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:150` |
-| functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:163` |
-| functionality | test_creating_a_run_returns_the_routing_and_the_artifacts | `python/services/agent/tests/test_service.py:172` |
-| functionality | test_the_run_is_handed_the_director_client | `python/services/agent/tests/test_service.py:185` |
-| security | test_a_missing_director_key_is_a_503_that_names_nothing_it_tried | `python/services/agent/tests/test_service.py:195` |
-| functionality | test_a_stopped_run_is_reported_as_what_stopped_it | `python/services/agent/tests/test_service.py:301` |
+| functionality | test_health_needs_no_token | `python/services/agent/tests/test_service.py:182` |
+| functionality | test_health_leaks_no_internal_detail | `python/services/agent/tests/test_service.py:189` |
+| functionality | test_a_run_names_its_project | `python/services/agent/tests/test_service.py:202` |
+| functionality | test_creating_a_run_answers_at_once_with_where_to_follow_it | `python/services/agent/tests/test_service.py:211` |
+| functionality | test_a_finished_run_records_its_routing_and_artifacts | `python/services/agent/tests/test_service.py:224` |
+| functionality | test_the_run_is_handed_the_director_client | `python/services/agent/tests/test_service.py:238` |
+| functionality | test_the_run_reports_progress_to_its_own_log | `python/services/agent/tests/test_service.py:247` |
+| security | test_a_missing_director_key_is_a_503_that_names_nothing_it_tried | `python/services/agent/tests/test_service.py:258` |
+| functionality | test_a_stopped_run_records_what_stopped_it | `python/services/agent/tests/test_service.py:396` |
+| functionality | test_following_a_finished_run_replays_its_log_and_closes | `python/services/agent/tests/test_service.py:450` |
+| functionality | test_following_resumes_after_the_last_event_id | `python/services/agent/tests/test_service.py:466` |
+| functionality | test_a_client_holding_the_final_event_is_told_to_stop_reconnecting | `python/services/agent/tests/test_service.py:477` |
+| functionality | test_an_event_is_framed_with_its_sequence_as_the_id | `python/services/agent/tests/test_stream.py:45` |
+| functionality | test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start | `python/services/agent/tests/test_stream.py:66` |
+| functionality | test_a_stream_closes_before_the_token_expires_or_at_its_maximum_length | `python/services/agent/tests/test_stream.py:72` |
+| functionality | test_a_stream_tails_new_events_and_closes_on_the_terminal_one | `python/services/agent/tests/test_stream.py:78` |
+| functionality | test_a_quiet_stream_sends_heartbeats | `python/services/agent/tests/test_stream.py:95` |
+| functionality | test_a_stream_reaching_its_deadline_closes_without_an_event | `python/services/agent/tests/test_stream.py:112` |
 
 ---
 

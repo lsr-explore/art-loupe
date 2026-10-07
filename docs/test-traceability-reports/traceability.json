@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 398,
+      "pytest": 435,
       "vitest": 522,
       "playwright": 40,
-      "all": 960
+      "all": 997
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 398,
+      "pytest": 435,
       "vitest": 522,
       "playwright": 40,
-      "all": 960
+      "all": 997
     }
   },
   "by_flow": {
@@ -166,27 +166,27 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 50,
-        "privacy": 0,
+        "security": 63,
+        "privacy": 1,
         "safety": 0,
-        "data": 1,
+        "data": 3,
         "performance": 1,
-        "functionality": 49
+        "functionality": 68
       },
       "runners": {
-        "pytest": 101,
+        "pytest": 136,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 101,
-      "parametrized": 6
+      "total": 136,
+      "parametrized": 14
     },
     "platform.auth": {
       "severity": "P1",
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 100,
+        "security": 102,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -194,11 +194,11 @@
         "functionality": 13
       },
       "runners": {
-        "pytest": 18,
+        "pytest": 20,
         "vitest": 83,
         "playwright": 17
       },
-      "total": 118,
+      "total": 120,
       "parametrized": 3
     },
     "canvas.session-plan": {
@@ -5958,6 +5958,118 @@
       "category": "data"
     },
     {
+      "id": "python/libs/persistence/tests/test_run_log.py:34",
+      "name": "test_transitions",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_run_log.py:47",
+      "name": "test_an_unknown_run_cannot_be_recorded",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_run_log.py:53",
+      "name": "test_a_reader_sees_only_its_owners_runs",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:101",
+      "name": "test_a_finished_run_records_its_events_gaplessly_and_its_result",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:121",
+      "name": "test_transitions_match_the_in_memory_log",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:138",
+      "name": "test_the_recorder_holds_no_table_privilege",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:156",
+      "name": "test_no_api_role_can_execute_the_recorder_functions",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:164",
+      "name": "test_the_recorder_can_execute_them",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:175",
+      "name": "test_authenticated_may_select_and_nothing_else",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:186",
+      "name": "test_anon_holds_nothing",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:191",
+      "name": "test_an_artist_cannot_rewrite_their_own_runs_result",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:200",
+      "name": "test_an_artist_sees_their_own_run_and_its_events",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:212",
+      "name": "test_another_artist_sees_neither",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:225",
+      "name": "test_runs_and_events_leave_with_their_project",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "privacy"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:81",
+      "name": "test_the_recorder_creates_a_queued_run_for_the_owners_project",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/persistence/tests/test_runs_rls.py:95",
+      "name": "test_a_project_that_is_not_the_owners_is_refused_like_an_absent_one",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
       "id": "python/libs/persistence/tests/test_schema_privileges.py:102",
       "name": "test_api_roles_cannot_use_the_checkpoint_schema",
       "runner": "pytest",
@@ -6686,6 +6798,62 @@
       "category": "functionality"
     },
     {
+      "id": "python/services/agent/tests/test_jobs.py:123",
+      "name": "test_a_progress_write_that_fails_does_not_fail_the_run",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:143",
+      "name": "test_shutdown_cancels_pending_runs",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:165",
+      "name": "test_a_final_event_that_fails_transiently_is_retried",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:187",
+      "name": "test_a_final_event_already_recorded_is_not_retried",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:201",
+      "name": "test_a_slow_progress_write_is_abandoned_and_the_run_continues",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:65",
+      "name": "test_each_node_reports_its_start_and_finish_in_order",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:84",
+      "name": "test_a_node_that_raises_reports_no_finish_and_the_run_fails",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:99",
+      "name": "test_a_cancelled_run_records_itself_as_interrupted",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
       "id": "python/services/agent/tests/test_no_image_generation.py:105",
       "name": "test_an_installed_generator_is_caught",
       "runner": "pytest",
@@ -6763,7 +6931,7 @@
       "category": "data"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:243",
+      "id": "python/services/agent/tests/test_ops_cost.py:270",
       "name": "test_the_reader_role_sees_the_ledger_and_nothing_else",
       "runner": "pytest",
       "flow": "ops.observability",
@@ -6973,92 +7141,183 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:143",
+      "id": "python/services/agent/tests/test_service.py:182",
       "name": "test_health_needs_no_token",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:150",
+      "id": "python/services/agent/tests/test_service.py:189",
       "name": "test_health_leaks_no_internal_detail",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:157",
+      "id": "python/services/agent/tests/test_service.py:196",
       "name": "test_creating_a_run_without_a_token_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:163",
+      "id": "python/services/agent/tests/test_service.py:202",
       "name": "test_a_run_names_its_project",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:172",
-      "name": "test_creating_a_run_returns_the_routing_and_the_artifacts",
+      "id": "python/services/agent/tests/test_service.py:211",
+      "name": "test_creating_a_run_answers_at_once_with_where_to_follow_it",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:185",
+      "id": "python/services/agent/tests/test_service.py:224",
+      "name": "test_a_finished_run_records_its_routing_and_artifacts",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:238",
       "name": "test_the_run_is_handed_the_director_client",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:195",
+      "id": "python/services/agent/tests/test_service.py:247",
+      "name": "test_the_run_reports_progress_to_its_own_log",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:258",
       "name": "test_a_missing_director_key_is_a_503_that_names_nothing_it_tried",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:218",
+      "id": "python/services/agent/tests/test_service.py:283",
       "name": "test_owner_comes_from_the_token",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:230",
+      "id": "python/services/agent/tests/test_service.py:296",
       "name": "test_a_body_that_names_an_owner_is_refused",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:243",
+      "id": "python/services/agent/tests/test_service.py:309",
       "name": "test_the_run_reads_the_project_as_the_artist",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:256",
+      "id": "python/services/agent/tests/test_service.py:322",
       "name": "test_a_token_expiring_before_the_deadline_is_refused_before_any_work",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:272",
-      "name": "test_a_token_supabase_rejects_mid_run_asks_for_a_refresh",
+      "id": "python/services/agent/tests/test_service.py:339",
+      "name": "test_a_project_that_is_not_the_artists_is_a_404_before_any_work",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:301",
-      "name": "test_a_stopped_run_is_reported_as_what_stopped_it",
+      "id": "python/services/agent/tests/test_service.py:396",
+      "name": "test_a_stopped_run_records_what_stopped_it",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:445",
+      "name": "test_following_a_run_without_a_token_is_refused",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:450",
+      "name": "test_following_a_finished_run_replays_its_log_and_closes",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:466",
+      "name": "test_following_resumes_after_the_last_event_id",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:477",
+      "name": "test_a_client_holding_the_final_event_is_told_to_stop_reconnecting",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:489",
+      "name": "test_another_artists_run_is_not_found",
+      "runner": "pytest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:112",
+      "name": "test_a_stream_reaching_its_deadline_closes_without_an_event",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:45",
+      "name": "test_an_event_is_framed_with_its_sequence_as_the_id",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:66",
+      "name": "test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:72",
+      "name": "test_a_stream_closes_before_the_token_expires_or_at_its_maximum_length",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:78",
+      "name": "test_a_stream_tails_new_events_and_closes_on_the_terminal_one",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_stream.py:95",
+      "name": "test_a_quiet_stream_sends_heartbeats",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"

@@ -13,11 +13,11 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 118 (3 parametrized) |
-| **Covered** | a11y 5 · security 100 · functionality 13 |
+| **Tests** | 120 (3 parametrized) |
+| **Covered** | a11y 5 · security 102 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
-## pytest — 18
+## pytest — 20
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -33,12 +33,14 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:228` |
 | security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:239` |
 | security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:246` |
-| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:157` |
-| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:218` |
-| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:230` |
-| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:243` |
-| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:256` |
-| security | test_a_token_supabase_rejects_mid_run_asks_for_a_refresh | `python/services/agent/tests/test_service.py:272` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:196` |
+| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:283` |
+| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:296` |
+| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:309` |
+| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:322` |
+| security | test_a_project_that_is_not_the_artists_is_a_404_before_any_work | `python/services/agent/tests/test_service.py:339` |
+| security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:445` |
+| security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:489` |
 
 ## Vitest — 83
 

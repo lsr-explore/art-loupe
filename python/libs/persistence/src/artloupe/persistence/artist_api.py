@@ -29,9 +29,12 @@ import httpx
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from artloupe.persistence.run_events import RunEvent
 from artloupe.persistence.tables import (
     PROJECTS_TABLE,
     REFERENCE_IMAGE_BUCKET,
+    RUN_EVENTS_TABLE,
+    RUNS_TABLE,
     SOURCE_IMAGES_TABLE,
     TOOL_RESULTS_TABLE,
 )
@@ -276,3 +279,24 @@ class ArtistApi:
             timeout=self._timeout,
         )
         _raise_for(response, "store a tool result")
+
+    async def run_visible(self, run_id: str) -> bool:
+        """Whether this artist can see the run. Absent and somebody else's are one answer."""
+        rows = await self._select(
+            RUNS_TABLE, {"id": f"eq.{run_id}", "select": "id"}, "read the run"
+        )
+        return bool(rows)
+
+    async def run_events_after(self, run_id: str, after: int) -> list[RunEvent]:
+        """The run's events with `seq` above `after`, oldest first. Empty if it is not visible."""
+        rows = await self._select(
+            RUN_EVENTS_TABLE,
+            {
+                "run_id": f"eq.{run_id}",
+                "seq": f"gt.{after}",
+                "select": "seq,kind,payload",
+                "order": "seq.asc",
+            },
+            "read the run's events",
+        )
+        return [RunEvent(seq=row["seq"], kind=row["kind"], payload=row["payload"]) for row in rows]

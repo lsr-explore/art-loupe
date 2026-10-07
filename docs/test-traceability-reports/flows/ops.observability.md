@@ -54,7 +54,7 @@ Cost, latency, evaluation health, and corpus ingestion
 | functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:132` |
 | data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:141` |
 | data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:206` |
-| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:243` |
+| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:270` |
 
 ## Vitest — 36
 
