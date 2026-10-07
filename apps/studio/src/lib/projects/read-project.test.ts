@@ -69,6 +69,20 @@ describe('reading a project for its page', () => {
     expect(runs?.url).toContain('limit=1');
   });
 
+  it('answers unavailable when the connection is refused', async () => {
+    const fetchImpl = vi.fn(async () => {
+      throw new TypeError('fetch failed');
+    }) as unknown as typeof fetch;
+    expect(await read(fetchImpl)).toEqual({ ok: false, reason: 'unavailable' });
+  });
+
+  it('answers unavailable when a body is not JSON', async () => {
+    const fetchImpl = vi.fn(
+      async () => new Response('<html>gateway</html>', { status: 200 }),
+    ) as unknown as typeof fetch;
+    expect(await read(fetchImpl)).toEqual({ ok: false, reason: 'unavailable' });
+  });
+
   it('answers unavailable when PostgREST fails', async () => {
     const { fetchImpl } = postgrest({}, 500);
     expect(await read(fetchImpl)).toEqual({ ok: false, reason: 'unavailable' });

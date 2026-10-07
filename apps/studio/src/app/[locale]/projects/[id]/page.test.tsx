@@ -15,12 +15,14 @@ const notFound = vi.hoisted(() =>
     throw new Error('NEXT_NOT_FOUND');
   }),
 );
-const getAccessToken = vi.hoisted(() => vi.fn<() => Promise<string | null>>());
+const peekAccessToken = vi.hoisted(() => vi.fn());
+const logout = vi.hoisted(() => vi.fn());
 const readProject = vi.hoisted(() => vi.fn<() => Promise<ReadProjectResult>>());
 const runPanel = vi.hoisted(() => vi.fn());
 
 vi.mock('next/navigation', () => ({ notFound }));
-vi.mock('@artloupe/auth/server', () => ({ getAccessToken }));
+vi.mock('@artloupe/auth/server', () => ({ peekAccessToken }));
+vi.mock('@/app/[locale]/actions', () => ({ logout }));
 vi.mock('@/lib/projects/read-project', () => ({ readProject }));
 vi.mock('@/env', () => ({
   env: { SUPABASE_URL: 'http://127.0.0.1:54321', SUPABASE_ANON_KEY: 'anon' },
@@ -50,7 +52,7 @@ vi.mock('@/i18n/navigation', () => ({
 import ProjectPage from './page';
 
 const renderFor = async (id: string) =>
-  render(await ProjectPage({ params: Promise.resolve({ id }) }));
+  render(await ProjectPage({ params: Promise.resolve({ locale: 'en', id }) }));
 
 const found = (overrides: Partial<Extract<ReadProjectResult, { ok: true }>['project']> = {}) =>
   ({
@@ -70,7 +72,7 @@ const found = (overrides: Partial<Extract<ReadProjectResult, { ok: true }>['proj
 
 beforeEach(() => {
   vi.clearAllMocks();
-  getAccessToken.mockResolvedValue('artist-token');
+  peekAccessToken.mockResolvedValue({ state: 'valid', accessToken: 'artist-token' });
   readProject.mockResolvedValue(found());
 });
 
@@ -140,9 +142,18 @@ describe('Project page ownership', () => {
     await expect(renderFor(PROJECT_ID)).rejects.toThrow('NEXT_NOT_FOUND');
   });
 
-  it('answers 404 with no session token', async () => {
-    getAccessToken.mockResolvedValue(null);
+  it('answers 404 for a session with no Supabase tokens, which owns nothing', async () => {
+    peekAccessToken.mockResolvedValue({ state: 'none' });
     await expect(renderFor(PROJECT_ID)).rejects.toThrow('NEXT_NOT_FOUND');
+    expect(readProject).not.toHaveBeenCalled();
+  });
+
+  it('offers sign-in again for an expired token, without reading or writing anything', async () => {
+    peekAccessToken.mockResolvedValue({ state: 'expired' });
+    await renderFor(PROJECT_ID);
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Your session has expired');
+    expect(screen.getByRole('button', { name: 'Sign in again' })).toBeInTheDocument();
     expect(readProject).not.toHaveBeenCalled();
   });
 

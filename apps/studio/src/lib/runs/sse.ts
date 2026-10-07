@@ -47,10 +47,14 @@ export const readSseFrames = async function* (
   const decoder = new TextDecoder();
   const reader = stream.getReader();
   let buffer = '';
+  let finished = false;
   try {
     for (;;) {
       const { value, done } = await reader.read();
-      if (done) return;
+      if (done) {
+        finished = true;
+        return;
+      }
       buffer += decoder.decode(value, { stream: true });
       const blocks = buffer.split(/\r\n\r\n|\n\n|\r\r/);
       buffer = blocks.pop() ?? '';
@@ -60,6 +64,9 @@ export const readSseFrames = async function* (
       }
     }
   } finally {
+    // Stopped before the end: the caller returned early or threw. Releasing the lock alone would
+    // leave the upstream stream open, and the agent would keep polling it until its own limit.
+    if (!finished) await reader.cancel().catch(() => undefined);
     reader.releaseLock();
   }
 };

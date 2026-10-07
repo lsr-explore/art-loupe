@@ -51,12 +51,18 @@ export const readProject = async ({
   // A token PostgREST refuses outright (401) owns nothing it could read, so it is answered like
   // a project that is not there. A demo session's token, which Supabase did not sign, lands here.
   let refused = false;
+  // A refused connection, an interrupted body or a body that is not JSON is `null` here, like an
+  // HTTP error, so the page shows its unavailable message instead of breaking.
   const select = async (path: string): Promise<Record<string, unknown>[] | null> => {
-    const response = await fetchImpl(`${rest}/${path}`, { headers, cache: 'no-store' });
-    if (response.status === 401) refused = true;
-    if (!response.ok) return null;
-    const rows: unknown = await response.json();
-    return Array.isArray(rows) ? (rows as Record<string, unknown>[]) : null;
+    try {
+      const response = await fetchImpl(`${rest}/${path}`, { headers, cache: 'no-store' });
+      if (response.status === 401) refused = true;
+      if (!response.ok) return null;
+      const rows: unknown = await response.json();
+      return Array.isArray(rows) ? (rows as Record<string, unknown>[]) : null;
+    } catch {
+      return null;
+    }
   };
 
   const id = encodeURIComponent(projectId);

@@ -89,6 +89,45 @@ describe('an event the contract refuses', () => {
     expect(loggerError).toHaveBeenCalledOnce();
   });
 
+  it('cancels the upstream stream, so the agent stops polling for a closed reader', async () => {
+    let cancelled = false;
+    const encoder = new TextEncoder();
+    const chunks = [agentFrame(1, 'exploded', {}), agentFrame(2, 'started', {})];
+    const upstream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        const next = chunks.shift();
+        if (next === undefined) return;
+        controller.enqueue(encoder.encode(next));
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+
+    await textOf(relayRunEvents(upstream, RUN_ID));
+
+    expect(cancelled).toBe(true);
+  });
+
+  it('cancels the upstream stream after the terminal event too', async () => {
+    let cancelled = false;
+    const encoder = new TextEncoder();
+    const upstream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(
+          encoder.encode(agentFrame(1, 'failed', { reason: 'interrupted', detail: 'x' })),
+        );
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+
+    await textOf(relayRunEvents(upstream, RUN_ID));
+
+    expect(cancelled).toBe(true);
+  });
+
   it('never relays the refused payload itself', async () => {
     const text = await textOf(
       relayRunEvents(

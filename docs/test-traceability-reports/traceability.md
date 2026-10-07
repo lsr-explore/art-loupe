@@ -30,22 +30,22 @@ exists, the detail tells you what it covers.
 | **critique** | | – | – | – | 6 | – | – | – | **6** |
 | [`inspiration.search`](flows/inspiration.search.md) | P2 | 3 | 12 | – | – | 6 | 4 | 42 | 67 |
 | **inspiration** | | 3 | 12 | – | – | 6 | 4 | 42 | **67** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 10 | 67 | – | 3 | 61 | – | 121 | 262 |
-| **intake** | | 10 | 67 | – | 3 | 61 | – | 121 | **262** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 10 | 68 | – | 5 | 61 | – | 123 | 267 |
+| **intake** | | 10 | 68 | – | 5 | 61 | – | 123 | **267** |
 | [`ops.observability`](flows/ops.observability.md) | P2 | 5 | 8 | – | – | 11 | – | 47 | 71 |
 | **ops** | | 5 | 8 | – | – | 11 | – | 47 | **71** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 63 | 1 | – | 3 | 1 | 68 | 136 |
-| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 104 | – | – | – | – | 13 | 122 |
+| [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 107 | – | – | – | – | 13 | 125 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 26 | – | – | 26 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 34 | – | – | – | – | – | 110 | 144 |
-| **platform** | | 39 | 167 | 1 | – | 29 | 1 | 191 | **428** |
+| **platform** | | 39 | 170 | 1 | – | 29 | 1 | 191 | **431** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **66** | **271** | **1** | **64** | **107** | **5** | **548** | **1062** |
+| **all flows** | | **66** | **275** | **1** | **66** | **107** | **5** | **550** | **1070** |
 
 ## Gaps
 
@@ -83,6 +83,6 @@ Three specific limits:
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
 | pytest | 438 | 0 | 438 |
-| Vitest | 584 | 0 | 584 |
+| Vitest | 592 | 0 | 592 |
 | Playwright | 40 | 0 | 40 |
-| **All** | **1062** | **0** | **1062** |
+| **All** | **1070** | **0** | **1070** |

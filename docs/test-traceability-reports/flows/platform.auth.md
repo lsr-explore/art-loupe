@@ -13,8 +13,8 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 122 (3 parametrized) |
-| **Covered** | a11y 5 · security 104 · functionality 13 |
+| **Tests** | 125 (3 parametrized) |
+| **Covered** | a11y 5 · security 107 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
 ## pytest — 20
@@ -42,7 +42,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:445` |
 | security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:489` |
 
-## Vitest — 85
+## Vitest — 88
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -117,6 +117,9 @@ Acknowledgement gate, sign-in, and the route guard
 | security | writes no session at all for a refused role | `packages/auth/src/server.test.ts:91` |
 | security | reports a refused role identically to a bad password | `packages/auth/src/server.test.ts:106` |
 | security | accepts any authenticated role when no allow list is given | `packages/auth/src/server.test.ts:122` |
+| security | returns a token with more than the refresh margin left | `packages/auth/src/server.test.ts:144` |
+| security | reports a token inside the refresh margin as expired, and changes nothing | `packages/auth/src/server.test.ts:149` |
+| security | tells a session without tokens apart from an expired one | `packages/auth/src/server.test.ts:156` |
 | functionality | renders the title as the page h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:15` |
 | functionality | renders the description and the form slot | `packages/fascia/src/components/blocks/login-card.test.tsx:21` |
 | functionality | omits the description paragraph when none is given | `packages/fascia/src/components/blocks/login-card.test.tsx:28` |

@@ -3,9 +3,9 @@
   "totals": {
     "tagged": {
       "pytest": 438,
-      "vitest": 584,
+      "vitest": 592,
       "playwright": 40,
-      "all": 1062
+      "all": 1070
     },
     "untagged": {
       "pytest": 0,
@@ -15,9 +15,9 @@
     },
     "all": {
       "pytest": 438,
-      "vitest": 584,
+      "vitest": 592,
       "playwright": 40,
-      "all": 1062
+      "all": 1070
     }
   },
   "by_flow": {
@@ -186,7 +186,7 @@
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 104,
+        "security": 107,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -195,10 +195,10 @@
       },
       "runners": {
         "pytest": 20,
-        "vitest": 85,
+        "vitest": 88,
         "playwright": 17
       },
-      "total": 122,
+      "total": 125,
       "parametrized": 3
     },
     "canvas.session-plan": {
@@ -246,19 +246,19 @@
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
         "a11y": 10,
-        "security": 67,
+        "security": 68,
         "privacy": 0,
-        "safety": 3,
+        "safety": 5,
         "data": 61,
         "performance": 0,
-        "functionality": 121
+        "functionality": 123
       },
       "runners": {
         "pytest": 61,
-        "vitest": 189,
+        "vitest": 194,
         "playwright": 12
       },
-      "total": 262,
+      "total": 267,
       "parametrized": 21
     },
     "ops.observability": {
@@ -1233,78 +1233,85 @@
       "category": "a11y"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:104",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:100",
+      "name": "hands the run panel the latest run, so a reload follows it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:106",
       "name": "says so when the project has no photograph yet",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:110",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:112",
       "name": "says the project could not be loaded when the data service fails",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:118",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:120",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:130",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:132",
       "name": "refuses %j without reading anything",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:138",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:140",
       "name": "answers 404 when RLS hides the project, absent and foreign alike",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:143",
-      "name": "answers 404 with no session token",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:145",
+      "name": "answers 404 for a session with no Supabase tokens, which owns nothing",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:149",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:151",
+      "name": "offers sign-in again for an expired token, without reading or writing anything",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:160",
       "name": "reads the project with the artist token",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:79",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:81",
       "name": "shows the reference photograph through the image route, with its dimensions",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:88",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:90",
       "name": "says plainly that the plan is not built yet",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:93",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:95",
       "name": "hands the run panel the project and no run when there is none",
-      "runner": "vitest",
-      "flow": "intake.project-intent",
-      "category": "functionality"
-    },
-    {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:98",
-      "name": "hands the run panel the latest run, so a reload follows it",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
@@ -2570,6 +2577,20 @@
       "category": "security"
     },
     {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:102",
+      "name": "answers not-found when RLS hides the project",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:107",
+      "name": "answers not-found, not unavailable, for a token Supabase refuses",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
       "id": "apps/studio/src/lib/projects/read-project.test.ts:39",
       "name": "returns the intent, the original and the latest run",
       "runner": "vitest",
@@ -2592,28 +2613,28 @@
     },
     {
       "id": "apps/studio/src/lib/projects/read-project.test.ts:72",
+      "name": "answers unavailable when the connection is refused",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:79",
+      "name": "answers unavailable when a body is not JSON",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:86",
       "name": "answers unavailable when PostgREST fails",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/lib/projects/read-project.test.ts:80",
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:94",
       "name": "reads with the artist token and the anon key, never anything else",
-      "runner": "vitest",
-      "flow": "intake.project-intent",
-      "category": "security"
-    },
-    {
-      "id": "apps/studio/src/lib/projects/read-project.test.ts:88",
-      "name": "answers not-found when RLS hides the project",
-      "runner": "vitest",
-      "flow": "intake.project-intent",
-      "category": "security"
-    },
-    {
-      "id": "apps/studio/src/lib/projects/read-project.test.ts:93",
-      "name": "answers not-found, not unavailable, for a token Supabase refuses",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
@@ -2631,6 +2652,20 @@
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:112",
+      "name": "cancels the upstream stream after the terminal event too",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:131",
+      "name": "never relays the refused payload itself",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "safety"
     },
     {
       "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:35",
@@ -2662,7 +2697,7 @@
     },
     {
       "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:92",
-      "name": "never relays the refused payload itself",
+      "name": "cancels the upstream stream, so the agent stops polling for a closed reader",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "safety"
@@ -3335,6 +3370,27 @@
     {
       "id": "packages/auth/src/server.test.ts:122",
       "name": "accepts any authenticated role when no allow list is given",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:144",
+      "name": "returns a token with more than the refresh margin left",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:149",
+      "name": "reports a token inside the refresh margin as expired, and changes nothing",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "packages/auth/src/server.test.ts:156",
+      "name": "tells a session without tokens apart from an expired one",
       "runner": "vitest",
       "flow": "platform.auth",
       "category": "security"

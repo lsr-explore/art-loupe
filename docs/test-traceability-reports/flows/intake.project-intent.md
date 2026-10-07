@@ -13,8 +13,8 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 262 (21 parametrized) |
-| **Covered** | a11y 10 · security 67 · safety 3 · data 61 · functionality 121 |
+| **Tests** | 267 (21 parametrized) |
+| **Covered** | a11y 10 · security 68 · safety 5 · data 61 · functionality 123 |
 | **Not covered** | privacy · performance |
 
 ## pytest — 61
@@ -83,21 +83,22 @@ Upload, intake, and the typed ProjectIntent
 | functionality | test_the_model_id_is_configuration | `python/services/agent/tests/test_routing.py:214` |
 | functionality | test_no_pixels_reach_the_model | `python/services/agent/tests/test_routing.py:225` |
 
-## Vitest — 189
+## Vitest — 194
 
 | Category | Test | Location |
 | --- | --- | --- |
-| functionality | shows the reference photograph through the image route, with its dimensions | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:79` |
-| functionality | says plainly that the plan is not built yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:88` |
-| functionality | hands the run panel the project and no run when there is none | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:93` |
-| functionality | hands the run panel the latest run, so a reload follows it | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:98` |
-| functionality | says so when the project has no photograph yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:104` |
-| functionality | says the project could not be loaded when the data service fails | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:110` |
-| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:118` |
-| security | refuses %j without reading anything | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:130` |
-| security | answers 404 when RLS hides the project, absent and foreign alike | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:138` |
-| security | answers 404 with no session token | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:143` |
-| security | reads the project with the artist token | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:149` |
+| functionality | shows the reference photograph through the image route, with its dimensions | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:81` |
+| functionality | says plainly that the plan is not built yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:90` |
+| functionality | hands the run panel the project and no run when there is none | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:95` |
+| functionality | hands the run panel the latest run, so a reload follows it | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:100` |
+| functionality | says so when the project has no photograph yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:106` |
+| functionality | says the project could not be loaded when the data service fails | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:112` |
+| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:120` |
+| security | refuses %j without reading anything | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:132` |
+| security | answers 404 when RLS hides the project, absent and foreign alike | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:140` |
+| security | answers 404 for a session with no Supabase tokens, which owns nothing | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:145` |
+| security | offers sign-in again for an expired token, without reading or writing anything | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:151` |
+| security | reads the project with the artist token | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:160` |
 | functionality | renders the page heading and the intake form | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:27` |
 | a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:35` |
 | functionality | answers 202 with the run id | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:38` |
@@ -216,15 +217,19 @@ Upload, intake, and the typed ProjectIntent
 | functionality | returns the intent, the original and the latest run | `apps/studio/src/lib/projects/read-project.test.ts:39` |
 | functionality | has no original and no run before either exists | `apps/studio/src/lib/projects/read-project.test.ts:57` |
 | functionality | asks only for the newest run | `apps/studio/src/lib/projects/read-project.test.ts:64` |
-| functionality | answers unavailable when PostgREST fails | `apps/studio/src/lib/projects/read-project.test.ts:72` |
-| security | reads with the artist token and the anon key, never anything else | `apps/studio/src/lib/projects/read-project.test.ts:80` |
-| security | answers not-found when RLS hides the project | `apps/studio/src/lib/projects/read-project.test.ts:88` |
-| security | answers not-found, not unavailable, for a token Supabase refuses | `apps/studio/src/lib/projects/read-project.test.ts:93` |
+| functionality | answers unavailable when the connection is refused | `apps/studio/src/lib/projects/read-project.test.ts:72` |
+| functionality | answers unavailable when a body is not JSON | `apps/studio/src/lib/projects/read-project.test.ts:79` |
+| functionality | answers unavailable when PostgREST fails | `apps/studio/src/lib/projects/read-project.test.ts:86` |
+| security | reads with the artist token and the anon key, never anything else | `apps/studio/src/lib/projects/read-project.test.ts:94` |
+| security | answers not-found when RLS hides the project | `apps/studio/src/lib/projects/read-project.test.ts:102` |
+| security | answers not-found, not unavailable, for a token Supabase refuses | `apps/studio/src/lib/projects/read-project.test.ts:107` |
 | functionality | relays every valid event with its id, and passes heartbeats on | `apps/studio/src/lib/runs/relay-run-events.test.ts:35` |
 | functionality | starts with its own retry interval | `apps/studio/src/lib/runs/relay-run-events.test.ts:51` |
 | functionality | stops after the terminal event even if more arrives | `apps/studio/src/lib/runs/relay-run-events.test.ts:56` |
 | safety | an unknown kind | `apps/studio/src/lib/runs/relay-run-events.test.ts:67` |
-| safety | never relays the refused payload itself | `apps/studio/src/lib/runs/relay-run-events.test.ts:92` |
+| safety | cancels the upstream stream, so the agent stops polling for a closed reader | `apps/studio/src/lib/runs/relay-run-events.test.ts:92` |
+| safety | cancels the upstream stream after the terminal event too | `apps/studio/src/lib/runs/relay-run-events.test.ts:112` |
+| safety | never relays the refused payload itself | `apps/studio/src/lib/runs/relay-run-events.test.ts:131` |
 | functionality | reads id, event and data, and joins multi-line data | `apps/studio/src/lib/runs/sse.test.ts:15` |
 | functionality | reassembles a frame split across network chunks | `apps/studio/src/lib/runs/sse.test.ts:22` |
 | functionality | keeps a comment-only frame as a heartbeat and drops retry lines | `apps/studio/src/lib/runs/sse.test.ts:28` |

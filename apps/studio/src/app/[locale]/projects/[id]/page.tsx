@@ -1,7 +1,8 @@
-import { getAccessToken } from '@artloupe/auth/server';
+import { peekAccessToken } from '@artloupe/auth/server';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { logout } from '@/app/[locale]/actions';
 import { RunPanel } from '@/components/project/run-panel';
 import { env } from '@/env';
 import { Link } from '@/i18n/navigation';
@@ -15,6 +16,10 @@ import { readProject } from '@/lib/projects/read-project';
  * that is somebody else's are the same 404 the rest of the app returns. A session whose token
  * Supabase refuses, such as the demo provider's, owns nothing and gets that 404 too.
  *
+ * The token is only peeked at. A Server Component cannot write cookies, so the refresh-or-destroy
+ * path in `getAccessToken` would throw here. An expired token gets a notice with the sign-out
+ * action instead, which runs where the cookie can be cleared, and leads back to sign-in.
+ *
  * The id is checked for UUID shape before anything is asked of the database. A path segment is
  * caller-controlled text, and it is interpolated into a PostgREST filter.
  *
@@ -24,32 +29,48 @@ import { readProject } from '@/lib/projects/read-project';
 const PROJECT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface ProjectPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }
 
 const ProjectPage = async ({ params }: ProjectPageProps) => {
-  const { id } = await params;
+  const { locale, id } = await params;
 
   if (!PROJECT_ID_PATTERN.test(id)) {
     notFound();
   }
 
-  const accessToken = await getAccessToken();
-  if (accessToken === null || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
+  const token = await peekAccessToken();
+  if (token.state === 'none' || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
     notFound();
+  }
+
+  const tp = await getTranslations('project');
+
+  if (token.state === 'expired') {
+    return (
+      <div className="flex flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('title')}</h1>
+        <p role="alert" className="text-sm">
+          {tp('sessionExpired')}
+        </p>
+        <form action={logout.bind(null, locale)}>
+          <button type="submit" className="text-sm underline underline-offset-4">
+            {tp('signInAgain')}
+          </button>
+        </form>
+      </div>
+    );
   }
 
   const read = await readProject({
     supabaseUrl: env.SUPABASE_URL,
     anonKey: env.SUPABASE_ANON_KEY,
-    accessToken,
+    accessToken: token.accessToken,
     projectId: id,
   });
   if (!read.ok && read.reason === 'not-found') {
     notFound();
   }
-
-  const tp = await getTranslations('project');
 
   if (!read.ok) {
     return (

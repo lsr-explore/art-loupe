@@ -19,7 +19,7 @@ vi.mock('iron-session', () => ({
   getIronSession: () => Promise.resolve(sessionStore.data),
 }));
 
-import { signIn } from './server';
+import { peekAccessToken, signIn } from './server';
 
 const providerFor = (role: 'artist' | 'operator' | 'superuser'): AuthProvider => ({
   authenticate: () => Promise.resolve({ user: { username: 'someone@example.test', role } }),
@@ -126,5 +126,35 @@ describe('signIn', () => {
     );
 
     expect(result.ok).toBe(true);
+  });
+});
+
+// @trace flow=platform.auth category=security
+describe('peekAccessToken', () => {
+  const tokens = (expiresInSeconds: number) => ({
+    accessToken: 'access',
+    refreshToken: 'refresh',
+    expiresAt: Math.floor(Date.now() / 1000) + expiresInSeconds,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns a token with more than the refresh margin left', async () => {
+    sessionStore.data = { tokens: tokens(600), save, destroy } as never;
+    expect(await peekAccessToken()).toEqual({ state: 'valid', accessToken: 'access' });
+  });
+
+  it('reports a token inside the refresh margin as expired, and changes nothing', async () => {
+    sessionStore.data = { tokens: tokens(30), save, destroy } as never;
+    expect(await peekAccessToken()).toEqual({ state: 'expired' });
+    expect(destroy).not.toHaveBeenCalled();
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it('tells a session without tokens apart from an expired one', async () => {
+    sessionStore.data = { save, destroy } as never;
+    expect(await peekAccessToken()).toEqual({ state: 'none' });
   });
 });

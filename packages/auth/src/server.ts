@@ -139,6 +139,34 @@ export const getAccessToken = async (refresher?: TokenRefresher): Promise<string
   return refreshed.accessToken;
 };
 
+/** What `peekAccessToken` found, without changing anything. */
+export type AccessTokenPeek =
+  | { state: 'none' }
+  | { state: 'expired' }
+  | { state: 'valid'; accessToken: string };
+
+/**
+ * The access token, for a caller that cannot write cookies: a Server Component.
+ *
+ * Same expiry rule as `getAccessToken`, and never refreshes, saves or destroys the session.
+ * Next forbids changing a cookie while a Server Component renders, so `getAccessToken`'s
+ * `session.destroy()` would throw there and break the page. A component that gets `expired`
+ * back should offer the sign-out action, which runs where a cookie can be written.
+ *
+ * `none` means the session holds no Supabase tokens at all, such as the demo provider's, and so
+ * owns nothing. It is not the same answer as `expired`.
+ */
+export const peekAccessToken = async (): Promise<AccessTokenPeek> => {
+  const tokens = (await readSession()).tokens;
+  if (!tokens) {
+    return { state: 'none' };
+  }
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  return tokens.expiresAt - REFRESH_SKEW_SECONDS > nowSeconds
+    ? { state: 'valid', accessToken: tokens.accessToken }
+    : { state: 'expired' };
+};
+
 export class NotAuthenticatedError extends Error {
   constructor() {
     super('No valid session. The caller should redirect to the login page.');
