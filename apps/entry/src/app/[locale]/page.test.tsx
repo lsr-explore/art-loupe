@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import { entryMessages, GATE_INFO_LINK_TEXT } from './page.fixtures';
 
 vi.mock('next-intl/server', () => ({

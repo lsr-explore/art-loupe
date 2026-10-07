@@ -8,6 +8,7 @@
 
 import { describe, expect, it } from 'vitest';
 import type { ZodType } from 'zod';
+
 import rawFixture from '../fixtures/contract-parity.json';
 import { artifactMetadataSchema } from './artifact';
 import { budgetLedgerSchema } from './budget';

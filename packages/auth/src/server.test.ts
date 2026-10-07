@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { AuthProvider } from './provider';
 import type { SessionData } from './types';
 

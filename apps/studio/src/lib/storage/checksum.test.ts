@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
+
 import { describe, expect, it } from 'vitest';
+
 import { CHECKSUM_PATTERN, computeChecksum, isChecksum } from './checksum';
 
 // @trace flow=intake.project-intent category=data

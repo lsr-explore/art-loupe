@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import { OverlayCanvas } from './overlay-canvas';
 import { MIN_TARGET_PX, type OverlayPoint, type OverlayStatus } from './overlay-geometry';
 import { OverlayHandle } from './overlay-handle';

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import fixture from '../fixtures/inspiration-parity.json';
 import { inspirationRequestSchema, inspirationResponseSchema } from './inspiration';
 

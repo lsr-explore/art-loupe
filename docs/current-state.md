@@ -248,8 +248,8 @@ in-process with `httpx.ASGITransport`.
 - **`gh api` writes need their body read back**, with `-F body=@file`. `-f` posts the literal
   filename and still answers 201.
 - **CI after a push: filter `gh run list` by `headSha`.**
-- **ESLint ignores the venv**, because a venv's bundled JS once failed the pre-commit hook.
-- **Biome formats JSON.** Format a generated report *after* generating it.
+- **Oxlint ignores the venv**, because a venv's bundled JS once failed the pre-commit hook.
+- **Oxfmt formats JSON.** Format a generated report *after* generating it.
 - **Never let a wrapped line start with `#`** — markdownlint reads it as a heading (MD018).
 - **One container runtime: Docker Desktop.** Parallel worktrees cannot share a migration history;
   run `supabase db reset` per branch.

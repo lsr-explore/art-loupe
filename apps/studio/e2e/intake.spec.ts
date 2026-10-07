@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, type Route, test } from '@playwright/test';
+
 import {
   type ApiErrorBody,
   type CreateProjectResponse,
@@ -89,213 +90,233 @@ const submit = (page: Page) => page.getByRole('button', { name: 'Start the proje
  */
 const errorSummary = (page: Page) => page.getByRole('alert', { name: 'There is a problem' });
 
-test.describe('Intake', {
-  annotation: [
-    { type: 'flow', description: 'intake.project-intent' },
-    { type: 'category', description: 'functionality' },
-  ],
-}, () => {
-  test('builds the multipart request the upload route expects', async ({ page }) => {
-    await openIntake(page);
-
-    const upload = page.waitForRequest((request) => request.url().includes(PROJECTS_ENDPOINT));
-    await stubUpload(page, 201, created());
-    await fillIntake(page);
-    await submit(page);
-
-    const request = await upload;
-    expect(request.method()).toBe('POST');
-
-    // Playwright does not parse multipart, so the parts are read out of the raw body. That is
-    // the point of asserting here at all: this is the only place the *browser's* encoding of
-    // the form is observed, rather than a FormData a test built itself.
-    const body = request.postData() ?? '';
-    expect(body).toContain(`name="${FILE_FIELD}"`);
-    expect(body).toContain('filename="studio-reference.png"');
-
-    const intent = /name="intent"\r?\n\r?\n([\s\S]*?)\r?\n--/.exec(body)?.[1];
-    expect(intent).toBeDefined();
-    expect(JSON.parse(intent as string)).toEqual({
-      medium: 'graphite',
-      time_budget_minutes: 180,
-      support: { width: 9, height: 12, units: 'in' },
-      skill_level: 'advanced',
-      goal: 'likeness over finish',
-    });
-  });
-
-  test('uploads a photograph dropped on the drop target', async ({ page }) => {
-    await openIntake(page);
-
-    // Playwright has no file-drop primitive, so the drop is a real `DataTransfer` built in the
-    // page and dispatched as the browser would: dragenter, dragover, then drop.
-    const dataTransfer = await page.evaluateHandle((bytes) => {
-      const transfer = new DataTransfer();
-      transfer.items.add(
-        new File([new Uint8Array(bytes)], 'dropped-reference.png', { type: 'image/png' }),
-      );
-      return transfer;
-    }, Array.from(PNG_BYTES));
-    const target = page.getByText('Drag a photograph here, or click to choose one');
-    for (const type of ['dragenter', 'dragover', 'drop']) {
-      await target.dispatchEvent(type, { dataTransfer });
-    }
-
-    await expect(page.getByRole('img', { name: /preview of the chosen/i })).toBeVisible();
-    await expect(page.getByText(/Chosen: dropped-reference\.png/)).toBeVisible();
-
-    const upload = page.waitForRequest((request) => request.url().includes(PROJECTS_ENDPOINT));
-    await stubUpload(page, 201, created());
-    await page.getByLabel('Medium').selectOption('graphite');
-    await page.getByLabel('Time available').fill('180');
-    await submit(page);
-
-    expect((await upload).postData() ?? '').toContain('filename="dropped-reference.png"');
-  });
-
-  test('opens the created project on a 201', async ({ page }) => {
-    await openIntake(page);
-    await stubUpload(page, 201, created());
-
-    await fillIntake(page);
-    await submit(page);
-
-    await expect(page).toHaveURL(new RegExp(`/en/projects/${PROJECT_ID}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Reference photograph received',
-    );
-    // The page must not imply a plan exists. It is the honest half of shipping this early.
-    await expect(page.getByText(/not built yet/i)).toBeVisible();
-  });
-
-  test('validates in the browser before anything is uploaded', async ({ page }) => {
-    await openIntake(page);
-
-    let uploaded = false;
-    await page.route(`**${PROJECTS_ENDPOINT}`, (route: Route) => {
-      uploaded = true;
-      return route.fulfill({ status: 201, body: JSON.stringify(created()) });
-    });
-
-    await submit(page);
-
-    const summary = errorSummary(page);
-    await expect(summary).toBeVisible();
-    await expect(summary.getByRole('link', { name: /choose the medium/i })).toBeVisible();
-    expect(uploaded).toBe(false);
-  });
-
-  test('moves focus to the error summary so the failure is announced', async ({ page }) => {
-    await openIntake(page);
-    await submit(page);
-
-    await expect(errorSummary(page)).toBeFocused();
-
-    // Following a summary link is how a keyboard user gets to the field it names.
-    await page.getByRole('link', { name: /choose the medium/i }).click();
-    await expect(page).toHaveURL(/#intake-medium$/);
-  });
-
-  const REFUSALS: [UploadRejection, RegExp][] = [
-    ['below_min_dimension', /at least 800 px/i],
-    ['unsupported_type', /not a JPEG, PNG or WebP/i],
-    ['undecodable', /could not be read as an image/i],
-    ['too_large', /over 25 MB/i],
-  ];
-
-  for (const [reason, expected] of REFUSALS) {
-    test(`explains the refusal ${reason} in words an artist can act on`, async ({ page }) => {
+test.describe(
+  'Intake',
+  {
+    annotation: [
+      { type: 'flow', description: 'intake.project-intent' },
+      { type: 'category', description: 'functionality' },
+    ],
+  },
+  () => {
+    test('builds the multipart request the upload route expects', async ({ page }) => {
       await openIntake(page);
-      await stubUpload(page, 422, refused(reason));
+
+      const upload = page.waitForRequest((request) => request.url().includes(PROJECTS_ENDPOINT));
+      await stubUpload(page, 201, created());
+      await fillIntake(page);
+      await submit(page);
+
+      const request = await upload;
+      expect(request.method()).toBe('POST');
+
+      // Playwright does not parse multipart, so the parts are read out of the raw body. That is
+      // the point of asserting here at all: this is the only place the *browser's* encoding of
+      // the form is observed, rather than a FormData a test built itself.
+      const body = request.postData() ?? '';
+      expect(body).toContain(`name="${FILE_FIELD}"`);
+      expect(body).toContain('filename="studio-reference.png"');
+
+      const intent = /name="intent"\r?\n\r?\n([\s\S]*?)\r?\n--/.exec(body)?.[1];
+      expect(intent).toBeDefined();
+      expect(JSON.parse(intent as string)).toEqual({
+        medium: 'graphite',
+        time_budget_minutes: 180,
+        support: { width: 9, height: 12, units: 'in' },
+        skill_level: 'advanced',
+        goal: 'likeness over finish',
+      });
+    });
+
+    test('uploads a photograph dropped on the drop target', async ({ page }) => {
+      await openIntake(page);
+
+      // Playwright has no file-drop primitive, so the drop is a real `DataTransfer` built in the
+      // page and dispatched as the browser would: dragenter, dragover, then drop.
+      const dataTransfer = await page.evaluateHandle((bytes) => {
+        const transfer = new DataTransfer();
+        transfer.items.add(
+          new File([new Uint8Array(bytes)], 'dropped-reference.png', { type: 'image/png' }),
+        );
+        return transfer;
+      }, Array.from(PNG_BYTES));
+      const target = page.getByText('Drag a photograph here, or click to choose one');
+      for (const type of ['dragenter', 'dragover', 'drop']) {
+        await target.dispatchEvent(type, { dataTransfer });
+      }
+
+      await expect(page.getByRole('img', { name: /preview of the chosen/i })).toBeVisible();
+      await expect(page.getByText(/Chosen: dropped-reference\.png/)).toBeVisible();
+
+      const upload = page.waitForRequest((request) => request.url().includes(PROJECTS_ENDPOINT));
+      await stubUpload(page, 201, created());
+      await page.getByLabel('Medium').selectOption('graphite');
+      await page.getByLabel('Time available').fill('180');
+      await submit(page);
+
+      expect((await upload).postData() ?? '').toContain('filename="dropped-reference.png"');
+    });
+
+    test('opens the created project on a 201', async ({ page }) => {
+      await openIntake(page);
+      await stubUpload(page, 201, created());
 
       await fillIntake(page);
       await submit(page);
 
-      await expect(errorSummary(page).getByText(expected)).toBeVisible();
-      await expect(page).toHaveURL(/\/en\/projects\/new$/);
-      // The form is usable again: a refusal is not a dead end.
-      await expect(page.getByRole('button', { name: 'Start the project' })).toBeEnabled();
+      await expect(page).toHaveURL(new RegExp(`/en/projects/${PROJECT_ID}$`));
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+        'Reference photograph received',
+      );
+      // The page must not imply a plan exists. It is the honest half of shipping this early.
+      await expect(page.getByText(/not built yet/i)).toBeVisible();
     });
-  }
 
-  test('reports a duplicate upload without pretending it failed', async ({ page }) => {
-    await openIntake(page);
-    await stubUpload(page, 409, { error: 'conflict' } satisfies ApiErrorBody);
+    test('validates in the browser before anything is uploaded', async ({ page }) => {
+      await openIntake(page);
 
-    await fillIntake(page);
-    await submit(page);
+      let uploaded = false;
+      await page.route(`**${PROJECTS_ENDPOINT}`, (route: Route) => {
+        uploaded = true;
+        return route.fulfill({ status: 201, body: JSON.stringify(created()) });
+      });
 
-    await expect(errorSummary(page).getByText(/already uploaded/i)).toBeVisible();
-  });
+      await submit(page);
 
-  test('reports an expired session rather than a generic failure', async ({ page }) => {
-    await openIntake(page);
-    await stubUpload(page, 401, { error: 'unauthenticated' } satisfies ApiErrorBody);
+      const summary = errorSummary(page);
+      await expect(summary).toBeVisible();
+      await expect(summary.getByRole('link', { name: /choose the medium/i })).toBeVisible();
+      expect(uploaded).toBe(false);
+    });
 
-    await fillIntake(page);
-    await submit(page);
+    test('moves focus to the error summary so the failure is announced', async ({ page }) => {
+      await openIntake(page);
+      await submit(page);
 
-    await expect(errorSummary(page).getByText(/session has ended/i)).toBeVisible();
-  });
+      await expect(errorSummary(page)).toBeFocused();
 
-  test('renders the form in Spanish on the Spanish route', {
-    annotation: [{ type: 'flow', description: 'platform.shell' }],
-  }, async ({ page }) => {
-    await signIn(page);
-    await page.goto('/es/projects/new');
+      // Following a summary link is how a keyboard user gets to the field it names.
+      await page.getByRole('link', { name: /choose the medium/i }).click();
+      await expect(page).toHaveURL(/#intake-medium$/);
+    });
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Iniciar un proyecto');
-    await expect(page.getByLabel('Fotografía de referencia')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Iniciar el proyecto' })).toBeVisible();
-  });
+    const REFUSALS: [UploadRejection, RegExp][] = [
+      ['below_min_dimension', /at least 800 px/i],
+      ['unsupported_type', /not a JPEG, PNG or WebP/i],
+      ['undecodable', /could not be read as an image/i],
+      ['too_large', /over 25 MB/i],
+    ];
 
-  test('reflows at 320 CSS px without horizontal scrolling', async ({ page }) => {
-    // WCAG 2.2 AA, SC 1.4.10. The support-size row is three controls side by side, which is
-    // what pushes this page over the budget if it is ever pinned to one line.
-    await page.setViewportSize({ width: 320, height: 640 });
-    await openIntake(page);
+    for (const [reason, expected] of REFUSALS) {
+      test(`explains the refusal ${reason} in words an artist can act on`, async ({ page }) => {
+        await openIntake(page);
+        await stubUpload(page, 422, refused(reason));
 
-    const overflows = await page.evaluate(
-      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+        await fillIntake(page);
+        await submit(page);
+
+        await expect(errorSummary(page).getByText(expected)).toBeVisible();
+        await expect(page).toHaveURL(/\/en\/projects\/new$/);
+        // The form is usable again: a refusal is not a dead end.
+        await expect(page.getByRole('button', { name: 'Start the project' })).toBeEnabled();
+      });
+    }
+
+    test('reports a duplicate upload without pretending it failed', async ({ page }) => {
+      await openIntake(page);
+      await stubUpload(page, 409, { error: 'conflict' } satisfies ApiErrorBody);
+
+      await fillIntake(page);
+      await submit(page);
+
+      await expect(errorSummary(page).getByText(/already uploaded/i)).toBeVisible();
+    });
+
+    test('reports an expired session rather than a generic failure', async ({ page }) => {
+      await openIntake(page);
+      await stubUpload(page, 401, { error: 'unauthenticated' } satisfies ApiErrorBody);
+
+      await fillIntake(page);
+      await submit(page);
+
+      await expect(errorSummary(page).getByText(/session has ended/i)).toBeVisible();
+    });
+
+    test(
+      'renders the form in Spanish on the Spanish route',
+      {
+        annotation: [{ type: 'flow', description: 'platform.shell' }],
+      },
+      async ({ page }) => {
+        await signIn(page);
+        await page.goto('/es/projects/new');
+
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('Iniciar un proyecto');
+        await expect(page.getByLabel('Fotografía de referencia')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Iniciar el proyecto' })).toBeVisible();
+      },
     );
 
-    expect(overflows).toBe(false);
-  });
+    test('reflows at 320 CSS px without horizontal scrolling', async ({ page }) => {
+      // WCAG 2.2 AA, SC 1.4.10. The support-size row is three controls side by side, which is
+      // what pushes this page over the budget if it is ever pinned to one line.
+      await page.setViewportSize({ width: 320, height: 640 });
+      await openIntake(page);
 
-  test('the intake form has no accessibility violations', {
-    annotation: [{ type: 'category', description: 'a11y' }],
-  }, async ({ page }) => {
-    await openIntake(page);
-    await page.reload();
+      const overflows = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      );
 
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
-  });
+      expect(overflows).toBe(false);
+    });
 
-  test('the error state has no accessibility violations', {
-    annotation: [{ type: 'category', description: 'a11y' }],
-  }, async ({ page }) => {
-    // The error surface is the part of this page that is easiest to get wrong and hardest to
-    // notice: it only exists after a failed submit, so a clean audit of the empty form says
-    // nothing about it.
-    await openIntake(page);
-    await submit(page);
-    await expect(errorSummary(page)).toBeVisible();
+    test(
+      'the intake form has no accessibility violations',
+      {
+        annotation: [{ type: 'category', description: 'a11y' }],
+      },
+      async ({ page }) => {
+        await openIntake(page);
+        await page.reload();
 
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
-  });
+        const results = await new AxeBuilder({ page }).analyze();
+        expect(results.violations).toEqual([]);
+      },
+    );
 
-  test('the project page has no accessibility violations', {
-    annotation: [{ type: 'category', description: 'a11y' }],
-  }, async ({ page }) => {
-    await openIntake(page);
-    await stubUpload(page, 201, created());
-    await fillIntake(page);
-    await submit(page);
-    await expect(page).toHaveURL(new RegExp(`/en/projects/${PROJECT_ID}$`));
+    test(
+      'the error state has no accessibility violations',
+      {
+        annotation: [{ type: 'category', description: 'a11y' }],
+      },
+      async ({ page }) => {
+        // The error surface is the part of this page that is easiest to get wrong and hardest to
+        // notice: it only exists after a failed submit, so a clean audit of the empty form says
+        // nothing about it.
+        await openIntake(page);
+        await submit(page);
+        await expect(errorSummary(page)).toBeVisible();
 
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
-  });
-});
+        const results = await new AxeBuilder({ page }).analyze();
+        expect(results.violations).toEqual([]);
+      },
+    );
+
+    test(
+      'the project page has no accessibility violations',
+      {
+        annotation: [{ type: 'category', description: 'a11y' }],
+      },
+      async ({ page }) => {
+        await openIntake(page);
+        await stubUpload(page, 201, created());
+        await fillIntake(page);
+        await submit(page);
+        await expect(page).toHaveURL(new RegExp(`/en/projects/${PROJECT_ID}$`));
+
+        const results = await new AxeBuilder({ page }).analyze();
+        expect(results.violations).toEqual([]);
+      },
+    );
+  },
+);

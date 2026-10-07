@@ -38,7 +38,8 @@ it from this file.
 - **pnpm** as package manager (workspace version pinned in `packageManager`).
 - **uv** runs the Python workspace toolchain — invoke Python tools via `uv run` (e.g.
   `uv run pytest`, `uv run ruff`), never bare, to avoid a different PATH interpreter.
-- **Biome** for formatting and import sorting only; its linter is off.
+- **Oxfmt** for formatting and import sorting (Prettier-compatible). Config in `.oxfmtrc.jsonc`;
+  see ADR 0005.
 - **Oxlint** is the only JS/TS linter: jsx-a11y, React and React Compiler, Next.js, TypeScript,
   and the house rules. Config in `.oxlintrc.jsonc`; see ADR 0004.
 - **Stylelint** for CSS.
@@ -54,7 +55,7 @@ it from this file.
 Run `pnpm check:all` to verify everything, or individual checks:
 
 ```sh
-pnpm format:check   # Biome formatting + import sorting
+pnpm format:check   # Oxfmt formatting + import sorting
 pnpm lint           # Oxlint
 pnpm lint:css       # Stylelint
 pnpm lint:md        # markdownlint

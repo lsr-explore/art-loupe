@@ -1,5 +1,6 @@
 import { getIronSession } from 'iron-session';
 import type { NextRequest, NextResponse } from 'next/server';
+
 import { getSessionOptions } from './options';
 import type { Session, SessionData } from './types';
 

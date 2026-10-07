@@ -4,6 +4,7 @@
 
 import { MAX_UPLOAD_BYTES, MIN_LONG_EDGE_PX } from '@artloupe/schemas';
 import { describe, expect, it, vi } from 'vitest';
+
 import { boundMetadata, inspectImage, MAX_EXIF_JSON_BYTES } from './inspect-image';
 import {
   GIF_BYTES,

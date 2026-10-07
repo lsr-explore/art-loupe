@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import { ImageMetadataCard } from './image-metadata-card';
 
 // @trace flow=inspiration.search category=a11y

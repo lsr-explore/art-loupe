@@ -1,8 +1,9 @@
 import type { Role } from '@artloupe/auth';
 import { acknowledgementRedirectUrl, hasAcknowledged } from '@artloupe/auth/ack';
 import { getSessionFromRequest } from '@artloupe/auth/middleware';
-import { type NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
+import { type NextRequest, NextResponse } from 'next/server';
+
 import { env } from '@/env';
 import { routing } from '@/i18n/routing';
 

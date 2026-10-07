@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Biome (format + import sorting)
+      - name: Oxfmt (format + import sorting)
         run: pnpm format:check
 
       - name: Oxlint (accessibility, React, Next.js, TypeScript)

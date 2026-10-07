@@ -3,6 +3,7 @@
 import { LanguageSelect } from '@artloupe/fascia/components/blocks/language-select';
 import { localeOptions } from '@artloupe/fascia/i18n/locales';
 import { useLocale } from 'next-intl';
+
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { type Locale, routing } from '@/i18n/routing';
 

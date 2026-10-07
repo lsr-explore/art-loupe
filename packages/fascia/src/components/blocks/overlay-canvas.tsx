@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
+
 import type { OverlayPoint } from './overlay-geometry';
 import { pointFromClientPosition } from './overlay-geometry';
 

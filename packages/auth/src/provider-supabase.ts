@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+
 import type { AuthProvider, TokenRefresher } from './provider';
 import type { AuthResult, Role, Tokens } from './types';
 

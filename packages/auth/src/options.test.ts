@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+
 import { getSessionOptions, SESSION_COOKIE_NAME } from './options';
 
 // @trace flow=platform.auth category=security

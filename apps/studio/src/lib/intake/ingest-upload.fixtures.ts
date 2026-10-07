@@ -12,6 +12,7 @@
  */
 
 import type { ProjectIntent } from '@artloupe/schemas';
+
 import { jpegBytes } from './inspect-image.fixtures';
 
 export const SUPABASE_URL = 'http://127.0.0.1:54321';

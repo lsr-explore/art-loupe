@@ -1,6 +1,7 @@
 'use client';
 import { type InspirationRequest, inspirationRequestSchema } from '@artloupe/schemas/inspiration';
 import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { fetchInspiration } from '@/lib/inspiration/search';
 
 /** Server state for one committed search. The query key is the validated request, so

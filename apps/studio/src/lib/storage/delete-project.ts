@@ -1,5 +1,4 @@
 import 'server-only';
-
 /**
  * Delete one project: its storage objects first, then its rows (issue #22, FR-806, NFR-10).
  *
@@ -25,7 +24,6 @@ import 'server-only';
  * bought by the insert-claim guard in
  * `supabase/migrations/20260906181500_close_storage_object_lifecycle.sql`.
  */
-
 import { REFERENCE_IMAGE_BUCKET } from './reference-images';
 
 export interface DeleteProjectRequest {

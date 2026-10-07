@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
+
 import darkSvg from '../../assets/brand-logo-dark.svg?raw';
 import lightSvg from '../../assets/brand-logo-light.svg?raw';
 import compactDarkSvg from '../../assets/brand-mark-dark.svg?raw';

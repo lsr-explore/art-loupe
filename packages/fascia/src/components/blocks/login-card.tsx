@@ -1,6 +1,7 @@
 import { Card } from '@artloupe/fascia/components/ui/card';
 import { cn } from '@artloupe/fascia/lib/utils';
 import type { ReactNode } from 'react';
+
 import { BrandLogo } from './brand-logo';
 
 interface LoginCardProps {

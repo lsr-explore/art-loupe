@@ -99,7 +99,7 @@ assumed present.
 
 ### Bootstrapping
 
-The Supabase CLI, Playwright, Biome, Vale and the report generators are all
+The Supabase CLI, Playwright, Oxlint, Oxfmt, Vale and the report generators are all
 devDependencies; `pnpm install` is the only step that fetches them. Two things it does
 not fetch, because they live outside the npm cache:
 
@@ -178,7 +178,7 @@ pnpm check:all      # everything below, in order
 
 | Command | Checks |
 | --- | --- |
-| `pnpm format:check` | Biome formatting + import sorting |
+| `pnpm format:check` | Oxfmt formatting + import sorting |
 | `pnpm lint` | Oxlint — jsx-a11y, React, Next.js, TypeScript, and house rules |
 | `pnpm lint:css` | Stylelint |
 | `pnpm lint:md` | markdownlint |

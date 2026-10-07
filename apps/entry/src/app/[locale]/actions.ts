@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
 import { ACK_COOKIE_NAME, ACK_COOKIE_VALUE, ackCookieOptions } from '@/lib/ack-cookie';
 import { appOrigins, resolveNextUrl } from '@/lib/app-origins';
 import { LAUNCH_TARGETS, type LaunchTarget } from '@/lib/launch-targets';

@@ -1,5 +1,6 @@
 import type { InspirationImage } from '@artloupe/schemas/inspiration';
 import { describe, expect, it } from 'vitest';
+
 import { visibleResults } from './results';
 
 const image = (id: string, title: string, year: number | null): InspirationImage => ({

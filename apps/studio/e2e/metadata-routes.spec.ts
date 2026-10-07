@@ -18,17 +18,21 @@ const METADATA_ROUTES = [
   '/opengraph-image.png',
 ];
 
-test.describe('Metadata routes bypass locale negotiation', {
-  annotation: [
-    { type: 'flow', description: 'platform.shell' },
-    { type: 'category', description: 'functionality' },
-  ],
-}, () => {
-  for (const route of METADATA_ROUTES) {
-    test(`${route} is served directly`, async ({ request }) => {
-      const response = await request.get(route, { maxRedirects: 0 });
+test.describe(
+  'Metadata routes bypass locale negotiation',
+  {
+    annotation: [
+      { type: 'flow', description: 'platform.shell' },
+      { type: 'category', description: 'functionality' },
+    ],
+  },
+  () => {
+    for (const route of METADATA_ROUTES) {
+      test(`${route} is served directly`, async ({ request }) => {
+        const response = await request.get(route, { maxRedirects: 0 });
 
-      expect(response.status(), `${route} should not redirect or 404`).toBe(200);
-    });
-  }
-});
+        expect(response.status(), `${route} should not redirect or 404`).toBe(200);
+      });
+    }
+  },
+);

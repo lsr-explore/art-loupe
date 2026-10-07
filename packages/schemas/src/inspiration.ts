@@ -36,9 +36,9 @@ export const inspirationRequestSchema = z
       value.source === 'pexels'
         ? Boolean(
             value.artist ||
-              value.highlights ||
-              value.date_begin !== null ||
-              value.date_end !== null,
+            value.highlights ||
+            value.date_begin !== null ||
+            value.date_end !== null,
           )
         : Boolean(value.orientation || value.size || value.color);
     const dates =

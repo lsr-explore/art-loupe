@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+
 import { IntakeForm } from '@/components/intake/intake-form';
 
 /**

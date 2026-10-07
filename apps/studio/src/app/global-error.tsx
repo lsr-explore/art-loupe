@@ -1,6 +1,7 @@
 'use client';
 
 import { StandaloneMessage } from '@artloupe/fascia/components/blocks/standalone-message';
+
 import './globals.css';
 
 interface GlobalErrorProps {

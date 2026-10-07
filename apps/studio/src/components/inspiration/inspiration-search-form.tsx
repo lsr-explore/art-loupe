@@ -4,6 +4,7 @@ import { Label } from '@artloupe/fascia/components/ui/label';
 import { NativeSelect } from '@artloupe/fascia/components/ui/native-select';
 import { type InspirationRequest, inspirationRequestSchema } from '@artloupe/schemas/inspiration';
 import { useTranslations } from 'next-intl';
+
 import { Field, linkClass, TextInput } from './form-fields';
 
 const ORIENTATIONS = ['', 'landscape', 'portrait', 'square'] as const;

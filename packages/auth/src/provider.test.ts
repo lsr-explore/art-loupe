@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
 import { demoAuthProvider } from './provider';
 
 // @trace flow=platform.auth category=security
