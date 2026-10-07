@@ -1,13 +1,16 @@
 # Current state
 
-**Updated:** 2026-09-13
+**Updated:** 2026-10-06
 
 ## 1. Snapshot
 
-**Slice 1 is twelve of fourteen PRs in, and PR 12 is complete.** PR 12 (routing) landed in two
-halves. 12a (#65) built the deterministic path: the graph loads a project as the artist, gates on
-a face, surveys the photograph, routes, and runs the selected tools. 12b (#67) replaced the
-routing stand-in with the model-driven Studio Director. PR 13, interrupt and resume, is next.
+**Slice 1 is twelve of fourteen PRs in, and PR 13, interrupt and resume, is next.** PR 12
+(routing) landed in two halves: 12a (#65) built the deterministic path, and 12b (#67) added the
+model-driven Studio Director.
+
+Two things happened beside the ladder. **Get Inspired** shipped as a side feature (#76, #79, #81).
+**The JS toolchain changed**: Oxlint is the only linter (ADR 0004), Oxfmt is the only formatter
+(ADR 0005), and the workspace is on TypeScript 7 (#86).
 
 Art Loupe turns a reference photograph into a medium-aware, time-boxed working plan where every
 claim is **measured** (a pixel fact), **cited** (an instructional source), or **chosen** (a
@@ -35,8 +38,14 @@ The same status lives in the ladder table in
 
 ### What works today
 
-- **An artist can complete an upload from the browser.** Every refusal reason renders as
-  something actionable in English and Spanish.
+- **An artist can complete an upload from the browser,** by picking a file or by dragging it
+  onto the drop zone, which shows a preview (#75). Every refusal reason renders as something
+  actionable in English and Spanish.
+- **Get Inspired searches Pexels photographs and Met public-domain paintings**
+  (`/[locale]/get-inspired`). It is a frontend system-design study piece. Results land in a
+  fascia `ImageGallery` with grid or flex layouts, masonry on or off. A shared Postgres cache sits
+  behind a per-artist rate limit. It does not yet start a project or feed the analysis tools.
+  [`design/get-inspired.md`](./design/get-inspired.md) has the sequence diagrams and code maps.
 - **Untrusted text is screened at ingest** on three of five surfaces. The two unscreened surfaces
   are recorded as rows, not left out.
 - **`POST /runs` routes a project through the Studio Director.** The face gate decides head
@@ -90,7 +99,10 @@ The interrupt threshold is PR 13's call, to be set against photographs.
   note, not an ADR. Tickets: [#63](https://github.com/lsr-explore/art-loupe/issues/63) amends
   FR-801/FR-807, and [#64](https://github.com/lsr-explore/art-loupe/issues/64) is the outline
   itself. Exhaust the discriminative route first.
-- **#50, the drag-and-drop upload target**, is filed at P2.
+- **Get Inspired's Postgres cache holds a database credential.** ADR 0002 says the Python service
+  holds no auth secret. The cache uses a restricted role, but no ADR records that exception yet.
+- **A `.git-blame-ignore-revs` entry for the Oxfmt reformat** is optional. The squash commit on
+  `main` is `c3d384c`.
 - **#43, MediaPipe usage metrics:** the disclosure text is drafted in
   `docs/about-site/data-sent-to-google.md` and has no surface to live on.
 - **Presenting anchors ("face" vs "facing")** is PR 13's concern and still undecided.
@@ -113,13 +125,18 @@ The interrupt threshold is PR 13's call, to be set against photographs.
 - [`backlog/README.md`](./backlog/README.md) — epic #57 is the artist-facing policy work
 - [`design/generated-imagery-boundary.md`](./design/generated-imagery-boundary.md) — where
   generated imagery is allowed; a design note, not yet an ADR
+- [`decision-records/0004`](./decision-records/0004-oxlint-replaces-eslint-and-biome-linting.md) and
+  [`0005`](./decision-records/0005-oxfmt-replaces-biome-formatting.md) — the lint and format
+  toolchain
 
 ## 2. Agent pickup notes
 
-**State:** slice 1, PRs 1-12 merged (12a is #65; 12b is #67, squash `26cbace`). No open PRs, no
-worktrees.
+**State:** slice 1, PRs 1-12 merged (12a #65, 12b #67). Since then: #75 drag-and-drop upload;
+Get Inspired #76 (Codex), #79, #81; toolchain #82 Oxlint, #85 Oxfmt, #86 deps + TS 7. `main` is
+`32ba4f1`. No open PRs, no worktrees.
 
-**Filed 2026-09-13** — P0: #56, #57 (epic), #58. P2: #54, #55, #63, #64, #68. P3: #59, #62, #66.
+**Open filed work** — P0: #56, #57 (epic), #58. P2: #54, #55, #63, #64, #68.
+P3: #59, #62, #66, and #80 (Cleveland Museum of Art provider for Get Inspired).
 
 **Next step: PR 13, interrupt and resume** (ladder row 13): a `runs` table with owner RLS, the
 threshold as runtime config, `interrupt()` alone in its node, a force-interrupt affordance, and
@@ -201,9 +218,14 @@ feature.
 - **FR-801's check is a denylist.** Adding a provider means reviewing both of its lists.
 
 **Stack:** pnpm workspaces + uv workspace (`libs/auth|config|schemas|persistence|metering|
-image-tools`, `services/agent`). Next 16 / React 19 — read `node_modules/next/dist/docs/` first.
-Node 24, pnpm 10.0.0, vitest 5, OpenCV 5.0.0.93, NumPy 2.5, MediaPipe 0.10.35, `anthropic` 1.5.0
-(built on `httpx2`, not `httpx`).
+image-tools`, `services/agent`). Next 16.4 / React 19 / TypeScript 7 — read
+`node_modules/next/dist/docs/` first. Node 24, pnpm 10.0.0, vitest 5, OpenCV 5.0.0.93, NumPy 2.5,
+MediaPipe 0.10.35, `anthropic` 1.5.0 (built on `httpx2`, not `httpx`).
+
+**Lint and format:** Oxlint (`.oxlintrc.jsonc`) and Oxfmt (`.oxfmtrc.jsonc`); no ESLint, no Biome.
+Plugins in `.oxlintrc.jsonc` are native Rust ports; only `jsPlugins` load npm packages
+(`@next/eslint-plugin-next`, for one rule). Stylelint is configured in `stylelint.config.mjs`.
+VS Code formats on save through the `oxc.oxc-vscode` extension (`.vscode/`).
 
 **`@artloupe/schemas` has zod-free subpaths, and client code must use them**
 (`/intent-values`, `/image-limits`). **`pnpm size` is the only check that catches a barrel
@@ -232,6 +254,11 @@ in-process with `httpx.ASGITransport`.
 - **Fake the Director at the transport:** `agent_support.RecordedDirector` is a real
   `AsyncAnthropic` over `httpx2.MockTransport`, passed via `DefaultAsyncHttpxClient`. An object
   from the `httpx` package is rejected by `anthropic` 1.x.
+- **A clean lint run does not prove rules are active.** After changing the Oxlint config, lint a
+  throwaway file of deliberate violations. The migration once dropped `rules-of-hooks` silently,
+  and the Next.js JS plugin never fired without `env.browser`.
+- **Run agent tests with `uv run --directory python python -m pytest`.** Bare `pytest` can resolve
+  outside uv's environment and fail on `cv2`.
 - **`check:all` does not run ruff.** Neither does the pre-commit hook. `uv run --directory python
   poe check` is the only gate that catches a Python lint error.
 - **Before writing a field whose value depends on a library's behaviour, probe that behaviour.**
