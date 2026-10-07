@@ -40,6 +40,57 @@ test.describe('Get inspired', {
     { type: 'category', description: 'functionality' },
   ],
 }, () => {
+  test('switches among the four gallery layouts in a real layout engine, passing axe', async ({
+    page,
+  }) => {
+    // Several paintings, so masonry has columns to pack; jsdom cannot measure this.
+    const many: InspirationResponse = {
+      ...result,
+      items: Array.from({ length: 5 }, (_, index) => ({
+        ...result.items[0],
+        id: `met:${index + 1}`,
+        title: `Painting ${index + 1}`,
+        alt: `Painting ${index + 1}`,
+      })),
+    };
+    await page.route('**/api/inspiration?**', (route) => route.fulfill({ json: many }));
+    await page.route('https://images.metmuseum.org/**', (route) =>
+      route.fulfill({ contentType: 'image/png', body: png }),
+    );
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await open(page);
+    await page.getByLabel('Collection', { exact: true }).selectOption('met');
+    await page.getByLabel('Keywords', { exact: true }).fill('flowers');
+    await page.getByRole('button', { name: 'Search', exact: true }).click();
+    const list = page.getByRole('list', { name: 'Images' });
+    await expect(list.getByRole('listitem')).toHaveCount(5);
+    const layout = page.getByLabel('Layout', { exact: true });
+    const masonry = page.getByLabel("Masonry (keep each image's proportions)");
+    for (const [engine, packed, expected] of [
+      ['grid', false, 'grid'],
+      ['grid', true, 'grid-masonry'],
+      ['flex', true, 'flex-masonry'],
+      ['flex', false, 'flex'],
+    ] as const) {
+      await layout.selectOption(engine);
+      await masonry.setChecked(packed);
+      await expect(list).toHaveAttribute('data-layout', expected);
+      // Three columns at this width: the first three items share a top edge.
+      const tops = await list
+        .getByRole('listitem')
+        .evaluateAll((items) => items.slice(0, 3).map((item) => item.getBoundingClientRect().top));
+      expect(new Set(tops.map(Math.round)).size).toBe(1);
+      await settleTransitions(page);
+      expect(
+        (
+          await new AxeBuilder({ page })
+            .include('section')
+            .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+            .analyze()
+        ).violations,
+      ).toEqual([]);
+    }
+  });
   test('searches one source, filters locally, and supports keyboard navigation and axe', async ({
     page,
   }, testInfo) => {

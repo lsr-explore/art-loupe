@@ -19,6 +19,26 @@ describe('inspiration.search: image metadata card', () => {
     expect(screen.getByText('Image unavailable')).toBeVisible();
     expect(screen.getByText('Van Gogh')).toBeVisible();
   });
+  // @trace category=functionality
+  it('keeps natural proportions for masonry and a fixed frame otherwise', () => {
+    const card = (fit: 'frame' | 'natural') =>
+      render(
+        <ImageMetadataCard
+          imageUrl="https://images.metmuseum.org/a.jpg"
+          title="Sunflowers"
+          alt="Sunflowers"
+          unavailableLabel="Image unavailable"
+          metadata={[]}
+          fit={fit}
+        />,
+      );
+    const framed = card('frame');
+    expect(screen.getByRole('img').parentElement).toHaveClass('aspect-[4/3]');
+    framed.unmount();
+    card('natural');
+    expect(screen.getByRole('img').parentElement).not.toHaveClass('aspect-[4/3]');
+    expect(screen.getByRole('img')).toHaveClass('h-auto');
+  });
   it('has a semantic caption and no axe violations', async () => {
     const { container } = render(
       <ImageMetadataCard

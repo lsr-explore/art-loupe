@@ -35,6 +35,22 @@ afterEach(() => {
 });
 // @trace flow=inspiration.search category=functionality
 describe('inspiration search', () => {
+  it('applies the chosen layout to the result list without a new request', async () => {
+    const fetch = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async () => Response.json(response));
+    open();
+    fireEvent.change(screen.getByLabelText('Keywords'), { target: { value: 'trees' } });
+    submit();
+    const list = await screen.findByRole('list', { name: 'Images' });
+    expect(list).toHaveAttribute('data-layout', 'grid');
+    fireEvent.change(screen.getByLabelText('Layout'), { target: { value: 'flex' } });
+    expect(list).toHaveAttribute('data-layout', 'flex');
+    // Masonry asks for natural proportions; it engages once the gallery can measure.
+    fireEvent.click(screen.getByLabelText(messages.inspiration.masonry));
+    expect(screen.getByRole('img').parentElement).not.toHaveClass('aspect-[4/3]');
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it('names the artist when only a shortened Met artist is held back', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
       Response.json({ ...response, items: [] }),
