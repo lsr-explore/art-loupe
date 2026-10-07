@@ -1,12 +1,19 @@
 # Current state
 
-**Updated:** 2026-10-06
+**Updated:** 2026-10-07
 
 ## 1. Snapshot
 
-**Slice 1 is twelve of fourteen PRs in, and PR 13, interrupt and resume, is next.** PR 12
-(routing) landed in two halves: 12a (#65) built the deterministic path, and 12b (#67) added the
-model-driven Studio Director.
+**Slice 1 is twelve of fourteen PRs in. The goal now is a demoable application, so the next
+work is a walking skeleton rather than PR 13.** PR 12 (routing) landed in two halves: 12a (#65)
+built the deterministic path, and 12b (#67) added the model-driven Studio Director.
+
+**Sequencing decided 2026-10-07 (Laurie):** build the walking skeleton first. That means wiring
+the studio to `/runs` and showing the routing decision, the overlays and the plates on the
+project page. After that, each missing agent lands as a visible increment: the Planner and the
+Critic, then interrupt and resume, then the Art Tutor and chat. No new design note is needed.
+PR 14 is split. **14a (operations cost)** runs in parallel now. **14b (run health)** waits for
+the `runs` table, which the skeleton creates.
 
 Two things happened beside the ladder. **Get Inspired** shipped as a side feature (#76, #79, #81).
 **The JS toolchain changed**: Oxlint is the only linter (ADR 0004), Oxfmt is the only formatter
@@ -90,9 +97,11 @@ The interrupt threshold is PR 13's call, to be set against photographs.
 
 ### Open questions
 
-- **Who wires the studio to `/runs`?** It could ride inside PR 13, which needs UI for its
-  force-interrupt affordance and overlay guides, or become its own PR. This is Laurie's scoping
-  call.
+- **Job-status transport for the skeleton:** polling or streaming. This is open in
+  `design/e2e-walkthrough.md` and is the skeleton's first design call. It is Laurie's call.
+- **Only one of the five agents exists.** `design/agents.md` defines the Studio Director, Visual
+  Analyst, Art Tutor, Studio Planner and Plan Critic. Only the Director is built. No retrieval
+  corpus tables exist, and only pgvector is enabled.
 - **Should a bad Director answer be retried once?** Today it stops the run with a 502.
 - **The generative-AI boundary has a direction, not yet a decision.**
   [`design/generated-imagery-boundary.md`](./design/generated-imagery-boundary.md) is a design
@@ -138,18 +147,35 @@ Get Inspired #76 (Codex), #79, #81; toolchain #82 Oxlint, #85 Oxfmt, #86 deps + 
 **Open filed work** — P0: #56, #57 (epic), #58. P2: #54, #55, #63, #64, #68.
 P3: #59, #62, #66, and #80 (Cleveland Museum of Art provider for Get Inspired).
 
-**Next step: PR 13, interrupt and resume** (ladder row 13): a `runs` table with owner RLS, the
-threshold as runtime config, `interrupt()` alone in its node, a force-interrupt affordance, and
-overlay guides that reach an off-frame vanishing point, which fascia's clamp prevents today (#40).
-Several calls are Laurie's before code: the interrupt threshold against photographs, how anchors
-are presented, and whether PR 13 wires the studio to `/runs`. PR 12 began with a design note
-(`routing-plan.md`); PR 13 likely warrants one too.
+**Next step (decided 2026-10-07): two parallel tracks toward a demo.** Laurie is trying
+**herdr** (`~/.local/bin/herdr`, v0.9.3, Claude state hook installed) in **Ghostty**, with one
+pane per track, each in its own worktree.
+
+- **Track 1, the walking skeleton (interactive with Laurie).** Add a project GET, have the
+  studio call `/runs`, and render the `RoutingDecision`, overlays (fascia primitives exist) and
+  plates on `projects/[id]/page.tsx`, which is a placeholder today. This track **owns the `runs`
+  table** (owner RLS, plus the FK and owner read policy that `run_node_metrics` deferred to it).
+  Plate delivery needs PNG encoding, a derivatives store and an image-route change, so it moves
+  into the skeleton rather than following PR 13. Laurie's calls before code: the job-status
+  transport, and how much of plate delivery the first cut needs. Her earlier call (before the
+  skeleton decision) was that the derivatives store comes last; it still stands until she
+  revisits it, so plates could be encoded per request instead of stored. Then the Planner and Critic,
+  then PR 13 (interrupt and resume), then the Tutor, retrieval and chat.
+- **Track 2, PR 14a, operations cost (mostly autonomous).** Build a cost panel in
+  `apps/operations`, reading **only** `public.run_node_metrics` as `service_role`. It must add
+  **no migrations**, so it can share the one local Supabase with track 1. Null `cost_usd` means
+  unpriced, not free, and must render differently from zero. Ship through the `ship` skill.
+- **PR 14b, run health,** follows once track 1's `runs` table merges.
+
+**Uncommitted on `main`:** `pnpm-lock.yaml` drift after #86. It deduplicates `@noble/hashes`
+2.4.0 to 1.8.0 under jsdom and drops a stray `typescript@6.0.3`. It is unverified as a clean
+dedupe. Ship it as a small `chore(deps)` PR or fold it into the first branch.
 
 **Retention is decided** (2026-09-13, recorded on #58): stored indefinitely until the artist
 deletes it, and a regenerated plan replaces its predecessor rather than versioning beside it.
 
-**Then:** PR 14 ops, then **plate delivery** — sequenced after 13 so the viewer does not
-duplicate the overlay surface 13 builds. The derivatives store comes last (Laurie).
+**Interrupt-related calls still open for PR 13:** the interrupt threshold against photographs,
+how anchors are presented, and off-frame overlay guides (#40).
 
 **Scope is settled.** Art Loupe = reference photo → medium-aware working plan. Artwork critique
 is **cut**; the **Plan Critic** is **kept**. *Never generates imagery* is the one part under
