@@ -10,6 +10,7 @@ screen. Failing the run because of it would cost them the analysis, which is the
 `artloupe.agent.runtime._flush` makes for the ledger, for the same reason.
 """
 
+import asyncio
 import logging
 from collections.abc import Awaitable, Callable
 from typing import Any
@@ -19,6 +20,11 @@ from artloupe.persistence import RunEventKind
 
 logger = logging.getLogger(__name__)
 
+# A progress write is best effort, so it gets far less time than the recorder's own bound. A run
+# makes about ten of them, all inside the run's deadline, and a slow log must not spend that
+# deadline on lines the artist can do without.
+PROGRESS_TIMEOUT_SECONDS = 1.0
+
 
 async def report(kind: RunEventKind, node: str) -> None:
     """Report one node event, if the active run has somewhere to report it."""
@@ -26,7 +32,8 @@ async def report(kind: RunEventKind, node: str) -> None:
     if resources is None or resources.progress is None:
         return
     try:
-        await resources.progress(kind, {"node": node})
+        async with asyncio.timeout(PROGRESS_TIMEOUT_SECONDS):
+            await resources.progress(kind, {"node": node})
     except Exception:
         logger.exception("failed to report run progress", extra={"node": node, "kind": kind})
 

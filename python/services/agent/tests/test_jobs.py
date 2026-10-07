@@ -196,3 +196,26 @@ async def test_a_final_event_already_recorded_is_not_retried(
     await jobs.record_terminal(log, RUN, "failed", {"reason": "second"})
 
     assert [event.payload.get("reason") for event in log.runs[RUN].events] == [None, "first"]
+
+
+async def test_a_slow_progress_write_is_abandoned_and_the_run_continues(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A stalled log must not spend the run's deadline on progress lines."""
+    monkeypatch.setattr("artloupe.agent.progress.PROGRESS_TIMEOUT_SECONDS", 0.01)
+
+    class StalledLog(InMemoryRunLog):
+        async def record(self, run_id, kind, payload=None):  # type: ignore[override]
+            if kind.startswith("node_"):
+                await asyncio.sleep(60)
+            return await super().record(run_id, kind, payload)
+
+    log = StalledLog()
+    await log.create(run_id=RUN, project_id="project", owner=OWNER)
+    await asyncio.wait_for(
+        jobs.run_job(two_node_graph(), initial(), log=log, guards=GUARDS, resources=resources()),
+        timeout=2,
+    )
+
+    # Both nodes ran; the job reached its own end rather than the run deadline.
+    assert log.runs[RUN].events[-1].payload["reason"] == "internal_error"
