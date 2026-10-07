@@ -5,6 +5,7 @@
       "apps/**",
       "packages/**",
       "**/*.json",
+      "**/*.jsonc",
       "**/*.ts",
       "**/*.tsx",
       "**/*.js",
@@ -36,19 +37,7 @@
     "lineWidth": 100
   },
   "linter": {
-    "enabled": true,
-    "rules": {
-      "preset": "recommended",
-      "a11y": {
-        "recommended": false
-      },
-      "suspicious": {
-        "noExplicitAny": "warn"
-      },
-      "performance": {
-        "noImgElement": "warn"
-      }
-    }
+    "enabled": false
   },
   "css": {
     "parser": {

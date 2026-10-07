@@ -163,7 +163,6 @@ const main = () => {
     status: projectFields.get(issue.number)?.status ?? '—',
   }))
 
-  const byNumber = new Map(issues.map((issue) => [issue.number, issue]))
   const epics = issues.filter((issue) => issue.labels.includes('epic')).sort(byPriorityThenNumber)
   const epicNumbers = new Set(epics.map((epic) => epic.number))
 

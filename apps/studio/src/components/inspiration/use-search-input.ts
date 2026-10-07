@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 export const SEARCH_DEBOUNCE_MS = 600;
 const alwaysCommit = () => true;
 
-interface SearchInputOptions<T> {
+interface SearchInputOptions<Value> {
   /** Whether a typed draft is worth an automatic request. Submit ignores this.
    * Pass a stable (module-level) function: a new one each render restarts the timer. */
-  shouldAutoCommit?: (draft: T) => boolean;
+  shouldAutoCommit?: (draft: Value) => boolean;
   delay?: number;
 }
 
@@ -16,9 +16,9 @@ interface SearchInputOptions<T> {
  * worth a request, because every automatic request can spend shared provider quota.
  * React Query aborts obsolete fetches.
  */
-export const useSearchInput = <T>(
-  initial: T,
-  { shouldAutoCommit = alwaysCommit, delay = SEARCH_DEBOUNCE_MS }: SearchInputOptions<T> = {},
+export const useSearchInput = <Value>(
+  initial: Value,
+  { shouldAutoCommit = alwaysCommit, delay = SEARCH_DEBOUNCE_MS }: SearchInputOptions<Value> = {},
 ) => {
   const [draft, setDraft] = useState(initial);
   const [committed, setCommitted] = useState(initial);
@@ -32,7 +32,7 @@ export const useSearchInput = <T>(
     setDraft,
     committed,
     commit: () => setCommitted(draft),
-    replace: (value: T) => {
+    replace: (value: Value) => {
       setDraft(value);
       setCommitted(value);
     },

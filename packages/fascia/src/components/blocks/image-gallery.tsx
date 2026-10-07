@@ -9,10 +9,10 @@ import {
   gridRowSpan,
 } from './gallery-layout';
 
-export interface ImageGalleryProps<T> {
-  items: T[];
-  getKey: (item: T) => string;
-  renderItem: (item: T) => ReactNode;
+export interface ImageGalleryProps<Item> {
+  items: Item[];
+  getKey: (item: Item) => string;
+  renderItem: (item: Item) => ReactNode;
   layout: GalleryLayout;
   /** Accessible name for the list, e.g. "Search results". */
   label: string;
@@ -38,7 +38,7 @@ const useGalleryMeasurements = (keySignature: string) => {
   const listRef = useRef<HTMLUListElement>(null);
   const [width, setWidth] = useState(0);
   const [heights, setHeights] = useState<Heights>({});
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-observe when the item set changes.
+  // keySignature is the dependency on purpose: re-observe whenever the item set changes.
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
@@ -70,7 +70,7 @@ const useGalleryMeasurements = (keySignature: string) => {
  * Until then, and wherever ResizeObserver is unavailable, the same engine lays items out
  * in plain rows. Measuring there is valid: an item's width is the same in both modes.
  */
-export const ImageGallery = <T,>({
+export const ImageGallery = <Item,>({
   items,
   getKey,
   renderItem,
@@ -79,7 +79,7 @@ export const ImageGallery = <T,>({
   minColumnWidth = 288,
   maxColumns = 3,
   gap = 20,
-}: ImageGalleryProps<T>) => {
+}: ImageGalleryProps<Item>) => {
   const keys = items.map(getKey);
   const { listRef, width, heights, canObserve } = useGalleryMeasurements(keys.join('\n'));
   const columns = columnCount(width, minColumnWidth, gap, maxColumns);
@@ -125,10 +125,10 @@ export const ImageGallery = <T,>({
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-redundant-roles -- Safari: see the role below.
     <ul
       ref={listRef}
       // Safari drops list semantics from a list without bullets unless the role is explicit.
+      // oxlint-disable-next-line jsx-a11y/no-redundant-roles
       role="list"
       aria-label={label}
       data-layout={`${layout.engine}${masonry ? '-masonry' : ''}`}
@@ -148,7 +148,6 @@ export const ImageGallery = <T,>({
           // items in the DOM, so it lands at the bottom of that column.
           Array.from({ length: columns - 1 }, (_, column) => (
             <li
-              // biome-ignore lint/suspicious/noArrayIndexKey: a break is identified by its column.
               key={`gallery-break-${column}`}
               aria-hidden="true"
               style={{ flexBasis: '100%', width: 0, margin: 0, padding: 0, order: column }}

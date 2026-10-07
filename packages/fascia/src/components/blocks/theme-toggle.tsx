@@ -57,11 +57,11 @@ export const ThemeToggle = ({ label, optionLabels, className }: ThemeToggleProps
   const mounted = useIsHydrated();
 
   return (
-    <div
-      role="group"
+    // A fieldset is a native group; `m-0 min-w-0` resets its default margin and width.
+    <fieldset
       aria-label={label}
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-full border border-border bg-card p-0.5',
+        'm-0 inline-flex min-w-0 items-center gap-0.5 rounded-full border border-border bg-card p-0.5',
         className,
       )}
     >
@@ -86,6 +86,6 @@ export const ThemeToggle = ({ label, optionLabels, className }: ThemeToggleProps
           </button>
         );
       })}
-    </div>
+    </fieldset>
   );
 };

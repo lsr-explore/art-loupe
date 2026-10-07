@@ -27,8 +27,8 @@
 import type { AxeMatchers } from 'vitest-axe';
 
 declare module 'vitest' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  // oxlint-disable-next-line typescript/no-empty-object-type
   interface Assertion extends AxeMatchers {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  // oxlint-disable-next-line typescript/no-empty-object-type
   interface AsymmetricMatchersContaining extends AxeMatchers {}
 }

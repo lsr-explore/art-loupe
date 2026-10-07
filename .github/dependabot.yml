@@ -5,8 +5,8 @@ updates:
     schedule:
       interval: weekly
     ignore:
-      # TS 7 (native-port rewrite) breaks typescript-eslint (no release
-      # supports it yet). Hold at 6.x until the lint stack catches up.
+      # Hold TS at 6.x until the TS 7 upgrade is evaluated on its own. The original
+      # blocker, typescript-eslint, left with ESLint (ADR 0004); Oxlint does not need it.
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
     groups:

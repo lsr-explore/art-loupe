@@ -6,7 +6,7 @@ import type * as React from 'react';
 const Label = ({ className, ...props }: React.ComponentProps<'label'>) => (
   // Primitive wrapper — the consumer supplies the association (`htmlFor` or nesting)
   // via spread props; it can't be declared here. jsx-a11y can't see that contract.
-  // eslint-disable-next-line jsx-a11y/label-has-associated-control
+  // oxlint-disable-next-line jsx-a11y/label-has-associated-control
   <label
     data-slot="label"
     className={cn(

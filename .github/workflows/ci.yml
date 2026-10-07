@@ -30,10 +30,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Biome (format + lint)
+      - name: Biome (format + import sorting)
         run: pnpm format:check
 
-      - name: ESLint (accessibility + Next.js rules)
+      - name: Oxlint (accessibility, React, Next.js, TypeScript)
         run: pnpm lint
 
       - name: Stylelint (CSS)
