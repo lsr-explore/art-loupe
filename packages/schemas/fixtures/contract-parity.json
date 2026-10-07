@@ -245,6 +245,80 @@
         "stopped": true,
         "stop_reason": "token ceiling reached before the plan was synthesised"
       }
+    ],
+    "run_results": [
+      {
+        "$comment": "A finished portrait run: the routing decision and one artifact's FR-305 metadata.",
+        "run_id": "7d1f3a2c-5b6e-4c8d-9e0f-1a2b3c4d5e6f",
+        "owner": "4a1f0e2c-0000-4000-8000-000000000001",
+        "project_id": "aaaaaaaa-3333-4333-8333-aaaaaaaaaaaa",
+        "node_trail": ["load_project", "face_gate", "survey", "direct", "analyse"],
+        "gate": {
+          "face_found": true,
+          "reason": null
+        },
+        "routing": {
+          "manifest": {
+            "selected": [
+              {
+                "tool": "grayscale",
+                "reason": null
+              },
+              {
+                "tool": "value_map",
+                "reason": "low-key reference; the value design is the whole problem"
+              },
+              {
+                "tool": "value_shapes",
+                "reason": null
+              },
+              {
+                "tool": "outline",
+                "reason": null
+              },
+              {
+                "tool": "head_construction",
+                "reason": "one face, with a facial landmark reliability of 0.8"
+              }
+            ],
+            "declined": [
+              {
+                "tool": "perspective",
+                "reason": "no vanishing point cleared the 0.35 confidence floor, so a horizon here would be invented"
+              }
+            ]
+          },
+          "rationale": "This is a portrait with one clearly detected face, so the head construction is worth building. No vanishing point cleared the confidence floor, so perspective would only draw coincidental lines.",
+          "gate": {
+            "face_found": true,
+            "reason": null
+          }
+        },
+        "artifacts": [
+          {
+            "tool": "grayscale",
+            "tool_version": "0.1.0",
+            "parameters": {
+              "weights": "rec709"
+            },
+            "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+            "duration_ms": 41,
+            "confidence": null,
+            "limitations": []
+          }
+        ]
+      }
+    ],
+    "run_failures": [
+      {
+        "$comment": "A ceiling working as designed is a reason of its own, not an internal error.",
+        "reason": "budget_exceeded",
+        "detail": "plan budget exhausted"
+      },
+      {
+        "reason": "interrupted",
+        "detail": "The service stopped before the run could finish."
+      }
     ]
   },
   "rejects": {
@@ -456,6 +530,34 @@
       "value": {
         "medium": "digital",
         "time_budget_minutes": 60
+      }
+    },
+    "run_failure_with_an_unknown_reason": {
+      "$comment": "The studio localizes the reason, so an unlisted one has no message to show.",
+      "schema": "run_failure",
+      "value": {
+        "reason": "something_new",
+        "detail": "x"
+      }
+    },
+    "run_failure_carrying_an_upstream_body": {
+      "$comment": "Strict on both sides: no field for an upstream error body to ride in on.",
+      "schema": "run_failure",
+      "value": {
+        "reason": "internal_error",
+        "detail": "x",
+        "upstream": "{\"message\":\"policy runs_select_own\"}"
+      }
+    },
+    "run_result_without_routing": {
+      "schema": "run_result",
+      "value": {
+        "run_id": "r",
+        "owner": "o",
+        "project_id": "p",
+        "node_trail": [],
+        "gate": {},
+        "artifacts": []
       }
     }
   }

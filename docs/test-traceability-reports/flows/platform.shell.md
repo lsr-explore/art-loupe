@@ -168,7 +168,7 @@ App shell, navigation, theming, and localization
 | a11y | has no detectable accessibility violations | `apps/entry/e2e/entry.spec.ts:46` |
 | functionality | ${route} is served directly | `apps/entry/e2e/metadata-routes.spec.ts:31` |
 | functionality | ${route} is served directly | `apps/operations/e2e/metadata-routes.spec.ts:31` |
-| functionality | renders the form in Spanish on the Spanish route | `apps/studio/e2e/intake.spec.ts:245` |
+| functionality | renders the form in Spanish on the Spanish route | `apps/studio/e2e/intake.spec.ts:244` |
 | functionality | ${route} is served directly | `apps/studio/e2e/metadata-routes.spec.ts:31` |
 
 ---

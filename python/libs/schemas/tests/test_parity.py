@@ -22,6 +22,8 @@ from artloupe.schemas import (
     ImageRef,
     ProjectIntent,
     RoutingDecision,
+    RunFailure,
+    RunResult,
     ToolManifest,
 )
 
@@ -69,6 +71,8 @@ SCHEMAS: dict[str, type[BaseModel]] = {
     "routing_decision": RoutingDecision,
     "artifact_metadata": ArtifactMetadata,
     "budget_ledger": BudgetLedger,
+    "run_result": RunResult,
+    "run_failure": RunFailure,
 }
 
 
@@ -123,6 +127,16 @@ def test_null_confidence_is_not_collapsed_to_zero() -> None:
 )
 def test_accepts_budget_ledgers(ledger: dict[str, Any]) -> None:
     BudgetLedger.model_validate(ledger)
+
+
+@pytest.mark.parametrize("result", ACCEPTS["run_results"], ids=lambda entry: entry["run_id"])
+def test_accepts_run_results(result: dict[str, Any]) -> None:
+    RunResult.model_validate(result)
+
+
+@pytest.mark.parametrize("failure", ACCEPTS["run_failures"], ids=lambda entry: entry["reason"])
+def test_accepts_run_failures(failure: dict[str, Any]) -> None:
+    RunFailure.model_validate(failure)
 
 
 @pytest.mark.parametrize(("name", "entry"), sorted(REJECTS.items()), ids=lambda value: str(value))

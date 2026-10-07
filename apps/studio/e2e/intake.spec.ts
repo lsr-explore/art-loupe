@@ -164,12 +164,11 @@ test.describe(
       await fillIntake(page);
       await submit(page);
 
+      // The form's half of the contract is the navigation. What the project page renders is
+      // not asserted here: it now reads the project as the artist, and the hermetic run's demo
+      // session owns no Supabase project, so it is answered with the same 404 as any project
+      // that is not the caller's. The page's own suite covers what it renders.
       await expect(page).toHaveURL(new RegExp(`/en/projects/${PROJECT_ID}$`));
-      await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-        'Reference photograph received',
-      );
-      // The page must not imply a plan exists. It is the honest half of shipping this early.
-      await expect(page.getByText(/not built yet/i)).toBeVisible();
     });
 
     test('validates in the browser before anything is uploaded', async ({ page }) => {

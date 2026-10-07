@@ -13,8 +13,8 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 204 (19 parametrized) |
-| **Covered** | a11y 8 · security 53 · safety 1 · data 61 · functionality 81 |
+| **Tests** | 267 (21 parametrized) |
+| **Covered** | a11y 10 · security 68 · safety 5 · data 61 · functionality 123 |
 | **Not covered** | privacy · performance |
 
 ## pytest — 61
@@ -83,16 +83,31 @@ Upload, intake, and the typed ProjectIntent
 | functionality | test_the_model_id_is_configuration | `python/services/agent/tests/test_routing.py:214` |
 | functionality | test_no_pixels_reach_the_model | `python/services/agent/tests/test_routing.py:225` |
 
-## Vitest — 131
+## Vitest — 194
 
 | Category | Test | Location |
 | --- | --- | --- |
-| functionality | confirms the upload and says plainly that the plan is not built | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:47` |
-| functionality | shows the project reference it was given | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:60` |
-| functionality | refuses %j rather than presenting it as a project | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:71` |
-| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:80` |
+| functionality | shows the reference photograph through the image route, with its dimensions | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:81` |
+| functionality | says plainly that the plan is not built yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:90` |
+| functionality | hands the run panel the project and no run when there is none | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:95` |
+| functionality | hands the run panel the latest run, so a reload follows it | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:100` |
+| functionality | says so when the project has no photograph yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:106` |
+| functionality | says the project could not be loaded when the data service fails | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:112` |
+| a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:120` |
+| security | refuses %j without reading anything | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:132` |
+| security | answers 404 when RLS hides the project, absent and foreign alike | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:140` |
+| security | answers 404 for a session with no Supabase tokens, which owns nothing | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:145` |
+| security | offers sign-in again for an expired token, without reading or writing anything | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:151` |
+| security | reads the project with the artist token | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:160` |
 | functionality | renders the page heading and the intake form | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:27` |
 | a11y | has no accessibility violations | `apps/studio/src/app/[locale]/projects/new/page.test.tsx:35` |
+| functionality | answers 202 with the run id | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:38` |
+| functionality | asks the agent to run this project, as the artist | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:44` |
+| functionality | the agent is not configured | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:56` |
+| security | answers 404 for an id that is not a UUID, without asking the agent | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:80` |
+| security | answers 404 with no token | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:86` |
+| security | passes the agent | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:92` |
+| security | answers 401 when the agent rejects the artist | `apps/studio/src/app/api/projects/[id]/runs/route.test.ts:101` |
 | security | answers 401 with no session | `apps/studio/src/app/api/projects/route.test.ts:57` |
 | security | answers 401 for a demo session, which owns no Supabase project | `apps/studio/src/app/api/projects/route.test.ts:65` |
 | security | takes the owner id from the token and never from the request | `apps/studio/src/app/api/projects/route.test.ts:75` |
@@ -114,6 +129,14 @@ Upload, intake, and the typed ProjectIntent
 | functionality | maps a duplicate to 409, not to a permissions error | `apps/studio/src/app/api/projects/route.test.ts:252` |
 | functionality | maps an unavailable backend to 502 and logs it | `apps/studio/src/app/api/projects/route.test.ts:260` |
 | functionality | accepts the full intent the walkthrough describes | `apps/studio/src/app/api/projects/route.test.ts:362` |
+| functionality | streams the validated events as SSE | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:40` |
+| functionality | forwards a numeric Last-Event-ID so a reconnect resumes | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:50` |
+| functionality | drops a Last-Event-ID that is not a sequence number | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:60` |
+| functionality | passes a 204 on, which tells EventSource to stop reconnecting | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:65` |
+| functionality | answers 503 when the agent cannot be reached | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:70` |
+| security | answers 404 for an id that is not a UUID, without asking the agent | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:78` |
+| security | passes the agent | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:83` |
+| security | answers 404 with no token | `apps/studio/src/app/api/runs/[id]/events/route.test.ts:88` |
 | functionality | posts the photograph and a validated intent, then opens the new project | `apps/studio/src/components/intake/intake-form.test.tsx:147` |
 | functionality | collects every missing required field into one summary instead of one per submit | `apps/studio/src/components/intake/intake-form.test.tsx:177` |
 | functionality | moves focus to the summary and links each entry to the field it belongs to | `apps/studio/src/components/intake/intake-form.test.tsx:189` |
@@ -140,6 +163,25 @@ Upload, intake, and the typed ProjectIntent
 | a11y | has no accessibility violations | `apps/studio/src/components/intake/intake-form.test.tsx:491` |
 | a11y | has no accessibility violations with a photograph previewed | `apps/studio/src/components/intake/intake-form.test.tsx:497` |
 | a11y | has no accessibility violations while showing errors | `apps/studio/src/components/intake/intake-form.test.tsx:506` |
+| functionality | shows the rationale, every selection, and every declination with its reason (FR-307) | `apps/studio/src/components/project/routing-summary.test.tsx:20` |
+| functionality | says so when nothing was declined | `apps/studio/src/components/project/routing-summary.test.tsx:35` |
+| functionality | shows a tool it has no name for as its id, rather than hiding it | `apps/studio/src/components/project/routing-summary.test.tsx:43` |
+| a11y | has no accessibility violations | `apps/studio/src/components/project/routing-summary.test.tsx:52` |
+| functionality | starts nothing until the artist asks | `apps/studio/src/components/project/run-panel.test.tsx:41` |
+| functionality | starts a run on request and follows its stream | `apps/studio/src/components/project/run-panel.test.tsx:47` |
+| functionality | announces the current step, then the routing decision | `apps/studio/src/components/project/run-panel.test.tsx:56` |
+| functionality | follows an existing run at once, without starting another | `apps/studio/src/components/project/run-panel.test.tsx:72` |
+| functionality | shows a failed run in the artist language, and offers to try again | `apps/studio/src/components/project/run-panel.test.tsx:78` |
+| functionality | treats the studio | `apps/studio/src/components/project/run-panel.test.tsx:89` |
+| functionality | says contact was lost when the stream is refused before the run ends | `apps/studio/src/components/project/run-panel.test.tsx:99` |
+| functionality | says the run could not start when the studio refuses | `apps/studio/src/components/project/run-panel.test.tsx:105` |
+| functionality | closes its stream when it unmounts | `apps/studio/src/components/project/run-panel.test.tsx:114` |
+| a11y | has no accessibility violations once a run has finished | `apps/studio/src/components/project/run-panel.test.tsx:121` |
+| functionality | tracks each node from running to done | `apps/studio/src/components/project/run-view.test.ts:13` |
+| functionality | keeps the result of a run that succeeded | `apps/studio/src/components/project/run-view.test.ts:27` |
+| functionality | keeps only the reason of a run that failed, never its English detail | `apps/studio/src/components/project/run-view.test.ts:36` |
+| functionality | turns a refused stream into a failure of its own | `apps/studio/src/components/project/run-view.test.ts:43` |
+| functionality | starts idle, with no run | `apps/studio/src/components/project/run-view.test.ts:50` |
 | data | uploads the object BEFORE the row that cites it | `apps/studio/src/lib/intake/ingest-upload.test.ts:55` |
 | data | creates the project before anything that needs its id | `apps/studio/src/lib/intake/ingest-upload.test.ts:74` |
 | data | writes the detections last, once the upload is already valid | `apps/studio/src/lib/intake/ingest-upload.test.ts:80` |
@@ -172,6 +214,27 @@ Upload, intake, and the typed ProjectIntent
 | functionality | refuses a long edge below ${MIN_LONG_EDGE_PX}px | `apps/studio/src/lib/intake/inspect-image.test.ts:129` |
 | functionality | accepts a long edge exactly at the floor | `apps/studio/src/lib/intake/inspect-image.test.ts:136` |
 | functionality | measures the long edge, not the width | `apps/studio/src/lib/intake/inspect-image.test.ts:143` |
+| functionality | returns the intent, the original and the latest run | `apps/studio/src/lib/projects/read-project.test.ts:39` |
+| functionality | has no original and no run before either exists | `apps/studio/src/lib/projects/read-project.test.ts:57` |
+| functionality | asks only for the newest run | `apps/studio/src/lib/projects/read-project.test.ts:64` |
+| functionality | answers unavailable when the connection is refused | `apps/studio/src/lib/projects/read-project.test.ts:72` |
+| functionality | answers unavailable when a body is not JSON | `apps/studio/src/lib/projects/read-project.test.ts:79` |
+| functionality | answers unavailable when PostgREST fails | `apps/studio/src/lib/projects/read-project.test.ts:86` |
+| security | reads with the artist token and the anon key, never anything else | `apps/studio/src/lib/projects/read-project.test.ts:94` |
+| security | answers not-found when RLS hides the project | `apps/studio/src/lib/projects/read-project.test.ts:102` |
+| security | answers not-found, not unavailable, for a token Supabase refuses | `apps/studio/src/lib/projects/read-project.test.ts:107` |
+| functionality | relays every valid event with its id, and passes heartbeats on | `apps/studio/src/lib/runs/relay-run-events.test.ts:35` |
+| functionality | starts with its own retry interval | `apps/studio/src/lib/runs/relay-run-events.test.ts:51` |
+| functionality | stops after the terminal event even if more arrives | `apps/studio/src/lib/runs/relay-run-events.test.ts:56` |
+| safety | an unknown kind | `apps/studio/src/lib/runs/relay-run-events.test.ts:67` |
+| safety | cancels the upstream stream, so the agent stops polling for a closed reader | `apps/studio/src/lib/runs/relay-run-events.test.ts:92` |
+| safety | cancels the upstream stream after the terminal event too | `apps/studio/src/lib/runs/relay-run-events.test.ts:112` |
+| safety | never relays the refused payload itself | `apps/studio/src/lib/runs/relay-run-events.test.ts:131` |
+| functionality | reads id, event and data, and joins multi-line data | `apps/studio/src/lib/runs/sse.test.ts:15` |
+| functionality | reassembles a frame split across network chunks | `apps/studio/src/lib/runs/sse.test.ts:22` |
+| functionality | keeps a comment-only frame as a heartbeat and drops retry lines | `apps/studio/src/lib/runs/sse.test.ts:28` |
+| functionality | discards a trailing partial frame, as the spec requires | `apps/studio/src/lib/runs/sse.test.ts:32` |
+| functionality | writes a frame the reader reads back unchanged | `apps/studio/src/lib/runs/sse.test.ts:36` |
 | data | produces the lowercase hex SHA-256 the database constraint accepts | `apps/studio/src/lib/storage/checksum.test.ts:9` |
 | data | matches the published SHA-256 of the empty input | `apps/studio/src/lib/storage/checksum.test.ts:16` |
 | data | changes when a single byte changes | `apps/studio/src/lib/storage/checksum.test.ts:24` |
@@ -226,15 +289,15 @@ Upload, intake, and the typed ProjectIntent
 | functionality | builds the multipart request the upload route expects | `apps/studio/e2e/intake.spec.ts:102` |
 | functionality | uploads a photograph dropped on the drop target | `apps/studio/e2e/intake.spec.ts:131` |
 | functionality | opens the created project on a 201 | `apps/studio/e2e/intake.spec.ts:160` |
-| functionality | validates in the browser before anything is uploaded | `apps/studio/e2e/intake.spec.ts:175` |
-| functionality | moves focus to the error summary so the failure is announced | `apps/studio/e2e/intake.spec.ts:192` |
-| functionality | explains the refusal ${reason} in words an artist can act on | `apps/studio/e2e/intake.spec.ts:211` |
-| functionality | reports a duplicate upload without pretending it failed | `apps/studio/e2e/intake.spec.ts:225` |
-| functionality | reports an expired session rather than a generic failure | `apps/studio/e2e/intake.spec.ts:235` |
-| functionality | reflows at 320 CSS px without horizontal scrolling | `apps/studio/e2e/intake.spec.ts:260` |
-| a11y | the intake form has no accessibility violations | `apps/studio/e2e/intake.spec.ts:273` |
-| a11y | the error state has no accessibility violations | `apps/studio/e2e/intake.spec.ts:287` |
-| a11y | the project page has no accessibility violations | `apps/studio/e2e/intake.spec.ts:305` |
+| functionality | validates in the browser before anything is uploaded | `apps/studio/e2e/intake.spec.ts:174` |
+| functionality | moves focus to the error summary so the failure is announced | `apps/studio/e2e/intake.spec.ts:191` |
+| functionality | explains the refusal ${reason} in words an artist can act on | `apps/studio/e2e/intake.spec.ts:210` |
+| functionality | reports a duplicate upload without pretending it failed | `apps/studio/e2e/intake.spec.ts:224` |
+| functionality | reports an expired session rather than a generic failure | `apps/studio/e2e/intake.spec.ts:234` |
+| functionality | reflows at 320 CSS px without horizontal scrolling | `apps/studio/e2e/intake.spec.ts:259` |
+| a11y | the intake form has no accessibility violations | `apps/studio/e2e/intake.spec.ts:272` |
+| a11y | the error state has no accessibility violations | `apps/studio/e2e/intake.spec.ts:286` |
+| a11y | the project page has no accessibility violations | `apps/studio/e2e/intake.spec.ts:304` |
 
 ---
 

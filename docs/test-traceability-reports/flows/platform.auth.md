@@ -13,8 +13,8 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 120 (3 parametrized) |
-| **Covered** | a11y 5 · security 102 · functionality 13 |
+| **Tests** | 125 (3 parametrized) |
+| **Covered** | a11y 5 · security 107 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
 ## pytest — 20
@@ -42,7 +42,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:445` |
 | security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:489` |
 
-## Vitest — 83
+## Vitest — 88
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -65,6 +65,8 @@ Acknowledgement gate, sign-in, and the route guard
 | security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:157` |
 | security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:175` |
 | security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:184` |
+| security | carries the artist token and the service identity, and refuses redirects | `apps/studio/src/lib/runs/agent-request.test.ts:14` |
+| security | cannot be pointed off the agent by the path | `apps/studio/src/lib/runs/agent-request.test.ts:38` |
 | security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:228` |
 | security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:268` |
 | security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:293` |
@@ -115,6 +117,9 @@ Acknowledgement gate, sign-in, and the route guard
 | security | writes no session at all for a refused role | `packages/auth/src/server.test.ts:91` |
 | security | reports a refused role identically to a bad password | `packages/auth/src/server.test.ts:106` |
 | security | accepts any authenticated role when no allow list is given | `packages/auth/src/server.test.ts:122` |
+| security | returns a token with more than the refresh margin left | `packages/auth/src/server.test.ts:144` |
+| security | reports a token inside the refresh margin as expired, and changes nothing | `packages/auth/src/server.test.ts:149` |
+| security | tells a session without tokens apart from an expired one | `packages/auth/src/server.test.ts:156` |
 | functionality | renders the title as the page h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:15` |
 | functionality | renders the description and the form slot | `packages/fascia/src/components/blocks/login-card.test.tsx:21` |
 | functionality | omits the description paragraph when none is given | `packages/fascia/src/components/blocks/login-card.test.tsx:28` |

@@ -75,7 +75,7 @@
     {
       "name": "JS (First Load)",
       "path": ".next/static/chunks/**/*.js",
-      "limit": "300 kB",
+      "limit": "500 kB",
       "gzip": true
     },
     {

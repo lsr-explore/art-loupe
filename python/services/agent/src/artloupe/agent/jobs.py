@@ -21,8 +21,6 @@ import logging
 from collections.abc import Coroutine
 from typing import Any
 
-from pydantic import BaseModel
-
 from artloupe.agent.director import RoutingFailed
 from artloupe.agent.nodes import ProjectNotReady
 from artloupe.agent.resources import PhotographUnavailable, RunResources
@@ -37,28 +35,9 @@ from artloupe.persistence import (
     RunLog,
     RunTransitionRefused,
 )
-from artloupe.schemas import ArtifactMetadata, RoutingDecision
+from artloupe.schemas import ArtifactMetadata, RoutingDecision, RunFailure, RunResult
 
 logger = logging.getLogger(__name__)
-
-
-class RunResult(BaseModel):
-    """What a finished run produced. Recorded as the `succeeded` event's payload."""
-
-    run_id: str
-    owner: str
-    project_id: str
-    node_trail: list[str]
-    gate: dict[str, Any]
-    routing: RoutingDecision
-    artifacts: list[ArtifactMetadata]
-
-
-class RunFailure(BaseModel):
-    """Why a run stopped. Recorded as the `failed` event's payload."""
-
-    reason: str
-    detail: str
 
 
 INTERNAL_FAILURE = RunFailure(
