@@ -138,7 +138,9 @@ class Index:
         except (OSError, ValueError, KeyError) as error:
             raise CorpusUnavailable("Learning corpus is missing or invalid") from error
 
-    def search(self, query: str, vector=None, limit: int = 6) -> list[Passage]:
+    def search(
+        self, query: str, vector=None, limit: int = 6, *, locale: str = "en"
+    ) -> list[Passage]:
         scores = defaultdict(float)
         for term in set(terms(query)):
             postings = self.postings.get(term, {})
@@ -156,8 +158,11 @@ class Index:
             :30
         ]
         fused = defaultdict(float)
-        for rank, number in enumerate(keyword, 1):
-            fused[number] += 1 / (60 + rank)
+        # The corpus is English; Spanish lexical matches can be accidental (e.g. "son").
+        # Prefer multilingual semantic search when a query vector is available.
+        if locale != "es" or vector is None:
+            for rank, number in enumerate(keyword, 1):
+                fused[number] += 1 / (60 + rank)
         if vector is not None:
             if self.vectors is None:
                 raise ValueError("No indexed vectors")
@@ -238,6 +243,22 @@ def retrieval_query(question) -> str:
         "example",
         "why",
         "please",
+        "cómo",
+        "como",
+        "puedo",
+        "podemos",
+        "practicar",
+        "practico",
+        "ejemplo",
+        "ejemplos",
+        "por",
+        "qué",
+        "que",
+        "favor",
+        "más",
+        "mas",
+        "yo",
+        "hacer",
     }
     if previous and len(question.question.split()) < 8 and (refers_back or generic_followup):
         return previous + " " + question.question

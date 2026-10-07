@@ -13,11 +13,11 @@ Art-historical context is carried back to a real citation
 | **Severity** | P0 |
 | **Why** | A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent. |
 | **Surfaces** | `apps/studio` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 51 (6 parametrized) |
-| **Covered** | a11y 2 · security 8 · safety 29 · data 8 · functionality 4 |
+| **Tests** | 53 (6 parametrized) |
+| **Covered** | a11y 2 · security 8 · safety 31 · data 8 · functionality 4 |
 | **Not covered** | privacy · performance |
 
-## pytest — 29
+## pytest — 31
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -50,6 +50,8 @@ Art-historical context is carried back to a real citation
 | safety | test_response_contract_accepts_shared_defaults | `python/services/agent/tests/test_learning.py:477` |
 | safety | test_budget_stop_returns_deliberate_limit_response | `python/services/agent/tests/test_learning.py:483` |
 | safety | test_short_explicit_topic_switch_does_not_carry_old_topic | `python/services/agent/tests/test_learning.py:505` |
+| safety | test_spanish_generic_followup_keeps_topic_without_diluting_a_new_topic | `python/services/agent/tests/test_learning.py:516` |
+| safety | test_spanish_vectors_avoid_accidental_english_keyword_hits | `python/services/agent/tests/test_learning.py:527` |
 
 ## Vitest — 21
 

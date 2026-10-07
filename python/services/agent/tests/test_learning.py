@@ -511,3 +511,27 @@ def test_short_explicit_topic_switch_does_not_carry_old_topic():
         history=[Turn(role="user", content="What is glazing in oil painting?")],
     )
     assert retrieval_query(question) == "What is balance?"
+
+
+def test_spanish_generic_followup_keeps_topic_without_diluting_a_new_topic():
+    from artloupe.agent.learning.models import Turn
+    from artloupe.agent.learning.retrieval import retrieval_query
+
+    history = [Turn(role="user", content="¿Qué son el rayado y el rayado cruzado?")]
+    followup = Question(question="¿Cómo puedo practicar?", locale="es", history=history)
+    assert retrieval_query(followup) == history[0].content + " ¿Cómo puedo practicar?"
+    new_topic = Question(question="¿Qué es el equilibrio?", locale="es", history=history)
+    assert retrieval_query(new_topic) == new_topic.question
+
+
+def test_spanish_vectors_avoid_accidental_english_keyword_hits():
+    vectors = np.zeros((2, 1536), dtype=np.float32)
+    vectors[0, 0] = 1
+    vectors[1, 1] = 1
+    index = Index(
+        [passage(), passage("unrelated", "His son painted portraits.")], "fixture", vectors
+    )
+    query = np.zeros(1536, dtype=np.float32)
+    query[0] = 1
+    assert [p.id for p in index.search("¿Qué son?", query, locale="es")] == ["passage-value"]
+    assert index.search("¿Qué son?", locale="es")[0].id == "unrelated"

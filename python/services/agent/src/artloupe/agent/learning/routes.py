@@ -55,7 +55,9 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
                         vectors, embedding_tokens = await embed(client, [query])
                         vector = vectors[0]
                         record_usage(model="text-embedding-3-small", input_tokens=embedding_tokens)
-                    passages = await asyncio.to_thread(index.search, query, vector)
+                    passages = await asyncio.to_thread(
+                        index.search, query, vector, locale=question.locale
+                    )
                 passages = usable(passages)
                 if not passages:
                     result = evidence_gap(question, mode, index.version)

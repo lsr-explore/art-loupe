@@ -31,6 +31,7 @@ class Case(BaseModel):
     question: str
     expected_status: Literal["answered", "insufficient_evidence"]
     medium: str | None = None
+    locale: Literal["en", "es"] = "en"
     history: list[Turn] = Field(default_factory=list, max_length=6)
     rubric: str
     gold: list[Gold] = Field(default_factory=list)
@@ -112,14 +113,17 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
                 row = {"id": case.id, "category": case.category}
                 try:
                     question = Question(
-                        question=case.question, medium=case.medium, history=case.history
+                        question=case.question,
+                        medium=case.medium,
+                        history=case.history,
+                        locale=case.locale,
                     )
                     query = retrieval_query(question)
                     vector, tokens = None, 0
                     if mode == "hybrid":
                         vectors, tokens = await embed(transport, [query])
                         vector = vectors[0]
-                    passages = index.search(query, vector)
+                    passages = index.search(query, vector, locale=question.locale)
                     row = {
                         "id": case.id,
                         "category": case.category,

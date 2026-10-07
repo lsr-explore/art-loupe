@@ -110,8 +110,11 @@ Retrieval gates are hit-at-six at least 85%, MRR at least 0.5, and zero executio
 errors. Live gates additionally require at least 85% correct answers, 95% supported
 answers, 95% medium-appropriate answers, and 100% abstention on expected gaps.
 Failed gates exit nonzero. The separate `eval-followups.json` suite tests a
-history-dependent practice question and an explicit short topic switch using the
-same retrieval-query helper as the HTTP route. When a suite has no expected gaps,
+history-dependent practice questions in English and Spanish and an explicit short
+topic switch using the
+same retrieval-query helper as the HTTP route. With vectors installed, Spanish
+queries use multilingual semantic ranking because the books are English; Spanish
+keyword-only retrieval is limited by that language mismatch. When a suite has no expected gaps,
 its abstention metric is unmeasured rather than a failed zero. Reports include
 per-case source IDs, source locations,
 latency, and (live) answers, excerpts, token usage, and rubric judgments. The judge

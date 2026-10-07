@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 470,
+      "pytest": 472,
       "vitest": 613,
       "playwright": 41,
-      "all": 1124
+      "all": 1126
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 470,
+      "pytest": 472,
       "vitest": 613,
       "playwright": 41,
-      "all": 1124
+      "all": 1126
     }
   },
   "by_flow": {
@@ -48,17 +48,17 @@
         "a11y": 2,
         "security": 8,
         "privacy": 0,
-        "safety": 29,
+        "safety": 31,
         "data": 8,
         "performance": 0,
         "functionality": 4
       },
       "runners": {
-        "pytest": 29,
+        "pytest": 31,
         "vitest": 21,
         "playwright": 1
       },
-      "total": 51,
+      "total": 53,
       "parametrized": 6
     },
     "safety.untrusted-input": {
@@ -7696,6 +7696,20 @@
     {
       "id": "python/services/agent/tests/test_learning.py:505",
       "name": "test_short_explicit_topic_switch_does_not_carry_old_topic",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:516",
+      "name": "test_spanish_generic_followup_keeps_topic_without_diluting_a_new_topic",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:527",
+      "name": "test_spanish_vectors_avoid_accidental_english_keyword_hits",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"

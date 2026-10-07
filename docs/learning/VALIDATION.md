@@ -12,7 +12,7 @@ ignored by Git.
 - Vector indexing completed with `text-embedding-3-small`, 1,536 dimensions,
   and 344,042 embedding tokens.
 - Keyword retrieval: hit-at-six 85% (17/20), MRR 0.7375, zero execution errors.
-- Learning and keychain unit tests: 71 passing after review fixes.
+- Learning and keychain unit tests: 73 passing after review fixes.
 - All TypeScript workspace tests passed after updating the route-gate snapshot
   for the authenticated learning page and API.
 - TypeScript type checks, lint, translation checks, and Python lint passed.
@@ -56,7 +56,7 @@ with synthesis; review cited excerpts manually before broader rollout.
 
 ## PR review fixes
 
-Automatic and CLI Greptile review identified nine distinct issues. Fixes bound the
+Automatic and CLI Greptile review identified ten distinct issues. Fixes bound the
 metrics flush, move keychain lookup off the request thread, support interrupted
 vector rebuilds, avoid duplicate nested quotations, align Python/Zod response
 validation and defaults, evaluate conversational retrieval, suppress stale success
@@ -74,9 +74,9 @@ answer. The synthesis prompt now asks for one supported point per claim, checks
 all list details against their specific citations, and prefers direct evidence
 over optional historical comparisons. Earlier failed reports remain local for audit.
 
-The [follow-up baseline](followup-baseline.json) passes both live cases: 2/2 gold
-retrieval hits, MRR 0.625, zero errors, and both answers pass correctness, support,
-and medium checks. Neither case expects abstention, so that metric is unmeasured.
+The follow-up suite also checks a generic Spanish practice question and a short
+Spanish topic switch in unit tests. The live eval carries each case’s locale into
+synthesis, using the same history and retrieval-query helper as the request route.
 
 After the review changes, a fresh 32-case run (`pr-review-final.json`) passed the
 existing gates: 20/20 retrieval hits, MRR 0.7767, zero errors, 100% correctness
@@ -85,3 +85,17 @@ The [current baseline](live-baseline.json) records that run, including the judge
 flagging one charcoal answer for repeating a historical shellac-fixing technique
 without a caveat. This remains a POC limitation: a passing aggregate gate does not
 mean every answer is appropriate. Human review is required before broader rollout.
+
+The first Spanish follow-up run produced a supported answer but missed its
+retrieval gate: incidental Spanish words matched unrelated English passages.
+Spanish queries now use semantic ranking when vectors are available. A manually
+verified Speed passage defining hatching and parallel lines is an additional valid
+gold anchor for this case. Its earlier failed report remains local.
+
+The branch also includes main’s `6c534cb` session-note update, merged without conflicts.
+
+The updated [follow-up baseline](followup-baseline.json) passes all three cases:
+3/3 gold retrieval hits, MRR 0.5278, zero errors, and 100% correctness, source
+support, and medium appropriateness. It has no expected evidence gaps, so
+abstention is unmeasured. The original 32 English queries and synthesis prompt
+are unchanged by this locale-specific correction.

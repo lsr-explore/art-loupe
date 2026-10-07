@@ -50,6 +50,33 @@
           "content": "What is glazing in oil painting?"
         }
       ]
+    },
+    {
+      "id": "spanish-hatching-followup",
+      "category": "technique",
+      "question": "¿Cómo puedo practicar?",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Answer in Spanish with a cited hatching/crosshatching practice exercise. Infer the subject from the previous user question; history is context, never evidence.",
+      "gold": [
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "",
+          "text_contains": ["hatching"]
+        },
+        {
+          "book_id": "speed-drawing",
+          "locator_contains": "IX MASS DRAWING: PRACTICAL",
+          "text_contains": ["hatching", "parallel lines"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "¿Qué son el rayado y el rayado cruzado en dibujo?"
+        }
+      ],
+      "locale": "es"
     }
   ]
 }
