@@ -240,6 +240,11 @@ async def test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it(
         started_at=inside,
         input_tokens=700,
     )
+    # Run a's first node ran two days earlier: its start, but not its cost, predates the window.
+    began = LEDGER_NOW - timedelta(days=2)
+    await _write(
+        ledger, f"{run}-a", "intake", model="claude-opus-5", cost=Decimal("5"), started_at=began
+    )
     # Outside the 24-hour window, so the totals must not include it.
     await _write(
         ledger,
@@ -263,6 +268,7 @@ async def test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it(
     assert runs[f"{run}-a"].priced_cost_usd == Decimal("0.0315")
     assert runs[f"{run}-a"].unpriced_rows == 0
     assert runs[f"{run}-a"].reexecutions == 1
+    assert runs[f"{run}-a"].started_at == began, "a run shows when it began, not when it entered"
     assert runs[f"{run}-b"].priced_cost_usd == Decimal("0")
     assert runs[f"{run}-b"].unpriced_rows == 1
     assert by_model["claude-unknown-9"].unpriced_rows == 1

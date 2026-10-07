@@ -131,9 +131,19 @@ async def build_cost_report(
         )
         by_node = [NodeCost(**row) for row in await cur.fetchall()]
 
+        # Sums stay inside the window; the start time does not. A run that began before the
+        # window, or resumed into it, still shows and sorts by when it actually started.
         await cur.execute(
-            f"select run_id, min(started_at) as started_at, {_TOTALS} {_IN_WINDOW} "
-            "group by run_id order by min(started_at) desc, run_id limit %(limit)s",
+            f"""
+            with windowed as (
+                select run_id, {_TOTALS} {_IN_WINDOW} group by run_id
+            ), began as (
+                select run_id, min(started_at) as started_at from public.run_node_metrics
+                where run_id in (select run_id from windowed) group by run_id
+            )
+            select windowed.*, began.started_at from windowed join began using (run_id)
+            order by began.started_at desc, run_id limit %(limit)s
+            """,
             params,
         )
         recent_runs = [RunCost(**row) for row in await cur.fetchall()]
