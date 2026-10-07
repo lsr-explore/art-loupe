@@ -13,11 +13,11 @@ Agent service transport, auth guard, and graph execution
 | **Severity** | P1 |
 | **Why** | The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable. |
 | **Surfaces** | `python/services/agent` · `python/libs/auth` · `python/libs/schemas` · `python/libs/persistence` · `python/libs/metering` · `python/libs/config` |
-| **Tests** | 132 (14 parametrized) |
-| **Covered** | security 63 · privacy 1 · data 3 · performance 1 · functionality 64 |
+| **Tests** | 136 (14 parametrized) |
+| **Covered** | security 63 · privacy 1 · data 3 · performance 1 · functionality 68 |
 | **Not covered** | a11y · safety |
 
-## pytest — 132
+## pytest — 136
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -121,6 +121,9 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_cancelled_run_records_itself_as_interrupted | `python/services/agent/tests/test_jobs.py:99` |
 | functionality | test_a_progress_write_that_fails_does_not_fail_the_run | `python/services/agent/tests/test_jobs.py:123` |
 | functionality | test_shutdown_cancels_pending_runs | `python/services/agent/tests/test_jobs.py:143` |
+| functionality | test_a_final_event_that_fails_transiently_is_retried | `python/services/agent/tests/test_jobs.py:165` |
+| functionality | test_a_final_event_already_recorded_is_not_retried | `python/services/agent/tests/test_jobs.py:187` |
+| functionality | test_a_slow_progress_write_is_abandoned_and_the_run_continues | `python/services/agent/tests/test_jobs.py:201` |
 | data | test_bytes_that_do_not_match_the_checksum_are_refused | `python/services/agent/tests/test_resources.py:22` |
 | functionality | test_bytes_that_are_not_an_image_are_refused | `python/services/agent/tests/test_resources.py:28` |
 | functionality | test_decoding_applies_exif_orientation | `python/services/agent/tests/test_resources.py:35` |
@@ -147,12 +150,13 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_stopped_run_records_what_stopped_it | `python/services/agent/tests/test_service.py:396` |
 | functionality | test_following_a_finished_run_replays_its_log_and_closes | `python/services/agent/tests/test_service.py:450` |
 | functionality | test_following_resumes_after_the_last_event_id | `python/services/agent/tests/test_service.py:466` |
+| functionality | test_a_client_holding_the_final_event_is_told_to_stop_reconnecting | `python/services/agent/tests/test_service.py:477` |
 | functionality | test_an_event_is_framed_with_its_sequence_as_the_id | `python/services/agent/tests/test_stream.py:45` |
-| functionality | test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start | `python/services/agent/tests/test_stream.py:54` |
-| functionality | test_a_stream_closes_before_the_token_expires_or_at_its_maximum_length | `python/services/agent/tests/test_stream.py:60` |
-| functionality | test_a_stream_tails_new_events_and_closes_on_the_terminal_one | `python/services/agent/tests/test_stream.py:66` |
-| functionality | test_a_quiet_stream_sends_heartbeats | `python/services/agent/tests/test_stream.py:83` |
-| functionality | test_a_stream_reaching_its_deadline_closes_without_an_event | `python/services/agent/tests/test_stream.py:100` |
+| functionality | test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start | `python/services/agent/tests/test_stream.py:66` |
+| functionality | test_a_stream_closes_before_the_token_expires_or_at_its_maximum_length | `python/services/agent/tests/test_stream.py:72` |
+| functionality | test_a_stream_tails_new_events_and_closes_on_the_terminal_one | `python/services/agent/tests/test_stream.py:78` |
+| functionality | test_a_quiet_stream_sends_heartbeats | `python/services/agent/tests/test_stream.py:95` |
+| functionality | test_a_stream_reaching_its_deadline_closes_without_an_event | `python/services/agent/tests/test_stream.py:112` |
 
 ---
 

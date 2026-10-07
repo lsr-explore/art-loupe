@@ -46,7 +46,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@artloupe/fascia', '@artloupe/auth'],
+  transpilePackages: ['@artloupe/fascia', '@artloupe/auth', '@artloupe/schemas'],
   serverExternalPackages: ['pino', 'pino-pretty'],
   experimental: {
     // Enables `src/app/global-not-found.tsx`. Required, not cosmetic: the root layout

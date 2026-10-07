@@ -86,19 +86,25 @@ def test_the_grants_this_table_is_protected_from_are_live_here() -> None:
     )
 
 
-def test_row_level_security_is_on_and_no_policy_opens_it() -> None:
-    """Enabling RLS with no policy is the entire protection — both halves have to hold."""
+def test_row_level_security_is_on_and_no_policy_opens_it_to_the_api_roles() -> None:
+    """RLS on, and no policy that names an API role — both halves have to hold.
+
+    The one expected policy names `artloupe_ops_reader`, the SELECT-only role the agent
+    service reads the ledger as for the operations dashboard.
+    """
     with _connect() as conn:
         enabled = conn.execute(
             "select relrowsecurity from pg_class where oid = %s::regclass", (TABLE,)
         ).fetchone()[0]
         policies = conn.execute(
-            "select policyname from pg_policies where schemaname = 'public' "
+            "select policyname, cmd, roles from pg_policies where schemaname = 'public' "
             "and tablename = 'run_node_metrics'"
         ).fetchall()
 
     assert enabled, f"{TABLE} has row-level security off — every row is readable"
-    assert not policies, f"{TABLE} has policies that grant rows to API roles: {policies}"
+    opening = [p for p in policies if set(p[2]) & {*API_ROLES, "public"}]
+    assert not opening, f"{TABLE} has policies that grant rows to API roles: {opening}"
+    assert ("ops_reader_reads_the_ledger", "SELECT", ["artloupe_ops_reader"]) in policies
 
 
 def test_the_api_roles_cannot_read_the_ledger() -> None:

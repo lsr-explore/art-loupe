@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 423,
-      "vitest": 486,
+      "pytest": 435,
+      "vitest": 522,
       "playwright": 40,
-      "all": 949
+      "all": 997
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 423,
-      "vitest": 486,
+      "pytest": 435,
+      "vitest": 522,
       "playwright": 40,
-      "all": 949
+      "all": 997
     }
   },
   "by_flow": {
@@ -171,14 +171,14 @@
         "safety": 0,
         "data": 3,
         "performance": 1,
-        "functionality": 64
+        "functionality": 68
       },
       "runners": {
-        "pytest": 132,
+        "pytest": 136,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 132,
+      "total": 136,
       "parametrized": 14
     },
     "platform.auth": {
@@ -265,21 +265,21 @@
       "severity": "P2",
       "title": "Cost, latency, evaluation health, and corpus ingestion",
       "counts": {
-        "a11y": 2,
-        "security": 4,
+        "a11y": 5,
+        "security": 8,
         "privacy": 0,
         "safety": 0,
-        "data": 1,
+        "data": 11,
         "performance": 0,
-        "functionality": 24
+        "functionality": 46
       },
       "runners": {
-        "pytest": 26,
-        "vitest": 5,
+        "pytest": 34,
+        "vitest": 36,
         "playwright": 0
       },
-      "total": 31,
-      "parametrized": 0
+      "total": 70,
+      "parametrized": 2
     },
     "palette.extraction": {
       "severity": "P2",
@@ -325,20 +325,20 @@
       "severity": "P2",
       "title": "App shell, navigation, theming, and localization",
       "counts": {
-        "a11y": 31,
+        "a11y": 34,
         "security": 0,
         "privacy": 0,
         "safety": 0,
         "data": 0,
         "performance": 0,
-        "functionality": 108
+        "functionality": 110
       },
       "runners": {
         "pytest": 0,
-        "vitest": 131,
+        "vitest": 136,
         "playwright": 8
       },
-      "total": 139,
+      "total": 144,
       "parametrized": 7
     }
   },
@@ -659,7 +659,7 @@
       "category": "security"
     },
     {
-      "id": "apps/operations/e2e/auth.spec.ts:73",
+      "id": "apps/operations/e2e/auth.spec.ts:76",
       "name": "the authenticated operations home has no accessibility violations",
       "runner": "playwright",
       "flow": "platform.auth",
@@ -722,14 +722,28 @@
       "category": "security"
     },
     {
-      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:20",
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:34",
       "name": "renders the page heading",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:27",
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:39",
+      "name": "defaults the cost window to seven days",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:44",
+      "name": "honours a known window and ignores an unknown one",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/app/[locale]/home/page.test.tsx:52",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "ops.observability",
@@ -755,6 +769,83 @@
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:101",
+      "name": "does not rely on color to tell unpriced from zero",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:112",
+      "name": "has no accessibility violations with data",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:121",
+      "name": "has no accessibility violations when unavailable",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:40",
+      "name": "renders a real zero as $0.00",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:45",
+      "name": "renders an unpriced cost as the word, never as $0.00",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:52",
+      "name": "states a sum with unpriced rows as a lower bound",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:58",
+      "name": "carries the lower bound into the spend total",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:64",
+      "name": "marks the current window and links the others",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:77",
+      "name": "says how many runs it left out",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:85",
+      "name": "says so when the window is empty rather than rendering empty tables",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/costs/cost-panel.test.tsx:91",
+      "name": "explains the %s state",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
     },
     {
       "id": "apps/operations/src/components/ui/error-boundary.test.tsx:15",
@@ -790,6 +881,111 @@
       "runner": "vitest",
       "flow": "platform.shell",
       "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/cost-figure.test.ts:13",
+      "name": "states a fully priced sum as the cost",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/cost-figure.test.ts:17",
+      "name": "keeps a real zero as a priced zero",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/cost-figure.test.ts:21",
+      "name": "never states an all-unpriced grouping as zero",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/cost-figure.test.ts:25",
+      "name": "marks a sum with any unpriced row as a lower bound",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/cost-figure.test.ts:33",
+      "name": "treats an empty grouping as a priced zero",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:30",
+      "name": "sends the operator",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:38",
+      "name": "returns the validated report",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:43",
+      "name": "refuses a report for a different window",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:48",
+      "name": "refuses a malformed report",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:53",
+      "name": "maps a %i to %s",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:63",
+      "name": "is unavailable when the agent cannot be reached",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:68",
+      "name": "is signed out without a token, and never calls the agent",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:75",
+      "name": "is signed out when an expired session cannot be cleared during render",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:80",
+      "name": "is unavailable when no agent is configured",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/lib/costs/fetch-cost-report.test.ts:88",
+      "name": "will not send a token over plain HTTP in production",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "security"
     },
     {
       "id": "apps/studio/e2e/auth.spec.ts:101",
@@ -3606,6 +3802,41 @@
       "category": "a11y"
     },
     {
+      "id": "packages/fascia/src/components/ui/table.test.tsx:42",
+      "name": "renders a real table named by its caption",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/ui/table.test.tsx:47",
+      "name": "scopes header cells to their column unless told otherwise",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "functionality"
+    },
+    {
+      "id": "packages/fascia/src/components/ui/table.test.tsx:57",
+      "name": "makes the scroll container a focusable, named region when labelled",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/ui/table.test.tsx:64",
+      "name": "adds no region or tab stop when unlabelled",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
+      "id": "packages/fascia/src/components/ui/table.test.tsx:70",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "platform.shell",
+      "category": "a11y"
+    },
+    {
       "id": "packages/fascia/src/i18n/messages.test.ts:11",
       "name": "ships a catalog for every locale the apps route",
       "runner": "vitest",
@@ -3911,6 +4142,27 @@
       "name": "accepts ${JSON.stringify(value)}",
       "runner": "vitest",
       "flow": "inspiration.search",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/ops-cost.test.ts:12",
+      "name": "rejects report ${index}",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/ops-cost.test.ts:14",
+      "name": "refuses a cost sent as a float",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/ops-cost.test.ts:9",
+      "name": "accepts report ${index}",
+      "runner": "vitest",
+      "flow": "ops.observability",
       "category": "data"
     },
     {
@@ -5069,14 +5321,14 @@
       "category": "performance"
     },
     {
-      "id": "python/libs/metering/tests/test_metrics_table.py:104",
+      "id": "python/libs/metering/tests/test_metrics_table.py:110",
       "name": "test_the_api_roles_cannot_read_the_ledger",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "security"
     },
     {
-      "id": "python/libs/metering/tests/test_metrics_table.py:121",
+      "id": "python/libs/metering/tests/test_metrics_table.py:127",
       "name": "test_a_flushed_run_is_readable_afterwards",
       "runner": "pytest",
       "flow": "ops.observability",
@@ -5091,7 +5343,7 @@
     },
     {
       "id": "python/libs/metering/tests/test_metrics_table.py:89",
-      "name": "test_row_level_security_is_on_and_no_policy_opens_it",
+      "name": "test_row_level_security_is_on_and_no_policy_opens_it_to_the_api_roles",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "security"
@@ -6560,6 +6812,27 @@
       "category": "functionality"
     },
     {
+      "id": "python/services/agent/tests/test_jobs.py:165",
+      "name": "test_a_final_event_that_fails_transiently_is_retried",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:187",
+      "name": "test_a_final_event_already_recorded_is_not_retried",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_jobs.py:201",
+      "name": "test_a_slow_progress_write_is_abandoned_and_the_run_continues",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
       "id": "python/services/agent/tests/test_jobs.py:65",
       "name": "test_each_node_reports_its_start_and_finish_in_order",
       "runner": "pytest",
@@ -6621,6 +6894,62 @@
       "runner": "pytest",
       "flow": "critique.no-generation",
       "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:101",
+      "name": "test_cost_is_sent_as_a_decimal_string_not_a_float",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:116",
+      "name": "test_an_unreachable_ledger_is_a_503_not_an_empty_report",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:132",
+      "name": "test_no_dsn_means_unavailable",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:141",
+      "name": "test_shared_typescript_python_report_fixture",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:206",
+      "name": "test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "data"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:270",
+      "name": "test_the_reader_role_sees_the_ledger_and_nothing_else",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:66",
+      "name": "test_only_an_operator_may_read_costs",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "security"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:81",
+      "name": "test_the_window_defaults_to_seven_days_and_is_a_closed_set",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
     },
     {
       "id": "python/services/agent/tests/test_resources.py:22",
@@ -6938,14 +7267,21 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_service.py:478",
+      "id": "python/services/agent/tests/test_service.py:477",
+      "name": "test_a_client_holding_the_final_event_is_told_to_stop_reconnecting",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_service.py:489",
       "name": "test_another_artists_run_is_not_found",
       "runner": "pytest",
       "flow": "platform.auth",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_stream.py:100",
+      "id": "python/services/agent/tests/test_stream.py:112",
       "name": "test_a_stream_reaching_its_deadline_closes_without_an_event",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -6959,28 +7295,28 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_stream.py:54",
+      "id": "python/services/agent/tests/test_stream.py:66",
       "name": "test_a_cursor_that_is_not_a_sequence_number_replays_from_the_start",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_stream.py:60",
+      "id": "python/services/agent/tests/test_stream.py:72",
       "name": "test_a_stream_closes_before_the_token_expires_or_at_its_maximum_length",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_stream.py:66",
+      "id": "python/services/agent/tests/test_stream.py:78",
       "name": "test_a_stream_tails_new_events_and_closes_on_the_terminal_one",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_stream.py:83",
+      "id": "python/services/agent/tests/test_stream.py:95",
       "name": "test_a_quiet_stream_sends_heartbeats",
       "runner": "pytest",
       "flow": "platform.agent-runtime",

@@ -32,20 +32,20 @@ exists, the detail tells you what it covers.
 | **inspiration** | | 3 | 12 | – | – | 6 | 4 | 42 | **67** |
 | [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 8 | 53 | – | 1 | 61 | – | 81 | 204 |
 | **intake** | | 8 | 53 | – | 1 | 61 | – | 81 | **204** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 24 | 31 |
-| **ops** | | 2 | 4 | – | – | 1 | – | 24 | **31** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 5 | 8 | – | – | 11 | – | 46 | 70 |
+| **ops** | | 5 | 8 | – | – | 11 | – | 46 | **70** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 63 | 1 | – | 3 | 1 | 64 | 132 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 63 | 1 | – | 3 | 1 | 68 | 136 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 102 | – | – | – | – | 13 | 120 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 22 | – | – | 22 |
-| [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 108 | 139 |
-| **platform** | | 36 | 165 | 1 | – | 25 | 1 | 185 | **413** |
+| [`platform.shell`](flows/platform.shell.md) | P2 | 34 | – | – | – | – | – | 110 | 144 |
+| **platform** | | 39 | 165 | 1 | – | 25 | 1 | 191 | **422** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **58** | **251** | **1** | **62** | **93** | **5** | **479** | **949** |
+| **all flows** | | **64** | **255** | **1** | **62** | **103** | **5** | **507** | **997** |
 
 ## Gaps
 
@@ -82,7 +82,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 423 | 0 | 423 |
-| Vitest | 486 | 0 | 486 |
+| pytest | 435 | 0 | 435 |
+| Vitest | 522 | 0 | 522 |
 | Playwright | 40 | 0 | 40 |
-| **All** | **949** | **0** | **949** |
+| **All** | **997** | **0** | **997** |

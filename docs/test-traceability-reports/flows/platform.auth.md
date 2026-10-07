@@ -40,7 +40,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:322` |
 | security | test_a_project_that_is_not_the_artists_is_a_404_before_any_work | `python/services/agent/tests/test_service.py:339` |
 | security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:445` |
-| security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:478` |
+| security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:489` |
 
 ## Vitest — 83
 
@@ -139,7 +139,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | redirects the gated home to the landing when unauthenticated | `apps/operations/e2e/auth.spec.ts:44` |
 | security | labels the console credentials for an operator and carries no secondary links | `apps/operations/e2e/auth.spec.ts:49` |
 | security | signs in and reaches the gated operations home | `apps/operations/e2e/auth.spec.ts:65` |
-| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:73` |
+| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:76` |
 | a11y | renders the public landing with no accessibility violations | `apps/studio/e2e/auth.spec.ts:31` |
 | security | redirects the gated home to the landing when unauthenticated | `apps/studio/e2e/auth.spec.ts:44` |
 | security | carries no acknowledgement checkbox and enables sign-in immediately | `apps/studio/e2e/auth.spec.ts:56` |

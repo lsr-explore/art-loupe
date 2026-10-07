@@ -6,12 +6,12 @@ for the same reason: a unit test should not need a database.
 
 `PostgresMetricsSink` is the one operations actually reads (FR-905). Three decisions:
 
-- **`public`, with row-level security and no policy.** Unlike the checkpoint tables, this one
-  has to be *readable* by the operations dashboard, which reaches Postgres through PostgREST —
-  so hiding it in an unexposed schema would hide it from its only consumer. RLS with no policy
-  denies `anon` and `authenticated` outright while `service_role`, which operations holds,
-  bypasses RLS. The migration is
-  `supabase/migrations/20260905120000_create_run_node_metrics.sql`.
+- **`public`, with row-level security and no policy for the API roles.** `anon` and
+  `authenticated` hold no grant and match no policy. The operations dashboard reads the
+  ledger through the agent service's `GET /ops/costs`, as `artloupe_ops_reader`, a
+  SELECT-only role that only Python holds. No app runtime holds `service_role`. The
+  migrations are `supabase/migrations/20260905120000_create_run_node_metrics.sql` and
+  `20261007130000_create_ops_reader_role.sql`.
 - **One connection per flush, no pool.** A run flushes once, when it ends. A pooled connection
   held for the length of a run would cost more than it saves and would have to be torn down on
   every code path that ends a run, including the ones that raise.

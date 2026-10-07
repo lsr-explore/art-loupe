@@ -13,11 +13,11 @@ App shell, navigation, theming, and localization
 | **Severity** | P2 |
 | **Why** | The chrome every surface renders identically. Regressions here are wide but shallow, and a11y lives here. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/fascia` |
-| **Tests** | 139 (7 parametrized) |
-| **Covered** | a11y 31 · functionality 108 |
+| **Tests** | 144 (7 parametrized) |
+| **Covered** | a11y 34 · functionality 110 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## Vitest — 131
+## Vitest — 136
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -122,6 +122,11 @@ App shell, navigation, theming, and localization
 | functionality | invokes the supplied action when signed out | `packages/fascia/src/components/blocks/user-chip.test.tsx:39` |
 | functionality | applies an extra className to the root | `packages/fascia/src/components/blocks/user-chip.test.tsx:50` |
 | a11y | has no accessibility violations | `packages/fascia/src/components/blocks/user-chip.test.tsx:57` |
+| functionality | renders a real table named by its caption | `packages/fascia/src/components/ui/table.test.tsx:42` |
+| functionality | scopes header cells to their column unless told otherwise | `packages/fascia/src/components/ui/table.test.tsx:47` |
+| a11y | makes the scroll container a focusable, named region when labelled | `packages/fascia/src/components/ui/table.test.tsx:57` |
+| a11y | adds no region or tab stop when unlabelled | `packages/fascia/src/components/ui/table.test.tsx:64` |
+| a11y | has no accessibility violations | `packages/fascia/src/components/ui/table.test.tsx:70` |
 | functionality | ships a catalog for every locale the apps route | `packages/fascia/src/i18n/messages.test.ts:11` |
 | functionality | supplies shared chrome the app never defines | `packages/fascia/src/i18n/messages.test.ts:17` |
 | functionality | returns the requested locale, not the default | `packages/fascia/src/i18n/messages.test.ts:24` |

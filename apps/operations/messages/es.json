@@ -19,5 +19,56 @@
   "metadata": {
     "title": "Control de Operaciones — Art Loupe",
     "description": "Panel operativo del estudio multiagente: actividad de crítica y recuperación, salud de las evaluaciones, guardarraíles y coste."
+  },
+  "costs": {
+    "title": "Coste de los agentes",
+    "description": "Gasto, tokens y ejecuciones de nodos del registro de ejecuciones. Las horas están en UTC.",
+    "windowLabel": "Periodo",
+    "windows": {
+      "24h": "Últimas 24 horas",
+      "7d": "Últimos 7 días",
+      "30d": "Últimos 30 días"
+    },
+    "stats": {
+      "label": "Totales de este periodo",
+      "spend": "Gasto",
+      "runs": "Ejecuciones",
+      "tokens": "Tokens (entrada + salida)",
+      "unpriced": "Ejecuciones sin precio",
+      "unpricedHint": "Llamadas a un modelo que no está en la tabla de precios. Su coste es desconocido, no cero."
+    },
+    "amount": {
+      "unpriced": "Sin precio",
+      "atLeast": "al menos {amount}",
+      "unpricedCount": "{count, plural, one {# sin precio} other {# sin precio}}"
+    },
+    "tables": {
+      "byModel": "Gasto por modelo",
+      "byNode": "Gasto por nodo",
+      "recentRuns": "Ejecuciones recientes",
+      "deterministic": "Determinista (sin modelo)",
+      "truncated": "Se muestran las {shown} más recientes de {total} ejecuciones."
+    },
+    "columns": {
+      "model": "Modelo",
+      "node": "Nodo",
+      "run": "Ejecución",
+      "started": "Inicio (UTC)",
+      "executions": "Ejecuciones",
+      "reexecutions": "Reejecuciones",
+      "inputTokens": "Tokens de entrada",
+      "outputTokens": "Tokens de salida",
+      "cacheRead": "Lectura de caché",
+      "cacheWrite": "Escritura de caché",
+      "time": "Tiempo total",
+      "cost": "Coste"
+    },
+    "seconds": "{value} s",
+    "empty": "No se registró actividad de los agentes en este periodo.",
+    "state": {
+      "unavailable": "Los datos de coste no están disponibles ahora. El servicio de agentes o su base de datos no respondió.",
+      "forbidden": "Tu cuenta no tiene permiso para leer datos de coste.",
+      "signedOut": "Tu sesión ha caducado. Vuelve a iniciar sesión para ver los datos de coste."
+    }
   }
 }
