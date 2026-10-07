@@ -11,7 +11,8 @@
     "./image-limits": "./src/image-limits.ts",
     "./intent-values": "./src/intent-values.ts",
     "./inspiration": "./src/inspiration.ts",
-    "./ops-cost": "./src/ops-cost.ts"
+    "./ops-cost": "./src/ops-cost.ts",
+    "./ops-runs": "./src/ops-runs.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

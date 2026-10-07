@@ -23,12 +23,6 @@
   "costs": {
     "title": "Coste de los agentes",
     "description": "Gasto, tokens y ejecuciones de nodos del registro de ejecuciones. Las horas están en UTC.",
-    "windowLabel": "Periodo",
-    "windows": {
-      "24h": "Últimas 24 horas",
-      "7d": "Últimos 7 días",
-      "30d": "Últimos 30 días"
-    },
     "stats": {
       "label": "Totales de este periodo",
       "spend": "Gasto",
@@ -64,11 +58,122 @@
       "cost": "Coste"
     },
     "seconds": "{value} s",
-    "empty": "No se registró actividad de los agentes en este periodo.",
-    "state": {
-      "unavailable": "Los datos de coste no están disponibles ahora. El servicio de agentes o su base de datos no respondió.",
-      "forbidden": "Tu cuenta no tiene permiso para leer datos de coste.",
-      "signedOut": "Tu sesión ha caducado. Vuelve a iniciar sesión para ver los datos de coste."
-    }
+    "empty": "No se registró actividad de los agentes en este periodo."
+  },
+  "window": {
+    "label": "Periodo",
+    "24h": "Últimas 24 horas",
+    "7d": "Últimos 7 días",
+    "30d": "Últimos 30 días"
+  },
+  "opsState": {
+    "unavailable": "Estos datos no están disponibles ahora. El servicio de agentes o su base de datos no respondió.",
+    "forbidden": "Tu cuenta no tiene permiso para leer datos de operaciones.",
+    "signedOut": "Tu sesión ha caducado. Vuelve a iniciar sesión para ver los datos de operaciones.",
+    "notFound": "No hay ninguna ejecución con ese identificador."
+  },
+  "runs": {
+    "title": "Estado de las ejecuciones",
+    "description": "Cada ejecución de los agentes en este periodo: cómo terminó, dónde la detuvo un fallo y cuánto esperó y duró.",
+    "empty": "No se registraron ejecuciones de los agentes en este periodo.",
+    "status": {
+      "queued": "En cola",
+      "running": "En curso",
+      "succeeded": "Completada",
+      "failed": "Fallida"
+    },
+    "stalledTag": "Estancada",
+    "stats": {
+      "label": "Totales de ejecuciones de este periodo",
+      "runs": "Ejecuciones",
+      "succeeded": "Completadas",
+      "failed": "Fallidas",
+      "inProgress": "En cola o en curso",
+      "stalled": "Estancadas",
+      "stalledHint": "Se cuentan de todo el historial, no solo de este periodo."
+    },
+    "durations": {
+      "label": "Cuánto tardaron las ejecuciones",
+      "queueWait": "Espera en cola",
+      "runTime": "Duración",
+      "median": "Mediana",
+      "p95": "Percentil 95",
+      "none": "Aún no hay ejecuciones"
+    },
+    "tables": {
+      "stalled": "Ejecuciones estancadas",
+      "failures": "Fallos por motivo",
+      "recentRuns": "Ejecuciones recientes",
+      "truncated": "Se muestran las {shown} más recientes de {total} ejecuciones.",
+      "betweenNodes": "Entre nodos",
+      "noCost": "Aún sin registro"
+    },
+    "columns": {
+      "run": "Ejecución",
+      "status": "Estado",
+      "reason": "Motivo",
+      "failedNode": "Nodo fallido",
+      "created": "Creada (UTC)",
+      "duration": "Duración",
+      "cost": "Coste",
+      "runs": "Ejecuciones"
+    },
+    "runLink": "Ejecución {id}",
+    "reasons": {
+      "budget_exceeded": "Presupuesto agotado",
+      "deadline_exceeded": "Tiempo límite superado",
+      "guard_stopped": "Detenida por un límite de bucle",
+      "project_not_found": "Proyecto no encontrado",
+      "project_not_ready": "Proyecto no preparado",
+      "photograph_unavailable": "Fotografía no disponible",
+      "credential_rejected": "Credencial rechazada",
+      "data_service_refused": "El servicio de datos rechazó la llamada",
+      "routing_failed": "Fallo de enrutamiento",
+      "interrupted": "El servicio se detuvo durante la ejecución",
+      "internal_error": "Error interno"
+    },
+    "detail": {
+      "title": "Ejecución {id}",
+      "back": "Volver a operaciones",
+      "summary": "Resumen",
+      "fields": {
+        "runId": "Identificador de ejecución",
+        "projectId": "Identificador de proyecto",
+        "status": "Estado",
+        "reason": "Motivo",
+        "errorDetail": "Detalle mostrado al artista",
+        "created": "Creada (UTC)",
+        "started": "Iniciada (UTC)",
+        "finished": "Terminada (UTC)",
+        "duration": "Duración",
+        "cost": "Coste",
+        "notYet": "Todavía no"
+      },
+      "steps": "Pasos por nodo",
+      "events": "Registro de eventos",
+      "ledger": "Registro de coste por nodo",
+      "columns": {
+        "node": "Nodo",
+        "startedAt": "Inicio tras",
+        "duration": "Duración",
+        "seq": "N.º",
+        "event": "Evento",
+        "subject": "Nodo o motivo",
+        "at": "Tras"
+      },
+      "didNotFinish": "No terminó",
+      "eventKinds": {
+        "started": "Ejecución iniciada",
+        "node_started": "Nodo iniciado",
+        "node_finished": "Nodo terminado",
+        "succeeded": "Ejecución completada",
+        "failed": "Ejecución fallida"
+      }
+    },
+    "stallRule": "Una ejecución que sigue en cola o en curso después de {minutes} minutos se marca como estancada, porque el propio límite del agente ya la habría detenido."
+  },
+  "durations": {
+    "seconds": "{value} s",
+    "minutes": "{minutes} min {seconds} s"
   }
 }
