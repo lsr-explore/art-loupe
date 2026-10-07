@@ -6,11 +6,10 @@ A total with any unpriced row is a lower bound, and the panel says so rather tha
 as a complete figure.
 """
 
-from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 CostWindow = Literal["24h", "7d", "30d"]
 
@@ -49,13 +48,13 @@ class NodeCost(CostTotals):
 
 class RunCost(CostTotals):
     run_id: str
-    started_at: datetime
+    started_at: AwareDatetime
 
 
 class CostReport(_Strict):
     window: CostWindow
-    since: datetime
-    generated_at: datetime
+    since: AwareDatetime
+    generated_at: AwareDatetime
     run_count: int = Field(ge=0)
     totals: CostTotals
     by_model: list[ModelCost]

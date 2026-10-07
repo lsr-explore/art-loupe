@@ -32,6 +32,9 @@ DATABASE_URL = os.environ.get(
 REQUIRE_POSTGRES = os.environ.get("ARTLOUPE_REQUIRE_POSTGRES") == "1"
 FIXTURE = Path(__file__).resolve().parents[4] / "packages/schemas/fixtures/ops-cost-parity.json"
 NOW = datetime(2026, 10, 7, 12, 0, tzinfo=UTC)
+# The database tests read a ledger other worktrees share. Their window ends far past any real
+# activity, so it holds only the rows the test wrote, and real runs cannot crowd them out.
+LEDGER_NOW = datetime(2099, 1, 1, 12, 0, tzinfo=UTC)
 OWNER = "4a1f0e2c-0000-4000-8000-000000000001"
 
 
@@ -206,9 +209,8 @@ async def _as_reader(conn: psycopg.AsyncConnection) -> None:
 async def test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it(
     ledger: psycopg.AsyncConnection,
 ) -> None:
-    # A unique prefix, so rows other worktrees left in the shared database cannot match.
-    run = f"ops-test-{NOW.timestamp()}"
-    inside = NOW - timedelta(hours=1)
+    run = "ops-test"
+    inside = LEDGER_NOW - timedelta(hours=1)
     await _write(
         ledger,
         f"{run}-a",
@@ -245,25 +247,48 @@ async def test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it(
         "route",
         model="claude-opus-5",
         cost=Decimal("9"),
-        started_at=NOW - timedelta(days=3),
+        started_at=LEDGER_NOW - timedelta(days=3),
     )
     await _as_reader(ledger)
 
-    report = await build_cost_report(ledger, "24h", now=NOW)
-    mine_runs = [r for r in report.recent_runs if r.run_id.startswith(run)]
+    report = await build_cost_report(ledger, "24h", now=LEDGER_NOW)
+    runs = {r.run_id: r for r in report.recent_runs}
     by_model = {m.model: m for m in report.by_model}
 
-    assert {r.run_id for r in mine_runs} == {f"{run}-a", f"{run}-b"}
-    run_a = next(r for r in mine_runs if r.run_id == f"{run}-a")
-    run_b = next(r for r in mine_runs if r.run_id == f"{run}-b")
-    assert run_a.priced_cost_usd == Decimal("0.0315")
-    assert run_a.unpriced_rows == 0
-    assert run_a.reexecutions == 1
-    assert run_b.priced_cost_usd == Decimal("0")
-    assert run_b.unpriced_rows == 1, "a null cost must be counted as unpriced, not summed as 0"
-    assert by_model["claude-unknown-9"].unpriced_rows >= 1
-    assert None in by_model, "deterministic nodes are grouped under a null model"
-    assert report.since == NOW - timedelta(hours=24)
+    assert report.run_count == 2, "the run outside the window must not be counted"
+    assert set(runs) == {f"{run}-a", f"{run}-b"}
+    assert report.totals.node_executions == 4
+    assert report.totals.priced_cost_usd == Decimal("0.0315")
+    assert report.totals.unpriced_rows == 1, "a null cost is counted, never summed as 0"
+    assert runs[f"{run}-a"].priced_cost_usd == Decimal("0.0315")
+    assert runs[f"{run}-a"].unpriced_rows == 0
+    assert runs[f"{run}-a"].reexecutions == 1
+    assert runs[f"{run}-b"].priced_cost_usd == Decimal("0")
+    assert runs[f"{run}-b"].unpriced_rows == 1
+    assert by_model["claude-unknown-9"].unpriced_rows == 1
+    assert by_model[None].node_executions == 1, "deterministic nodes group under a null model"
+    assert report.since == LEDGER_NOW - timedelta(hours=24)
+
+
+async def test_pooled_connections_read_one_snapshot_as_the_role(
+    ledger: psycopg.AsyncConnection,
+) -> None:
+    """The totals and breakdowns are separate queries; they must all see the same snapshot."""
+    from artloupe.agent.ops_cost import _restrict_role
+
+    conn = await psycopg.AsyncConnection.connect(DATABASE_URL, connect_timeout=3)
+    try:
+        await _restrict_role(conn)
+        settings = await (
+            await conn.execute(
+                "select current_user, current_setting('transaction_isolation'), "
+                "current_setting('transaction_read_only')"
+            )
+        ).fetchone()
+    finally:
+        await conn.close()
+
+    assert settings == (OPS_ROLE, "repeatable read", "on")
 
 
 @pytest.mark.trace(flow="ops.observability", category="security")

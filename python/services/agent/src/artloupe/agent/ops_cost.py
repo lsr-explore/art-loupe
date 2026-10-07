@@ -14,7 +14,7 @@ import os
 from datetime import UTC, datetime, timedelta
 
 import psycopg
-from psycopg import AsyncConnection
+from psycopg import AsyncConnection, IsolationLevel
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
 
@@ -66,6 +66,10 @@ async def _restrict_role(conn: AsyncConnection) -> None:
     # Session-level, so it holds for every later use of this pooled connection.
     await conn.execute(f"SET ROLE {OPS_ROLE}")
     await conn.commit()
+    # One snapshot per report. The totals and each breakdown are separate queries, and at the
+    # default READ COMMITTED a run landing between them would make the figures disagree.
+    await conn.set_isolation_level(IsolationLevel.REPEATABLE_READ)
+    await conn.set_read_only(True)
 
 
 async def _get_pool() -> AsyncConnectionPool:
