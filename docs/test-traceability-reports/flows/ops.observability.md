@@ -13,11 +13,11 @@ Cost, latency, evaluation health, and corpus ingestion
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
 | **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
-| **Tests** | 70 (2 parametrized) |
-| **Covered** | a11y 5 · security 8 · data 11 · functionality 46 |
+| **Tests** | 71 (2 parametrized) |
+| **Covered** | a11y 5 · security 8 · data 11 · functionality 47 |
 | **Not covered** | privacy · safety · performance |
 
-## pytest — 34
+## pytest — 35
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -47,14 +47,15 @@ Cost, latency, evaluation health, and corpus ingestion
 | functionality | test_flushing_nothing_opens_no_connection | `python/libs/metering/tests/test_sinks.py:46` |
 | security | test_the_ledger_table_is_denied_to_the_api_roles_by_construction | `python/libs/metering/tests/test_sinks.py:52` |
 | functionality | test_the_sink_writes_where_the_migration_creates | `python/libs/metering/tests/test_sinks.py:71` |
-| security | test_only_an_operator_may_read_costs | `python/services/agent/tests/test_ops_cost.py:66` |
-| functionality | test_the_window_defaults_to_seven_days_and_is_a_closed_set | `python/services/agent/tests/test_ops_cost.py:81` |
-| functionality | test_cost_is_sent_as_a_decimal_string_not_a_float | `python/services/agent/tests/test_ops_cost.py:101` |
-| functionality | test_an_unreachable_ledger_is_a_503_not_an_empty_report | `python/services/agent/tests/test_ops_cost.py:116` |
-| functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:132` |
-| data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:141` |
-| data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:206` |
-| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:270` |
+| security | test_only_an_operator_may_read_costs | `python/services/agent/tests/test_ops_cost.py:69` |
+| functionality | test_the_window_defaults_to_seven_days_and_is_a_closed_set | `python/services/agent/tests/test_ops_cost.py:84` |
+| functionality | test_cost_is_sent_as_a_decimal_string_not_a_float | `python/services/agent/tests/test_ops_cost.py:104` |
+| functionality | test_an_unreachable_ledger_is_a_503_not_an_empty_report | `python/services/agent/tests/test_ops_cost.py:119` |
+| functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:135` |
+| data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:144` |
+| data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:209` |
+| functionality | test_pooled_connections_read_one_snapshot_as_the_role | `python/services/agent/tests/test_ops_cost.py:279` |
+| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:301` |
 
 ## Vitest — 36
 

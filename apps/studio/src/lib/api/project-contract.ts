@@ -27,7 +27,12 @@ export const FILE_FIELD = 'file';
 export const INTENT_FIELD = 'intent';
 
 /** The closed set of machine-readable refusal codes. Widening it is an API change. */
-export type ApiErrorCode = 'unauthenticated' | 'not_found' | 'invalid_upload' | 'conflict';
+export type ApiErrorCode =
+  | 'unauthenticated'
+  | 'not_found'
+  | 'invalid_upload'
+  | 'conflict'
+  | 'agent_unavailable';
 
 /**
  * Why an upload was refused — a closed set, and never anything computed from stored state.

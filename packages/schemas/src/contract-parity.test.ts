@@ -17,6 +17,7 @@ import { imageRefSchema } from './image';
 import { projectIntentSchema } from './intent';
 import { toolManifestSchema } from './manifest';
 import { routingDecisionSchema } from './routing';
+import { runFailureSchema, runResultSchema } from './run';
 
 interface ParityFixture {
   accepts: {
@@ -27,6 +28,8 @@ interface ParityFixture {
     routing_decisions: unknown[];
     artifact_metadata: { tool: string }[];
     budget_ledgers: { stopped: boolean }[];
+    run_results: { run_id: string }[];
+    run_failures: { reason: string }[];
   };
   rejects: Record<string, { schema: string; value: unknown }>;
 }
@@ -63,6 +66,8 @@ const SCHEMAS: Record<string, ZodType> = {
   routing_decision: routingDecisionSchema,
   artifact_metadata: artifactMetadataSchema,
   budget_ledger: budgetLedgerSchema,
+  run_result: runResultSchema,
+  run_failure: runFailureSchema,
 };
 
 // @trace flow=platform.contracts category=data
@@ -116,6 +121,18 @@ describe('contract parity fixture — accepted values', () => {
   for (const ledger of accepts.budget_ledgers) {
     it(`parses a ledger with stopped=${ledger.stopped}`, () => {
       expect(() => budgetLedgerSchema.parse(ledger)).not.toThrow();
+    });
+  }
+
+  for (const result of accepts.run_results) {
+    it(`parses run result ${result.run_id}`, () => {
+      expect(() => runResultSchema.parse(result)).not.toThrow();
+    });
+  }
+
+  for (const failure of accepts.run_failures) {
+    it(`parses a ${failure.reason} run failure`, () => {
+      expect(() => runFailureSchema.parse(failure)).not.toThrow();
     });
   }
 });

@@ -93,3 +93,13 @@ export const invalidUpload = (reason: UploadRejection): NextResponse<ApiErrorBod
  */
 export const conflict = (): NextResponse<ApiErrorBody> =>
   NextResponse.json({ error: 'conflict' }, { status: 409 });
+
+/**
+ * The analysis service could not be reached, or answered with something other than a run.
+ *
+ * One answer for "not configured", "unreachable" and "answered nonsense". All three mean the same
+ * to the artist — try again later — and the detail belongs in the server log. 503 rather than
+ * 502 so a client treats it as temporary.
+ */
+export const agentUnavailable = (): NextResponse<ApiErrorBody> =>
+  NextResponse.json({ error: 'agent_unavailable' }, { status: 503 });

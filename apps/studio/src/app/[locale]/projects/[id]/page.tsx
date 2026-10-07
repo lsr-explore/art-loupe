@@ -1,25 +1,25 @@
+import { getAccessToken } from '@artloupe/auth/server';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { RunPanel } from '@/components/project/run-panel';
+import { env } from '@/env';
 import { Link } from '@/i18n/navigation';
+import { readProject } from '@/lib/projects/read-project';
 
 /**
- * Where a completed upload lands — a placeholder, and it says so.
+ * One project: its reference photograph, and the analysis the artist can start and follow.
  *
- * The intake form navigates here on a 201 because the URL shape is worth establishing now: a
- * project is a thing with an address, and every later PR in the slice (the plates, the routing
- * summary, the geometry overlays, the interrupt) hangs off this route. What is *not* here is
- * any of that, and the page states the gap rather than dressing an empty shell as a result.
+ * **It reads the project as the artist.** `readProject` asks PostgREST with the artist's own
+ * token, so RLS answers whether this project is theirs, and a project that is absent and one
+ * that is somebody else's are the same 404 the rest of the app returns. A session whose token
+ * Supabase refuses, such as the demo provider's, owns nothing and gets that 404 too.
  *
- * **It reads nothing.** There is no GET for a project yet, so this page cannot confirm that the
- * id exists or that this artist owns it — and it must not pretend otherwise. It therefore says
- * the upload was received (which the redirect from the form is evidence of) and never that the
- * project was loaded. When the read path lands, ownership is answered by RLS and a missing or
- * foreign project becomes the same 404 the rest of the app already returns.
+ * The id is checked for UUID shape before anything is asked of the database. A path segment is
+ * caller-controlled text, and it is interpolated into a PostgREST filter.
  *
- * The id is checked for UUID shape before it is rendered. React escapes interpolated text, so
- * this is not an injection guard; it is a correctness one — a path segment is caller-controlled
- * text, and echoing arbitrary text back as "your project" is a claim the page cannot support.
+ * The photograph is served through the image route rather than a signed URL, so `img-src` stays
+ * `'self'`. The run panel is the only client component; everything else renders on the server.
  */
 const PROJECT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -34,19 +34,67 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
     notFound();
   }
 
+  const accessToken = await getAccessToken();
+  if (accessToken === null || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
+    notFound();
+  }
+
+  const read = await readProject({
+    supabaseUrl: env.SUPABASE_URL,
+    anonKey: env.SUPABASE_ANON_KEY,
+    accessToken,
+    projectId: id,
+  });
+  if (!read.ok && read.reason === 'not-found') {
+    notFound();
+  }
+
   const tp = await getTranslations('project');
 
-  return (
-    <div className="flex flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('receivedTitle')}</h1>
-        <p className="text-sm text-muted-foreground">{tp('receivedDescription')}</p>
+  if (!read.ok) {
+    return (
+      <div className="flex flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('title')}</h1>
+        <p role="alert" className="text-sm">
+          {tp('unavailable')}
+        </p>
       </div>
-      <dl className="flex flex-col gap-1 text-sm">
-        <dt className="text-muted-foreground">{tp('referenceLabel')}</dt>
-        <dd className="font-mono">{id}</dd>
-      </dl>
-      <p className="text-sm text-muted-foreground">{tp('planPending')}</p>
+    );
+  }
+
+  const { project } = read;
+
+  return (
+    <div className="flex flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('title')}</h1>
+        <p className="text-sm text-muted-foreground">{tp('planPending')}</p>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <figure className="flex flex-col gap-2">
+          {project.original ? (
+            // A plain <img>: the bytes come from the app's own image route, already private and
+            // cached, and `next/image` would add a second, public cache in front of them.
+            // oxlint-disable-next-line nextjs/no-img-element
+            <img
+              src={`/api/images/${project.original.storageKey}`}
+              alt={tp('photoAlt')}
+              width={project.original.widthPx}
+              height={project.original.heightPx}
+              className="h-auto w-full rounded-md border"
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">{tp('noOriginal')}</p>
+          )}
+          <figcaption className="text-xs text-muted-foreground">
+            {tp('referenceLabel')}: <span className="font-mono">{project.projectId}</span>
+          </figcaption>
+        </figure>
+
+        <RunPanel projectId={project.projectId} initialRunId={project.latestRun?.runId ?? null} />
+      </div>
+
       <div>
         <Link className="text-sm underline underline-offset-4" href="/projects/new">
           {tp('startAnother')}

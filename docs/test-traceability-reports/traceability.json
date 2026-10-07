@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 435,
-      "vitest": 522,
+      "pytest": 438,
+      "vitest": 584,
       "playwright": 40,
-      "all": 997
+      "all": 1062
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 435,
-      "vitest": 522,
+      "pytest": 438,
+      "vitest": 584,
       "playwright": 40,
-      "all": 997
+      "all": 1062
     }
   },
   "by_flow": {
@@ -186,7 +186,7 @@
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "counts": {
         "a11y": 5,
-        "security": 102,
+        "security": 104,
         "privacy": 0,
         "safety": 0,
         "data": 0,
@@ -195,10 +195,10 @@
       },
       "runners": {
         "pytest": 20,
-        "vitest": 83,
+        "vitest": 85,
         "playwright": 17
       },
-      "total": 120,
+      "total": 122,
       "parametrized": 3
     },
     "canvas.session-plan": {
@@ -245,21 +245,21 @@
       "severity": "P2",
       "title": "Upload, intake, and the typed ProjectIntent",
       "counts": {
-        "a11y": 8,
-        "security": 53,
+        "a11y": 10,
+        "security": 67,
         "privacy": 0,
-        "safety": 1,
+        "safety": 3,
         "data": 61,
         "performance": 0,
-        "functionality": 81
+        "functionality": 121
       },
       "runners": {
         "pytest": 61,
-        "vitest": 131,
+        "vitest": 189,
         "playwright": 12
       },
-      "total": 204,
-      "parametrized": 19
+      "total": 262,
+      "parametrized": 21
     },
     "ops.observability": {
       "severity": "P2",
@@ -271,14 +271,14 @@
         "safety": 0,
         "data": 11,
         "performance": 0,
-        "functionality": 46
+        "functionality": 47
       },
       "runners": {
-        "pytest": 34,
+        "pytest": 35,
         "vitest": 36,
         "playwright": 0
       },
-      "total": 70,
+      "total": 71,
       "parametrized": 2
     },
     "palette.extraction": {
@@ -309,17 +309,17 @@
         "security": 0,
         "privacy": 0,
         "safety": 0,
-        "data": 22,
+        "data": 26,
         "performance": 0,
         "functionality": 0
       },
       "runners": {
-        "pytest": 11,
-        "vitest": 11,
+        "pytest": 13,
+        "vitest": 13,
         "playwright": 0
       },
-      "total": 22,
-      "parametrized": 8
+      "total": 26,
+      "parametrized": 10
     },
     "platform.shell": {
       "severity": "P2",
@@ -1107,70 +1107,70 @@
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:175",
+      "id": "apps/studio/e2e/intake.spec.ts:174",
       "name": "validates in the browser before anything is uploaded",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:192",
+      "id": "apps/studio/e2e/intake.spec.ts:191",
       "name": "moves focus to the error summary so the failure is announced",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:211",
+      "id": "apps/studio/e2e/intake.spec.ts:210",
       "name": "explains the refusal ${reason} in words an artist can act on",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:225",
+      "id": "apps/studio/e2e/intake.spec.ts:224",
       "name": "reports a duplicate upload without pretending it failed",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:235",
+      "id": "apps/studio/e2e/intake.spec.ts:234",
       "name": "reports an expired session rather than a generic failure",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:245",
+      "id": "apps/studio/e2e/intake.spec.ts:244",
       "name": "renders the form in Spanish on the Spanish route",
       "runner": "playwright",
       "flow": "platform.shell",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:260",
+      "id": "apps/studio/e2e/intake.spec.ts:259",
       "name": "reflows at 320 CSS px without horizontal scrolling",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:273",
+      "id": "apps/studio/e2e/intake.spec.ts:272",
       "name": "the intake form has no accessibility violations",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:287",
+      "id": "apps/studio/e2e/intake.spec.ts:286",
       "name": "the error state has no accessibility violations",
       "runner": "playwright",
       "flow": "intake.project-intent",
       "category": "a11y"
     },
     {
-      "id": "apps/studio/e2e/intake.spec.ts:305",
+      "id": "apps/studio/e2e/intake.spec.ts:304",
       "name": "the project page has no accessibility violations",
       "runner": "playwright",
       "flow": "intake.project-intent",
@@ -1233,32 +1233,81 @@
       "category": "a11y"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:47",
-      "name": "confirms the upload and says plainly that the plan is not built",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:104",
+      "name": "says so when the project has no photograph yet",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:60",
-      "name": "shows the project reference it was given",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:110",
+      "name": "says the project could not be loaded when the data service fails",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:71",
-      "name": "refuses %j rather than presenting it as a project",
-      "runner": "vitest",
-      "flow": "intake.project-intent",
-      "category": "functionality"
-    },
-    {
-      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:80",
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:118",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:130",
+      "name": "refuses %j without reading anything",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:138",
+      "name": "answers 404 when RLS hides the project, absent and foreign alike",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:143",
+      "name": "answers 404 with no session token",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:149",
+      "name": "reads the project with the artist token",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:79",
+      "name": "shows the reference photograph through the image route, with its dimensions",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:88",
+      "name": "says plainly that the plan is not built yet",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:93",
+      "name": "hands the run panel the project and no run when there is none",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:98",
+      "name": "hands the run panel the latest run, so a reload follows it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
     },
     {
       "id": "apps/studio/src/app/[locale]/projects/new/page.test.tsx:27",
@@ -1412,6 +1461,55 @@
       "name": "reports a spent provider quota as an outage",
       "runner": "vitest",
       "flow": "inspiration.search",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:101",
+      "name": "answers 401 when the agent rejects the artist",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:38",
+      "name": "answers 202 with the run id",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:44",
+      "name": "asks the agent to run this project, as the artist",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:56",
+      "name": "the agent is not configured",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:80",
+      "name": "answers 404 for an id that is not a UUID, without asking the agent",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:86",
+      "name": "answers 404 with no token",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/projects/[id]/runs/route.test.ts:92",
+      "name": "passes the agent",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
       "category": "security"
     },
     {
@@ -1602,6 +1700,62 @@
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:40",
+      "name": "streams the validated events as SSE",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:50",
+      "name": "forwards a numeric Last-Event-ID so a reconnect resumes",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:60",
+      "name": "drops a Last-Event-ID that is not a sequence number",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:65",
+      "name": "passes a 204 on, which tells EventSource to stop reconnecting",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:70",
+      "name": "answers 503 when the agent cannot be reached",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:78",
+      "name": "answers 404 for an id that is not a UUID, without asking the agent",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:83",
+      "name": "passes the agent",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/runs/[id]/events/route.test.ts:88",
+      "name": "answers 404 with no token",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
     },
     {
       "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:108",
@@ -1854,6 +2008,139 @@
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/project/routing-summary.test.tsx:20",
+      "name": "shows the rationale, every selection, and every declination with its reason (FR-307)",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/routing-summary.test.tsx:35",
+      "name": "says so when nothing was declined",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/routing-summary.test.tsx:43",
+      "name": "shows a tool it has no name for as its id, rather than hiding it",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/routing-summary.test.tsx:52",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:105",
+      "name": "says the run could not start when the studio refuses",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:114",
+      "name": "closes its stream when it unmounts",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:121",
+      "name": "has no accessibility violations once a run has finished",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:41",
+      "name": "starts nothing until the artist asks",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:47",
+      "name": "starts a run on request and follows its stream",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:56",
+      "name": "announces the current step, then the routing decision",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:72",
+      "name": "follows an existing run at once, without starting another",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:78",
+      "name": "shows a failed run in the artist language, and offers to try again",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:89",
+      "name": "treats the studio",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-panel.test.tsx:99",
+      "name": "says contact was lost when the stream is refused before the run ends",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-view.test.ts:13",
+      "name": "tracks each node from running to done",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-view.test.ts:27",
+      "name": "keeps the result of a run that succeeded",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-view.test.ts:36",
+      "name": "keeps only the reason of a run that failed, never its English detail",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-view.test.ts:43",
+      "name": "turns a refused stream into a failure of its own",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/run-view.test.ts:50",
+      "name": "starts idle, with no run",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
     },
     {
       "id": "apps/studio/src/components/ui/error-boundary.test.tsx:15",
@@ -2281,6 +2568,139 @@
       "runner": "vitest",
       "flow": "intake.project-intent",
       "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:39",
+      "name": "returns the intent, the original and the latest run",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:57",
+      "name": "has no original and no run before either exists",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:64",
+      "name": "asks only for the newest run",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:72",
+      "name": "answers unavailable when PostgREST fails",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:80",
+      "name": "reads with the artist token and the anon key, never anything else",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:88",
+      "name": "answers not-found when RLS hides the project",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/projects/read-project.test.ts:93",
+      "name": "answers not-found, not unavailable, for a token Supabase refuses",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/agent-request.test.ts:14",
+      "name": "carries the artist token and the service identity, and refuses redirects",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/agent-request.test.ts:38",
+      "name": "cannot be pointed off the agent by the path",
+      "runner": "vitest",
+      "flow": "platform.auth",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:35",
+      "name": "relays every valid event with its id, and passes heartbeats on",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:51",
+      "name": "starts with its own retry interval",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:56",
+      "name": "stops after the terminal event even if more arrives",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:67",
+      "name": "an unknown kind",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/relay-run-events.test.ts:92",
+      "name": "never relays the refused payload itself",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/sse.test.ts:15",
+      "name": "reads id, event and data, and joins multi-line data",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/sse.test.ts:22",
+      "name": "reassembles a frame split across network chunks",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/sse.test.ts:28",
+      "name": "keeps a comment-only frame as a heartbeat and drops retry lines",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/sse.test.ts:32",
+      "name": "discards a trailing partial frame, as the spec requires",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/lib/runs/sse.test.ts:36",
+      "name": "writes a frame the reader reads back unchanged",
+      "runner": "vitest",
+      "flow": "intake.project-intent",
+      "category": "functionality"
     },
     {
       "id": "apps/studio/src/lib/storage/checksum.test.ts:16",
@@ -4047,77 +4467,91 @@
       "category": "a11y"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:100",
+      "id": "packages/schemas/src/contract-parity.test.ts:105",
       "name": "parses routing decision ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:106",
+      "id": "packages/schemas/src/contract-parity.test.ts:111",
       "name": "parses ${metadata.tool} artifact metadata",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:111",
+      "id": "packages/schemas/src/contract-parity.test.ts:116",
       "name": "keeps a null confidence distinct from a zero one",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:117",
+      "id": "packages/schemas/src/contract-parity.test.ts:122",
       "name": "parses a ledger with stopped=${ledger.stopped}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:126",
+      "id": "packages/schemas/src/contract-parity.test.ts:128",
+      "name": "parses run result ${result.run_id}",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:134",
+      "name": "parses a ${failure.reason} run failure",
+      "runner": "vitest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/contract-parity.test.ts:143",
       "name": "rejects ${name}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:133",
+      "id": "packages/schemas/src/contract-parity.test.ts:150",
       "name": "names only schemas this suite knows how to validate",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:71",
+      "id": "packages/schemas/src/contract-parity.test.ts:76",
       "name": "parses a ${claim.evidence.kind} claim",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:76",
+      "id": "packages/schemas/src/contract-parity.test.ts:81",
       "name": "covers every evidence class the taxonomy defines",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:82",
+      "id": "packages/schemas/src/contract-parity.test.ts:87",
       "name": "parses image ref ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:88",
+      "id": "packages/schemas/src/contract-parity.test.ts:93",
       "name": "parses the ${name} project intent and fills the documented defaults",
       "runner": "vitest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "packages/schemas/src/contract-parity.test.ts:94",
+      "id": "packages/schemas/src/contract-parity.test.ts:99",
       "name": "parses tool manifest ${index}",
       "runner": "vitest",
       "flow": "platform.contracts",
@@ -6343,77 +6777,91 @@
       "category": "functionality"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:100",
+      "id": "python/libs/schemas/tests/test_parity.py:104",
       "name": "test_accepts_tool_manifests",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:105",
+      "id": "python/libs/schemas/tests/test_parity.py:109",
       "name": "test_accepts_routing_decisions",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:110",
+      "id": "python/libs/schemas/tests/test_parity.py:114",
       "name": "test_accepts_artifact_metadata",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:114",
+      "id": "python/libs/schemas/tests/test_parity.py:118",
       "name": "test_null_confidence_is_not_collapsed_to_zero",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:124",
+      "id": "python/libs/schemas/tests/test_parity.py:128",
       "name": "test_accepts_budget_ledgers",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:129",
+      "id": "python/libs/schemas/tests/test_parity.py:133",
+      "name": "test_accepts_run_results",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:138",
+      "name": "test_accepts_run_failures",
+      "runner": "pytest",
+      "flow": "platform.contracts",
+      "category": "data"
+    },
+    {
+      "id": "python/libs/schemas/tests/test_parity.py:143",
       "name": "test_rejects",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:136",
+      "id": "python/libs/schemas/tests/test_parity.py:150",
       "name": "test_reject_entries_name_only_known_schemas",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:76",
+      "id": "python/libs/schemas/tests/test_parity.py:80",
       "name": "test_accepts_every_evidence_class",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:80",
+      "id": "python/libs/schemas/tests/test_parity.py:84",
       "name": "test_fixture_covers_the_whole_taxonomy",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:86",
+      "id": "python/libs/schemas/tests/test_parity.py:90",
       "name": "test_accepts_image_refs",
       "runner": "pytest",
       "flow": "platform.contracts",
       "category": "data"
     },
     {
-      "id": "python/libs/schemas/tests/test_parity.py:93",
+      "id": "python/libs/schemas/tests/test_parity.py:97",
       "name": "test_project_intent_defaults_match_the_mirror",
       "runner": "pytest",
       "flow": "platform.contracts",
@@ -6896,56 +7344,63 @@
       "category": "safety"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:101",
+      "id": "python/services/agent/tests/test_ops_cost.py:104",
       "name": "test_cost_is_sent_as_a_decimal_string_not_a_float",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:116",
+      "id": "python/services/agent/tests/test_ops_cost.py:119",
       "name": "test_an_unreachable_ledger_is_a_503_not_an_empty_report",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:132",
+      "id": "python/services/agent/tests/test_ops_cost.py:135",
       "name": "test_no_dsn_means_unavailable",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:141",
+      "id": "python/services/agent/tests/test_ops_cost.py:144",
       "name": "test_shared_typescript_python_report_fixture",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "data"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:206",
+      "id": "python/services/agent/tests/test_ops_cost.py:209",
       "name": "test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "data"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:270",
+      "id": "python/services/agent/tests/test_ops_cost.py:279",
+      "name": "test_pooled_connections_read_one_snapshot_as_the_role",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_cost.py:301",
       "name": "test_the_reader_role_sees_the_ledger_and_nothing_else",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:66",
+      "id": "python/services/agent/tests/test_ops_cost.py:69",
       "name": "test_only_an_operator_may_read_costs",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "security"
     },
     {
-      "id": "python/services/agent/tests/test_ops_cost.py:81",
+      "id": "python/services/agent/tests/test_ops_cost.py:84",
       "name": "test_the_window_defaults_to_seven_days_and_is_a_closed_set",
       "runner": "pytest",
       "flow": "ops.observability",

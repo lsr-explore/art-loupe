@@ -83,11 +83,69 @@
     }
   },
   "project": {
-    "receivedTitle": "Fotografía de referencia recibida",
-    "receivedDescription": "Tu original se guarda tal y como lo enviaste, y nunca se modifica.",
     "referenceLabel": "Referencia del proyecto",
-    "planPending": "El plan de este proyecto aún no está construido. La evaluación de la referencia, las planchas de valor y contorno, el enrutado de herramientas y el plan de estudio llegan más adelante: aquí es donde aparecerán.",
-    "startAnother": "Iniciar otro proyecto"
+    "planPending": "El plan de trabajo aún no está construido. Primero llega el enrutamiento; la evaluación de la referencia, las láminas y el plan llegarán más adelante.",
+    "startAnother": "Iniciar otro proyecto",
+    "title": "Tu proyecto",
+    "photoAlt": "La fotografía de referencia de este proyecto",
+    "noOriginal": "Este proyecto aún no tiene fotografía de referencia.",
+    "unavailable": "No se pudo cargar este proyecto ahora. Inténtalo de nuevo en un momento.",
+    "run": {
+      "title": "Análisis",
+      "start": "Analizar esta referencia",
+      "retry": "Intentar de nuevo",
+      "starting": "Iniciando el análisis…",
+      "queued": "El análisis está en cola.",
+      "runningStep": "En curso: {step}",
+      "succeeded": "El análisis ha terminado.",
+      "failed": "El análisis se detuvo.",
+      "failedTitle": "El análisis se detuvo",
+      "disconnected": "Se perdió el contacto con el análisis.",
+      "disconnectedTitle": "Se perdió el contacto con el análisis",
+      "disconnectedHint": "Es posible que el análisis siga en marcha. Recarga la página para retomarlo.",
+      "startFailed": "No se pudo iniciar el análisis.",
+      "startFailedTitle": "No se pudo iniciar el análisis",
+      "startFailedHint": "El servicio de análisis no está disponible ahora. Inténtalo de nuevo en un momento.",
+      "stepsLabel": "Pasos del análisis",
+      "stepRunning": "en curso",
+      "stepDone": "hecho"
+    },
+    "nodes": {
+      "load_project": "Leyendo tu proyecto",
+      "face_gate": "Buscando un rostro",
+      "survey": "Examinando la fotografía",
+      "direct": "Eligiendo los estudios",
+      "analyse": "Ejecutando los estudios"
+    },
+    "tools": {
+      "grayscale": "Escala de grises",
+      "value_map": "Mapa de valores",
+      "value_shapes": "Formas de valor",
+      "outline": "Contorno",
+      "head_construction": "Construcción de la cabeza",
+      "perspective": "Perspectiva"
+    },
+    "routing": {
+      "title": "Lo que eligió el Director de Estudio",
+      "selected": "Seleccionados",
+      "declined": "Descartados",
+      "noneDeclined": "No se descartó nada.",
+      "directorsWords": "Los motivos anteriores son palabras del propio Director de Estudio y se muestran en inglés."
+    },
+    "failure": {
+      "budget_exceeded": "Este proyecto ha agotado su presupuesto de análisis.",
+      "deadline_exceeded": "El análisis tardó demasiado y se detuvo.",
+      "guard_stopped": "Uno de los límites de seguridad detuvo el análisis.",
+      "project_not_found": "No se encontró este proyecto.",
+      "project_not_ready": "Este proyecto necesita una fotografía de referencia y sus datos de admisión antes de poder analizarse.",
+      "photograph_unavailable": "No se pudo leer la fotografía de referencia para analizarla.",
+      "credential_rejected": "Tu sesión caducó durante el análisis. Vuelve a iniciar sesión e inténtalo de nuevo.",
+      "data_service_refused": "El servicio de datos rechazó una solicitud durante el análisis.",
+      "routing_failed": "El Director de Estudio no pudo decidir qué estudios ejecutar.",
+      "interrupted": "El servicio de análisis se detuvo antes de que terminara el análisis.",
+      "internal_error": "Algo falló dentro del servicio de análisis.",
+      "invalid_stream": "El servicio de análisis envió una actualización que no se pudo leer."
+    }
   },
   "nav": {
     "label": "Secciones del estudio"

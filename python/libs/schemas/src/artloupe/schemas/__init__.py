@@ -49,6 +49,7 @@ from artloupe.schemas.manifest import (
     check_accounts_for,
 )
 from artloupe.schemas.routing import RoutingDecision, RoutingGate
+from artloupe.schemas.run import RUN_FAILURE_REASONS, RunFailure, RunFailureReason, RunResult
 from artloupe.schemas.screening import (
     EXCERPT_MAX_LENGTH,
     SCREENED_SURFACES,
@@ -66,6 +67,7 @@ __all__ = [
     "MEASUREMENT_UNITS",
     "MEDIA",
     "MIN_LONG_EDGE_PX",
+    "RUN_FAILURE_REASONS",
     "SCREENED_SURFACES",
     "SKILL_LEVELS",
     "TOOLS",
@@ -88,6 +90,9 @@ __all__ = [
     "ProjectIntent",
     "RoutingDecision",
     "RoutingGate",
+    "RunFailure",
+    "RunFailureReason",
+    "RunResult",
     "ScreenedSurface",
     "SkillLevel",
     "SupportSize",

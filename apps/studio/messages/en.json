@@ -83,11 +83,69 @@
     }
   },
   "project": {
-    "receivedTitle": "Reference photograph received",
-    "receivedDescription": "Your original is stored exactly as you sent it, and it is never altered.",
     "referenceLabel": "Project reference",
-    "planPending": "The plan for this project is not built yet. Reference assessment, value and outline plates, the tool routing and the studio plan all arrive in later work — this page is where they will appear.",
-    "startAnother": "Start another project"
+    "planPending": "The working plan is not built yet. Routing comes first; the reference assessment, the plates and the plan follow in later work.",
+    "startAnother": "Start another project",
+    "title": "Your project",
+    "photoAlt": "The reference photograph for this project",
+    "noOriginal": "This project has no reference photograph yet.",
+    "unavailable": "This project could not be loaded right now. Try again in a moment.",
+    "run": {
+      "title": "Analysis",
+      "start": "Analyse this reference",
+      "retry": "Try again",
+      "starting": "Starting the analysis…",
+      "queued": "The analysis is queued.",
+      "runningStep": "Working: {step}",
+      "succeeded": "The analysis has finished.",
+      "failed": "The analysis stopped.",
+      "failedTitle": "The analysis stopped",
+      "disconnected": "Lost contact with the analysis.",
+      "disconnectedTitle": "Lost contact with the analysis",
+      "disconnectedHint": "The analysis may still be running. Reload the page to pick it up again.",
+      "startFailed": "The analysis could not be started.",
+      "startFailedTitle": "The analysis could not be started",
+      "startFailedHint": "The analysis service is not available right now. Try again in a moment.",
+      "stepsLabel": "Analysis steps",
+      "stepRunning": "in progress",
+      "stepDone": "done"
+    },
+    "nodes": {
+      "load_project": "Reading your project",
+      "face_gate": "Looking for a face",
+      "survey": "Surveying the photograph",
+      "direct": "Choosing the studies",
+      "analyse": "Running the studies"
+    },
+    "tools": {
+      "grayscale": "Grayscale",
+      "value_map": "Value map",
+      "value_shapes": "Value shapes",
+      "outline": "Outline",
+      "head_construction": "Head construction",
+      "perspective": "Perspective"
+    },
+    "routing": {
+      "title": "What the Studio Director chose",
+      "selected": "Selected",
+      "declined": "Declined",
+      "noneDeclined": "Nothing was declined.",
+      "directorsWords": "The reasons above are the Studio Director's own words, and are shown in English."
+    },
+    "failure": {
+      "budget_exceeded": "This project has used its analysis budget.",
+      "deadline_exceeded": "The analysis took too long and was stopped.",
+      "guard_stopped": "The analysis was stopped by one of its safety limits.",
+      "project_not_found": "This project could not be found.",
+      "project_not_ready": "This project needs a reference photograph and its intake details before it can be analysed.",
+      "photograph_unavailable": "The reference photograph could not be read for analysis.",
+      "credential_rejected": "Your session expired during the analysis. Sign in again and retry.",
+      "data_service_refused": "The data service refused a request during the analysis.",
+      "routing_failed": "The Studio Director could not decide which studies to run.",
+      "interrupted": "The analysis service stopped before the analysis finished.",
+      "internal_error": "Something went wrong inside the analysis service.",
+      "invalid_stream": "The analysis service sent an update that could not be read."
+    }
   },
   "nav": {
     "label": "Studio sections"
