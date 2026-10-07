@@ -37,17 +37,17 @@ Shared schemas and the TS/Python contract boundary
 
 | Category | Test | Location |
 | --- | --- | --- |
-| data | parses a ${claim.evidence.kind} claim | `packages/schemas/src/contract-parity.test.ts:70` |
-| data | covers every evidence class the taxonomy defines | `packages/schemas/src/contract-parity.test.ts:75` |
-| data | parses image ref ${index} | `packages/schemas/src/contract-parity.test.ts:81` |
-| data | parses the ${name} project intent and fills the documented defaults | `packages/schemas/src/contract-parity.test.ts:87` |
-| data | parses tool manifest ${index} | `packages/schemas/src/contract-parity.test.ts:93` |
-| data | parses routing decision ${index} | `packages/schemas/src/contract-parity.test.ts:99` |
-| data | parses ${metadata.tool} artifact metadata | `packages/schemas/src/contract-parity.test.ts:105` |
-| data | keeps a null confidence distinct from a zero one | `packages/schemas/src/contract-parity.test.ts:110` |
-| data | parses a ledger with stopped=${ledger.stopped} | `packages/schemas/src/contract-parity.test.ts:116` |
-| data | rejects ${name} | `packages/schemas/src/contract-parity.test.ts:125` |
-| data | names only schemas this suite knows how to validate | `packages/schemas/src/contract-parity.test.ts:132` |
+| data | parses a ${claim.evidence.kind} claim | `packages/schemas/src/contract-parity.test.ts:71` |
+| data | covers every evidence class the taxonomy defines | `packages/schemas/src/contract-parity.test.ts:76` |
+| data | parses image ref ${index} | `packages/schemas/src/contract-parity.test.ts:82` |
+| data | parses the ${name} project intent and fills the documented defaults | `packages/schemas/src/contract-parity.test.ts:88` |
+| data | parses tool manifest ${index} | `packages/schemas/src/contract-parity.test.ts:94` |
+| data | parses routing decision ${index} | `packages/schemas/src/contract-parity.test.ts:100` |
+| data | parses ${metadata.tool} artifact metadata | `packages/schemas/src/contract-parity.test.ts:106` |
+| data | keeps a null confidence distinct from a zero one | `packages/schemas/src/contract-parity.test.ts:111` |
+| data | parses a ledger with stopped=${ledger.stopped} | `packages/schemas/src/contract-parity.test.ts:117` |
+| data | rejects ${name} | `packages/schemas/src/contract-parity.test.ts:126` |
+| data | names only schemas this suite knows how to validate | `packages/schemas/src/contract-parity.test.ts:133` |
 
 ---
 

@@ -28,22 +28,24 @@ exists, the detail tells you what it covers.
 | `critique.alignment` | P1 | – | – | – | – | – | – | – | **none** |
 | `critique.formal-analysis` | P1 | – | – | – | – | – | – | – | **none** |
 | **critique** | | – | – | – | 6 | – | – | – | **6** |
-| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 7 | 53 | – | 1 | 61 | – | 72 | 194 |
-| **intake** | | 7 | 53 | – | 1 | 61 | – | 72 | **194** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 2 | 4 | – | – | 1 | – | 24 | 31 |
-| **ops** | | 2 | 4 | – | – | 1 | – | 24 | **31** |
+| [`inspiration.search`](flows/inspiration.search.md) | P2 | 3 | 12 | – | – | 6 | 4 | 42 | 67 |
+| **inspiration** | | 3 | 12 | – | – | 6 | 4 | 42 | **67** |
+| [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 8 | 53 | – | 1 | 61 | – | 81 | 204 |
+| **intake** | | 8 | 53 | – | 1 | 61 | – | 81 | **204** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 5 | 8 | – | – | 11 | – | 46 | 70 |
+| **ops** | | 5 | 8 | – | – | 11 | – | 46 | **70** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 50 | – | – | 1 | 1 | 49 | 101 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 100 | – | – | – | – | 13 | 118 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 22 | – | – | 22 |
-| [`platform.shell`](flows/platform.shell.md) | P2 | 31 | – | – | – | – | – | 108 | 139 |
-| **platform** | | 36 | 150 | – | – | 23 | 1 | 170 | **380** |
+| [`platform.shell`](flows/platform.shell.md) | P2 | 34 | – | – | – | – | – | 110 | 144 |
+| **platform** | | 39 | 150 | – | – | 23 | 1 | 172 | **385** |
 | `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
 | **retrieval** | | – | – | – | – | – | – | – | **0** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **54** | **224** | **–** | **62** | **85** | **1** | **413** | **839** |
+| **all flows** | | **64** | **240** | **–** | **62** | **101** | **5** | **488** | **960** |
 
 ## Gaps
 
@@ -80,7 +82,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 370 | 0 | 370 |
-| Vitest | 433 | 0 | 433 |
-| Playwright | 36 | 0 | 36 |
-| **All** | **839** | **0** | **839** |
+| pytest | 398 | 0 | 398 |
+| Vitest | 522 | 0 | 522 |
+| Playwright | 40 | 0 | 40 |
+| **All** | **960** | **0** | **960** |

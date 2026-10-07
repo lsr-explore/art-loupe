@@ -51,44 +51,44 @@ Acknowledgement gate, sign-in, and the route guard
 | security | uses the demo provider only when AUTH_PROVIDER asks for it | `apps/operations/src/app/[locale]/actions.test.ts:98` |
 | security | still restricts roles when the demo provider is in use | `apps/operations/src/app/[locale]/actions.test.ts:108` |
 | security | fails closed when Supabase is not configured | `apps/operations/src/app/[locale]/actions.test.ts:118` |
-| security | refuses a traversal attempt without asking Storage | `apps/studio/src/app/api/images/[...key]/route.test.ts:54` |
-| security | refuses an uppercase UUID, which no key this system wrote ever carries | `apps/studio/src/app/api/images/[...key]/route.test.ts:63` |
-| security | answers 404 when the session carries no Supabase token | `apps/studio/src/app/api/images/[...key]/route.test.ts:72` |
-| security | answers 404 when signing fails as %s | `apps/studio/src/app/api/images/[...key]/route.test.ts:85` |
-| security | signs with the artist token, never a service key | `apps/studio/src/app/api/images/[...key]/route.test.ts:100` |
-| security | answers 502 when Storage could not be asked | `apps/studio/src/app/api/images/[...key]/route.test.ts:110` |
-| security | answers 502 when the signed URL does not resolve | `apps/studio/src/app/api/images/[...key]/route.test.ts:123` |
-| security | answers 502 when the connection to storage is refused outright | `apps/studio/src/app/api/images/[...key]/route.test.ts:132` |
-| security | serves an accepted type through unchanged | `apps/studio/src/app/api/images/[...key]/route.test.ts:148` |
-| security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:156` |
-| security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:174` |
-| security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:183` |
-| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:227` |
-| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:267` |
-| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:292` |
-| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:304` |
-| security | never answers a route handler with a redirect | `apps/studio/src/proxy.test.ts:311` |
-| security | refuses an unauthenticated or cross-app caller at every route handler with 401 | `apps/studio/src/proxy.test.ts:334` |
-| security | lets an artist through to the handler without requiring the acknowledgement | `apps/studio/src/proxy.test.ts:349` |
-| security | is true when the cookie is present | `packages/auth/src/ack.test.ts:16` |
-| security | is false when it is absent | `packages/auth/src/ack.test.ts:20` |
-| security | does not accept the session cookie in its place | `packages/auth/src/ack.test.ts:24` |
-| security | sends the visitor to the entry point carrying an absolute next= | `packages/auth/src/ack.test.ts:31` |
-| security | preserves the deep link query string | `packages/auth/src/ack.test.ts:42` |
-| security | prefers the configured public origin over the request origin | `packages/auth/src/ack.test.ts:55` |
-| security | is the name the entry point writes and the apps read | `packages/auth/src/ack.test.ts:74` |
-| security | reads the sub claim | `packages/auth/src/claims.test.ts:13` |
-| security | lowercases the subject | `packages/auth/src/claims.test.ts:17` |
-| security | survives multi-byte claims alongside the subject | `packages/auth/src/claims.test.ts:25` |
-| security | answers null for a %s | `packages/auth/src/claims.test.ts:31` |
-| security | never throws, whatever it is handed | `packages/auth/src/claims.test.ts:35` |
-| security | returns options with the cookie name and provided password | `packages/auth/src/options.test.ts:12` |
-| security | throws when the password is missing | `packages/auth/src/options.test.ts:23` |
-| security | throws when the password is too short | `packages/auth/src/options.test.ts:29` |
-| security | defaults to an eight-hour session rather than iron-session | `packages/auth/src/options.test.ts:34` |
-| security | lets an app shorten the session via AUTH_SESSION_TTL | `packages/auth/src/options.test.ts:41` |
-| security | refuses a zero TTL, which iron-session reads as  | `packages/auth/src/options.test.ts:48` |
-| security | refuses a non-numeric TTL rather than silently falling back | `packages/auth/src/options.test.ts:55` |
+| security | refuses a traversal attempt without asking Storage | `apps/studio/src/app/api/images/[...key]/route.test.ts:55` |
+| security | refuses an uppercase UUID, which no key this system wrote ever carries | `apps/studio/src/app/api/images/[...key]/route.test.ts:64` |
+| security | answers 404 when the session carries no Supabase token | `apps/studio/src/app/api/images/[...key]/route.test.ts:73` |
+| security | answers 404 when signing fails as %s | `apps/studio/src/app/api/images/[...key]/route.test.ts:86` |
+| security | signs with the artist token, never a service key | `apps/studio/src/app/api/images/[...key]/route.test.ts:101` |
+| security | answers 502 when Storage could not be asked | `apps/studio/src/app/api/images/[...key]/route.test.ts:111` |
+| security | answers 502 when the signed URL does not resolve | `apps/studio/src/app/api/images/[...key]/route.test.ts:124` |
+| security | answers 502 when the connection to storage is refused outright | `apps/studio/src/app/api/images/[...key]/route.test.ts:133` |
+| security | serves an accepted type through unchanged | `apps/studio/src/app/api/images/[...key]/route.test.ts:149` |
+| security | clamps %s to opaque bytes rather than reflecting it | `apps/studio/src/app/api/images/[...key]/route.test.ts:157` |
+| security | clamps a missing content-type rather than leaving it unset | `apps/studio/src/app/api/images/[...key]/route.test.ts:175` |
+| security | forbids sniffing and keeps the response out of shared caches | `apps/studio/src/app/api/images/[...key]/route.test.ts:184` |
+| security | matches the committed route × visitor gate matrix | `apps/studio/src/proxy.test.ts:228` |
+| security | admits no anonymous visitor to any route but the landing | `apps/studio/src/proxy.test.ts:268` |
+| security | applies the acknowledgement gate before the auth gate | `apps/studio/src/proxy.test.ts:293` |
+| security | refuses an operator session rather than treating it as authorized | `apps/studio/src/proxy.test.ts:305` |
+| security | never answers a route handler with a redirect | `apps/studio/src/proxy.test.ts:312` |
+| security | refuses an unauthenticated or cross-app caller at every route handler with 401 | `apps/studio/src/proxy.test.ts:335` |
+| security | lets an artist through to the handler without requiring the acknowledgement | `apps/studio/src/proxy.test.ts:350` |
+| security | is true when the cookie is present | `packages/auth/src/ack.test.ts:17` |
+| security | is false when it is absent | `packages/auth/src/ack.test.ts:21` |
+| security | does not accept the session cookie in its place | `packages/auth/src/ack.test.ts:25` |
+| security | sends the visitor to the entry point carrying an absolute next= | `packages/auth/src/ack.test.ts:32` |
+| security | preserves the deep link query string | `packages/auth/src/ack.test.ts:43` |
+| security | prefers the configured public origin over the request origin | `packages/auth/src/ack.test.ts:56` |
+| security | is the name the entry point writes and the apps read | `packages/auth/src/ack.test.ts:75` |
+| security | reads the sub claim | `packages/auth/src/claims.test.ts:14` |
+| security | lowercases the subject | `packages/auth/src/claims.test.ts:18` |
+| security | survives multi-byte claims alongside the subject | `packages/auth/src/claims.test.ts:26` |
+| security | answers null for a %s | `packages/auth/src/claims.test.ts:32` |
+| security | never throws, whatever it is handed | `packages/auth/src/claims.test.ts:36` |
+| security | returns options with the cookie name and provided password | `packages/auth/src/options.test.ts:13` |
+| security | throws when the password is missing | `packages/auth/src/options.test.ts:24` |
+| security | throws when the password is too short | `packages/auth/src/options.test.ts:30` |
+| security | defaults to an eight-hour session rather than iron-session | `packages/auth/src/options.test.ts:35` |
+| security | lets an app shorten the session via AUTH_SESSION_TTL | `packages/auth/src/options.test.ts:42` |
+| security | refuses a zero TTL, which iron-session reads as  | `packages/auth/src/options.test.ts:49` |
+| security | refuses a non-numeric TTL rather than silently falling back | `packages/auth/src/options.test.ts:56` |
 | security | resolves an artist session for valid credentials | `packages/auth/src/provider-supabase.test.ts:29` |
 | security | relays Supabase | `packages/auth/src/provider-supabase.test.ts:47` |
 | security | reads the role from app_metadata | `packages/auth/src/provider-supabase.test.ts:65` |
@@ -100,55 +100,55 @@ Acknowledgement gate, sign-in, and the route guard
 | security | exchanges a refresh token for a fresh pair | `packages/auth/src/provider-supabase.test.ts:174` |
 | security | returns null for a spent or revoked refresh token | `packages/auth/src/provider-supabase.test.ts:192` |
 | security | treats a session with no expiry as already expired | `packages/auth/src/provider-supabase.test.ts:202` |
-| security | resolves a super-user session for matching credentials | `packages/auth/src/provider.test.ts:17` |
-| security | issues no tokens, so a demo session cannot reach the Python services | `packages/auth/src/provider.test.ts:26` |
-| security | returns null for a wrong password | `packages/auth/src/provider.test.ts:35` |
-| security | returns null for an unknown username | `packages/auth/src/provider.test.ts:44` |
-| security | rejects a password sharing a long prefix with the real one | `packages/auth/src/provider.test.ts:53` |
-| security | throws when the demo credentials are not configured | `packages/auth/src/provider.test.ts:65` |
-| security | persists the session for an accepted principal | `packages/auth/src/server.test.ts:43` |
-| security | refuses invalid credentials without writing a session | `packages/auth/src/server.test.ts:54` |
-| security | admits a principal whose role is on the allow list | `packages/auth/src/server.test.ts:64` |
-| security | refuses a valid principal whose role is not on the allow list | `packages/auth/src/server.test.ts:80` |
-| security | writes no session at all for a refused role | `packages/auth/src/server.test.ts:90` |
-| security | reports a refused role identically to a bad password | `packages/auth/src/server.test.ts:105` |
-| security | accepts any authenticated role when no allow list is given | `packages/auth/src/server.test.ts:121` |
-| functionality | renders the title as the page h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:14` |
-| functionality | renders the description and the form slot | `packages/fascia/src/components/blocks/login-card.test.tsx:20` |
-| functionality | omits the description paragraph when none is given | `packages/fascia/src/components/blocks/login-card.test.tsx:27` |
-| functionality | paints the backdrop behind the card, not inside it | `packages/fascia/src/components/blocks/login-card.test.tsx:33` |
-| functionality | keeps the card surface solid so no text sits on the backdrop | `packages/fascia/src/components/blocks/login-card.test.tsx:49` |
-| functionality | renders the org lockup above the card, not inside it | `packages/fascia/src/components/blocks/login-card.test.tsx:59` |
-| functionality | prefixes the app name to the single h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:71` |
-| functionality | omits the separator when no app name is given | `packages/fascia/src/components/blocks/login-card.test.tsx:80` |
-| functionality | keeps the organisation name out of the heading outline | `packages/fascia/src/components/blocks/login-card.test.tsx:87` |
-| functionality | stacks the wordmark visually while keeping the accessible name intact | `packages/fascia/src/components/blocks/login-card.test.tsx:97` |
-| functionality | renders a single-word org name on one line | `packages/fascia/src/components/blocks/login-card.test.tsx:109` |
-| functionality | omits the lockup entirely when no org name is given | `packages/fascia/src/components/blocks/login-card.test.tsx:115` |
-| functionality | applies an extra className to the root | `packages/fascia/src/components/blocks/login-card.test.tsx:121` |
-| a11y | has no accessibility violations | `packages/fascia/src/components/blocks/login-card.test.tsx:128` |
+| security | resolves a super-user session for matching credentials | `packages/auth/src/provider.test.ts:18` |
+| security | issues no tokens, so a demo session cannot reach the Python services | `packages/auth/src/provider.test.ts:27` |
+| security | returns null for a wrong password | `packages/auth/src/provider.test.ts:36` |
+| security | returns null for an unknown username | `packages/auth/src/provider.test.ts:45` |
+| security | rejects a password sharing a long prefix with the real one | `packages/auth/src/provider.test.ts:54` |
+| security | throws when the demo credentials are not configured | `packages/auth/src/provider.test.ts:66` |
+| security | persists the session for an accepted principal | `packages/auth/src/server.test.ts:44` |
+| security | refuses invalid credentials without writing a session | `packages/auth/src/server.test.ts:55` |
+| security | admits a principal whose role is on the allow list | `packages/auth/src/server.test.ts:65` |
+| security | refuses a valid principal whose role is not on the allow list | `packages/auth/src/server.test.ts:81` |
+| security | writes no session at all for a refused role | `packages/auth/src/server.test.ts:91` |
+| security | reports a refused role identically to a bad password | `packages/auth/src/server.test.ts:106` |
+| security | accepts any authenticated role when no allow list is given | `packages/auth/src/server.test.ts:122` |
+| functionality | renders the title as the page h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:15` |
+| functionality | renders the description and the form slot | `packages/fascia/src/components/blocks/login-card.test.tsx:21` |
+| functionality | omits the description paragraph when none is given | `packages/fascia/src/components/blocks/login-card.test.tsx:28` |
+| functionality | paints the backdrop behind the card, not inside it | `packages/fascia/src/components/blocks/login-card.test.tsx:34` |
+| functionality | keeps the card surface solid so no text sits on the backdrop | `packages/fascia/src/components/blocks/login-card.test.tsx:50` |
+| functionality | renders the org lockup above the card, not inside it | `packages/fascia/src/components/blocks/login-card.test.tsx:60` |
+| functionality | prefixes the app name to the single h1 | `packages/fascia/src/components/blocks/login-card.test.tsx:72` |
+| functionality | omits the separator when no app name is given | `packages/fascia/src/components/blocks/login-card.test.tsx:81` |
+| functionality | keeps the organisation name out of the heading outline | `packages/fascia/src/components/blocks/login-card.test.tsx:88` |
+| functionality | stacks the wordmark visually while keeping the accessible name intact | `packages/fascia/src/components/blocks/login-card.test.tsx:98` |
+| functionality | renders a single-word org name on one line | `packages/fascia/src/components/blocks/login-card.test.tsx:110` |
+| functionality | omits the lockup entirely when no org name is given | `packages/fascia/src/components/blocks/login-card.test.tsx:116` |
+| functionality | applies an extra className to the root | `packages/fascia/src/components/blocks/login-card.test.tsx:122` |
+| a11y | has no accessibility violations | `packages/fascia/src/components/blocks/login-card.test.tsx:129` |
 
 ## Playwright — 17
 
 | Category | Test | Location |
 | --- | --- | --- |
-| security | the authenticated header reflows at 320 CSS px | `apps/operations/e2e/auth.spec.ts:11` |
-| a11y | renders the public landing with no accessibility violations | `apps/operations/e2e/auth.spec.ts:25` |
-| security | redirects the gated home to the landing when unauthenticated | `apps/operations/e2e/auth.spec.ts:34` |
-| security | labels the console credentials for an operator and carries no secondary links | `apps/operations/e2e/auth.spec.ts:39` |
-| security | signs in and reaches the gated operations home | `apps/operations/e2e/auth.spec.ts:55` |
-| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:63` |
-| a11y | renders the public landing with no accessibility violations | `apps/studio/e2e/auth.spec.ts:28` |
-| security | redirects the gated home to the landing when unauthenticated | `apps/studio/e2e/auth.spec.ts:37` |
-| security | carries no acknowledgement checkbox and enables sign-in immediately | `apps/studio/e2e/auth.spec.ts:49` |
-| security | labels the identifier for an artist and carries no secondary links | `apps/studio/e2e/auth.spec.ts:56` |
-| security | serves the backdrop through the optimizer in a modern format | `apps/studio/e2e/auth.spec.ts:68` |
-| security | signs in, reaches the gated home, and bounces an authed user off the landing | `apps/studio/e2e/auth.spec.ts:92` |
-| security | shows the signed-in identity in the header on every gated page | `apps/studio/e2e/auth.spec.ts:108` |
-| security | the authenticated header reflows at 320 CSS px | `apps/studio/e2e/auth.spec.ts:123` |
-| a11y | the authenticated home has no accessibility violations | `apps/studio/e2e/auth.spec.ts:139` |
-| security | redirects an unacknowledged visitor to the entry point with a resume link | `apps/studio/e2e/auth.spec.ts:171` |
-| security | gates the public landing as well, not just authenticated routes | `apps/studio/e2e/auth.spec.ts:185` |
+| security | the authenticated header reflows at 320 CSS px | `apps/operations/e2e/auth.spec.ts:15` |
+| a11y | renders the public landing with no accessibility violations | `apps/operations/e2e/auth.spec.ts:29` |
+| security | redirects the gated home to the landing when unauthenticated | `apps/operations/e2e/auth.spec.ts:44` |
+| security | labels the console credentials for an operator and carries no secondary links | `apps/operations/e2e/auth.spec.ts:49` |
+| security | signs in and reaches the gated operations home | `apps/operations/e2e/auth.spec.ts:65` |
+| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:76` |
+| a11y | renders the public landing with no accessibility violations | `apps/studio/e2e/auth.spec.ts:31` |
+| security | redirects the gated home to the landing when unauthenticated | `apps/studio/e2e/auth.spec.ts:44` |
+| security | carries no acknowledgement checkbox and enables sign-in immediately | `apps/studio/e2e/auth.spec.ts:56` |
+| security | labels the identifier for an artist and carries no secondary links | `apps/studio/e2e/auth.spec.ts:65` |
+| security | serves the backdrop through the optimizer in a modern format | `apps/studio/e2e/auth.spec.ts:77` |
+| security | signs in, reaches the gated home, and bounces an authed user off the landing | `apps/studio/e2e/auth.spec.ts:101` |
+| security | shows the signed-in identity in the header on every gated page | `apps/studio/e2e/auth.spec.ts:117` |
+| security | the authenticated header reflows at 320 CSS px | `apps/studio/e2e/auth.spec.ts:132` |
+| a11y | the authenticated home has no accessibility violations | `apps/studio/e2e/auth.spec.ts:148` |
+| security | redirects an unacknowledged visitor to the entry point with a resume link | `apps/studio/e2e/auth.spec.ts:188` |
+| security | gates the public landing as well, not just authenticated routes | `apps/studio/e2e/auth.spec.ts:202` |
 
 ---
 

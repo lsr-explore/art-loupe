@@ -35,6 +35,8 @@ from artloupe.agent.graph import build_graph
 from artloupe.agent.inspiration_cache import close_cache_pool
 from artloupe.agent.inspiration_routes import router as inspiration_router
 from artloupe.agent.nodes import ProjectNotReady
+from artloupe.agent.ops_cost import close_ops_pool
+from artloupe.agent.ops_routes import router as ops_router
 from artloupe.agent.resources import PhotographUnavailable, RunResources
 from artloupe.agent.runtime import execute_run
 from artloupe.agent.state import RunState
@@ -57,7 +59,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    """Compose the auth library's lifespan; close the Director's client and cache pool on shutdown.
+    """Compose the auth library's lifespan; close the Director's client and both pools on shutdown.
 
     `artloupe-auth` keeps one connection pool per process, and so does the Director's client. Runs
     reuse both, so each is closed once, here, rather than per request.
@@ -68,11 +70,13 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
         finally:
             await close_director_client()
             await close_cache_pool()
+            await close_ops_pool()
 
 
 app = FastAPI(title=SERVICE_NAME, version=SERVICE_VERSION, lifespan=lifespan)
 
 app.include_router(inspiration_router)
+app.include_router(ops_router)
 
 # Compiled once at import rather than per request. The graph is stateless and immutable;
 # rebuilding it per call would re-validate the topology on every request for no benefit.

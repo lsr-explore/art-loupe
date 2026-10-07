@@ -39,11 +39,12 @@ The default is `memory` so no unit test needs a database. Nothing silently upgra
 
 ## Four decisions worth not re-deriving
 
-- **The table is in `public` with RLS and no policy** — the opposite of the checkpoint
-  tables, on purpose. Checkpoints are hidden in an unexposed schema because nothing outside
-  the graph reads them; this table's only consumer is the operations dashboard, which reads
-  through PostgREST, so hiding it would hide it from the one thing that needs it. RLS with no
-  policy denies `anon` and `authenticated` outright, and `service_role` bypasses RLS.
+- **The table is in `public` with RLS, and no policy for the API roles** — the opposite of
+  the checkpoint tables. `anon` and `authenticated` hold no grant and match no policy. The
+  operations dashboard does not read it through PostgREST: the agent service's
+  `GET /ops/costs` reads it as `artloupe_ops_reader`, a SELECT-only role that only Python
+  holds and whose policy names that role alone. No app runtime holds `service_role`.
+  (`20261007130000_create_ops_reader_role.sql`.)
 - **Guards are enforced at the node boundary**, not inside node bodies and not only around
   the run. Refusing to *start* a node means no partial work and no half-charged ledger;
   cancelling mid-node would leave a checkpoint with a node half-applied. The run-level

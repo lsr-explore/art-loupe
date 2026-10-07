@@ -13,18 +13,18 @@ Cost, latency, evaluation health, and corpus ingestion
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
 | **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
-| **Tests** | 31 |
-| **Covered** | a11y 2 · security 4 · data 1 · functionality 24 |
+| **Tests** | 70 (2 parametrized) |
+| **Covered** | a11y 5 · security 8 · data 11 · functionality 46 |
 | **Not covered** | privacy · safety · performance |
 
-## pytest — 26
+## pytest — 34
 
 | Category | Test | Location |
 | --- | --- | --- |
 | security | test_the_grants_this_table_is_protected_from_are_live_here | `python/libs/metering/tests/test_metrics_table.py:63` |
-| security | test_row_level_security_is_on_and_no_policy_opens_it | `python/libs/metering/tests/test_metrics_table.py:89` |
-| security | test_the_api_roles_cannot_read_the_ledger | `python/libs/metering/tests/test_metrics_table.py:104` |
-| data | test_a_flushed_run_is_readable_afterwards | `python/libs/metering/tests/test_metrics_table.py:121` |
+| security | test_row_level_security_is_on_and_no_policy_opens_it_to_the_api_roles | `python/libs/metering/tests/test_metrics_table.py:89` |
+| security | test_the_api_roles_cannot_read_the_ledger | `python/libs/metering/tests/test_metrics_table.py:110` |
+| data | test_a_flushed_run_is_readable_afterwards | `python/libs/metering/tests/test_metrics_table.py:127` |
 | functionality | test_cost_is_decimal_not_float | `python/libs/metering/tests/test_pricing.py:24` |
 | functionality | test_input_and_output_are_priced_separately | `python/libs/metering/tests/test_pricing.py:35` |
 | functionality | test_cached_input_is_cheaper_and_writing_the_cache_is_dearer | `python/libs/metering/tests/test_pricing.py:40` |
@@ -47,16 +47,55 @@ Cost, latency, evaluation health, and corpus ingestion
 | functionality | test_flushing_nothing_opens_no_connection | `python/libs/metering/tests/test_sinks.py:46` |
 | security | test_the_ledger_table_is_denied_to_the_api_roles_by_construction | `python/libs/metering/tests/test_sinks.py:52` |
 | functionality | test_the_sink_writes_where_the_migration_creates | `python/libs/metering/tests/test_sinks.py:71` |
+| security | test_only_an_operator_may_read_costs | `python/services/agent/tests/test_ops_cost.py:66` |
+| functionality | test_the_window_defaults_to_seven_days_and_is_a_closed_set | `python/services/agent/tests/test_ops_cost.py:81` |
+| functionality | test_cost_is_sent_as_a_decimal_string_not_a_float | `python/services/agent/tests/test_ops_cost.py:101` |
+| functionality | test_an_unreachable_ledger_is_a_503_not_an_empty_report | `python/services/agent/tests/test_ops_cost.py:116` |
+| functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:132` |
+| data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:141` |
+| data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:206` |
+| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:243` |
 
-## Vitest — 5
+## Vitest — 36
 
 | Category | Test | Location |
 | --- | --- | --- |
-| functionality | renders the page heading | `apps/operations/src/app/[locale]/home/page.test.tsx:20` |
-| a11y | has no accessibility violations | `apps/operations/src/app/[locale]/home/page.test.tsx:27` |
+| functionality | renders the page heading | `apps/operations/src/app/[locale]/home/page.test.tsx:34` |
+| functionality | defaults the cost window to seven days | `apps/operations/src/app/[locale]/home/page.test.tsx:39` |
+| functionality | honours a known window and ignores an unknown one | `apps/operations/src/app/[locale]/home/page.test.tsx:44` |
+| a11y | has no accessibility violations | `apps/operations/src/app/[locale]/home/page.test.tsx:52` |
 | functionality | renders the heading and the login section | `apps/operations/src/app/[locale]/page.test.tsx:29` |
 | functionality | renders a decorative gradient backdrop and no photographic asset | `apps/operations/src/app/[locale]/page.test.tsx:38` |
 | a11y | has no accessibility violations | `apps/operations/src/app/[locale]/page.test.tsx:49` |
+| functionality | renders a real zero as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:40` |
+| functionality | renders an unpriced cost as the word, never as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:45` |
+| functionality | states a sum with unpriced rows as a lower bound | `apps/operations/src/components/costs/cost-panel.test.tsx:52` |
+| functionality | carries the lower bound into the spend total | `apps/operations/src/components/costs/cost-panel.test.tsx:58` |
+| functionality | marks the current window and links the others | `apps/operations/src/components/costs/cost-panel.test.tsx:64` |
+| functionality | says how many runs it left out | `apps/operations/src/components/costs/cost-panel.test.tsx:77` |
+| functionality | says so when the window is empty rather than rendering empty tables | `apps/operations/src/components/costs/cost-panel.test.tsx:85` |
+| functionality | explains the %s state | `apps/operations/src/components/costs/cost-panel.test.tsx:91` |
+| a11y | does not rely on color to tell unpriced from zero | `apps/operations/src/components/costs/cost-panel.test.tsx:101` |
+| a11y | has no accessibility violations with data | `apps/operations/src/components/costs/cost-panel.test.tsx:112` |
+| a11y | has no accessibility violations when unavailable | `apps/operations/src/components/costs/cost-panel.test.tsx:121` |
+| data | states a fully priced sum as the cost | `apps/operations/src/lib/costs/cost-figure.test.ts:13` |
+| data | keeps a real zero as a priced zero | `apps/operations/src/lib/costs/cost-figure.test.ts:17` |
+| data | never states an all-unpriced grouping as zero | `apps/operations/src/lib/costs/cost-figure.test.ts:21` |
+| data | marks a sum with any unpriced row as a lower bound | `apps/operations/src/lib/costs/cost-figure.test.ts:25` |
+| data | treats an empty grouping as a priced zero | `apps/operations/src/lib/costs/cost-figure.test.ts:33` |
+| security | sends the operator | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:30` |
+| functionality | returns the validated report | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:38` |
+| functionality | refuses a report for a different window | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:43` |
+| functionality | refuses a malformed report | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:48` |
+| functionality | maps a %i to %s | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:53` |
+| functionality | is unavailable when the agent cannot be reached | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:63` |
+| functionality | is signed out without a token, and never calls the agent | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:68` |
+| functionality | is signed out when an expired session cannot be cleared during render | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:75` |
+| functionality | is unavailable when no agent is configured | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:80` |
+| security | will not send a token over plain HTTP in production | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:88` |
+| data | accepts report ${index} | `packages/schemas/src/ops-cost.test.ts:9` |
+| data | rejects report ${index} | `packages/schemas/src/ops-cost.test.ts:12` |
+| data | refuses a cost sent as a float | `packages/schemas/src/ops-cost.test.ts:14` |
 
 ---
 

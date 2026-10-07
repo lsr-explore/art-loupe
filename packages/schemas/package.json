@@ -10,7 +10,8 @@
     ".": "./src/index.ts",
     "./image-limits": "./src/image-limits.ts",
     "./intent-values": "./src/intent-values.ts",
-    "./inspiration": "./src/inspiration.ts"
+    "./inspiration": "./src/inspiration.ts",
+    "./ops-cost": "./src/ops-cost.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

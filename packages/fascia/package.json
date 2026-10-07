@@ -23,6 +23,7 @@
     "./components/ui/select": "./src/components/ui/select.tsx",
     "./components/ui/separator": "./src/components/ui/separator.tsx",
     "./components/ui/skeleton": "./src/components/ui/skeleton.tsx",
+    "./components/ui/table": "./src/components/ui/table.tsx",
     "./components/ui/textarea": "./src/components/ui/textarea.tsx",
     "./components/blocks/app-footer": "./src/components/blocks/app-footer.tsx",
     "./components/blocks/app-header": "./src/components/blocks/app-header.tsx",

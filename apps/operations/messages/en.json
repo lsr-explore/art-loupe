@@ -19,5 +19,56 @@
   "metadata": {
     "title": "Operations Control — Art Loupe",
     "description": "Operational dashboard for the multi-agent studio: critique and retrieval activity, evaluation health, guardrails, and cost."
+  },
+  "costs": {
+    "title": "Agent cost",
+    "description": "Spend, tokens and node executions from the run ledger. Times are in UTC.",
+    "windowLabel": "Time window",
+    "windows": {
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days"
+    },
+    "stats": {
+      "label": "Totals for this window",
+      "spend": "Spend",
+      "runs": "Runs",
+      "tokens": "Tokens (input + output)",
+      "unpriced": "Unpriced executions",
+      "unpricedHint": "Calls to a model missing from the price table. Their cost is unknown, not zero."
+    },
+    "amount": {
+      "unpriced": "Unpriced",
+      "atLeast": "at least {amount}",
+      "unpricedCount": "{count, plural, one {# unpriced} other {# unpriced}}"
+    },
+    "tables": {
+      "byModel": "Spend by model",
+      "byNode": "Spend by node",
+      "recentRuns": "Recent runs",
+      "deterministic": "Deterministic (no model)",
+      "truncated": "Showing the {shown} most recent of {total} runs."
+    },
+    "columns": {
+      "model": "Model",
+      "node": "Node",
+      "run": "Run",
+      "started": "Started (UTC)",
+      "executions": "Executions",
+      "reexecutions": "Re-executions",
+      "inputTokens": "Input tokens",
+      "outputTokens": "Output tokens",
+      "cacheRead": "Cache read",
+      "cacheWrite": "Cache write",
+      "time": "Total time",
+      "cost": "Cost"
+    },
+    "seconds": "{value} s",
+    "empty": "No agent activity was recorded in this window.",
+    "state": {
+      "unavailable": "Cost data is unavailable right now. The agent service or its database did not answer.",
+      "forbidden": "Your account is not permitted to read cost data.",
+      "signedOut": "Your session has expired. Sign in again to see cost data."
+    }
   }
 }

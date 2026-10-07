@@ -20,6 +20,9 @@ export const env = createEnv({
     // them for `supabase`.
     SUPABASE_URL: z.string().url().optional(),
     SUPABASE_ANON_KEY: z.string().min(1).optional(),
+    // The agent service, which serves the cost report. Operations forwards the operator's own
+    // token and holds no database credential. Unset, the cost panel says it is unavailable.
+    ARTLOUPE_AGENT_URL: z.url().optional(),
   },
 
   /**
@@ -54,6 +57,7 @@ export const env = createEnv({
     AUTH_PROVIDER: process.env.AUTH_PROVIDER,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+    ARTLOUPE_AGENT_URL: process.env.ARTLOUPE_AGENT_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_ENTRY_URL: process.env.NEXT_PUBLIC_ENTRY_URL,
   },
