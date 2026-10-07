@@ -228,5 +228,32 @@
     "black": "Black",
     "gray": "Gray",
     "white": "White"
+  },
+  "learning": {
+    "title": "Learn about art",
+    "description": "Ask about drawing, painting, or art history. Answers draw on three selected books and show the passages they use.",
+    "privacy": "This conversation stays in this tab. Your question and recent turns are sent to the answer provider; vector search also sends your question to the embedding provider. Closing or reloading clears the conversation.",
+    "examples": "Example questions",
+    "exampleValue": "What is the difference between value and color?",
+    "exampleSpace": "How does negative space help a composition?",
+    "exampleImpressionism": "What characterizes Impressionist painting?",
+    "conversation": "Learning conversation",
+    "practice": "Suggested exercise",
+    "sources": "Supporting passages",
+    "historical": "This is a historical text. Materials advice may be outdated.",
+    "openSource": "Open the source publication",
+    "medium": "Your medium (optional)",
+    "anyMedium": "General art question",
+    "question": "Your question",
+    "hint": "Ask a specific question. If the books do not provide enough evidence, the assistant will say so.",
+    "ask": "Ask",
+    "asking": "Reading the sources…",
+    "clear": "Clear conversation",
+    "sessionEnded": "Your session has ended. Sign in again to ask a question.",
+    "rateLimited": "Please wait a moment before asking another question.",
+    "unavailable": "Learning is temporarily unavailable. Your question is still here; please try again.",
+    "citation": "Read supporting passage {number}",
+    "ready": "Answer ready.",
+    "link": "Ask the learning assistant"
   }
 }

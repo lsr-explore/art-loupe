@@ -12,12 +12,65 @@ Art-historical context is carried back to a real citation
 | --- | --- |
 | **Severity** | P0 |
 | **Why** | A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent. |
-| **Surfaces** | `apps/studio` · `python/services/agent` |
-| **Tests** | 0 |
-| **Covered** | nothing yet |
-| **Not covered** | a11y · security · privacy · safety · data · performance · functionality |
+| **Surfaces** | `apps/studio` · `python/services/agent` · `packages/schemas` |
+| **Tests** | 40 (4 parametrized) |
+| **Covered** | a11y 2 · security 8 · safety 21 · data 6 · functionality 3 |
+| **Not covered** | privacy · performance |
 
-No test currently claims this flow.
+## pytest — 21
+
+| Category | Test | Location |
+| --- | --- | --- |
+| safety | test_shared_request_accepts | `python/services/agent/tests/test_learning.py:27` |
+| safety | test_shared_request_rejects | `python/services/agent/tests/test_learning.py:32` |
+| safety | test_citation_identity_and_metadata_are_resolved_from_evidence | `python/services/agent/tests/test_learning.py:37` |
+| safety | test_insufficient_evidence_cannot_contain_a_factual_answer | `python/services/agent/tests/test_learning.py:48` |
+| safety | test_epub_spine_order_preserves_headings_and_excludes_boilerplate | `python/services/agent/tests/test_learning.py:53` |
+| safety | test_chunk_tail_survives_and_overlap_does_not_cross_sections | `python/services/agent/tests/test_learning.py:61` |
+| safety | test_retrieval_prefers_specific_evidence_and_returns_no_unknown_term | `python/services/agent/tests/test_learning.py:69` |
+| safety | test_semantic_retrieval_finds_a_paraphrase_without_keyword_overlap | `python/services/agent/tests/test_learning.py:83` |
+| safety | test_screened_document_never_reaches_synthesis | `python/services/agent/tests/test_learning.py:98` |
+| safety | test_real_sdk_request_escapes_injection_and_validates_citations | `python/services/agent/tests/test_learning.py:102` |
+| safety | test_model_refusal_and_truncation_are_not_answers | `python/services/agent/tests/test_learning.py:123` |
+| safety | test_no_evidence_abstains_without_a_model_call | `python/services/agent/tests/test_learning.py:134` |
+| safety | test_embedding_response_order_and_dimensions | `python/services/agent/tests/test_learning.py:151` |
+| safety | test_corpus_tampering_and_stale_embeddings_fail_closed | `python/services/agent/tests/test_learning.py:178` |
+| safety | test_eval_retrieval_metrics_fail_for_the_wrong_passage | `python/services/agent/tests/test_learning.py:196` |
+| safety | test_offline_eval_does_not_claim_to_measure_answers | `python/services/agent/tests/test_learning.py:215` |
+| safety | test_authenticated_endpoint_rejects_other_roles | `python/services/agent/tests/test_learning.py:239` |
+| safety | test_endpoint_returns_cited_answer_with_verified_artist | `python/services/agent/tests/test_learning.py:254` |
+| safety | test_provider_verification_reports_only_authentication_metadata | `python/services/agent/tests/test_learning.py:280` |
+| safety | test_gap_explanation_cannot_smuggle_uncited_model_facts | `python/services/agent/tests/test_learning.py:308` |
+| safety | test_live_eval_preserves_retrieval_when_judge_truncates | `python/services/agent/tests/test_learning.py:332` |
+
+## Vitest — 18
+
+| Category | Test | Location |
+| --- | --- | --- |
+| security | authenticates before reading or forwarding a question | `apps/studio/src/app/api/learning/route.test.ts:23` |
+| security | rejects a cross-origin POST | `apps/studio/src/app/api/learning/route.test.ts:29` |
+| security | rejects oversized bodies even without Content-Length | `apps/studio/src/app/api/learning/route.test.ts:31` |
+| security | validates the request and its unknown fields | `apps/studio/src/app/api/learning/route.test.ts:33` |
+| security | forwards two identities separately and returns private evidence | `apps/studio/src/app/api/learning/route.test.ts:35` |
+| security | refuses a citation absent from the returned evidence | `apps/studio/src/app/api/learning/route.test.ts:46` |
+| security | does not expose provider errors | `apps/studio/src/app/api/learning/route.test.ts:52` |
+| security | preserves a bounded retry delay | `apps/studio/src/app/api/learning/route.test.ts:60` |
+| functionality | renders cited evidence and keeps follow-up context bounded | `apps/studio/src/components/learning/learning-chat.test.tsx:25` |
+| functionality | retains the draft when the service fails | `apps/studio/src/components/learning/learning-chat.test.tsx:46` |
+| functionality | shows an evidence gap without invented citations | `apps/studio/src/components/learning/learning-chat.test.tsx:53` |
+| a11y | has accessible question controls | `apps/studio/src/components/learning/learning-chat.test.tsx:70` |
+| data | accepts ${JSON.stringify(value)} | `packages/schemas/src/learning.test.ts:9` |
+| data | rejects ${JSON.stringify(value)} | `packages/schemas/src/learning.test.ts:12` |
+| data | accepts a server-resolved citation | `packages/schemas/src/learning.test.ts:14` |
+| data | rejects citations absent from the evidence | `packages/schemas/src/learning.test.ts:16` |
+| data | rejects an answer disguised as an evidence gap | `packages/schemas/src/learning.test.ts:20` |
+| data | rejects unsafe source URLs | `packages/schemas/src/learning.test.ts:25` |
+
+## Playwright — 1
+
+| Category | Test | Location |
+| --- | --- | --- |
+| a11y | opens cited passages on mobile and desktop without layout overflow | `apps/studio/e2e/learning.spec.ts:16` |
 
 ---
 

@@ -144,7 +144,7 @@
       "title": "Art-historical context is carried back to a real citation",
       "severity": "P0",
       "rationale": "A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent.",
-      "surfaces": ["apps/studio", "python/services/agent"]
+      "surfaces": ["apps/studio", "python/services/agent", "packages/schemas"]
     },
     {
       "id": "palette.extraction",
