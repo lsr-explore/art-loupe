@@ -43,7 +43,7 @@ CLI showed all 31 present. The rule list, not the docs, is the source for any fu
 ## Decision
 
 1. **Oxlint is the only JavaScript and TypeScript linter.** Its configuration is
-   `.oxlintrc.json`, and `pnpm lint` runs it.
+   `.oxlintrc.jsonc`, and `pnpm lint` runs it.
 2. **Native rules first; ESLint plugins only for gaps.** The one rule with no native port,
    `no-location-assign-relative-destination`, runs from `@next/eslint-plugin-next` through
    Oxlint's JS plugin API, aliased as `next-js` because `nextjs` is a native plugin name.
@@ -105,9 +105,12 @@ CLI showed all 31 present. The rule list, not the docs, is the source for any fu
 - **Vitest idioms the Jest-derived rules misread are switched off.** These are `valid-expect`
   (Vitest's `expect(value, message)`), `require-to-throw-message` (on `.not.toThrow()`),
   `valid-title` (computed `it.each` titles), `no-conditional-expect` (type-narrowing guards)
-  and `require-mock-type-parameters`. Each has a comment in `.oxlintrc.json`.
+  and `require-mock-type-parameters`. Each has a comment in `.oxlintrc.jsonc`.
 - **Globals must be declared.** `env` lists `browser` and `node`. Without `browser`, the Next.js
   JS plugin cannot resolve `window` as a global, and its rule silently never fires.
+- **The configuration is `.oxlintrc.jsonc`, not `.json`.** It carries comments, which Oxlint
+  accepts. A strict JSON parser rejects them, and Biome's editor integration reported them as
+  errors. The `.jsonc` extension says what the file is, and Oxlint discovers it without a flag.
 - **Suppression comments use Oxlint's names**, such as `oxlint-disable-next-line
   nextjs/no-img-element`. `biome-ignore` comments for lint rules are gone.
 - **The JS plugin API is alpha.** One rule depends on it. If it breaks, that rule can be
@@ -122,6 +125,6 @@ CLI showed all 31 present. The rule list, not the docs, is the source for any fu
 
 ## Related
 
-- `.oxlintrc.json` — the configuration, with the reason for every non-default setting.
+- `.oxlintrc.jsonc` — the configuration, with the reason for every non-default setting.
 - `docs/decision-records/settled-decisions.md` — the accessibility enforcement entry.
 - [ADR 0001](0001-scaffolded-from-existing-monorepo.md) — the toolchain this repo started with.

@@ -40,7 +40,7 @@ it from this file.
   `uv run pytest`, `uv run ruff`), never bare, to avoid a different PATH interpreter.
 - **Biome** for formatting and import sorting only; its linter is off.
 - **Oxlint** is the only JS/TS linter: jsx-a11y, React and React Compiler, Next.js, TypeScript,
-  and the house rules. Config in `.oxlintrc.json`; see ADR 0004.
+  and the house rules. Config in `.oxlintrc.jsonc`; see ADR 0004.
 - **Stylelint** for CSS.
 - **markdownlint-cli2** for docs.
 - **Vitest** for unit/component tests.
