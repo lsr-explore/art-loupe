@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- fascia is framework-agnostic and has no Next
+/* oxlint-disable nextjs/no-img-element -- fascia is framework-agnostic and has no Next
    dependency to import `next/image` from. This fixture stands in for whatever a consuming app
    renders as the canvas child and never ships, so the rule's LCP concern does not apply. */
 import type { OverlayCanvasLabels } from './overlay-canvas';
@@ -37,7 +37,4 @@ export const handleLabels: OverlayHandleLabels = {
  * about scope: this element never ships, it only stands in for whatever the consuming app
  * renders as `children`.
  */
-export const FixturePhotograph = () => (
-  // biome-ignore lint/performance/noImgElement: fascia has no Next dependency and must not gain one for a test fixture.
-  <img alt="Reference photograph" src="/fixture.jpg" />
-);
+export const FixturePhotograph = () => <img alt="Reference photograph" src="/fixture.jpg" />;

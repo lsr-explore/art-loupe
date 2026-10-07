@@ -1,5 +1,5 @@
 // Fascia supports React without Next.js; providers return sized thumbnails.
-/* eslint-disable @next/next/no-img-element */
+/* oxlint-disable nextjs/no-img-element */
 'use client';
 import { type ReactNode, useState } from 'react';
 
@@ -41,7 +41,6 @@ export const ImageMetadataCard = ({
         {failedUrl === imageUrl ? (
           <p className="p-4 text-center">{unavailableLabel}</p>
         ) : (
-          // biome-ignore lint/performance/noImgElement: Fascia is framework-independent; provider thumbnails are already sized.
           <img
             src={imageUrl}
             alt={alt}

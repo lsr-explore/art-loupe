@@ -178,8 +178,8 @@ pnpm check:all      # everything below, in order
 
 | Command | Checks |
 | --- | --- |
-| `pnpm format:check` | Biome formatting + lint |
-| `pnpm lint` | ESLint — jsx-a11y and Next.js rules |
+| `pnpm format:check` | Biome formatting + import sorting |
+| `pnpm lint` | Oxlint — jsx-a11y, React, Next.js, TypeScript, and house rules |
 | `pnpm lint:css` | Stylelint |
 | `pnpm lint:md` | markdownlint |
 | `pnpm i18n:check` | next-intl en/es message parity |

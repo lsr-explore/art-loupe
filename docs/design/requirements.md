@@ -316,7 +316,7 @@ retrieval while carrying a higher number range than the sections that follow it.
 | NFR-04 | Per-project **plan budget**: token and image-call ceiling with a hard stop, visible in operations. Covers plan generation only |
 | NFR-11 | Per-artist **chat credits**: a daily cap on conversational turns, weighted by route, reset on a fixed schedule, independent of NFR-04 in both directions. Operations reports consumption by route and how often the cap is reached |
 | NFR-05 | Degraded mode is defined per external dependency: museum API down, retrieval empty, landmark detector unavailable. Each degrades to abstention plus a stated limitation, never to a guess |
-| NFR-06 | WCAG 2.2 AA across all three surfaces, enforced by `eslint-plugin-jsx-a11y` and axe assertions. Every artifact image carries a text alternative describing what was measured |
+| NFR-06 | WCAG 2.2 AA across all three surfaces, enforced by Oxlint's jsx-a11y rules and axe assertions. Every artifact image carries a text alternative describing what was measured |
 | NFR-07 | en/es parity enforced by `pnpm i18n:check`. No user-facing copy is hard-coded |
 | NFR-08 | Every agent output is a validated typed contract. `packages/schemas` and `python/libs/schemas` mirror; drift fails CI |
 | NFR-09 | Every run is traceable end to end by a single run ID across studio, agent, and operations |

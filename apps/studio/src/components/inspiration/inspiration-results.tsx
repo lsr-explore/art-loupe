@@ -38,9 +38,11 @@ export const InspirationResults = ({
   return (
     <section aria-label={translate('results')} className="space-y-4">
       {toolbar}
-      <p role="status" aria-live="polite" aria-atomic="true">
+      {/* `<output>` carries the status role natively; the live-region attributes stay
+          explicit because screen readers do not all announce `<output>` changes alone. */}
+      <output aria-live="polite" aria-atomic="true" className="block">
         {status}
-      </p>
+      </output>
       {search.isError ? (
         <div role="alert" className="space-y-3 rounded-xl border border-foreground p-4">
           <p>{error}</p>

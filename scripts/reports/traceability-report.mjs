@@ -152,7 +152,7 @@ const collectFiles = () => {
       if (/\.test\.tsx?$/.test(file)) vitest.push(file)
     }
     for (const file of walk(join(pkg, 'e2e'))) {
-      if (/\.spec\.ts$/.test(file)) playwright.push(file)
+      if (file.endsWith('.spec.ts')) playwright.push(file)
     }
   }
 
@@ -160,7 +160,7 @@ const collectFiles = () => {
     for (const pkg of listDirs(group)) {
       for (const file of walk(join(pkg, 'tests'))) {
         const base = file.split('/').pop()
-        if (/^test_.*\.py$/.test(base) || /_test\.py$/.test(base)) pytest.push(file)
+        if (/^test_.*\.py$/.test(base) || base.endsWith('_test.py')) pytest.push(file)
       }
     }
   }
@@ -197,8 +197,6 @@ const parseTracePairs = (raw, context, errors) => {
   }
   return found
 }
-
-const indentOf = (line) => line.length - line.trimStart().length
 
 /**
  * Merge an annotation onto an inherited one, remembering WHICH LINE each key came from.
@@ -323,7 +321,7 @@ const parsePython = (file, text, errors) => {
         classTrace = null
         classIndent = -1
       }
-      const trace = { ...moduleTrace, ...(classTrace ?? {}), ...(pending ?? {}) }
+      const trace = { ...moduleTrace, ...classTrace, ...pending }
       entries.push({
         file,
         line: index + 1,
@@ -343,7 +341,7 @@ const parsePython = (file, text, errors) => {
     // A decorator that isn't ours, or a plain statement, still terminates a pending
     // parametrize/trace pair only when it's another def-level construct; anything else
     // (imports, constants) resets nothing.
-    if (/^@/.test(trimmed)) continue
+    if (trimmed.startsWith('@')) continue
   }
 
   return entries
@@ -792,7 +790,7 @@ judgement — for a test that inherits it from its suite, the claim is about the
 }
 
 const renderMarkdown = (summary, catalog, totals) => {
-  const { rows, gaps, untaggedByPackage } = summary
+  const { gaps, untaggedByPackage } = summary
   const header = ['Flow', 'Sev', ...catalog.categories.map((name) => SHORT[name] ?? name), 'Tests']
   const cell = (value) => (value === 0 ? '–' : String(value))
 

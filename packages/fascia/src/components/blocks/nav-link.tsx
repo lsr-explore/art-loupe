@@ -46,7 +46,7 @@ const VARIANT_STYLES = {
  * Presentational by design: it takes `isActive` rather than reading the pathname,
  * which keeps it out of the client bundle and keeps `fascia` free of any app's
  * routing config. Each app wraps it in a ~12-line client component that supplies
- * both (see `apps/*​/src/components/layout/nav-link.tsx`).
+ * both (see `apps/<app>/src/components/layout/nav-link.tsx`).
  */
 export const NavLink = ({
   href,

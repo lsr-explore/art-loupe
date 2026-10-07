@@ -177,14 +177,15 @@ export const OverlayCanvas = ({
             photograph lands here — on a div with no handler — and the SC 2.5.7 path silently
             does nothing. Handles re-enable pointer events on themselves.
           */}
-          <div
+          {/* A fieldset is a native group. Its default margin, padding, border and
+              min-content width are reset so it behaves as the plain layer it replaces. */}
+          <fieldset
             aria-label={labels.groupLabel}
-            className="pointer-events-none absolute inset-0 z-20"
+            className="pointer-events-none absolute inset-0 z-20 m-0 min-w-0 border-0 p-0"
             data-slot="overlay-layer"
-            role="group"
           >
             {overlay}
-          </div>
+          </fieldset>
         </div>
 
         <p className="sr-only" data-slot="overlay-instructions" id={instructionsId}>

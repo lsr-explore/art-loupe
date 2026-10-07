@@ -146,6 +146,9 @@ export const PhotographDropZone = ({
 
   return (
     <div className="flex flex-col gap-2">
+      {/* Drag and drop is a pointer-only enhancement. The file input inside this label is
+          the keyboard and screen-reader path, so these drag handlers add no barrier. */}
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <label
         htmlFor={id}
         onDragEnter={dragOver}
@@ -174,8 +177,7 @@ export const PhotographDropZone = ({
         />
         {preview !== null && !preview.failed ? (
           // A plain <img>: the source is a local blob URL, which `next/image` cannot optimise.
-          /* eslint-disable @next/next/no-img-element -- a blob: URL has nothing to optimise */
-          // biome-ignore lint/performance/noImgElement: a blob: URL has nothing to optimise
+          // oxlint-disable-next-line nextjs/no-img-element -- a blob: URL has nothing to optimise
           <img
             src={preview.url}
             alt={ti('dropZone.previewAlt')}

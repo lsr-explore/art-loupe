@@ -32,7 +32,10 @@ export const datesInvalid = (request: InspirationRequest) =>
 
 interface InspirationSearchFormProps {
   draft: InspirationRequest;
-  onChange: <K extends keyof InspirationRequest>(key: K, value: InspirationRequest[K]) => void;
+  onChange: <Key extends keyof InspirationRequest>(
+    key: Key,
+    value: InspirationRequest[Key],
+  ) => void;
   onSourceChange: (source: InspirationRequest['source']) => void;
   onSubmit: () => void;
 }
