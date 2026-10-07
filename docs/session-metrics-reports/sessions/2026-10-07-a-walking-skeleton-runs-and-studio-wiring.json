@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-07",
+  "label": "Walking skeleton S1 and S2: runs as background jobs streamed over SSE (#87), and the studio wiring (#90)",
+  "confidence": "measured",
+  "cost_usd": 20.35,
+  "api_minutes": 34.5,
+  "wall_minutes": 196.1,
+  "context_over_150k_pct": 91,
+  "parallel_agents": 2,
+  "themes": ["agent", "app", "data"],
+  "effort_split": {
+    "build": 45,
+    "setup": 5,
+    "design": 15,
+    "docs": 5,
+    "verify_ops": 22,
+    "churn": 8
+  },
+  "churn_attribution": {
+    "under_specified": 5,
+    "refinement": 35,
+    "avoidable_error": 40,
+    "genuine_discovery": 20
+  },
+  "ratings": { "scoping_clarity": 4, "decision_stability": 4, "tooling_leverage": 3 },
+  "rework_of": [],
+  "delivered": { "prs": [87, 90], "adrs": [] },
+  "review": { "coderabbit_findings": 11, "fixed": 9, "deferred": 1, "declined": 1 },
+  "decisions": [
+    "Track 2 (PR 14a) ran in a second herdr pane with its own worktree and session (Laurie)",
+    "Run progress streams over SSE, with the run detached from the connection (option B) (Laurie)",
+    "Run state is written by a scoped Postgres role through guarded functions; no MCP server; an ADR is held back while this is a POC, recorded in docs/decision-records/poc-design-notes.md (Laurie)",
+    "Append-only run_events log; SSE replays after Last-Event-ID, polls the cursor, and answers 204 to a client holding the final event (mine, from the robust-pattern question)",
+    "dispatch_run is the in-process seam that the NFR-02 worker pool replaces (mine)",
+    "The run_node_metrics foreign key to runs is deferred; it is a retention call (mine, flagged)",
+    "A run starts from an explicit button, the page shows the photograph, and 'Try again' appears only after a failure (Laurie; the retry is mine, flagged)",
+    "The studio validates each SSE event with Zod on the server and re-frames it; RunResult and RunFailure move into the shared schemas with parity fixtures (mine)",
+    "The studio size-limit is raised from 300 kB to 500 kB (Laurie)",
+    "peekAccessToken: a read-only token peek for Server Components (from review)",
+    "#88 is P2 (Laurie); #91, token refresh, is P2 (mine, delegated)"
+  ],
+  "retro": {
+    "went_well": "Both slices were checked end to end against the real local stack before shipping. S1 ran in-process with real auth, the Postgres run log and PostgREST reads. S2 ran in a headless browser through the real Next server, which proved the SSE was not buffered. Design calls were put as side-by-side options, and the SSE question became a short write-up of the standard pattern, which Laurie then chose. Every outward write was read back, including PR bodies, review replies and comment bodies.",
+    "improve": "On #87 my resolve loop closed Greptile's own unaddressed threads along with mine, and I had to reopen them. Greptile's three findings on #90 were all reachable from code I could have read first: getAccessToken writes a cookie, fetch can reject, and releaseLock does not cancel. I stated that operations holds service_role from a migration comment, without checking newer decisions. I also wrote the 'reviewed by @lsr-explore' footer before noticing it was untrue, and caught it before posting.",
+    "tooling_suggestion": "Before a resolve step, filter threads to ones I posted or replied to. Before calling an auth helper from a new context (a Server Component, a background task), read what it writes. Make `pnpm size` build first, or warn when .next is older than the source; it silently measured a day-old build."
+  },
+  "note": "Cost, API time and wall time are from /usage, pasted before /wrap began, so the wrap itself is not included. /usage: Opus 3.8k input, 209.6k output, 64.9m cache read, 396.7k cache write; 982 lines added, 53 removed; Haiku $0.0001. ccusage puts this session at $20.12. context_over_150k_pct (91) and the skills split (/backlog 5%, /wrap 2%, /ship 1%) cover the last 24 hours across both local sessions. The 11 review findings are 4 from the CLI and 4 from Greptile's on-PR review on #87, plus 3 on #90. On #87, two on-PR findings duplicate CLI findings and are counted as fixed; the CLI P1 is counted as deferred to #88 even though a bounded retry for it shipped in #87. Laurie merged both PRs while the final CI run was still going, and CI then passed on main both times. Setup includes the Track 2 worktree and kickoff prompt, pnpm install for #89's new workspace link, and re-applying #89's migration over a policy Track 2 had created by hand. Five persistence tests fail locally on shared data (#48)."
+}
