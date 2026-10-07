@@ -5,8 +5,12 @@ no lifespan race. Nothing here reaches Supabase: the anonymous cases run the rea
 against throwaway settings, and the authenticated cases substitute an already-verified token,
 because verifying one is `libs/auth`'s job and is tested there. `execute_run` is replaced
 wherever a test is about the endpoint rather than the graph; `test_graph.py` covers the graph.
+
+A run is a background job, so a test that asserts how one ended first waits for it (`settle`),
+then reads the in-memory run log the endpoint wrote to.
 """
 
+import asyncio
 import time
 from collections.abc import AsyncIterator, Iterator
 from dataclasses import replace
@@ -16,6 +20,7 @@ from typing import Any
 import httpx
 import pytest
 
+from artloupe.agent import jobs
 from artloupe.agent.director import DirectorRefused, RoutingFailed
 from artloupe.agent.nodes import ProjectNotReady
 from artloupe.agent.resources import PhotographUnavailable
@@ -30,7 +35,14 @@ from artloupe.metering import (
     RecursionLimitExceeded,
     WallClockExceeded,
 )
-from artloupe.persistence import ArtistApi, ArtistApiError, CredentialRejected, ProjectNotFound
+from artloupe.persistence import (
+    ArtistApi,
+    ArtistApiError,
+    CredentialRejected,
+    InMemoryRunLog,
+    ProjectNotFound,
+    RunEvent,
+)
 from artloupe.schemas import BudgetLedger
 
 pytestmark = pytest.mark.trace(flow="platform.agent-runtime", category="functionality")
@@ -56,6 +68,8 @@ ROUTING = {
     "rationale": "The value plates carry this plan.",
     "gate": {"face_found": False, "reason": NO_FACE},
 }
+
+OTHER_ARTIST = replace(ARTIST, subject="4a1f0e2c-0000-4000-8000-000000000002")
 
 # What the endpoint hands a run as its Director client. Never called: `execute_run` is replaced.
 DIRECTOR_CLIENT = object()
@@ -91,6 +105,23 @@ def configured(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     get_settings.cache_clear()
 
 
+@pytest.fixture(autouse=True)
+def run_log(monkeypatch: pytest.MonkeyPatch) -> InMemoryRunLog:
+    """A fresh run log per test, shared by the endpoint that writes it and the one that reads it."""
+    log = InMemoryRunLog()
+    monkeypatch.setattr("artloupe.agent.service.get_run_log", lambda: log)
+    return log
+
+
+async def settle() -> None:
+    """Wait for every background run the endpoint started."""
+    await asyncio.gather(*jobs._PENDING)  # noqa: SLF001 — the seam a test has to wait on
+
+
+def events_of(log: InMemoryRunLog, run_id: str) -> list[RunEvent]:
+    return log.runs[run_id].events
+
+
 @pytest.fixture
 async def client() -> AsyncIterator[httpx.AsyncClient]:
     transport = httpx.ASGITransport(app=app)
@@ -114,7 +145,7 @@ def authenticated() -> Iterator[None]:
 
 
 class RecordedRun:
-    """Replaces `execute_run`: records what the endpoint handed it, returns a finished run."""
+    """Replaces `execute_run`: records what the job handed it, returns a finished run."""
 
     def __init__(self) -> None:
         self.calls: list[dict[str, Any]] = []
@@ -136,8 +167,16 @@ class RecordedRun:
 @pytest.fixture
 def recorded(monkeypatch: pytest.MonkeyPatch) -> RecordedRun:
     stub = RecordedRun()
-    monkeypatch.setattr("artloupe.agent.service.execute_run", stub)
+    monkeypatch.setattr("artloupe.agent.jobs.execute_run", stub)
     return stub
+
+
+async def start_run(client: httpx.AsyncClient) -> str:
+    """Start a run, wait for it to end, and return its id."""
+    response = await client.post("/runs", json=BODY)
+    assert response.status_code == 202, response.text
+    await settle()
+    return response.json()["run_id"]
 
 
 async def test_health_needs_no_token(client: httpx.AsyncClient) -> None:
@@ -169,26 +208,50 @@ async def test_a_run_names_its_project(
     assert recorded.calls == []
 
 
-async def test_creating_a_run_returns_the_routing_and_the_artifacts(
-    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+async def test_creating_a_run_answers_at_once_with_where_to_follow_it(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun, run_log: InMemoryRunLog
 ) -> None:
     response = await client.post("/runs", json=BODY)
-    assert response.status_code == 200
 
+    assert response.status_code == 202
     body = response.json()
-    assert body["owner"] == ARTIST.subject
-    assert body["project_id"] == PROJECT
-    assert body["routing"] == ROUTING
-    assert body["artifacts"] == []
+    assert body["status"] == "queued"
+    assert body["events"] == f"/runs/{body['run_id']}/events"
+    assert run_log.runs[body["run_id"]].project_id == PROJECT
+    await settle()
+
+
+async def test_a_finished_run_records_its_routing_and_artifacts(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun, run_log: InMemoryRunLog
+) -> None:
+    run_id = await start_run(client)
+
+    started, succeeded = events_of(run_log, run_id)
+    assert started.kind == "started"
+    assert succeeded.kind == "succeeded"
+    assert succeeded.payload["owner"] == ARTIST.subject
+    assert succeeded.payload["project_id"] == PROJECT
+    assert succeeded.payload["routing"] == ROUTING
+    assert succeeded.payload["artifacts"] == []
 
 
 async def test_the_run_is_handed_the_director_client(
     client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
 ) -> None:
-    await client.post("/runs", json=BODY)
+    await start_run(client)
 
     (call,) = recorded.calls
     assert call["resources"].director is DIRECTOR_CLIENT
+
+
+async def test_the_run_reports_progress_to_its_own_log(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun, run_log: InMemoryRunLog
+) -> None:
+    run_id = await start_run(client)
+
+    (call,) = recorded.calls
+    assert call["resources"].progress is not None
+    assert call["run_id"] == run_id
 
 
 @pytest.mark.trace(flow="platform.agent-runtime", category="security")
@@ -196,6 +259,7 @@ async def test_a_missing_director_key_is_a_503_that_names_nothing_it_tried(
     client: httpx.AsyncClient,
     authenticated: None,
     recorded: RecordedRun,
+    run_log: InMemoryRunLog,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Refused before any work. The seam's message names a keychain item, which stays in the log."""
@@ -212,18 +276,20 @@ async def test_a_missing_director_key_is_a_503_that_names_nothing_it_tried(
     assert response.status_code == 503
     assert response.json() == {"detail": "The routing model is not configured."}
     assert recorded.calls == []
+    assert run_log.runs == {}
 
 
 @pytest.mark.trace(flow="platform.auth", category="security")
 async def test_owner_comes_from_the_token(
-    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun, run_log: InMemoryRunLog
 ) -> None:
     """`owner` is what Postgres RLS reads as `auth.uid()`; only the verified token may set it."""
-    await client.post("/runs", json=BODY)
+    run_id = await start_run(client)
 
     (call,) = recorded.calls
     assert call["initial"]["owner"] == ARTIST.subject
     assert call["owner"] == ARTIST.subject
+    assert run_log.runs[run_id].owner == ARTIST.subject
 
 
 @pytest.mark.trace(flow="platform.auth", category="security")
@@ -243,8 +309,8 @@ async def test_a_body_that_names_an_owner_is_refused(
 async def test_the_run_reads_the_project_as_the_artist(
     client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
 ) -> None:
-    """The run's only credential is the artist's own token, so RLS decides what it can reach."""
-    await client.post("/runs", json=BODY)
+    """The run's only credential for artist data is the artist's own token, so RLS decides."""
+    await start_run(client)
 
     (call,) = recorded.calls
     api = call["resources"].api
@@ -254,7 +320,7 @@ async def test_the_run_reads_the_project_as_the_artist(
 
 @pytest.mark.trace(flow="platform.auth", category="security")
 async def test_a_token_expiring_before_the_deadline_is_refused_before_any_work(
-    client: httpx.AsyncClient, recorded: RecordedRun
+    client: httpx.AsyncClient, recorded: RecordedRun, run_log: InMemoryRunLog
 ) -> None:
     app.dependency_overrides[require_token] = lambda: replace(
         ARTIST, expires_at=int(time.time()) + 5
@@ -266,57 +332,158 @@ async def test_a_token_expiring_before_the_deadline_is_refused_before_any_work(
 
     assert response.status_code == 401
     assert recorded.calls == []
+    assert run_log.runs == {}
 
 
 @pytest.mark.trace(flow="platform.auth", category="security")
-async def test_a_token_supabase_rejects_mid_run_asks_for_a_refresh(
-    client: httpx.AsyncClient, authenticated: None, monkeypatch: pytest.MonkeyPatch
+async def test_a_project_that_is_not_the_artists_is_a_404_before_any_work(
+    client: httpx.AsyncClient,
+    authenticated: None,
+    recorded: RecordedRun,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """The same remedy as a token about to expire: 401 with the refresh signal, never a 502."""
+    """The recorder refuses it. Absent and somebody else's are one answer, as under RLS."""
 
-    async def rejected(*_args: object, **_kwargs: object) -> None:
-        raise CredentialRejected("Supabase rejected the artist's token while trying to read")
+    class RefusingLog(InMemoryRunLog):
+        async def create(self, *, run_id: str, project_id: str, owner: str) -> None:
+            raise ProjectNotFound("no project with this id belongs to this artist")
 
-    monkeypatch.setattr("artloupe.agent.service.execute_run", rejected)
+    monkeypatch.setattr("artloupe.agent.service.get_run_log", RefusingLog)
 
     response = await client.post("/runs", json=BODY)
-    assert response.status_code == 401
-    assert response.headers["www-authenticate"] == "Bearer"
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Project not found."}
+    assert recorded.calls == []
 
 
 @pytest.mark.parametrize(
-    ("failure", "status", "detail"),
+    ("failure", "reason", "detail"),
     [
-        (BudgetExceeded("plan budget exhausted"), 429, "plan budget exhausted"),
-        (WallClockExceeded("run exceeded its deadline"), 504, "run exceeded its deadline"),
-        (RecursionLimitExceeded("run exceeded its supersteps"), 500, "run exceeded its supersteps"),
-        (ProjectNotFound("no project visible"), 404, "Project not found."),
-        (ProjectNotReady("the project has no reference photograph yet"), 409, None),
-        (PhotographUnavailable("the original could not be decoded as an image"), 422, None),
-        (ArtistApiError("refused: HTTP 500"), 502, "The data service refused a call."),
-        (RoutingFailed("the Director returned no decision (stop reason: max_tokens)"), 502, None),
-        (DirectorRefused("cyber"), 502, None),
+        (BudgetExceeded("plan budget exhausted"), "budget_exceeded", "plan budget exhausted"),
+        (WallClockExceeded("run exceeded its deadline"), "deadline_exceeded", None),
+        (RecursionLimitExceeded("run exceeded its supersteps"), "guard_stopped", None),
+        (ProjectNotFound("no project visible"), "project_not_found", "Project not found."),
+        (ProjectNotReady("the project has no reference photograph yet"), "project_not_ready", None),
+        (
+            PhotographUnavailable("the original could not be decoded"),
+            "photograph_unavailable",
+            None,
+        ),
+        (
+            CredentialRejected("Supabase rejected the artist's token while trying to read"),
+            "credential_rejected",
+            "Supabase rejected the access token during the run. Refresh it and retry.",
+        ),
+        (
+            ArtistApiError("refused: HTTP 500"),
+            "data_service_refused",
+            "The data service refused a call.",
+        ),
+        (
+            RoutingFailed("the Director returned no decision (stop reason: max_tokens)"),
+            "routing_failed",
+            None,
+        ),
+        (DirectorRefused("cyber"), "routing_failed", None),
+        (
+            RuntimeError("a bug, with internals"),
+            "internal_error",
+            "The run stopped because of an internal error.",
+        ),
     ],
 )
-async def test_a_stopped_run_is_reported_as_what_stopped_it(
+async def test_a_stopped_run_records_what_stopped_it(
     client: httpx.AsyncClient,
     authenticated: None,
+    run_log: InMemoryRunLog,
     monkeypatch: pytest.MonkeyPatch,
     failure: Exception,
-    status: int,
+    reason: str,
     detail: str | None,
 ) -> None:
     """A ceiling being reached is not an internal error, and a missing project is not either.
 
-    Collapsing these onto a 500 would make a budget working exactly as designed, or a project
-    the artist cannot see, indistinguishable from a fault.
+    The run has already been answered with a 202, so how it stopped is the `failed` event's
+    reason. Collapsing these onto one reason would make a budget working exactly as designed, or a
+    project the artist cannot see, indistinguishable from a fault.
     """
 
     async def stopped(*_args: object, **_kwargs: object) -> None:
         raise failure
 
-    monkeypatch.setattr("artloupe.agent.service.execute_run", stopped)
+    monkeypatch.setattr("artloupe.agent.jobs.execute_run", stopped)
 
-    response = await client.post("/runs", json=BODY)
-    assert response.status_code == status
-    assert response.json() == {"detail": detail if detail is not None else str(failure)}
+    run_id = await start_run(client)
+
+    *_, last = events_of(run_log, run_id)
+    assert last.kind == "failed"
+    assert last.payload == {
+        "reason": reason,
+        "detail": detail if detail is not None else str(failure),
+    }
+
+
+# ---------------------------------------------------------------------------------------------
+# Following a run
+# ---------------------------------------------------------------------------------------------
+
+
+def parse_stream(body: str) -> list[dict[str, str]]:
+    """The SSE events in `body`, each as its fields. Comments and the retry line are dropped."""
+    events = []
+    for block in body.split("\n\n"):
+        fields = dict(
+            line.split(": ", 1) for line in block.splitlines() if line and not line.startswith(":")
+        )
+        if "event" in fields:
+            events.append(fields)
+    return events
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_following_a_run_without_a_token_is_refused(client: httpx.AsyncClient) -> None:
+    response = await client.get(f"/runs/{PROJECT}/events")
+    assert response.status_code == 401
+
+
+async def test_following_a_finished_run_replays_its_log_and_closes(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    run_id = await start_run(client)
+
+    response = await client.get(f"/runs/{run_id}/events")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/event-stream")
+    events = parse_stream(response.text)
+    assert [(event["id"], event["event"]) for event in events] == [
+        ("1", "started"),
+        ("2", "succeeded"),
+    ]
+
+
+async def test_following_resumes_after_the_last_event_id(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """What a reconnecting `EventSource` sends. Nothing it already has is sent again."""
+    run_id = await start_run(client)
+
+    response = await client.get(f"/runs/{run_id}/events", headers={"Last-Event-ID": "1"})
+
+    assert [event["event"] for event in parse_stream(response.text)] == ["succeeded"]
+
+
+@pytest.mark.trace(flow="platform.auth", category="security")
+async def test_another_artists_run_is_not_found(
+    client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun
+) -> None:
+    """Absent and somebody else's are one answer, so run ids cannot be probed."""
+    run_id = await start_run(client)
+
+    app.dependency_overrides[require_token] = lambda: OTHER_ARTIST
+    missing = await client.get(f"/runs/{OTHER_ARTIST.subject}/events")
+    foreign = await client.get(f"/runs/{run_id}/events")
+
+    assert foreign.status_code == 404
+    assert foreign.json() == missing.json() == {"detail": "Run not found."}

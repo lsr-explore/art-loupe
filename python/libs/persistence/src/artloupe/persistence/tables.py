@@ -29,3 +29,9 @@ TOOL_RESULTS_TABLE = "public.tool_results"
 # The private Supabase Storage bucket holding the uploaded bytes. Object keys are
 # `{owner_id}/{project_id}/{checksum}`; the leading segment is what the storage policies match.
 REFERENCE_IMAGE_BUCKET = "reference-images"
+
+# One agent run (NFR-09), and the append-only log of its progress. The artist may read both; only
+# the `artloupe_run_recorder` role writes them, through `artloupe_run_create` and
+# `artloupe_run_record` (`artloupe.persistence.run_log`).
+RUNS_TABLE = "public.runs"
+RUN_EVENTS_TABLE = "public.run_events"
