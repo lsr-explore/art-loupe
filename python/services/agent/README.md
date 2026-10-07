@@ -17,7 +17,12 @@ the Studio Director's routing.
 | Endpoint | Auth | Purpose |
 | --- | --- | --- |
 | `GET /health` | none | Liveness. A probe has no token to present, and a health check that fails on auth reports the wrong thing when auth is what broke. Returns no state and no build detail — an unauthenticated endpoint should not be a reconnaissance surface. |
-| `POST /runs` | bearer | Runs the graph and returns the result. `owner` comes from the **verified token**, never the request body. |
+| `POST /runs` | bearer | Records a queued run and returns `202` with its id at once; the graph runs as a background job. `owner` comes from the **verified token**, never the request body. |
+| `GET /runs/{id}/events` | bearer | Streams the run's log as Server-Sent Events, replaying after `Last-Event-ID`, then tailing until `succeeded` or `failed`. Read as the artist, so RLS decides whose runs are visible. |
+
+Run state is written only by the `artloupe_run_recorder` role, never with the artist's token.
+`docs/decision-records/poc-design-notes.md` has the reasoning. Set `ARTLOUPE_RUN_LOG=postgres`
+to record runs in `public.runs` and `public.run_events`; the default keeps them in memory.
 
 ## Run it
 

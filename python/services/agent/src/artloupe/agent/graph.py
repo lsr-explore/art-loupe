@@ -16,6 +16,8 @@ The shape that matters and will not change:
   settled on this same signature for the same reason.
 - Nodes return *partial* state. `RunState.node_trail` accumulates via its reducer; returning
   the whole state from a node would fight that.
+- `reported(...)` wraps outside `instrumented(...)`. It appends the node's start and finish to
+  the run log, outside the measured span, so a slow log write is not billed to the node.
 - Every node is registered through `instrumented(...)`. Wrapping at registration rather than
   in the node bodies is what makes "unmetered node" a thing you can see in a diff: an
   `add_node` call without the wrapper stands out, where a missing decorator inside a function
@@ -29,6 +31,7 @@ which is the only thing that should ever call `ainvoke` on this graph.
 from langgraph.graph import END, START, StateGraph
 
 from artloupe.agent.nodes import analyse, face_gate, load_project, survey
+from artloupe.agent.progress import reported
 from artloupe.agent.routing import direct
 from artloupe.agent.state import RunState
 from artloupe.metering import instrumented
@@ -51,7 +54,7 @@ def build_graph(checkpointer=None):
     """
     builder = StateGraph(RunState)
     for name, node in NODES:
-        builder.add_node(name, instrumented(name, node))
+        builder.add_node(name, reported(name, instrumented(name, node)))
 
     builder.add_edge(START, NODES[0][0])
     for (earlier, _), (later, _) in zip(NODES, NODES[1:], strict=False):

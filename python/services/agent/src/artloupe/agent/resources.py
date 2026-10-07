@@ -21,7 +21,7 @@ immutable under FR-105, and the checksum in the state says which bytes they must
 """
 
 import hashlib
-from collections.abc import Iterator
+from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
@@ -32,7 +32,10 @@ from anthropic import AsyncAnthropic
 from numpy.typing import NDArray
 
 from artloupe.image_tools import PlateSuite
-from artloupe.persistence import ArtistApi
+from artloupe.persistence import ArtistApi, RunEventKind
+
+# Where a run reports its progress: one call per event, appended to the run log.
+ProgressReporter = Callable[[RunEventKind, dict[str, str]], Awaitable[None]]
 
 
 class PhotographUnavailable(RuntimeError):
@@ -48,10 +51,14 @@ class RunResources:
 
     `director` is shared across runs, since it is one connection pool per process. It travels here
     rather than in the state because it holds the provider key.
+
+    `progress` is where each node's start and finish are reported. `None` reports nothing, which
+    is what a test that drives the graph directly wants.
     """
 
     api: ArtistApi
     director: AsyncAnthropic | None = None
+    progress: ProgressReporter | None = None
     image: NDArray[np.uint8] | None = None
     plates: PlateSuite | None = None
 
@@ -67,6 +74,11 @@ def use_run_resources(resources: RunResources) -> Iterator[RunResources]:
         yield resources
     finally:
         _RESOURCES.reset(token)
+
+
+def active_run_resources() -> RunResources | None:
+    """The active run's resources, or `None` when the graph runs without any."""
+    return _RESOURCES.get()
 
 
 def run_resources() -> RunResources:

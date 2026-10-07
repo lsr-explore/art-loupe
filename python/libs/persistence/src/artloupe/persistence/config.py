@@ -56,6 +56,23 @@ class PersistenceSettings(BaseSettings):
         description="Upper bound on pooled connections. One pool per process, not per graph.",
     )
 
+    artloupe_run_log: PersistenceMode = Field(
+        default="memory",
+        description=(
+            "'memory' keeps runs and their events in-process, for tests. 'postgres' records them "
+            "in `public.runs` and `public.run_events`, which the studio's stream reads."
+        ),
+    )
+
+    artloupe_run_log_database_url: str | None = Field(
+        default=None,
+        description=(
+            "A login that may assume `artloupe_run_recorder`. Unset falls back to "
+            "`DATABASE_URL`, which works locally; a deployment binds a dedicated login that "
+            "holds that role and nothing else."
+        ),
+    )
+
     @property
     def persistence_enabled(self) -> bool:
         """True when checkpoints must outlive the process that wrote them."""

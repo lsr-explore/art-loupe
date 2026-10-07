@@ -4,14 +4,19 @@ Per ADR 0002 the browser never reaches this service: a Next.js route handler for
 artist's Supabase access token, and `artloupe-auth` verifies it here. Python never mints a
 credential — it only presents the one it was handed, back to Supabase, as the same artist.
 
-Two endpoints, and the difference between them is the point of this module:
-
 - `GET /health` is **unauthenticated**, because a liveness probe has no token to present and
   a health check that can fail on auth reports the wrong thing when auth is what broke.
   It returns no state, no counts, and no build detail — an unauthenticated endpoint on a
   public deployment should not be a reconnaissance surface.
 - `POST /runs` is **authenticated**, and takes its owner from the *verified token*, never
-  from the request body. A caller cannot assert whose run this is.
+  from the request body. A caller cannot assert whose run this is. It records the run and
+  returns 202 at once; the run continues as a background job (`artloupe.agent.jobs`).
+- `GET /runs/{id}/events` streams that run's log over SSE (`artloupe.agent.stream`), read as
+  the artist, so RLS decides whose runs a caller can follow.
+
+Only what can fail *before* a run starts is an HTTP error here: a token about to expire, a
+missing provider key, a project that is not the artist's. Everything after that is a `failed`
+event in the run's log, because by then the response has already gone.
 
 Every run goes through `artloupe.agent.runtime.execute_run`, never `graph.ainvoke` directly.
 That is what keeps the loop guards and the budget ceiling from being optional: an endpoint
@@ -23,31 +28,35 @@ import logging
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Annotated, Literal
 from uuid import UUID, uuid4
 
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.responses import JSONResponse
+import httpx
+from fastapi import FastAPI, Header, HTTPException, Request, status
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
-from artloupe.agent.director import RoutingFailed, close_director_client, director_client
+from artloupe.agent.director import close_director_client, director_client
 from artloupe.agent.graph import build_graph
 from artloupe.agent.inspiration_cache import close_cache_pool
 from artloupe.agent.inspiration_routes import router as inspiration_router
-from artloupe.agent.nodes import ProjectNotReady
-from artloupe.agent.resources import PhotographUnavailable, RunResources
-from artloupe.agent.runtime import execute_run
+from artloupe.agent.jobs import cancel_pending_runs, dispatch_run, run_job
+from artloupe.agent.resources import RunResources
 from artloupe.agent.state import RunState
+from artloupe.agent.stream import closes_at, follow, fully_consumed, parse_cursor
 from artloupe.auth.dependencies import CurrentUser, HttpClient, auth_lifespan
+from artloupe.auth.tokens import VerifiedToken
 from artloupe.config import SecretUnavailable
-from artloupe.metering import (
-    BudgetExceeded,
-    GuardTripped,
-    RunGuards,
-    WallClockExceeded,
+from artloupe.metering import RunGuards
+from artloupe.persistence import (
+    ArtistApi,
+    ArtistApiError,
+    CredentialRejected,
+    InMemoryRunLog,
+    ProjectNotFound,
+    RunReader,
+    get_run_log,
 )
-from artloupe.persistence import ArtistApi, ArtistApiError, CredentialRejected, ProjectNotFound
-from artloupe.schemas import ArtifactMetadata, RoutingDecision
 
 SERVICE_NAME = "artloupe-agent"
 SERVICE_VERSION = "0.1.0"
@@ -60,12 +69,15 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """Compose the auth library's lifespan; close the Director's client and cache pool on shutdown.
 
     `artloupe-auth` keeps one connection pool per process, and so does the Director's client. Runs
-    reuse both, so each is closed once, here, rather than per request.
+    reuse both, so each is closed once, here, rather than per request. Background runs are
+    cancelled first, while the clients they hold are still open, so each can record itself as
+    interrupted.
     """
     async with auth_lifespan():
         try:
             yield
         finally:
+            await cancel_pending_runs()
             await close_director_client()
             await close_cache_pool()
 
@@ -79,29 +91,6 @@ app.include_router(inspiration_router)
 _graph = build_graph()
 
 
-# How a stopped run is reported. A ceiling being reached is not an internal error, and
-# collapsing every ceiling onto a 500 would make a budget working as designed
-# indistinguishable from a fault:
-#
-# - a plan budget exhausted is a quota, and 429 is what callers already retry-or-stop on;
-# - a run that ran out of time is a 504, which is what it is from the caller's side;
-# - a graph that looped is the unmapped default, 500, because a run that will not converge
-#   is our bug rather than the caller's and no change to the request fixes it.
-_GUARD_STATUS: dict[type[GuardTripped], int] = {
-    BudgetExceeded: 429,
-    WallClockExceeded: 504,
-}
-
-
-@app.exception_handler(GuardTripped)
-async def guard_tripped(_request: Request, error: GuardTripped) -> JSONResponse:
-    """Report a run stopped by one of its own ceilings, with the reason it was stopped."""
-    return JSONResponse(
-        status_code=_GUARD_STATUS.get(type(error), 500),
-        content={"detail": error.reason},
-    )
-
-
 @app.exception_handler(ProjectNotFound)
 async def project_not_found(_request: Request, _error: ProjectNotFound) -> JSONResponse:
     """404 for a project that is absent and for one that is somebody else's — one answer.
@@ -110,18 +99,6 @@ async def project_not_found(_request: Request, _error: ProjectNotFound) -> JSONR
     probe which project ids exist.
     """
     return JSONResponse(status_code=404, content={"detail": "Project not found."})
-
-
-@app.exception_handler(ProjectNotReady)
-async def project_not_ready(_request: Request, error: ProjectNotReady) -> JSONResponse:
-    """409: the project exists but has no photograph or no intake, so there is nothing to route."""
-    return JSONResponse(status_code=409, content={"detail": str(error)})
-
-
-@app.exception_handler(PhotographUnavailable)
-async def photograph_unavailable(_request: Request, error: PhotographUnavailable) -> JSONResponse:
-    """422: the original is there but cannot be analysed as the photograph it claims to be."""
-    return JSONResponse(status_code=422, content={"detail": str(error)})
 
 
 @app.exception_handler(ArtistApiError)
@@ -135,28 +112,16 @@ async def artist_api_error(_request: Request, _error: ArtistApiError) -> JSONRes
 
 @app.exception_handler(CredentialRejected)
 async def credential_rejected(_request: Request, _error: CredentialRejected) -> JSONResponse:
-    """401 with the refresh signal: Supabase rejected the artist's token partway through a run.
+    """401 with the refresh signal: Supabase rejected the artist's token.
 
-    The same answer a token expiring before the run gets, so a caller has one remedy for both. A
-    502 here would invite a retry with the same unusable token.
+    The same answer a token about to expire gets, so a caller has one remedy for both. A 502 here
+    would invite a retry with the same unusable token.
     """
     return JSONResponse(
         status_code=401,
-        content={
-            "detail": "Supabase rejected the access token during the run. Refresh it and retry."
-        },
+        content={"detail": "Supabase rejected the access token. Refresh it and retry."},
         headers={"WWW-Authenticate": "Bearer"},
     )
-
-
-@app.exception_handler(RoutingFailed)
-async def routing_failed(_request: Request, error: RoutingFailed) -> JSONResponse:
-    """502: the Director's model answered, but not with a decision the run can use.
-
-    The run stops rather than routing on a guess. A refusal is reported the same way, with its
-    category, because the remedy is the same: nothing in the request can change the outcome.
-    """
-    return JSONResponse(status_code=502, content={"detail": str(error)})
 
 
 @app.exception_handler(SecretUnavailable)
@@ -189,14 +154,12 @@ class RunRequest(BaseModel):
     project_id: UUID
 
 
-class RunResponse(BaseModel):
+class RunAccepted(BaseModel):
+    """A recorded run. Its progress and result arrive on `events`, not in this response."""
+
     run_id: str
-    owner: str
-    project_id: str
-    node_trail: list[str]
-    gate: dict[str, Any]
-    routing: RoutingDecision
-    artifacts: list[ArtifactMetadata]
+    status: Literal["queued"]
+    events: str
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -205,18 +168,18 @@ async def health() -> HealthResponse:
     return HealthResponse(status="ok", service=SERVICE_NAME, version=SERVICE_VERSION)
 
 
-@app.post("/runs", response_model=RunResponse)
-async def create_run(request: RunRequest, user: CurrentUser, client: HttpClient) -> RunResponse:
-    """Route and analyse one project, as the artist who owns it.
+@app.post("/runs", response_model=RunAccepted, status_code=status.HTTP_202_ACCEPTED)
+async def create_run(request: RunRequest, user: CurrentUser, client: HttpClient) -> RunAccepted:
+    """Record a run of one project, as the artist who owns it, and start it in the background.
 
     `owner` comes from `user.subject` — the verified token's Supabase user id, which is what
-    Postgres RLS reads as `auth.uid()`. The run reads the project with that same artist's token,
-    so RLS, not this handler, decides whether the project is theirs.
+    Postgres RLS reads as `auth.uid()`. The recorder refuses a project that is not that owner's,
+    with the same 404 as one that does not exist, and the run then reads the project with the
+    artist's own token, so RLS still decides what it can reach.
 
-    A token that would expire before the run's deadline is refused up front. A token that expired
-    partway through would fail on some later Supabase call, after work had been spent. The
-    Director's client is resolved up front for the same reason: a missing provider key is a 503
-    before any work, rather than a failure at the fourth node.
+    Everything that can be checked before work starts is checked here, and answered as an HTTP
+    error: a token that would expire before the run's deadline, and a missing provider key. Each
+    would otherwise fail the run partway through, after work had been spent.
     """
     guards = RunGuards.from_settings()
     if user.expires_at - time.time() < guards.wall_clock_seconds:
@@ -225,33 +188,73 @@ async def create_run(request: RunRequest, user: CurrentUser, client: HttpClient)
             detail="The access token expires before a run could finish. Refresh it and retry.",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    director = director_client()
 
     run_id = str(uuid4())
+    project_id = str(request.project_id)
+    log = get_run_log()
+    await log.create(run_id=run_id, project_id=project_id, owner=user.subject)
+
     initial: RunState = {
         "run_id": run_id,
         "owner": user.subject,
-        "project_id": str(request.project_id),
+        "project_id": project_id,
         "node_trail": [],
     }
-    outcome = await execute_run(
-        _graph,
-        initial,
-        run_id=run_id,
-        owner=user.subject,
-        guards=guards,
-        resources=RunResources(
-            api=ArtistApi(user.access_token, client=client), director=director_client()
-        ),
+    dispatch_run(
+        run_job(
+            _graph,
+            initial,
+            log=log,
+            guards=guards,
+            resources=RunResources(
+                api=ArtistApi(user.access_token, client=client), director=director
+            ),
+        )
     )
-    result: dict[str, Any] = outcome.state
-    return RunResponse(
-        run_id=result["run_id"],
-        owner=result["owner"],
-        project_id=result["project_id"],
-        node_trail=result["node_trail"],
-        gate=result["gate"],
-        routing=RoutingDecision.model_validate(result["routing"]),
-        artifacts=[ArtifactMetadata.model_validate(entry) for entry in result["artifacts"]],
+    return RunAccepted(run_id=run_id, status="queued", events=f"/runs/{run_id}/events")
+
+
+def _reader_for(user: VerifiedToken, client: httpx.AsyncClient) -> RunReader:
+    """What this artist can see of their runs: RLS through their token, or the in-memory log."""
+    log = get_run_log()
+    if isinstance(log, InMemoryRunLog):
+        return log.reader_for(user.subject)
+    return ArtistApi(user.access_token, client=client)
+
+
+@app.get("/runs/{run_id}/events")
+async def run_events(
+    run_id: UUID,
+    user: CurrentUser,
+    client: HttpClient,
+    last_event_id: Annotated[str | None, Header()] = None,
+) -> Response:
+    """Stream the run's log as Server-Sent Events, from after `Last-Event-ID`.
+
+    Visibility is checked before the stream opens, so a run that is absent or somebody else's is
+    a plain 404 rather than a stream that never says anything. A client that already holds the
+    run's final event gets 204, which stops its `EventSource` from reconnecting.
+    """
+    reader = _reader_for(user, client)
+    if not await reader.run_visible(str(run_id)):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found.")
+
+    after = parse_cursor(last_event_id)
+    if await fully_consumed(reader, str(run_id), after):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    return StreamingResponse(
+        follow(
+            reader,
+            str(run_id),
+            after=after,
+            until=closes_at(user.expires_at),
+        ),
+        media_type="text/event-stream",
+        # `no-transform` and `X-Accel-Buffering` stop a proxy from buffering the stream into
+        # one late response.
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 

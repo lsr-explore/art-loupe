@@ -60,44 +60,44 @@ Injection screening on every untrusted surface
 
 | Category | Test | Location |
 | --- | --- | --- |
-| safety | logs the rule and surface when screening found something | `apps/studio/src/app/api/projects/route.test.ts:270` |
-| safety | never puts the excerpt in a log | `apps/studio/src/app/api/projects/route.test.ts:295` |
-| safety | says nothing at all when screening was clean | `apps/studio/src/app/api/projects/route.test.ts:317` |
-| safety | logs an error when the detections did not reach the table | `apps/studio/src/app/api/projects/route.test.ts:322` |
-| safety | does not log an error when they did | `apps/studio/src/app/api/projects/route.test.ts:335` |
-| safety | never tells the artist what was detected | `apps/studio/src/app/api/projects/route.test.ts:340` |
-| safety | screens the filename | `apps/studio/src/lib/intake/ingest-upload.test.ts:131` |
-| safety | screens the artist | `apps/studio/src/lib/intake/ingest-upload.test.ts:141` |
-| safety | screens before it stores | `apps/studio/src/lib/intake/ingest-upload.test.ts:152` |
-| safety | records a detection with the surface, rule, severity and excerpt | `apps/studio/src/lib/intake/ingest-upload.test.ts:161` |
-| safety | records the surfaces it did NOT screen | `apps/studio/src/lib/intake/ingest-upload.test.ts:178` |
-| safety | still writes the unscreened-surface record when nothing was detected | `apps/studio/src/lib/intake/ingest-upload.test.ts:195` |
-| safety | makes a retry idempotent rather than doubling the counts | `apps/studio/src/lib/intake/ingest-upload.test.ts:203` |
-| safety | is always an object, even with no metadata to read | `apps/studio/src/lib/intake/inspect-image.test.ts:152` |
-| safety | survives metadata it cannot parse, and says the read was incomplete | `apps/studio/src/lib/intake/inspect-image.test.ts:159` |
-| safety | keeps nothing that a jsonb column cannot hold | `apps/studio/src/lib/intake/inspect-image.test.ts:183` |
-| safety | bounds what it will store | `apps/studio/src/lib/intake/inspect-image.test.ts:202` |
-| safety | keeps the record of what it dropped inside the same budget | `apps/studio/src/lib/intake/inspect-image.test.ts:208` |
-| safety | still records that fields were dropped, as a count | `apps/studio/src/lib/intake/inspect-image.test.ts:223` |
-| safety | never presents a trimmed block as a complete one | `apps/studio/src/lib/intake/inspect-image.test.ts:236` |
-| safety | always carries the count whenever anything was dropped | `apps/studio/src/lib/intake/inspect-image.test.ts:254` |
-| safety | leaves a small block untouched | `apps/studio/src/lib/intake/inspect-image.test.ts:269` |
-| safety | (unnamed) | `packages/schemas/src/screening.test.ts:42` |
-| safety | declares the same surfaces the module does | `packages/schemas/src/screening.test.ts:52` |
-| safety | gives every rule a unique id | `packages/schemas/src/screening.test.ts:58` |
-| safety | (unnamed) | `packages/schemas/src/screening.test.ts:71` |
-| safety | compiles every pattern | `packages/schemas/src/screening.test.ts:87` |
-| safety | bounds every quantifier that follows a negated class | `packages/schemas/src/screening.test.ts:95` |
-| safety | names the surface it was asked about | `packages/schemas/src/screening.test.ts:109` |
-| safety | reports a rule once however many times it matches | `packages/schemas/src/screening.test.ts:114` |
-| safety | bounds the excerpt | `packages/schemas/src/screening.test.ts:119` |
-| safety | collapses whitespace so one detection stays one line | `packages/schemas/src/screening.test.ts:125` |
-| safety | finds text nested inside it | `packages/schemas/src/screening.test.ts:133` |
-| safety | screens keys as well as values | `packages/schemas/src/screening.test.ts:138` |
-| safety | reaches into arrays | `packages/schemas/src/screening.test.ts:145` |
-| safety | reports each rule once across the whole block | `packages/schemas/src/screening.test.ts:151` |
-| safety | survives a block nested deeper than it will walk | `packages/schemas/src/screening.test.ts:159` |
-| safety | ignores the values that are not text | `packages/schemas/src/screening.test.ts:171` |
+| safety | logs the rule and surface when screening found something | `apps/studio/src/app/api/projects/route.test.ts:271` |
+| safety | never puts the excerpt in a log | `apps/studio/src/app/api/projects/route.test.ts:296` |
+| safety | says nothing at all when screening was clean | `apps/studio/src/app/api/projects/route.test.ts:318` |
+| safety | logs an error when the detections did not reach the table | `apps/studio/src/app/api/projects/route.test.ts:323` |
+| safety | does not log an error when they did | `apps/studio/src/app/api/projects/route.test.ts:336` |
+| safety | never tells the artist what was detected | `apps/studio/src/app/api/projects/route.test.ts:341` |
+| safety | screens the filename | `apps/studio/src/lib/intake/ingest-upload.test.ts:133` |
+| safety | screens the artist | `apps/studio/src/lib/intake/ingest-upload.test.ts:143` |
+| safety | screens before it stores | `apps/studio/src/lib/intake/ingest-upload.test.ts:154` |
+| safety | records a detection with the surface, rule, severity and excerpt | `apps/studio/src/lib/intake/ingest-upload.test.ts:163` |
+| safety | records the surfaces it did NOT screen | `apps/studio/src/lib/intake/ingest-upload.test.ts:180` |
+| safety | still writes the unscreened-surface record when nothing was detected | `apps/studio/src/lib/intake/ingest-upload.test.ts:197` |
+| safety | makes a retry idempotent rather than doubling the counts | `apps/studio/src/lib/intake/ingest-upload.test.ts:205` |
+| safety | is always an object, even with no metadata to read | `apps/studio/src/lib/intake/inspect-image.test.ts:153` |
+| safety | survives metadata it cannot parse, and says the read was incomplete | `apps/studio/src/lib/intake/inspect-image.test.ts:160` |
+| safety | keeps nothing that a jsonb column cannot hold | `apps/studio/src/lib/intake/inspect-image.test.ts:184` |
+| safety | bounds what it will store | `apps/studio/src/lib/intake/inspect-image.test.ts:203` |
+| safety | keeps the record of what it dropped inside the same budget | `apps/studio/src/lib/intake/inspect-image.test.ts:209` |
+| safety | still records that fields were dropped, as a count | `apps/studio/src/lib/intake/inspect-image.test.ts:224` |
+| safety | never presents a trimmed block as a complete one | `apps/studio/src/lib/intake/inspect-image.test.ts:237` |
+| safety | always carries the count whenever anything was dropped | `apps/studio/src/lib/intake/inspect-image.test.ts:255` |
+| safety | leaves a small block untouched | `apps/studio/src/lib/intake/inspect-image.test.ts:270` |
+| safety | (unnamed) | `packages/schemas/src/screening.test.ts:43` |
+| safety | declares the same surfaces the module does | `packages/schemas/src/screening.test.ts:53` |
+| safety | gives every rule a unique id | `packages/schemas/src/screening.test.ts:59` |
+| safety | (unnamed) | `packages/schemas/src/screening.test.ts:72` |
+| safety | compiles every pattern | `packages/schemas/src/screening.test.ts:88` |
+| safety | bounds every quantifier that follows a negated class | `packages/schemas/src/screening.test.ts:96` |
+| safety | names the surface it was asked about | `packages/schemas/src/screening.test.ts:110` |
+| safety | reports a rule once however many times it matches | `packages/schemas/src/screening.test.ts:115` |
+| safety | bounds the excerpt | `packages/schemas/src/screening.test.ts:120` |
+| safety | collapses whitespace so one detection stays one line | `packages/schemas/src/screening.test.ts:126` |
+| safety | finds text nested inside it | `packages/schemas/src/screening.test.ts:134` |
+| safety | screens keys as well as values | `packages/schemas/src/screening.test.ts:139` |
+| safety | reaches into arrays | `packages/schemas/src/screening.test.ts:146` |
+| safety | reports each rule once across the whole block | `packages/schemas/src/screening.test.ts:152` |
+| safety | survives a block nested deeper than it will walk | `packages/schemas/src/screening.test.ts:160` |
+| safety | ignores the values that are not text | `packages/schemas/src/screening.test.ts:172` |
 
 ---
 
