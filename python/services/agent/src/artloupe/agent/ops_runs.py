@@ -2,6 +2,8 @@
 
 Every query names its columns. The role's grant on `runs` is column-level and leaves out
 `result` and `owner_id`, so `select *` would be refused rather than quietly over-reading.
+Events come from `ops.run_event_log`, never `run_events`: a `succeeded` payload carries the
+whole result, owner and routing included, and the view leaves every payload behind.
 """
 
 from datetime import UTC, datetime, timedelta
@@ -54,7 +56,7 @@ _SUMMARY = """
         ledger.node_executions, ledger.priced_cost_usd, ledger.unpriced_rows
     from public.runs as r
     left join lateral (
-        select e.kind, e.payload ->> 'node' as node from public.run_events as e
+        select e.kind, e.node from ops.run_event_log as e
         where e.run_id = r.id and e.kind in ('node_started', 'node_finished')
         order by e.seq desc limit 1
     ) as last_node on true
@@ -249,11 +251,11 @@ async def build_run_detail(
 
         await cur.execute(
             """
-            select e.seq, e.kind, e.payload ->> 'node' as node, e.payload ->> 'reason' as reason,
+            select e.seq, e.kind, e.node, e.reason,
                    e.created_at,
                    greatest(0, round(extract(epoch from e.created_at - r.created_at) * 1000))::int
                        as offset_ms
-            from public.run_events as e join public.runs as r on r.id = e.run_id
+            from ops.run_event_log as e join public.runs as r on r.id = e.run_id
             where e.run_id = %(run_id)s order by e.seq
             """,
             params,

@@ -35,6 +35,11 @@ REQUIRE_POSTGRES = os.environ.get("ARTLOUPE_REQUIRE_POSTGRES") == "1"
 NOW = datetime(2099, 1, 1, 12, 0, tzinfo=UTC)
 OWNER = UUID("cccccccc-5555-4555-8555-cccccccccccc")
 PROJECT = UUID("cccccccc-6666-4666-8666-cccccccccccc")
+# What a real `succeeded` event carries: the whole run result, as `runs.result` does.
+PRIVATE_RESULT = {
+    "owner": str(OWNER),
+    "routing": {"rationale": "The artist's private routing rationale."},
+}
 
 FIXTURE = Path(__file__).resolve().parents[4] / "packages/schemas/fixtures/ops-runs-parity.json"
 
@@ -131,14 +136,16 @@ async def ledger() -> psycopg.AsyncConnection:
         pytest.skip("no Postgres reachable -- run `pnpm supabase start`")
     granted = await (
         await conn.execute(
-            "select has_table_privilege(%s, 'public.run_events', 'SELECT')", (OPS_ROLE,)
+            "select to_regclass('ops.run_event_log') is not null "
+            "and has_table_privilege(%s, 'ops.run_event_log', 'SELECT')",
+            (OPS_ROLE,),
         )
     ).fetchone()
     if not granted[0]:
         await conn.close()
         if REQUIRE_POSTGRES:
-            pytest.fail(f"{OPS_ROLE} cannot read run_events -- the migration did not run")
-        pytest.skip(f"{OPS_ROLE} cannot read run_events -- apply supabase/migrations locally")
+            pytest.fail(f"{OPS_ROLE} cannot read ops.run_event_log -- the migration did not run")
+        pytest.skip(f"{OPS_ROLE} cannot read ops.run_event_log -- apply supabase/migrations")
     try:
         yield conn
     finally:
@@ -170,7 +177,7 @@ async def _run(
             OWNER,
             status,
             Jsonb(error) if error else None,
-            Jsonb({"routing": "private"}) if status == "succeeded" else None,
+            Jsonb(PRIVATE_RESULT) if status == "succeeded" else None,
             len(events),
             created,
             started,
@@ -207,7 +214,7 @@ async def seeded(ledger: psycopg.AsyncConnection) -> dict[str, UUID]:
                 ("started", {}),
                 ("node_started", {"node": "route"}),
                 ("node_finished", {"node": "route"}),
-                ("succeeded", {}),
+                ("succeeded", PRIVATE_RESULT),
             ],
         ),
         "failed_in_node": await _run(
@@ -337,14 +344,27 @@ async def test_an_unknown_run_is_not_found(
 async def test_the_reader_cannot_see_a_runs_result_or_its_owner(
     ledger: psycopg.AsyncConnection, seeded: dict[str, UUID]
 ) -> None:
+    """The result is in two places, `runs.result` and the `succeeded` payload. Both are shut."""
     await ledger.execute("select id, status, project_id from public.runs limit 1")
-    for column in ("result", "owner_id"):
+    for statement in (
+        "select result from public.runs limit 1",
+        "select owner_id from public.runs limit 1",
+        "select payload from public.run_events limit 1",
+        "select count(*) from public.run_events",
+        "select count(*) from public.projects",
+    ):
         with pytest.raises(psycopg.errors.InsufficientPrivilege):
             async with ledger.transaction():
-                await ledger.execute(f"select {column} from public.runs limit 1")
-    with pytest.raises(psycopg.errors.InsufficientPrivilege):
-        async with ledger.transaction():
-            await ledger.execute("select count(*) from public.projects")
+                await ledger.execute(statement)
+
+    columns = await (
+        await ledger.execute(
+            "select * from ops.run_event_log where run_id = %s", (seeded["succeeded"],)
+        )
+    ).fetchall()
+    assert columns, "the control: the succeeded run's events are readable through the view"
+    readable = repr(columns)
+    assert "rationale" not in readable and str(OWNER) not in readable
 
 
 def _event(seq: int, kind: str, node: str | None = None) -> RunEvent:
