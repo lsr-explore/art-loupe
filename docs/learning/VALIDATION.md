@@ -12,7 +12,7 @@ ignored by Git.
 - Vector indexing completed with `text-embedding-3-small`, 1,536 dimensions,
   and 344,042 embedding tokens.
 - Keyword retrieval: hit-at-six 85% (17/20), MRR 0.7375, zero execution errors.
-- Learning and keychain unit tests: 75 passing after review fixes.
+- Learning and keychain unit tests: 77 passing after review fixes.
 - All TypeScript workspace tests passed after updating the route-gate snapshot
   for the authenticated learning page and API.
 - TypeScript type checks, lint, translation checks, and Python lint passed.
@@ -56,7 +56,7 @@ with synthesis; review cited excerpts manually before broader rollout.
 
 ## PR review fixes
 
-Automatic and CLI Greptile review identified eleven distinct issues. Fixes bound the
+Automatic and CLI Greptile review identified twelve distinct issues. Fixes bound the
 metrics flush, move keychain lookup off the request thread, support interrupted
 vector rebuilds, avoid duplicate nested quotations, align Python/Zod response
 validation and defaults, evaluate conversational retrieval, suppress stale success
@@ -105,3 +105,8 @@ original subject. Retrieval now walks back to the latest explicit user topic,
 skipping generic follow-ups and preserving explicit topic switches. English and
 Spanish three-question regressions cover this path; the live suite includes a
 repeated hatching follow-up. The parallel final CLI review raised no findings.
+
+A final comparison regression distinguishes generic turns from subject-bearing
+follow-ups: “How does it compare to scumbling?” stays in the query together with
+the earlier glazing topic. Only purely generic turns are skipped. English and
+Spanish tests cover this distinction; the existing eval queries remain unchanged.

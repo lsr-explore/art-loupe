@@ -564,3 +564,21 @@ def test_repeated_followups_keep_latest_explicit_subject(
     assert retrieval_query(Question(question=second_followup, history=history)) == (
         new_topic + " " + second_followup
     )
+
+
+@pytest.mark.parametrize(
+    "topic,comparison,followup",
+    [
+        ("What is glazing?", "How does it compare to scumbling?", "More examples please"),
+        ("¿Qué es el rayado?", "¿Cómo se compara esto con el sombreado?", "Más ejemplos por favor"),
+    ],
+)
+def test_subject_bearing_followups_retain_the_comparison_and_its_context(
+    topic, comparison, followup
+):
+    from artloupe.agent.learning.models import Turn
+    from artloupe.agent.learning.retrieval import retrieval_query
+
+    history = [Turn(role="user", content=topic), Turn(role="user", content=comparison)]
+    question = Question(question=followup, history=history)
+    assert retrieval_query(question) == " ".join([topic, comparison, followup])

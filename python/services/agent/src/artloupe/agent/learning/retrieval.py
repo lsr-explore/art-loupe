@@ -205,7 +205,7 @@ def configured_index() -> Index:
     return load_index(directory)
 
 
-def _is_followup(text: str) -> bool:
+def _is_followup(text: str, *, generic_only: bool = False) -> bool:
     words = set(re.findall(r"[a-záéíóúñ]+", text.lower()))
     refers_back = bool(
         words
@@ -256,19 +256,18 @@ def _is_followup(text: str) -> bool:
         "yo",
         "hacer",
     }
-    return len(text.split()) < 8 and (refers_back or generic_followup)
+    return len(text.split()) < 8 and (generic_followup or (refers_back and not generic_only))
 
 
 def retrieval_query(question) -> str:
     """Carry the latest explicit topic through consecutive follow-ups, identically in evals."""
     if not _is_followup(question.question):
         return question.question
-    previous = next(
-        (
-            turn.content
-            for turn in reversed(question.history)
-            if turn.role == "user" and not _is_followup(turn.content)
-        ),
-        "",
-    )
-    return previous + " " + question.question if previous else question.question
+    topics = []
+    for turn in reversed(question.history):
+        if turn.role != "user" or _is_followup(turn.content, generic_only=True):
+            continue
+        topics.append(turn.content)
+        if not _is_followup(turn.content):
+            break
+    return " ".join([*reversed(topics), question.question])

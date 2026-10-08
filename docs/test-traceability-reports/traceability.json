@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 473,
+      "pytest": 474,
       "vitest": 613,
       "playwright": 41,
-      "all": 1127
+      "all": 1128
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 473,
+      "pytest": 474,
       "vitest": 613,
       "playwright": 41,
-      "all": 1127
+      "all": 1128
     }
   },
   "by_flow": {
@@ -48,18 +48,18 @@
         "a11y": 2,
         "security": 8,
         "privacy": 0,
-        "safety": 32,
+        "safety": 33,
         "data": 8,
         "performance": 0,
         "functionality": 4
       },
       "runners": {
-        "pytest": 32,
+        "pytest": 33,
         "vitest": 21,
         "playwright": 1
       },
-      "total": 54,
-      "parametrized": 7
+      "total": 55,
+      "parametrized": 8
     },
     "safety.untrusted-input": {
       "severity": "P0",
@@ -7724,6 +7724,13 @@
     {
       "id": "python/services/agent/tests/test_learning.py:552",
       "name": "test_repeated_followups_keep_latest_explicit_subject",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:576",
+      "name": "test_subject_bearing_followups_retain_the_comparison_and_its_context",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"
