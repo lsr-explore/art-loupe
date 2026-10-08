@@ -105,7 +105,7 @@ async def test_met_uses_paginated_endpoint_and_preserves_partial_success():
 
 
 async def test_pexels_sends_only_supported_filters(monkeypatch):
-    monkeypatch.setenv("PEXELS_API_KEY", "test-key")
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: "test-key")
 
     def handle(request):
         assert request.headers["Authorization"] == "test-key"
@@ -144,7 +144,7 @@ async def test_pexels_sends_only_supported_filters(monkeypatch):
 
 
 async def test_provider_rate_limit_is_an_outage_not_an_empty_result(monkeypatch):
-    monkeypatch.setenv("PEXELS_API_KEY", "test-key")
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: "test-key")
     async with httpx.AsyncClient(
         transport=httpx.MockTransport(lambda _: httpx.Response(429))
     ) as client:
@@ -224,7 +224,7 @@ async def test_fresh_cache_avoids_provider_calls():
 
 
 async def test_stale_cache_survives_outage_but_not_beyond_seven_days(monkeypatch):
-    monkeypatch.delenv("PEXELS_API_KEY", raising=False)
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: None)
     request = SearchRequest(source="pexels", query="trees")
     result = await cached_search(request, None, MemoryCache(90000))
     assert result.stale

@@ -19,6 +19,7 @@ from psycopg import AsyncConnection, IsolationLevel
 from psycopg_pool import AsyncConnectionPool
 
 from artloupe.agent.ops_cost_models import CostWindow
+from artloupe.config import resolve_secret
 
 OPS_ROLE = "artloupe_ops_reader"
 POOL_MAX_SIZE = 2
@@ -50,7 +51,11 @@ async def restrict_role(conn: AsyncConnection) -> None:
 
 async def _get_pool() -> AsyncConnectionPool:
     global _pool
-    dsn = os.environ.get("ARTLOUPE_OPS_DATABASE_URL")
+    # A mounted file, or locally the env value. Never the process environment in production.
+    dsn = resolve_secret(
+        "ARTLOUPE_OPS_DATABASE_URL",
+        non_production_value=os.environ.get("ARTLOUPE_OPS_DATABASE_URL"),
+    )
     if not dsn:
         raise OpsDatabaseUnavailable
     async with _pool_lock:

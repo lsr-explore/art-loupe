@@ -18,6 +18,8 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from artloupe.config import require_secret
+
 MeteringMode = Literal["memory", "postgres"]
 
 
@@ -87,6 +89,10 @@ class MeteringSettings(BaseSettings):
     def persistence_enabled(self) -> bool:
         """True when the ledger must outlive the process that wrote it."""
         return self.artloupe_metering == "postgres"
+
+    def ledger_database_url(self) -> str:
+        """The ledger's connection. A secret, resolved like `artloupe.persistence`'s."""
+        return require_secret("DATABASE_URL", non_production_value=self.database_url)
 
 
 @lru_cache(maxsize=1)

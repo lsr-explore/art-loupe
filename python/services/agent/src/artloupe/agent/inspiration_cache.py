@@ -24,6 +24,7 @@ from psycopg_pool import AsyncConnectionPool
 
 from artloupe.agent.inspiration_models import SearchRequest, SearchResponse
 from artloupe.agent.inspiration_providers import ProviderUnavailable, search_provider
+from artloupe.config import resolve_secret
 
 logger = logging.getLogger(__name__)
 _searches = asyncio.Semaphore(4)
@@ -51,7 +52,11 @@ async def _restrict_role(conn: AsyncConnection) -> None:
 async def _get_pool() -> AsyncConnectionPool | None:
     """Open the pool on first use; no DSN means the cache is simply off."""
     global _pool
-    dsn = os.environ.get("ARTLOUPE_INSPIRATION_DATABASE_URL")
+    # A mounted file, or locally the env value. Never the process environment in production.
+    dsn = resolve_secret(
+        "ARTLOUPE_INSPIRATION_DATABASE_URL",
+        non_production_value=os.environ.get("ARTLOUPE_INSPIRATION_DATABASE_URL"),
+    )
     if not dsn:
         return None
     async with _pool_lock:

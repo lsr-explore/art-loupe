@@ -138,6 +138,7 @@ name = "artloupe-auth"
 version = "0.1.0"
 source = { editable = "libs/auth" }
 dependencies = [
+    { name = "artloupe-config" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "pydantic" },
@@ -153,6 +154,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "artloupe-config", editable = "libs/config" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "pydantic", specifier = ">=2.9" },
@@ -207,6 +209,7 @@ name = "artloupe-metering"
 version = "0.1.0"
 source = { editable = "libs/metering" }
 dependencies = [
+    { name = "artloupe-config" },
     { name = "artloupe-schemas" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic" },
@@ -215,6 +218,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "artloupe-config", editable = "libs/config" },
     { name = "artloupe-schemas", editable = "libs/schemas" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "pydantic", specifier = ">=2.9" },
@@ -226,6 +230,7 @@ name = "artloupe-persistence"
 version = "0.1.0"
 source = { editable = "libs/persistence" }
 dependencies = [
+    { name = "artloupe-config" },
     { name = "httpx" },
     { name = "langgraph-checkpoint-postgres" },
     { name = "psycopg", extra = ["binary", "pool"] },
@@ -234,6 +239,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "artloupe-config", editable = "libs/config" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
     { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.2" },

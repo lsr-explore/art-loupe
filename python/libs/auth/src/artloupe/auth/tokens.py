@@ -139,8 +139,9 @@ async def verify_access_token(
     if not token:
         raise InvalidTokenError("No bearer token supplied.")
 
-    if settings.supabase_jwt_secret:
-        claims = _decode(token, settings.supabase_jwt_secret, SYMMETRIC_ALGORITHMS, settings)
+    jwt_secret = settings.jwt_secret()
+    if jwt_secret:
+        claims = _decode(token, jwt_secret, SYMMETRIC_ALGORITHMS, settings)
     else:
         key_set = await _load_key_set(client, settings)
         signing_key = _select_key(key_set, token)

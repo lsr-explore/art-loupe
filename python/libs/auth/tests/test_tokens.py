@@ -255,3 +255,43 @@ def test_asymmetric_mode_excludes_hmac():
     assert not set(ASYMMETRIC_ALGORITHMS) & set(SYMMETRIC_ALGORITHMS)
     assert all(algorithm.startswith(("ES", "RS", "Ed")) for algorithm in ASYMMETRIC_ALGORITHMS)
     assert all(algorithm.startswith("HS") for algorithm in SYMMETRIC_ALGORITHMS)
+
+
+@pytest.fixture
+def secrets_dir(monkeypatch, tmp_path):
+    """A scratch `/run/secrets`, and none of the variables that could point elsewhere."""
+    from artloupe.config import keys
+
+    monkeypatch.setattr(keys, "SECRETS_DIR", tmp_path)
+    for name in ("APP_ENV", "SUPABASE_JWT_SECRET", "SUPABASE_JWT_SECRET_FILE"):
+        monkeypatch.delenv(name, raising=False)
+    keys.get_settings.cache_clear()
+    yield tmp_path
+    keys.get_settings.cache_clear()
+
+
+def _hs256_token(secret: str) -> str:
+    now = int(time.time())
+    claims = {"sub": "s", "aud": "authenticated", "iss": ISSUER, "iat": now, "exp": now + 60}
+    return jwt.encode(claims, secret, algorithm="HS256")
+
+
+async def test_a_mounted_legacy_secret_switches_to_symmetric_verification(settings, secrets_dir):
+    legacy = "legacy-hs256-secret-at-least-32-bytes-long"
+    (secrets_dir / "supabase_jwt_secret").write_text(legacy + "\n")
+    async with httpx.AsyncClient() as client:
+        verified = await verify_access_token(_hs256_token(legacy), client, settings)
+    assert verified.subject == "s"
+
+
+@respx.mock
+async def test_an_exported_legacy_secret_is_never_read(
+    settings, signing_key, jwks, secrets_dir, monkeypatch
+):
+    """The signing secret is a secret: the environment cannot switch verification modes."""
+    legacy = "legacy-hs256-secret-at-least-32-bytes-long"
+    monkeypatch.setenv("SUPABASE_JWT_SECRET", legacy)
+    respx.get(JWKS_URL).mock(return_value=httpx.Response(200, json=jwks))
+    async with httpx.AsyncClient() as client:
+        with pytest.raises(InvalidTokenError):
+            await verify_access_token(_hs256_token(legacy), client, settings)

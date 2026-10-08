@@ -86,4 +86,4 @@ def get_metrics_sink(settings: MeteringSettings | None = None) -> MetricsSink:
     resolved = settings or get_settings()
     if not resolved.persistence_enabled:
         return InMemoryMetricsSink()
-    return PostgresMetricsSink(resolved.database_url)
+    return PostgresMetricsSink(resolved.ledger_database_url())
