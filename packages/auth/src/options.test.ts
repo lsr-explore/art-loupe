@@ -1,3 +1,7 @@
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { getSessionOptions, SESSION_COOKIE_NAME } from './options';
@@ -31,6 +35,27 @@ describe('getSessionOptions', () => {
     process.env.AUTH_SESSION_PASSWORD = 'short';
 
     expect(() => getSessionOptions()).toThrow('at least 32 characters');
+  });
+
+  it('reads the password from a mounted secret file', () => {
+    const scratch = mkdtempSync(join(tmpdir(), 'artloupe-session-'));
+    const mounted = join(scratch, 'auth_session_password');
+    writeFileSync(mounted, `${'f'.repeat(32)}\n`);
+    process.env.AUTH_SESSION_PASSWORD_FILE = mounted;
+    process.env.AUTH_SESSION_PASSWORD = 'e'.repeat(32);
+
+    try {
+      expect(getSessionOptions().password).toBe('f'.repeat(32));
+    } finally {
+      rmSync(scratch, { recursive: true, force: true });
+    }
+  });
+
+  it('ignores an exported password in production', () => {
+    process.env.APP_ENV = 'production';
+    process.env.AUTH_SESSION_PASSWORD = 'e'.repeat(32);
+
+    expect(() => getSessionOptions()).toThrow('AUTH_SESSION_PASSWORD_FILE');
   });
   it("defaults to an eight-hour session rather than iron-session's fourteen days", () => {
     process.env.AUTH_SESSION_PASSWORD = 'a'.repeat(32);

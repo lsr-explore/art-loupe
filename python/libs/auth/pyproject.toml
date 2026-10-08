@@ -10,6 +10,8 @@ version = "0.1.0"
 description = "Verification of Supabase-issued access tokens, and FastAPI guards built on it."
 requires-python = ">=3.12"
 dependencies = [
+  # The legacy HS256 signing secret resolves through the one secret seam.
+  "artloupe-config",
   # `[crypto]` pulls `cryptography`, required for the asymmetric (ES256/RS256) path.
   # Without it PyJWT can only verify HMAC.
   "pyjwt[crypto]>=2.10",
@@ -36,3 +38,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 # PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
 packages = ["src/artloupe"]
+
+[tool.uv.sources]
+artloupe-config = { workspace = true }

@@ -212,5 +212,5 @@ def get_run_log() -> RunLog:
     """
     settings = get_settings()
     if settings.artloupe_run_log == "postgres":
-        return PostgresRunLog(settings.artloupe_run_log_database_url or settings.database_url)
+        return PostgresRunLog(settings.run_log_database_url())
     return InMemoryRunLog()

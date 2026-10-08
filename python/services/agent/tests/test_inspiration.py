@@ -20,6 +20,7 @@ from artloupe.agent.inspiration_providers import ProviderUnavailable, painting, 
 from artloupe.agent.inspiration_rate_limit import RateLimiter
 from artloupe.agent.inspiration_routes import router
 from artloupe.auth.dependencies import get_http_client, require_token
+from artloupe.config import SecretUnavailable
 
 pytestmark = pytest.mark.trace(flow="inspiration.search", category="functionality")
 
@@ -105,7 +106,7 @@ async def test_met_uses_paginated_endpoint_and_preserves_partial_success():
 
 
 async def test_pexels_sends_only_supported_filters(monkeypatch):
-    monkeypatch.setenv("PEXELS_API_KEY", "test-key")
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: "test-key")
 
     def handle(request):
         assert request.headers["Authorization"] == "test-key"
@@ -144,7 +145,7 @@ async def test_pexels_sends_only_supported_filters(monkeypatch):
 
 
 async def test_provider_rate_limit_is_an_outage_not_an_empty_result(monkeypatch):
-    monkeypatch.setenv("PEXELS_API_KEY", "test-key")
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: "test-key")
     async with httpx.AsyncClient(
         transport=httpx.MockTransport(lambda _: httpx.Response(429))
     ) as client:
@@ -224,12 +225,22 @@ async def test_fresh_cache_avoids_provider_calls():
 
 
 async def test_stale_cache_survives_outage_but_not_beyond_seven_days(monkeypatch):
-    monkeypatch.delenv("PEXELS_API_KEY", raising=False)
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", lambda: None)
     request = SearchRequest(source="pexels", query="trees")
     result = await cached_search(request, None, MemoryCache(90000))
     assert result.stale
     with pytest.raises(ProviderUnavailable):
         await cached_search(request, None, MemoryCache(700000))
+
+
+async def test_an_unreadable_pexels_key_is_an_outage_so_stale_results_survive(monkeypatch):
+    def unreadable():
+        raise SecretUnavailable("The secret file for PEXELS_API_KEY could not be read.")
+
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", unreadable)
+    request = SearchRequest(source="pexels", query="trees")
+    result = await cached_search(request, None, MemoryCache(90000))
+    assert result.stale
 
 
 async def test_cache_write_failure_does_not_fail_provider_result(monkeypatch):

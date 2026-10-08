@@ -1,5 +1,7 @@
 import type { SessionOptions } from 'iron-session';
 
+import { resolveSecret } from './secrets';
+
 /** Cookie name for the encrypted demo session. */
 export const SESSION_COOKIE_NAME = 'artloupe_session';
 
@@ -41,15 +43,17 @@ const readTtlSeconds = (): number => {
  * iron-session configuration, resolved at call time from the environment.
  *
  * Reads `AUTH_SESSION_PASSWORD` lazily (not at module load) so importing this
- * package never throws during a build step where the secret is absent. Apps
- * also declare the var in their `env.ts` for build-time validation and typing.
+ * package never throws during a build step where the secret is absent. It is a
+ * secret, so it resolves through `resolveSecret`: a mounted file, or outside
+ * production the environment (see `./secrets.ts`).
  */
 export const getSessionOptions = (): SessionOptions => {
-  const password = process.env.AUTH_SESSION_PASSWORD;
+  const password = resolveSecret('AUTH_SESSION_PASSWORD');
 
   if (!password || password.length < MIN_PASSWORD_LENGTH) {
     throw new Error(
-      `AUTH_SESSION_PASSWORD must be set and at least ${MIN_PASSWORD_LENGTH} characters.`,
+      `AUTH_SESSION_PASSWORD must be set and at least ${MIN_PASSWORD_LENGTH} characters. ` +
+        'Mount it as /run/secrets/auth_session_password or point AUTH_SESSION_PASSWORD_FILE at it.',
     );
   }
 

@@ -17,6 +17,8 @@ version = "0.1.0"
 description = "LangGraph checkpointing over Postgres, isolated in its own schema."
 requires-python = ">=3.12"
 dependencies = [
+  # Database URLs carry passwords, so they resolve through the one secret seam.
+  "artloupe-config",
   # The artist-scoped Supabase client (`artist_api`). Already in the lockfile through
   # artloupe-auth; declared here because this package imports it directly.
   "httpx>=0.28",
@@ -34,3 +36,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 # PEP 420 namespace: `artloupe` carries no __init__.py, mirroring the @artloupe/* scope.
 packages = ["src/artloupe"]
+
+[tool.uv.sources]
+artloupe-config = { workspace = true }

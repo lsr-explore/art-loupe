@@ -125,7 +125,10 @@ cp apps/operations/.env.example apps/operations/.env.local
 
 Set `AUTH_SESSION_PASSWORD` to a random string of 32+ characters in each app that has one
 — the value in `.env.example` is a placeholder, and it encrypts the session cookie. Fill in
-`SUPABASE_URL` and `SUPABASE_ANON_KEY` from `pnpm supabase status`. Then:
+`SUPABASE_URL` and `SUPABASE_ANON_KEY` from `pnpm supabase status`. The password is a secret, but
+a local one protects nothing, so `.env.local` is fine here. With `APP_ENV=production` the apps
+ignore it and read only a mounted file, `AUTH_SESSION_PASSWORD_FILE` or
+`/run/secrets/auth_session_password`. Then:
 
 ```sh
 pnpm supabase start                      # both studio and operations sign in through it
@@ -187,11 +190,13 @@ APP_ENV=local
 ARTLOUPE_KEYCHAIN_SERVICE=<keychain service>
 ARTLOUPE_ANTHROPIC_KEYCHAIN_ACCOUNT=<account of the Anthropic item>
 ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT=<account of the OpenAI item>
+ARTLOUPE_PEXELS_KEYCHAIN_ACCOUNT=<account of the Pexels item>  # optional: Get Inspired
 ARTLOUPE_RUN_LOG=postgres        # the studio streams runs from public.runs
 ARTLOUPE_METERING=postgres       # the cost panel reads public.run_node_metrics
 ```
 
-The file holds keychain coordinates, never a key. A key written into it is ignored.
+The file holds keychain coordinates, never a key. A key written into it is ignored, and so is a
+key exported in the shell: a secret is never read from the process environment.
 
 Not every setting is read from this file. Each one has its own loader:
 
@@ -203,8 +208,18 @@ Not every setting is read from this file. Each one has its own loader:
 
 #### 3. Put the provider keys in the keychain
 
-Locally, the Anthropic and OpenAI keys come from the macOS login keychain. Both items share
-one service and differ by account. Store each one once:
+Every secret resolves the same way, and the first match wins:
+
+1. The macOS keychain, when `APP_ENV` is `local` and that secret's keychain account is set.
+2. A mounted file, at `<NAME>_FILE` when that is set and `/run/secrets/<name>` otherwise.
+   Docker, CI and production use this.
+3. Outside production only, a throwaway value. Only the local database URLs have one.
+
+Paid provider keys are refused outright in CI (`CI=true` or `APP_ENV=ci`), whatever is
+mounted, so CI can never spend tokens.
+
+Locally, the Anthropic, OpenAI and Pexels keys come from the macOS login keychain. The items
+share one service and differ by account. Store each one once:
 
 ```sh
 security add-generic-password -s <service> -a <account> -w     # prompts for the key
@@ -229,9 +244,9 @@ To list every account stored under a service, without printing any key:
 security dump-keychain | grep -B15 '"svce"<blob>="<service>"' | grep '"acct"'
 ```
 
-Exporting `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` in the shell overrides the keychain.
 Anthropic is required for runs and learning answers. OpenAI is needed only for learning
-embeddings. Without OpenAI, the learning assistant falls back to keyword search.
+embeddings. Without OpenAI, the learning assistant falls back to keyword search. Without Pexels,
+Get Inspired reports its Pexels source as unavailable.
 
 To confirm both keys authenticate, without generating anything:
 

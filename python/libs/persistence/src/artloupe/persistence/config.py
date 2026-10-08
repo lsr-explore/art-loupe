@@ -14,6 +14,8 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from artloupe.config import require_secret, resolve_secret
+
 PersistenceMode = Literal["memory", "postgres"]
 
 # Where LangGraph's checkpoint tables live.
@@ -77,6 +79,22 @@ class PersistenceSettings(BaseSettings):
     def persistence_enabled(self) -> bool:
         """True when checkpoints must outlive the process that wrote them."""
         return self.artloupe_persistence == "postgres"
+
+    def checkpoint_database_url(self) -> str:
+        """The checkpointer's connection. A secret: it carries a password.
+
+        A mounted `DATABASE_URL` file wins. Outside production the field above stands in, which
+        is the local Supabase default unless the environment overrides it.
+        """
+        return require_secret("DATABASE_URL", non_production_value=self.database_url)
+
+    def run_log_database_url(self) -> str:
+        """The run recorder's connection, falling back to the checkpointer's when unset."""
+        recorder = resolve_secret(
+            "ARTLOUPE_RUN_LOG_DATABASE_URL",
+            non_production_value=self.artloupe_run_log_database_url,
+        )
+        return recorder or self.checkpoint_database_url()
 
 
 @lru_cache(maxsize=1)

@@ -1,7 +1,8 @@
 """One real call to the Director's model. Opt-in, because it spends real money.
 
-Skipped unless `ARTLOUPE_LIVE_TESTS=1`, which `uv run poe test-live` sets. The key is resolved
-through the real seam (`artloupe.config`), so locally it is read from the keychain.
+Skipped unless `ARTLOUPE_LIVE_TESTS=1`, which `uv run poe test-live` sets, and always skipped in
+CI, even if that flag is set there. The key is resolved through the real seam (`artloupe.config`),
+so locally it is read from the keychain, and in CI the seam would refuse it anyway.
 
 It asserts only what must hold of any competent answer: the reply parses, and it accounts for
 every offered tool exactly once. Whether the routing is *good* is a question for an eval.
@@ -13,6 +14,7 @@ import pytest
 from agent_support import FACE_GATE, INTENT, SURVEY
 
 from artloupe.agent.director import ask_director, close_director_client, director_client
+from artloupe.config import running_in_ci
 from artloupe.schemas import TOOLS, ToolManifest, check_accounts_for
 
 pytestmark = pytest.mark.trace(flow="intake.project-intent", category="functionality")
@@ -23,6 +25,7 @@ pytestmark = pytest.mark.trace(flow="intake.project-intent", category="functiona
     os.environ.get("ARTLOUPE_LIVE_TESTS") != "1",
     reason="spends real money; run it with `uv run poe test-live`",
 )
+@pytest.mark.skipif(running_in_ci(), reason="paid provider calls never run in CI")
 async def test_the_director_routes_a_portrait_for_real() -> None:
     try:
         answer = await ask_director(

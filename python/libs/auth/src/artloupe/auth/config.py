@@ -13,6 +13,8 @@ from functools import lru_cache
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from artloupe.config import resolve_secret
+
 
 class AuthSettings(BaseSettings):
     """Environment-backed settings for verifying forwarded access tokens."""
@@ -27,18 +29,6 @@ class AuthSettings(BaseSettings):
         )
     )
 
-    supabase_jwt_secret: str | None = Field(
-        default=None,
-        description=(
-            "Legacy HS256 signing secret, for a project that still issues HS256 tokens. When "
-            "set, tokens are verified symmetrically — which also means this process holds "
-            "material that can SIGN tokens, not just verify them. Leave unset to use the "
-            "published JWKS instead, which is the safer mode. A local `supabase start` signs "
-            "with ES256 and publishes its key, so local development leaves this unset; "
-            "setting it there makes every locally issued token fail verification."
-        ),
-    )
-
     artloupe_jwt_audience: str = Field(
         default="authenticated",
         description="Expected `aud` claim. Supabase issues 'authenticated' for signed-in users.",
@@ -51,6 +41,21 @@ class AuthSettings(BaseSettings):
         default=10.0,
         description="Timeout for fetching the JWKS document from Supabase.",
     )
+
+    def jwt_secret(self) -> str | None:
+        """The legacy HS256 signing secret, for a project that still issues HS256 tokens.
+
+        Not a settings field, so it is never read from the environment or an env file. It
+        resolves through `artloupe.config` like every other secret: a mounted file
+        (`SUPABASE_JWT_SECRET_FILE`, else `/run/secrets/supabase_jwt_secret`), or nothing.
+
+        When present, tokens are verified symmetrically, which means this process holds
+        material that can SIGN tokens, not just verify them. Absent, the published JWKS is used,
+        which is the safer mode. A local `supabase start` signs with ES256 and publishes its
+        key, so local development leaves this unset; setting it there makes every locally
+        issued token fail verification.
+        """
+        return resolve_secret("SUPABASE_JWT_SECRET")
 
     @property
     def gotrue_base_url(self) -> str:

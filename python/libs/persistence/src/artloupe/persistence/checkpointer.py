@@ -62,10 +62,11 @@ async def _build_postgres_saver() -> BaseCheckpointSaver:
     from psycopg_pool import AsyncConnectionPool
 
     settings = get_settings()
-    await _create_schema(settings.database_url)
+    conninfo = settings.checkpoint_database_url()
+    await _create_schema(conninfo)
 
     pool = AsyncConnectionPool(
-        conninfo=settings.database_url,
+        conninfo=conninfo,
         max_size=settings.artloupe_checkpoint_pool_max,
         # `open=False` then an explicit `open()`: constructing an open pool inside a running
         # event loop emits a deprecation warning and hides connection errors until first use.

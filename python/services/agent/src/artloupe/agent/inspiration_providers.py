@@ -2,12 +2,12 @@
 
 import asyncio
 import logging
-import os
 from urllib.parse import urlparse
 
 import httpx
 
 from artloupe.agent.inspiration_models import InspirationImage, SearchRequest, SearchResponse
+from artloupe.config import SecretUnavailable, get_pexels_api_key
 
 logger = logging.getLogger(__name__)
 MET = "https://collectionapi.metmuseum.org/public/collection"
@@ -86,7 +86,13 @@ def painting(obj, artist=""):
 
 
 async def search_pexels(request, client):
-    key = os.environ.get("PEXELS_API_KEY")
+    # Off the event loop: locally this can be a keychain lookup. A configured key that cannot be
+    # read is an outage, not a crash, so `cached_search` can still serve a stale result.
+    try:
+        key = await asyncio.to_thread(get_pexels_api_key)
+    except SecretUnavailable as error:
+        logger.warning("Pexels key unavailable: %s", error)
+        raise ProviderUnavailable() from error
     if not key:
         raise ProviderUnavailable()
     params = {"query": request.query, "page": request.page, "per_page": PAGE_SIZE}

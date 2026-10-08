@@ -89,7 +89,8 @@ wired up yet; sign-in is currently where the boundary lives.
 
 | Var | Purpose |
 | --- | --- |
-| `AUTH_SESSION_PASSWORD` | iron-session encryption key — **≥ 32 chars** |
+| `AUTH_SESSION_PASSWORD` | iron-session encryption key — **≥ 32 chars**. A secret, resolved by `src/secrets.ts`: a mounted file (`AUTH_SESSION_PASSWORD_FILE`, else `/run/secrets/auth_session_password`) wins, and the variable itself is read only when `APP_ENV` is not `production`. |
+| `APP_ENV` | `local` (default), `ci` or `production`. Any other value throws rather than falling back to `local`. |
 | `AUTH_SESSION_TTL` | Session lifetime in seconds. Optional; defaults to 8 hours. Rejects `0`, which iron-session reads as "never expires". |
 | `DEMO_AUTH_USERNAME` | Demo super-user username |
 | `DEMO_AUTH_PASSWORD` | Demo super-user password |

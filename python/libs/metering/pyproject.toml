@@ -24,6 +24,8 @@ dependencies = [
   # `BudgetLedger` is a shared contract, mirrored in `packages/schemas`. Metering fills it;
   # it does not get to redefine it.
   "artloupe-schemas",
+  # Database URLs carry passwords, so they resolve through the one secret seam.
+  "artloupe-config",
   "pydantic>=2.9",
   "pydantic-settings>=2.6",
   # psycopg 3, for the durable sink. `binary` ships a wheel so no local libpq is needed.
@@ -40,4 +42,5 @@ build-backend = "hatchling.build"
 packages = ["src/artloupe"]
 
 [tool.uv.sources]
+artloupe-config = { workspace = true }
 artloupe-schemas = { workspace = true }

@@ -12,6 +12,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Names the environment for the secret seams (artloupe.config, @artloupe/auth/secrets). In ci a
+# paid provider key is always refused, so nothing in this workflow can spend tokens, and secrets
+# come from mounted files or throwaway test values, never a keychain.
+env:
+  APP_ENV: ci
+
 jobs:
   e2e:
     name: Playwright E2E
