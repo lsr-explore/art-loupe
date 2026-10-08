@@ -8,37 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from '@artloupe/fascia/components/ui/table';
-import { COST_WINDOWS, type CostReport, type CostWindow } from '@artloupe/schemas/ops-cost';
+import type { CostReport } from '@artloupe/schemas/ops-cost';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 
-import { Link } from '@/i18n/navigation';
+import { OpsStateMessage } from '@/components/ops-state-message';
 import type { CostReportResult } from '@/lib/costs/fetch-cost-report';
 
 import { CostAmount } from './cost-amount';
 
 const NUMERIC = 'text-right tabular-nums';
-
-const WindowNav = ({ current }: { current: CostWindow }) => {
-  const tc = useTranslations('costs');
-  return (
-    <nav aria-label={tc('windowLabel')}>
-      <ul className="flex flex-wrap gap-2">
-        {COST_WINDOWS.map((option) => (
-          <li key={option}>
-            <Link
-              href={{ pathname: '/home', query: { window: option } }}
-              aria-current={option === current ? 'page' : undefined}
-              className="inline-flex min-h-6 items-center rounded-md border px-3 py-1 text-sm underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-[current=page]:border-foreground aria-[current=page]:font-semibold"
-            >
-              {tc(`windows.${option}`)}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-};
 
 const Stat = ({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) => (
   <Card size="sm">
@@ -174,20 +153,10 @@ const CostTables = ({ report }: { report: CostReport }) => {
   );
 };
 
-const StateMessage = ({ status }: { status: Exclude<CostReportResult['status'], 'ok'> }) => {
-  const ts = useTranslations('costs.state');
-  const key = status === 'signed-out' ? 'signedOut' : status;
-  return (
-    <p data-cost-state className="rounded-md border p-4 text-sm">
-      {ts(key)}
-    </p>
-  );
-};
-
-type CostPanelProps = { costWindow: CostWindow; result: CostReportResult };
+type CostPanelProps = { result: CostReportResult };
 
 /** The operations cost panel: totals, then spend by model, by node and by recent run. */
-export const CostPanel = ({ costWindow, result }: CostPanelProps) => {
+export const CostPanel = ({ result }: CostPanelProps) => {
   const tc = useTranslations('costs');
   const format = useFormatter();
 
@@ -198,34 +167,29 @@ export const CostPanel = ({ costWindow, result }: CostPanelProps) => {
           {tc('title')}
         </h2>
         <p className="text-muted-foreground">{tc('description')}</p>
-        <WindowNav current={costWindow} />
       </header>
 
       {result.status !== 'ok' ? (
-        <StateMessage status={result.status} />
-      ) : result.report.totals.node_executions === 0 ? (
-        <p data-cost-state className="rounded-md border p-4 text-sm">
-          {tc('empty')}
-        </p>
+        <OpsStateMessage status={result.status} />
+      ) : result.data.totals.node_executions === 0 ? (
+        <p className="rounded-md border p-4 text-sm">{tc('empty')}</p>
       ) : (
         <>
           <section aria-label={tc('stats.label')}>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Stat label={tc('stats.spend')}>
-                <CostAmount totals={result.report.totals} />
+                <CostAmount totals={result.data.totals} />
               </Stat>
-              <Stat label={tc('stats.runs')}>{format.number(result.report.run_count)}</Stat>
+              <Stat label={tc('stats.runs')}>{format.number(result.data.run_count)}</Stat>
               <Stat label={tc('stats.tokens')}>
-                {format.number(
-                  result.report.totals.input_tokens + result.report.totals.output_tokens,
-                )}
+                {format.number(result.data.totals.input_tokens + result.data.totals.output_tokens)}
               </Stat>
               <Stat label={tc('stats.unpriced')} hint={tc('stats.unpricedHint')}>
-                {format.number(result.report.totals.unpriced_rows)}
+                {format.number(result.data.totals.unpriced_rows)}
               </Stat>
             </div>
           </section>
-          <CostTables report={result.report} />
+          <CostTables report={result.data} />
         </>
       )}
     </section>

@@ -12,13 +12,13 @@ vi.mock('server-only', () => ({}));
 vi.mock('@artloupe/auth/server', () => ({ getAccessToken }));
 vi.mock('@/env', () => ({ env }));
 
-import { fetchCostReport } from './fetch-cost-report';
+import { fetchCostReport } from './costs/fetch-cost-report';
 
 const respond = (status: number, body: unknown = {}) =>
   vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json(body, { status }));
 
 // @trace flow=ops.observability category=functionality
-describe('fetchCostReport', () => {
+describe('readFromAgent, through fetchCostReport', () => {
   beforeEach(() => {
     getAccessToken.mockResolvedValue('operator-token');
     env.ARTLOUPE_AGENT_URL = 'http://127.0.0.1:8080';
@@ -37,7 +37,7 @@ describe('fetchCostReport', () => {
 
   it('returns the validated report', async () => {
     respond(200, mixedReport);
-    expect(await fetchCostReport('7d')).toEqual({ status: 'ok', report: mixedReport });
+    expect(await fetchCostReport('7d')).toEqual({ status: 'ok', data: mixedReport });
   });
 
   it('refuses a report for a different window', async () => {
@@ -53,6 +53,7 @@ describe('fetchCostReport', () => {
   it.each([
     [401, 'signed-out'],
     [403, 'forbidden'],
+    [404, 'not-found'],
     [503, 'unavailable'],
     [500, 'unavailable'],
   ] as const)('maps a %i to %s', async (status, expected) => {

@@ -1,22 +1,14 @@
 """Read the cost ledger for the operations dashboard, as `artloupe_ops_reader` and nothing else.
 
-The connection comes from ARTLOUPE_OPS_DATABASE_URL, a login whose only useful membership is
-`artloupe_ops_reader`. Every pooled connection sets that role before it is handed out, so
-even a DSN with more reach reads only what the role can. Never the project-owner DSN, a
-user token, or a Supabase service-role key.
-
-The grouping happens here in SQL. `sum()` skips nulls, so `priced_cost_usd` is the sum of the
-priced rows only, and `unpriced_rows` counts the rows a sum would otherwise hide.
+The connection and its role restriction live in `ops_db`. The grouping happens here in SQL.
+`sum()` skips nulls, so `priced_cost_usd` is the sum of the priced rows only, and
+`unpriced_rows` counts the rows a sum would otherwise hide.
 """
 
-import asyncio
-import os
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
-import psycopg
-from psycopg import AsyncConnection, IsolationLevel
+from psycopg import AsyncConnection
 from psycopg.rows import dict_row
-from psycopg_pool import AsyncConnectionPool
 
 from artloupe.agent.ops_cost_models import (
     RECENT_RUNS_LIMIT,
@@ -27,19 +19,9 @@ from artloupe.agent.ops_cost_models import (
     NodeCost,
     RunCost,
 )
+from artloupe.agent.ops_db import WINDOW_LENGTHS, read_as_ops
 
-OPS_ROLE = "artloupe_ops_reader"
-POOL_MAX_SIZE = 2
-POOL_WAIT_SECONDS = 2
-QUERY_TIMEOUT_SECONDS = 5
-
-WINDOW_LENGTHS: dict[CostWindow, timedelta] = {
-    "24h": timedelta(hours=24),
-    "7d": timedelta(days=7),
-    "30d": timedelta(days=30),
-}
-
-_TOTALS = """
+LEDGER_TOTALS = """
     count(*)::int                                          as node_executions,
     count(*) filter (where attempt > 1)::int               as reexecutions,
     coalesce(sum(cost_usd), 0)                             as priced_cost_usd,
@@ -54,55 +36,6 @@ _TOTALS = """
 _IN_WINDOW = "from public.run_node_metrics where started_at >= %(since)s"
 
 
-class OpsDatabaseUnavailable(Exception):
-    """No DSN is configured, or the database did not answer in time."""
-
-
-_pool: AsyncConnectionPool | None = None
-_pool_lock = asyncio.Lock()
-
-
-async def _restrict_role(conn: AsyncConnection) -> None:
-    # Session-level, so it holds for every later use of this pooled connection.
-    await conn.execute(f"SET ROLE {OPS_ROLE}")
-    await conn.commit()
-    # One snapshot per report. The totals and each breakdown are separate queries, and at the
-    # default READ COMMITTED a run landing between them would make the figures disagree.
-    await conn.set_isolation_level(IsolationLevel.REPEATABLE_READ)
-    await conn.set_read_only(True)
-
-
-async def _get_pool() -> AsyncConnectionPool:
-    global _pool
-    dsn = os.environ.get("ARTLOUPE_OPS_DATABASE_URL")
-    if not dsn:
-        raise OpsDatabaseUnavailable
-    async with _pool_lock:
-        if _pool is None:
-            pool = AsyncConnectionPool(
-                dsn,
-                open=False,
-                # Idle until the first report; an unreachable database must not block startup.
-                min_size=0,
-                max_size=POOL_MAX_SIZE,
-                timeout=POOL_WAIT_SECONDS,
-                max_idle=300,
-                kwargs={"connect_timeout": 2, "options": "-c statement_timeout=4000"},
-                configure=_restrict_role,
-                check=AsyncConnectionPool.check_connection,
-            )
-            await pool.open(wait=False)
-            _pool = pool
-    return _pool
-
-
-async def close_ops_pool() -> None:
-    global _pool
-    if _pool is not None:
-        await _pool.close()
-        _pool = None
-
-
 async def build_cost_report(
     conn: AsyncConnection, window: CostWindow, now: datetime | None = None
 ) -> CostReport:
@@ -112,20 +45,20 @@ async def build_cost_report(
     params = {"since": since, "limit": RECENT_RUNS_LIMIT}
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
-            f"select {_TOTALS}, count(distinct run_id)::int as run_count {_IN_WINDOW}", params
+            f"select {LEDGER_TOTALS}, count(distinct run_id)::int as run_count {_IN_WINDOW}", params
         )
         totals_row = await cur.fetchone()
         run_count = totals_row.pop("run_count")
 
         await cur.execute(
-            f"select model, {_TOTALS} {_IN_WINDOW} group by model "
+            f"select model, {LEDGER_TOTALS} {_IN_WINDOW} group by model "
             "order by priced_cost_usd desc, model nulls last",
             params,
         )
         by_model = [ModelCost(**row) for row in await cur.fetchall()]
 
         await cur.execute(
-            f"select node, {_TOTALS} {_IN_WINDOW} group by node "
+            f"select node, {LEDGER_TOTALS} {_IN_WINDOW} group by node "
             "order by priced_cost_usd desc, node",
             params,
         )
@@ -136,7 +69,7 @@ async def build_cost_report(
         await cur.execute(
             f"""
             with windowed as (
-                select run_id, {_TOTALS} {_IN_WINDOW} group by run_id
+                select run_id, {LEDGER_TOTALS} {_IN_WINDOW} group by run_id
             ), began as (
                 select run_id, min(started_at) as started_at from public.run_node_metrics
                 where run_id in (select run_id from windowed) group by run_id
@@ -162,12 +95,4 @@ async def build_cost_report(
 
 async def read_cost_report(window: CostWindow) -> CostReport:
     """The route's entry point: a pooled, role-restricted, read-only report."""
-    pool = await _get_pool()
-    try:
-        async with asyncio.timeout(QUERY_TIMEOUT_SECONDS), pool.connection() as conn:
-            report = await build_cost_report(conn, window)
-            await conn.rollback()
-            return report
-    except (TimeoutError, psycopg.Error) as exc:
-        # The pool's own timeout is a psycopg.Error too.
-        raise OpsDatabaseUnavailable from exc
+    return await read_as_ops(lambda conn: build_cost_report(conn, window))

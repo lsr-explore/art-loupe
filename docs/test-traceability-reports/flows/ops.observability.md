@@ -13,11 +13,11 @@ Cost, latency, evaluation health, and corpus ingestion
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
 | **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
-| **Tests** | 71 (2 parametrized) |
-| **Covered** | a11y 5 · security 8 · data 11 · functionality 47 |
-| **Not covered** | privacy · safety · performance |
+| **Tests** | 113 (2 parametrized) |
+| **Covered** | a11y 10 · security 10 · privacy 1 · data 16 · functionality 76 |
+| **Not covered** | safety · performance |
 
-## pytest — 35
+## pytest — 46
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -47,56 +47,98 @@ Cost, latency, evaluation health, and corpus ingestion
 | functionality | test_flushing_nothing_opens_no_connection | `python/libs/metering/tests/test_sinks.py:46` |
 | security | test_the_ledger_table_is_denied_to_the_api_roles_by_construction | `python/libs/metering/tests/test_sinks.py:52` |
 | functionality | test_the_sink_writes_where_the_migration_creates | `python/libs/metering/tests/test_sinks.py:71` |
-| security | test_only_an_operator_may_read_costs | `python/services/agent/tests/test_ops_cost.py:69` |
-| functionality | test_the_window_defaults_to_seven_days_and_is_a_closed_set | `python/services/agent/tests/test_ops_cost.py:84` |
-| functionality | test_cost_is_sent_as_a_decimal_string_not_a_float | `python/services/agent/tests/test_ops_cost.py:104` |
-| functionality | test_an_unreachable_ledger_is_a_503_not_an_empty_report | `python/services/agent/tests/test_ops_cost.py:119` |
-| functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:135` |
-| data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:144` |
-| data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:209` |
-| functionality | test_pooled_connections_read_one_snapshot_as_the_role | `python/services/agent/tests/test_ops_cost.py:279` |
-| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:301` |
+| security | test_only_an_operator_may_read_costs | `python/services/agent/tests/test_ops_cost.py:70` |
+| functionality | test_the_window_defaults_to_seven_days_and_is_a_closed_set | `python/services/agent/tests/test_ops_cost.py:85` |
+| functionality | test_cost_is_sent_as_a_decimal_string_not_a_float | `python/services/agent/tests/test_ops_cost.py:105` |
+| functionality | test_an_unreachable_ledger_is_a_503_not_an_empty_report | `python/services/agent/tests/test_ops_cost.py:120` |
+| functionality | test_no_dsn_means_unavailable | `python/services/agent/tests/test_ops_cost.py:136` |
+| data | test_shared_typescript_python_report_fixture | `python/services/agent/tests/test_ops_cost.py:145` |
+| data | test_unpriced_is_counted_beside_the_priced_sum_never_folded_into_it | `python/services/agent/tests/test_ops_cost.py:210` |
+| functionality | test_pooled_connections_read_one_snapshot_as_the_role | `python/services/agent/tests/test_ops_cost.py:280` |
+| security | test_the_reader_role_sees_the_ledger_and_nothing_else | `python/services/agent/tests/test_ops_cost.py:302` |
+| security | test_only_an_operator_may_read_run_health | `python/services/agent/tests/test_ops_runs.py:68` |
+| functionality | test_an_unknown_run_is_a_404_and_a_malformed_id_a_422 | `python/services/agent/tests/test_ops_runs.py:83` |
+| functionality | test_an_unreachable_database_is_a_503 | `python/services/agent/tests/test_ops_runs.py:95` |
+| data | test_shared_typescript_python_run_fixtures | `python/services/agent/tests/test_ops_runs.py:108` |
+| data | test_run_health_counts_reasons_and_durations | `python/services/agent/tests/test_ops_runs.py:262` |
+| functionality | test_a_run_past_its_deadline_is_stalled_whatever_the_window | `python/services/agent/tests/test_ops_runs.py:289` |
+| data | test_a_run_carries_its_ledger_once_it_has_one | `python/services/agent/tests/test_ops_runs.py:301` |
+| functionality | test_the_drill_down_pairs_nodes_and_names_where_it_stopped | `python/services/agent/tests/test_ops_runs.py:311` |
+| functionality | test_an_unknown_run_is_not_found | `python/services/agent/tests/test_ops_runs.py:329` |
+| privacy | test_the_reader_cannot_see_a_runs_result_or_its_owner | `python/services/agent/tests/test_ops_runs.py:337` |
+| functionality | test_steps_pair_a_finish_only_with_its_own_node | `python/services/agent/tests/test_ops_runs.py:361` |
 
-## Vitest — 36
+## Vitest — 67
 
 | Category | Test | Location |
 | --- | --- | --- |
-| functionality | renders the page heading | `apps/operations/src/app/[locale]/home/page.test.tsx:34` |
-| functionality | defaults the cost window to seven days | `apps/operations/src/app/[locale]/home/page.test.tsx:39` |
-| functionality | honours a known window and ignores an unknown one | `apps/operations/src/app/[locale]/home/page.test.tsx:44` |
-| a11y | has no accessibility violations | `apps/operations/src/app/[locale]/home/page.test.tsx:52` |
+| functionality | renders the page heading | `apps/operations/src/app/[locale]/home/page.test.tsx:41` |
+| functionality | defaults both panels to a seven-day window | `apps/operations/src/app/[locale]/home/page.test.tsx:46` |
+| functionality | honours a known window and ignores an unknown one | `apps/operations/src/app/[locale]/home/page.test.tsx:52` |
+| functionality | renders the cost panel, then run health | `apps/operations/src/app/[locale]/home/page.test.tsx:60` |
+| a11y | has no accessibility violations | `apps/operations/src/app/[locale]/home/page.test.tsx:69` |
 | functionality | renders the heading and the login section | `apps/operations/src/app/[locale]/page.test.tsx:29` |
 | functionality | renders a decorative gradient backdrop and no photographic asset | `apps/operations/src/app/[locale]/page.test.tsx:38` |
 | a11y | has no accessibility violations | `apps/operations/src/app/[locale]/page.test.tsx:49` |
-| functionality | renders a real zero as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:40` |
-| functionality | renders an unpriced cost as the word, never as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:45` |
-| functionality | states a sum with unpriced rows as a lower bound | `apps/operations/src/components/costs/cost-panel.test.tsx:52` |
-| functionality | carries the lower bound into the spend total | `apps/operations/src/components/costs/cost-panel.test.tsx:58` |
-| functionality | marks the current window and links the others | `apps/operations/src/components/costs/cost-panel.test.tsx:64` |
-| functionality | says how many runs it left out | `apps/operations/src/components/costs/cost-panel.test.tsx:77` |
-| functionality | says so when the window is empty rather than rendering empty tables | `apps/operations/src/components/costs/cost-panel.test.tsx:85` |
-| functionality | explains the %s state | `apps/operations/src/components/costs/cost-panel.test.tsx:91` |
-| a11y | does not rely on color to tell unpriced from zero | `apps/operations/src/components/costs/cost-panel.test.tsx:101` |
-| a11y | has no accessibility violations with data | `apps/operations/src/components/costs/cost-panel.test.tsx:112` |
-| a11y | has no accessibility violations when unavailable | `apps/operations/src/components/costs/cost-panel.test.tsx:121` |
+| functionality | renders the drill-down under a heading naming the run | `apps/operations/src/app/[locale]/runs/[id]/page.test.tsx:45` |
+| security | answers an id that cannot be a run without asking the agent | `apps/operations/src/app/[locale]/runs/[id]/page.test.tsx:57` |
+| functionality | is a 404 when the agent has no such run | `apps/operations/src/app/[locale]/runs/[id]/page.test.tsx:62` |
+| functionality | explains any other failed read | `apps/operations/src/app/[locale]/runs/[id]/page.test.tsx:67` |
+| a11y | has no accessibility violations | `apps/operations/src/app/[locale]/runs/[id]/page.test.tsx:74` |
+| functionality | renders a real zero as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:27` |
+| functionality | renders an unpriced cost as the word, never as $0.00 | `apps/operations/src/components/costs/cost-panel.test.tsx:32` |
+| functionality | states a sum with unpriced rows as a lower bound | `apps/operations/src/components/costs/cost-panel.test.tsx:39` |
+| functionality | carries the lower bound into the spend total | `apps/operations/src/components/costs/cost-panel.test.tsx:45` |
+| functionality | says how many runs it left out | `apps/operations/src/components/costs/cost-panel.test.tsx:51` |
+| functionality | says so when the window is empty rather than rendering empty tables | `apps/operations/src/components/costs/cost-panel.test.tsx:58` |
+| functionality | explains the %s state | `apps/operations/src/components/costs/cost-panel.test.tsx:64` |
+| a11y | does not rely on color to tell unpriced from zero | `apps/operations/src/components/costs/cost-panel.test.tsx:74` |
+| a11y | has no accessibility violations with data | `apps/operations/src/components/costs/cost-panel.test.tsx:85` |
+| a11y | has no accessibility violations when unavailable | `apps/operations/src/components/costs/cost-panel.test.tsx:93` |
+| functionality | marks the node that never finished in words | `apps/operations/src/components/runs/run-detail.test.tsx:19` |
+| functionality | says a step whose start was lost has no recorded start | `apps/operations/src/components/runs/run-detail.test.tsx:28` |
+| functionality | shows the reason and the detail the artist saw | `apps/operations/src/components/runs/run-detail.test.tsx:53` |
+| functionality | lists every event in order, the failure with its reason | `apps/operations/src/components/runs/run-detail.test.tsx:59` |
+| functionality | says a run with no ledger has no cost yet | `apps/operations/src/components/runs/run-detail.test.tsx:67` |
+| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-detail.test.tsx:73` |
+| functionality | names each failure reason and the node it stopped in | `apps/operations/src/components/runs/run-health-panel.test.tsx:36` |
+| functionality | shows an unknown reason code as it is, and a stop between nodes in words | `apps/operations/src/components/runs/run-health-panel.test.tsx:41` |
+| functionality | lists stalled runs in their own table, tagged in words | `apps/operations/src/components/runs/run-health-panel.test.tsx:46` |
+| functionality | counts every stalled run and says when the list is shortened | `apps/operations/src/components/runs/run-health-panel.test.tsx:53` |
+| functionality | links each run to its drill-down | `apps/operations/src/components/runs/run-health-panel.test.tsx:60` |
+| functionality | says a finished run has no ledger yet rather than showing $0.00 | `apps/operations/src/components/runs/run-health-panel.test.tsx:69` |
+| functionality | formats durations in seconds and minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:78` |
+| functionality | states the stall rule in minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:84` |
+| functionality | says so when the window is quiet | `apps/operations/src/components/runs/run-health-panel.test.tsx:89` |
+| functionality | explains a failed read without a stall rule it does not have | `apps/operations/src/components/runs/run-health-panel.test.tsx:95` |
+| a11y | does not rely on color for status | `apps/operations/src/components/runs/run-health-panel.test.tsx:102` |
+| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-health-panel.test.tsx:111` |
+| functionality | marks the current window and links the others | `apps/operations/src/components/window-nav.test.tsx:32` |
+| a11y | has no accessibility violations | `apps/operations/src/components/window-nav.test.tsx:46` |
 | data | states a fully priced sum as the cost | `apps/operations/src/lib/costs/cost-figure.test.ts:13` |
 | data | keeps a real zero as a priced zero | `apps/operations/src/lib/costs/cost-figure.test.ts:17` |
 | data | never states an all-unpriced grouping as zero | `apps/operations/src/lib/costs/cost-figure.test.ts:21` |
 | data | marks a sum with any unpriced row as a lower bound | `apps/operations/src/lib/costs/cost-figure.test.ts:25` |
 | data | treats an empty grouping as a priced zero | `apps/operations/src/lib/costs/cost-figure.test.ts:33` |
-| security | sends the operator | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:30` |
-| functionality | returns the validated report | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:38` |
-| functionality | refuses a report for a different window | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:43` |
-| functionality | refuses a malformed report | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:48` |
-| functionality | maps a %i to %s | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:53` |
-| functionality | is unavailable when the agent cannot be reached | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:63` |
-| functionality | is signed out without a token, and never calls the agent | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:68` |
-| functionality | is signed out when an expired session cannot be cleared during render | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:75` |
-| functionality | is unavailable when no agent is configured | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:80` |
-| security | will not send a token over plain HTTP in production | `apps/operations/src/lib/costs/fetch-cost-report.test.ts:88` |
+| security | sends the operator | `apps/operations/src/lib/ops-api.test.ts:30` |
+| functionality | returns the validated report | `apps/operations/src/lib/ops-api.test.ts:38` |
+| functionality | refuses a report for a different window | `apps/operations/src/lib/ops-api.test.ts:43` |
+| functionality | refuses a malformed report | `apps/operations/src/lib/ops-api.test.ts:48` |
+| functionality | maps a %i to %s | `apps/operations/src/lib/ops-api.test.ts:53` |
+| functionality | is unavailable when the agent cannot be reached | `apps/operations/src/lib/ops-api.test.ts:64` |
+| functionality | is signed out without a token, and never calls the agent | `apps/operations/src/lib/ops-api.test.ts:69` |
+| functionality | is signed out when an expired session cannot be cleared during render | `apps/operations/src/lib/ops-api.test.ts:76` |
+| functionality | is unavailable when no agent is configured | `apps/operations/src/lib/ops-api.test.ts:81` |
+| security | will not send a token over plain HTTP in production | `apps/operations/src/lib/ops-api.test.ts:89` |
+| functionality | asks for the window and accepts a report for it | `apps/operations/src/lib/runs/fetch-runs.test.ts:22` |
+| functionality | refuses a report for a different window | `apps/operations/src/lib/runs/fetch-runs.test.ts:28` |
+| functionality | refuses a drill-down for a different run | `apps/operations/src/lib/runs/fetch-runs.test.ts:33` |
+| functionality | accepts the drill-down for the run it asked about | `apps/operations/src/lib/runs/fetch-runs.test.ts:40` |
 | data | accepts report ${index} | `packages/schemas/src/ops-cost.test.ts:9` |
 | data | rejects report ${index} | `packages/schemas/src/ops-cost.test.ts:12` |
 | data | refuses a cost sent as a float | `packages/schemas/src/ops-cost.test.ts:14` |
+| data | accepts ${name} ${index} | `packages/schemas/src/ops-runs.test.ts:14` |
+| data | rejects ${name} ${index} | `packages/schemas/src/ops-runs.test.ts:16` |
 
 ---
 

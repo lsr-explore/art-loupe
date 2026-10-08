@@ -32,8 +32,8 @@ exists, the detail tells you what it covers.
 | **inspiration** | | 3 | 12 | – | – | 6 | 4 | 42 | **67** |
 | [`intake.project-intent`](flows/intake.project-intent.md) | P2 | 10 | 68 | – | 5 | 61 | – | 123 | 267 |
 | **intake** | | 10 | 68 | – | 5 | 61 | – | 123 | **267** |
-| [`ops.observability`](flows/ops.observability.md) | P2 | 5 | 8 | – | – | 11 | – | 47 | 71 |
-| **ops** | | 5 | 8 | – | – | 11 | – | 47 | **71** |
+| [`ops.observability`](flows/ops.observability.md) | P2 | 10 | 10 | 1 | – | 16 | – | 76 | 113 |
+| **ops** | | 10 | 10 | 1 | – | 16 | – | 76 | **113** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 66 | 1 | – | 3 | 1 | 68 | 139 |
@@ -45,7 +45,7 @@ exists, the detail tells you what it covers.
 | **retrieval** | | 2 | 8 | – | 33 | 8 | – | 4 | **55** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **68** | **286** | **1** | **99** | **115** | **5** | **554** | **1128** |
+| **all flows** | | **73** | **288** | **2** | **99** | **120** | **5** | **583** | **1170** |
 
 ## Gaps
 
@@ -82,7 +82,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 474 | 0 | 474 |
-| Vitest | 613 | 0 | 613 |
+| pytest | 485 | 0 | 485 |
+| Vitest | 644 | 0 | 644 |
 | Playwright | 41 | 0 | 41 |
-| **All** | **1128** | **0** | **1128** |
+| **All** | **1170** | **0** | **1170** |

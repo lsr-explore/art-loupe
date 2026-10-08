@@ -67,9 +67,10 @@ test.describe(
       await expect(page).toHaveURL(/\/en\/home$/);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Operations');
       // Assert each dashboard panel here as it lands, or this only proves the gate opened.
-      // The demo provider carries no Supabase token, so the cost panel can only explain that
-      // it has no data. Its data states are covered by `cost-panel.test.tsx`.
+      // The demo provider carries no Supabase token, so each panel can only explain that it
+      // has no data. Their data states are covered by their own component suites.
       await expect(page.getByRole('heading', { level: 2, name: 'Agent cost' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: 'Run health' })).toBeVisible();
       await expect(page.getByRole('navigation', { name: 'Time window' })).toBeVisible();
     });
 

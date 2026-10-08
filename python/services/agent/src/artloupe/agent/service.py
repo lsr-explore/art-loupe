@@ -42,7 +42,7 @@ from artloupe.agent.inspiration_cache import close_cache_pool
 from artloupe.agent.inspiration_routes import router as inspiration_router
 from artloupe.agent.jobs import cancel_pending_runs, dispatch_run, run_job
 from artloupe.agent.learning.routes import router as learning_router
-from artloupe.agent.ops_cost import close_ops_pool
+from artloupe.agent.ops_db import close_ops_pool
 from artloupe.agent.ops_routes import router as ops_router
 from artloupe.agent.resources import RunResources
 from artloupe.agent.state import RunState

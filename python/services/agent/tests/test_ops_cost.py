@@ -19,8 +19,9 @@ from fastapi import FastAPI
 from pydantic import ValidationError
 
 from artloupe.agent import ops_routes
-from artloupe.agent.ops_cost import OPS_ROLE, OpsDatabaseUnavailable, build_cost_report
+from artloupe.agent.ops_cost import build_cost_report
 from artloupe.agent.ops_cost_models import CostReport
+from artloupe.agent.ops_db import OPS_ROLE, OpsDatabaseUnavailable
 from artloupe.auth.config import AuthSettings, get_settings
 from artloupe.auth.dependencies import get_http_client, require_token
 
@@ -280,11 +281,11 @@ async def test_pooled_connections_read_one_snapshot_as_the_role(
     ledger: psycopg.AsyncConnection,
 ) -> None:
     """The totals and breakdowns are separate queries; they must all see the same snapshot."""
-    from artloupe.agent.ops_cost import _restrict_role
+    from artloupe.agent.ops_db import restrict_role
 
     conn = await psycopg.AsyncConnection.connect(DATABASE_URL, connect_timeout=3)
     try:
-        await _restrict_role(conn)
+        await restrict_role(conn)
         settings = await (
             await conn.execute(
                 "select current_user, current_setting('transaction_isolation'), "

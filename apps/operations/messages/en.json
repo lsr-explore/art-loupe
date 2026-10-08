@@ -23,12 +23,6 @@
   "costs": {
     "title": "Agent cost",
     "description": "Spend, tokens and node executions from the run ledger. Times are in UTC.",
-    "windowLabel": "Time window",
-    "windows": {
-      "24h": "Last 24 hours",
-      "7d": "Last 7 days",
-      "30d": "Last 30 days"
-    },
     "stats": {
       "label": "Totals for this window",
       "spend": "Spend",
@@ -64,11 +58,124 @@
       "cost": "Cost"
     },
     "seconds": "{value} s",
-    "empty": "No agent activity was recorded in this window.",
-    "state": {
-      "unavailable": "Cost data is unavailable right now. The agent service or its database did not answer.",
-      "forbidden": "Your account is not permitted to read cost data.",
-      "signedOut": "Your session has expired. Sign in again to see cost data."
-    }
+    "empty": "No agent activity was recorded in this window."
+  },
+  "window": {
+    "label": "Time window",
+    "24h": "Last 24 hours",
+    "7d": "Last 7 days",
+    "30d": "Last 30 days"
+  },
+  "opsState": {
+    "unavailable": "This data is unavailable right now. The agent service or its database did not answer.",
+    "forbidden": "Your account is not permitted to read operations data.",
+    "signedOut": "Your session has expired. Sign in again to see operations data.",
+    "notFound": "No run has that id."
+  },
+  "runs": {
+    "title": "Run health",
+    "description": "Every agent run in this window: how it ended, where a failure stopped it, and how long it waited and ran.",
+    "empty": "No agent runs were recorded in this window.",
+    "status": {
+      "queued": "Queued",
+      "running": "Running",
+      "succeeded": "Succeeded",
+      "failed": "Failed"
+    },
+    "stalledTag": "Stalled",
+    "stats": {
+      "label": "Run totals for this window",
+      "runs": "Runs",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "inProgress": "Queued or running",
+      "stalled": "Stalled",
+      "stalledHint": "Counted across all time, not only this window."
+    },
+    "durations": {
+      "label": "How long runs took",
+      "queueWait": "Queue wait",
+      "runTime": "Run time",
+      "median": "Median",
+      "p95": "95th percentile",
+      "none": "No runs yet"
+    },
+    "tables": {
+      "stalled": "Stalled runs",
+      "failures": "Failures by reason",
+      "recentRuns": "Recent runs",
+      "truncated": "Showing the {shown} most recent of {total} runs.",
+      "betweenNodes": "Between nodes",
+      "noCost": "No ledger yet",
+      "stalledTruncated": "Showing the {shown} oldest of {total} stalled runs."
+    },
+    "columns": {
+      "run": "Run",
+      "status": "Status",
+      "reason": "Reason",
+      "failedNode": "Failed node",
+      "created": "Created (UTC)",
+      "duration": "Duration",
+      "cost": "Cost",
+      "runs": "Runs"
+    },
+    "runLink": "Run {id}",
+    "reasons": {
+      "budget_exceeded": "Budget exceeded",
+      "deadline_exceeded": "Deadline exceeded",
+      "guard_stopped": "Stopped by a loop guard",
+      "project_not_found": "Project not found",
+      "project_not_ready": "Project not ready",
+      "photograph_unavailable": "Photograph unavailable",
+      "credential_rejected": "Credential rejected",
+      "data_service_refused": "Data service refused",
+      "routing_failed": "Routing failed",
+      "interrupted": "Service stopped mid-run",
+      "internal_error": "Internal error"
+    },
+    "detail": {
+      "title": "Run {id}",
+      "back": "Back to operations",
+      "summary": "Summary",
+      "fields": {
+        "runId": "Run id",
+        "projectId": "Project id",
+        "status": "Status",
+        "reason": "Reason",
+        "errorDetail": "Detail shown to the artist",
+        "created": "Created (UTC)",
+        "started": "Started (UTC)",
+        "finished": "Finished (UTC)",
+        "duration": "Duration",
+        "cost": "Cost",
+        "notYet": "Not yet"
+      },
+      "steps": "Node steps",
+      "events": "Event log",
+      "ledger": "Ledger by node",
+      "columns": {
+        "node": "Node",
+        "startedAt": "Started after",
+        "duration": "Duration",
+        "seq": "#",
+        "event": "Event",
+        "subject": "Node or reason",
+        "at": "After"
+      },
+      "didNotFinish": "Did not finish",
+      "eventKinds": {
+        "started": "Run started",
+        "node_started": "Node started",
+        "node_finished": "Node finished",
+        "succeeded": "Run succeeded",
+        "failed": "Run failed"
+      },
+      "notRecorded": "Not recorded"
+    },
+    "stallRule": "A run still queued or running after {minutes} minutes is marked stalled, because the agent's own deadline would have stopped it by then."
+  },
+  "durations": {
+    "seconds": "{value} s",
+    "minutes": "{minutes} min {seconds} s"
   }
 }

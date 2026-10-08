@@ -144,7 +144,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | redirects the gated home to the landing when unauthenticated | `apps/operations/e2e/auth.spec.ts:44` |
 | security | labels the console credentials for an operator and carries no secondary links | `apps/operations/e2e/auth.spec.ts:49` |
 | security | signs in and reaches the gated operations home | `apps/operations/e2e/auth.spec.ts:65` |
-| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:76` |
+| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:77` |
 | a11y | renders the public landing with no accessibility violations | `apps/studio/e2e/auth.spec.ts:31` |
 | security | redirects the gated home to the landing when unauthenticated | `apps/studio/e2e/auth.spec.ts:44` |
 | security | carries no acknowledgement checkbox and enables sign-in immediately | `apps/studio/e2e/auth.spec.ts:56` |

@@ -2,7 +2,10 @@ import { COST_WINDOWS, type CostWindow } from '@artloupe/schemas/ops-cost';
 import { getTranslations } from 'next-intl/server';
 
 import { CostPanel } from '@/components/costs/cost-panel';
+import { RunHealthPanel } from '@/components/runs/run-health-panel';
+import { WindowNav } from '@/components/window-nav';
 import { fetchCostReport } from '@/lib/costs/fetch-cost-report';
+import { fetchRunHealth } from '@/lib/runs/fetch-runs';
 
 const DEFAULT_WINDOW: CostWindow = '7d';
 
@@ -17,7 +20,10 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   const th = await getTranslations('home');
   const requested = (await searchParams).window;
   const costWindow = isCostWindow(requested) ? requested : DEFAULT_WINDOW;
-  const result = await fetchCostReport(costWindow);
+  const [costs, runs] = await Promise.all([
+    fetchCostReport(costWindow),
+    fetchRunHealth(costWindow),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -27,8 +33,10 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{th('description')}</p>
       </section>
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">
-        <CostPanel costWindow={costWindow} result={result} />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
+        <WindowNav current={costWindow} />
+        <CostPanel result={costs} />
+        <RunHealthPanel result={runs} />
       </div>
     </div>
   );
