@@ -20,6 +20,7 @@ from artloupe.agent.inspiration_providers import ProviderUnavailable, painting, 
 from artloupe.agent.inspiration_rate_limit import RateLimiter
 from artloupe.agent.inspiration_routes import router
 from artloupe.auth.dependencies import get_http_client, require_token
+from artloupe.config import SecretUnavailable
 
 pytestmark = pytest.mark.trace(flow="inspiration.search", category="functionality")
 
@@ -230,6 +231,16 @@ async def test_stale_cache_survives_outage_but_not_beyond_seven_days(monkeypatch
     assert result.stale
     with pytest.raises(ProviderUnavailable):
         await cached_search(request, None, MemoryCache(700000))
+
+
+async def test_an_unreadable_pexels_key_is_an_outage_so_stale_results_survive(monkeypatch):
+    def unreadable():
+        raise SecretUnavailable("The secret file for PEXELS_API_KEY could not be read.")
+
+    monkeypatch.setattr(inspiration_providers, "get_pexels_api_key", unreadable)
+    request = SearchRequest(source="pexels", query="trees")
+    result = await cached_search(request, None, MemoryCache(90000))
+    assert result.stale
 
 
 async def test_cache_write_failure_does_not_fail_provider_result(monkeypatch):

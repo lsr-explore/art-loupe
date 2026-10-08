@@ -99,9 +99,13 @@ def get_settings() -> SecretSettings:
 
 
 def running_in_ci() -> bool:
-    """True under `APP_ENV=ci`, or when the runner says so. GitHub Actions sets `CI=true`."""
+    """True when the runner says so, or when `APP_ENV` resolves to `ci` from any source.
+
+    GitHub Actions sets `CI=true`. `APP_ENV` is checked through the settings rather than the
+    process environment alone, so `APP_ENV=ci` written into `python/.env` counts too.
+    """
     flagged = os.environ.get("CI", "").strip().lower() in {"1", "true", "yes"}
-    return flagged or os.environ.get("APP_ENV") == "ci"
+    return flagged or get_settings().app_env == "ci"
 
 
 def resolve_secret(
@@ -115,6 +119,10 @@ def resolve_secret(
     `None` lets an optional feature switch itself off. A secret that is configured but unusable
     (a missing file, an empty keychain item) raises instead, because that is a mistake to fix
     rather than a feature to skip.
+
+    The value is read on every call, never cached here. A caller that builds a long-lived client
+    or connection pool from it keeps the first value, so a rotated file reaches the Director
+    client and the database pools at the next restart.
     """
     settings = get_settings()
 

@@ -371,3 +371,13 @@ def test_pexels_is_free_and_not_refused_in_ci(
     (secrets_dir / "pexels_api_key").write_text("pexels-mounted\n")
     monkeypatch.setenv("CI", "true")
     assert get_pexels_api_key() == "pexels-mounted"
+
+
+def test_app_env_ci_written_into_an_env_file_also_refuses_paid_keys(
+    env_files: tuple[Path, Path], secrets_dir: Path
+) -> None:
+    """The guard reads the resolved setting, not only the process environment."""
+    (secrets_dir / "anthropic_api_key").write_text("sk-ant-mounted\n")
+    env_files[1].write_text("APP_ENV=ci\n")
+    with pytest.raises(PaidCallRefusedInCI):
+        get_anthropic_api_key()
