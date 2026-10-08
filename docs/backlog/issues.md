@@ -7,13 +7,13 @@ Snapshot of `lsr-explore/art-loupe` open issues taken **2026-10-07**.
 Descriptive only — this file reports what GitHub says. It carries no sequencing opinion;
 what each epic is **for** is in [`README.md`](./README.md).
 
-- Open issues: **34** — **2** epics, **12** filed under an epic, **20** unparented
+- Open issues: **35** — **2** epics, **12** filed under an epic, **21** unparented
 
 | Priority | Issues |
 | --- | --- |
 | P0 | 3 |
 | P1 | 3 |
-| P2 | 15 |
+| P2 | 16 |
 | P3 | 13 |
 | — | 0 |
 
@@ -73,6 +73,14 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | [#38](https://github.com/lsr-explore/art-loupe/issues/38) | studio: an unreadable insert response leaves an orphan project row | P3 | Backlog |
 | [#80](https://github.com/lsr-explore/art-loupe/issues/80) | studio: add Cleveland Museum of Art as a Get Inspired provider | P3 | Backlog |
 
+### packages
+
+| # | Title | Priority | Status |
+| --- | --- | --- | --- |
+| [#33](https://github.com/lsr-explore/art-loupe/issues/33) | packages: add @artloupe/schemas to entry and operations | P2 | Backlog |
+| [#68](https://github.com/lsr-explore/art-loupe/issues/68) | packages: make every @artloupe/schemas contract strict, matching extra=forbid | P2 | Backlog |
+| [#91](https://github.com/lsr-explore/art-loupe/issues/91) | packages: renew the Supabase access token instead of ending the session at expiry | P2 | Backlog |
+
 ### test
 
 | # | Title | Priority | Status |
@@ -80,13 +88,6 @@ Open issues with no epic parent, grouped by the `area:` prefix in their title.
 | [#36](https://github.com/lsr-explore/art-loupe/issues/36) | test: adopt vitest browser mode for layout-dependent assertions | P3 | Backlog |
 | [#48](https://github.com/lsr-explore/art-loupe/issues/48) | test: persistence tests count every row, so using the app locally breaks them | P3 | Backlog |
 | [#62](https://github.com/lsr-explore/art-loupe/issues/62) | test: apply the requirements §7 flow restructure to flows.json | P3 | Backlog |
-
-### packages
-
-| # | Title | Priority | Status |
-| --- | --- | --- | --- |
-| [#33](https://github.com/lsr-explore/art-loupe/issues/33) | packages: add @artloupe/schemas to entry and operations | P2 | Backlog |
-| [#68](https://github.com/lsr-explore/art-loupe/issues/68) | packages: make every @artloupe/schemas contract strict, matching extra=forbid | P2 | Backlog |
 
 ### agent
 
