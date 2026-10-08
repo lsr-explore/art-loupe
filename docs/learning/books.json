@@ -1,0 +1,31 @@
+{
+  "books": [
+    {
+      "id": "introduction-art",
+      "filename": "Introduction to Art.pdf",
+      "title": "Introduction to Art: Design, Context, and Meaning",
+      "author": "Pamela Sachant, Peggy Blood, Jeffery LeMieux, Rita Tekippe; University System of Georgia",
+      "url": "https://ungpressbooks.com/store/introduction-to-art/",
+      "license": "CC BY-SA 4.0 (original text; third-party material excluded)",
+      "historical": false
+    },
+    {
+      "id": "speed-drawing",
+      "filename": "The_Practice_and_Science_of_Drawing_by_Harold_Speed.3.epub",
+      "title": "The Practice and Science of Drawing",
+      "author": "Harold Speed",
+      "url": "https://www.gutenberg.org/ebooks/14264",
+      "license": "Public domain in the USA; Project Gutenberg license applies to branded edition",
+      "historical": true
+    },
+    {
+      "id": "parkhurst-oil",
+      "filename": "The_Painter_in_Oil_by_Daniel_Burleigh_Parkhurst.3.epub",
+      "title": "The Painter in Oil",
+      "author": "Daniel Burleigh Parkhurst",
+      "url": "https://www.gutenberg.org/ebooks/30877",
+      "license": "Public domain in the USA; Project Gutenberg license applies to branded edition",
+      "historical": true
+    }
+  ]
+}

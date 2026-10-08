@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 
 const HomePage = async () => {
   const th = await getTranslations('home');
+  const learning = await getTranslations('learning');
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
@@ -28,6 +29,12 @@ const HomePage = async () => {
           href="/get-inspired"
         >
           {th('getInspired')}
+        </Link>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-lg border border-foreground px-4 font-medium underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          href="/learn"
+        >
+          {learning('link')}
         </Link>
       </div>
     </div>

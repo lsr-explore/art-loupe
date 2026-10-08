@@ -45,6 +45,7 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
   }
 
   const tp = await getTranslations('project');
+  const learning = await getTranslations('learning');
 
   if (token.state === 'expired') {
     return (
@@ -116,6 +117,9 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
         <RunPanel projectId={project.projectId} initialRunId={project.latestRun?.runId ?? null} />
       </div>
 
+      <Link href="/learn" className="inline-flex min-h-11 items-center underline">
+        {learning('link')}
+      </Link>
       <div>
         <Link className="text-sm underline underline-offset-4" href="/projects/new">
           {tp('startAnother')}

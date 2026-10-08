@@ -36,20 +36,20 @@ exists, the detail tells you what it covers.
 | **ops** | | 5 | 8 | – | – | 11 | – | 47 | **71** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 63 | 1 | – | 3 | 1 | 68 | 136 |
+| [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 66 | 1 | – | 3 | 1 | 68 | 139 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 107 | – | – | – | – | 13 | 125 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 26 | – | – | 26 |
 | [`platform.shell`](flows/platform.shell.md) | P2 | 34 | – | – | – | – | – | 110 | 144 |
-| **platform** | | 39 | 170 | 1 | – | 29 | 1 | 191 | **431** |
-| `retrieval.grounding` | P0 | – | – | – | – | – | – | – | **none** |
-| **retrieval** | | – | – | – | – | – | – | – | **0** |
+| **platform** | | 39 | 173 | 1 | – | 29 | 1 | 191 | **434** |
+| [`retrieval.grounding`](flows/retrieval.grounding.md) | P0 | 2 | 8 | – | 33 | 8 | – | 4 | 55 |
+| **retrieval** | | 2 | 8 | – | 33 | 8 | – | 4 | **55** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 17 | – | 55 | – | – | – | 72 |
 | **safety** | | – | 17 | – | 55 | – | – | – | **72** |
-| **all flows** | | **66** | **275** | **1** | **66** | **107** | **5** | **550** | **1070** |
+| **all flows** | | **68** | **286** | **1** | **99** | **115** | **5** | **554** | **1128** |
 
 ## Gaps
 
-- **5 flow(s) with no covering test:** `retrieval.grounding`, `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
+- **4 flow(s) with no covering test:** `critique.alignment`, `critique.formal-analysis`, `canvas.session-plan`, `palette.extraction`
 - **`critique.no-generation`** (P0) has tests but none categorised `a11y`.
 - **`safety.untrusted-input`** (P0) has tests but none categorised `a11y`.
 
@@ -82,7 +82,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 438 | 0 | 438 |
-| Vitest | 592 | 0 | 592 |
-| Playwright | 40 | 0 | 40 |
-| **All** | **1070** | **0** | **1070** |
+| pytest | 474 | 0 | 474 |
+| Vitest | 613 | 0 | 613 |
+| Playwright | 41 | 0 | 41 |
+| **All** | **1128** | **0** | **1128** |

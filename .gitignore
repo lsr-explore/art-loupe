@@ -93,3 +93,7 @@ __pycache__/
 
 # temp references
 docs/temp-references
+
+# Generated learning corpus and vectors; source books remain outside the repository.
+python/learning-corpus*/
+python/learning-eval-reports/

@@ -4,6 +4,7 @@ import type { InspirationRequest } from '@artloupe/schemas/inspiration';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import { Link } from '@/i18n/navigation';
 import { type ResultSort, visibleResults } from '@/lib/inspiration/results';
 
 import { InspirationResults } from './inspiration-results';
@@ -41,6 +42,7 @@ const worthAutoSearch = (draft: InspirationRequest) =>
  * when a request runs.
  */
 export const InspirationSearch = () => {
+  const learning = useTranslations('learning');
   const translate = useTranslations('inspiration');
   const locale = useLocale();
   const { draft, setDraft, committed, commit, replace } = useSearchInput(initial, {
@@ -78,6 +80,9 @@ export const InspirationSearch = () => {
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8 sm:px-6">
+      <Link href="/learn" className="inline-flex min-h-11 items-center underline">
+        {learning('link')}
+      </Link>
       <header className="space-y-2">
         <h1 className="text-3xl font-bold">{translate('title')}</h1>
         <p>{translate('description')}</p>

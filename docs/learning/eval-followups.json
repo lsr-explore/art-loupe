@@ -1,0 +1,115 @@
+{
+  "cases": [
+    {
+      "id": "hatching-followup",
+      "category": "technique",
+      "question": "How do I practise it?",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Answer hatching/crosshatching practice using cited line/tone evidence; infer it from history, never use the assistant turn as evidence.",
+      "gold": [
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "",
+          "text_contains": ["hatching"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "What are hatching and cross hatching?"
+        },
+        {
+          "role": "assistant",
+          "content": "We discussed hatching and crosshatching."
+        }
+      ]
+    },
+    {
+      "id": "short-topic-switch",
+      "category": "technique",
+      "question": "What is balance?",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Address balance as the current topic, not glazing. Cite compositional balance evidence.",
+      "gold": [
+        {
+          "book_id": "parkhurst-oil",
+          "locator_contains": "COMPOSITION",
+          "text_contains": ["balance"]
+        },
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "PDF page 72",
+          "text_contains": ["balance", "visual"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "What is glazing in oil painting?"
+        }
+      ]
+    },
+    {
+      "id": "spanish-hatching-followup",
+      "category": "technique",
+      "question": "¿Cómo puedo practicar?",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Answer in Spanish with a cited hatching/crosshatching practice exercise. Infer the subject from the previous user question; history is context, never evidence.",
+      "gold": [
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "",
+          "text_contains": ["hatching"]
+        },
+        {
+          "book_id": "speed-drawing",
+          "locator_contains": "IX MASS DRAWING: PRACTICAL",
+          "text_contains": ["hatching", "parallel lines"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "¿Qué son el rayado y el rayado cruzado en dibujo?"
+        }
+      ],
+      "locale": "es"
+    },
+    {
+      "id": "repeated-hatching-followup",
+      "category": "technique",
+      "question": "More examples please",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Answer hatching/crosshatching practice using cited line/tone evidence; infer it from history, never use the assistant turn as evidence.",
+      "gold": [
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "",
+          "text_contains": ["hatching"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "What are hatching and cross hatching?"
+        },
+        {
+          "role": "assistant",
+          "content": "We discussed hatching and crosshatching."
+        },
+        {
+          "role": "user",
+          "content": "How can I practice?"
+        },
+        {
+          "role": "assistant",
+          "content": "We discussed a hatching practice exercise."
+        }
+      ]
+    }
+  ]
+}

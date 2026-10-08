@@ -5,6 +5,7 @@ from artloupe.config.keys import (
     SecretSettings,
     SecretUnavailable,
     get_anthropic_api_key,
+    get_openai_api_key,
     get_settings,
 )
 
@@ -13,5 +14,6 @@ __all__ = [
     "SecretSettings",
     "SecretUnavailable",
     "get_anthropic_api_key",
+    "get_openai_api_key",
     "get_settings",
 ]

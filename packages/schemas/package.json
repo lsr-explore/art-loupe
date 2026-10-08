@@ -2,7 +2,7 @@
   "name": "@artloupe/schemas",
   "version": "0.0.0",
   "private": true,
-  "description": "Art Loupe shared TS contracts — Zod schemas + inferred types mirroring the Python `artloupe-schemas` Pydantic models. Hand-authored now; codegen-from-Pydantic (committed output + CI drift-check) is the planned follow-up.",
+  "description": "Art Loupe shared TS contracts \u2014 Zod schemas + inferred types mirroring the Python `artloupe-schemas` Pydantic models. Hand-authored now; codegen-from-Pydantic (committed output + CI drift-check) is the planned follow-up.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -11,7 +11,8 @@
     "./image-limits": "./src/image-limits.ts",
     "./intent-values": "./src/intent-values.ts",
     "./inspiration": "./src/inspiration.ts",
-    "./ops-cost": "./src/ops-cost.ts"
+    "./ops-cost": "./src/ops-cost.ts",
+    "./learning": "./src/learning.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

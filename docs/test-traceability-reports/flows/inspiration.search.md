@@ -54,13 +54,13 @@ Inspiration search, provider eligibility, caching, and result controls
 | security | keeps rate limits distinct | `apps/studio/src/app/api/inspiration/route.test.ts:54` |
 | security | passes the artist | `apps/studio/src/app/api/inspiration/route.test.ts:61` |
 | security | reports a spent provider quota as an outage | `apps/studio/src/app/api/inspiration/route.test.ts:67` |
-| functionality | applies the chosen layout to the result list without a new request | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:39` |
-| functionality | names the artist when only a shortened Met artist is held back | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:55` |
-| functionality | labels loaded results when a short edit is held back from auto-search | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:71` |
-| functionality | loads metadata, filters locally, and displays only source-specific controls | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:89` |
-| functionality | cancels an obsolete request and does not let it overwrite current results | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:108` |
-| functionality | retains existing results when loading another batch fails | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:129` |
-| functionality | announces cached and partial data instead of claiming completeness | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:142` |
+| functionality | applies the chosen layout to the result list without a new request | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:44` |
+| functionality | names the artist when only a shortened Met artist is held back | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:60` |
+| functionality | labels loaded results when a short edit is held back from auto-search | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:76` |
+| functionality | loads metadata, filters locally, and displays only source-specific controls | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:94` |
+| functionality | cancels an obsolete request and does not let it overwrite current results | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:113` |
+| functionality | retains existing results when loading another batch fails | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:134` |
+| functionality | announces cached and partial data instead of claiming completeness | `apps/studio/src/components/inspiration/inspiration-search.test.tsx:147` |
 | performance | commits only the final keystroke and submit bypasses the delay | `apps/studio/src/components/inspiration/use-search-input.test.tsx:9` |
 | performance | typing a draft the caller rejects never commits, but submit still does | `apps/studio/src/components/inspiration/use-search-input.test.tsx:25` |
 | performance | source changes replace both values immediately | `apps/studio/src/components/inspiration/use-search-input.test.tsx:38` |
