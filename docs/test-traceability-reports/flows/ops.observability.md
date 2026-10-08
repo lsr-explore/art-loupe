@@ -13,11 +13,11 @@ Cost, latency, evaluation health, and corpus ingestion
 | **Severity** | P2 |
 | **Why** | An internal surface. A wrong number here misleads the operator, not the artist. |
 | **Surfaces** | `apps/operations` · `python/services/agent` · `packages/schemas` · `python/libs/metering` |
-| **Tests** | 110 (2 parametrized) |
-| **Covered** | a11y 10 · security 10 · privacy 1 · data 16 · functionality 73 |
+| **Tests** | 113 (2 parametrized) |
+| **Covered** | a11y 10 · security 10 · privacy 1 · data 16 · functionality 76 |
 | **Not covered** | safety · performance |
 
-## pytest — 45
+## pytest — 46
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -62,12 +62,13 @@ Cost, latency, evaluation health, and corpus ingestion
 | data | test_shared_typescript_python_run_fixtures | `python/services/agent/tests/test_ops_runs.py:108` |
 | data | test_run_health_counts_reasons_and_durations | `python/services/agent/tests/test_ops_runs.py:262` |
 | functionality | test_a_run_past_its_deadline_is_stalled_whatever_the_window | `python/services/agent/tests/test_ops_runs.py:289` |
-| data | test_a_run_carries_its_ledger_once_it_has_one | `python/services/agent/tests/test_ops_runs.py:300` |
-| functionality | test_the_drill_down_pairs_nodes_and_names_where_it_stopped | `python/services/agent/tests/test_ops_runs.py:310` |
-| functionality | test_an_unknown_run_is_not_found | `python/services/agent/tests/test_ops_runs.py:328` |
-| privacy | test_the_reader_cannot_see_a_runs_result_or_its_owner | `python/services/agent/tests/test_ops_runs.py:336` |
+| data | test_a_run_carries_its_ledger_once_it_has_one | `python/services/agent/tests/test_ops_runs.py:301` |
+| functionality | test_the_drill_down_pairs_nodes_and_names_where_it_stopped | `python/services/agent/tests/test_ops_runs.py:311` |
+| functionality | test_an_unknown_run_is_not_found | `python/services/agent/tests/test_ops_runs.py:329` |
+| privacy | test_the_reader_cannot_see_a_runs_result_or_its_owner | `python/services/agent/tests/test_ops_runs.py:337` |
+| functionality | test_steps_pair_a_finish_only_with_its_own_node | `python/services/agent/tests/test_ops_runs.py:361` |
 
-## Vitest — 65
+## Vitest — 67
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -95,21 +96,23 @@ Cost, latency, evaluation health, and corpus ingestion
 | a11y | has no accessibility violations with data | `apps/operations/src/components/costs/cost-panel.test.tsx:85` |
 | a11y | has no accessibility violations when unavailable | `apps/operations/src/components/costs/cost-panel.test.tsx:93` |
 | functionality | marks the node that never finished in words | `apps/operations/src/components/runs/run-detail.test.tsx:19` |
-| functionality | shows the reason and the detail the artist saw | `apps/operations/src/components/runs/run-detail.test.tsx:28` |
-| functionality | lists every event in order, the failure with its reason | `apps/operations/src/components/runs/run-detail.test.tsx:34` |
-| functionality | says a run with no ledger has no cost yet | `apps/operations/src/components/runs/run-detail.test.tsx:42` |
-| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-detail.test.tsx:48` |
+| functionality | says a step whose start was lost has no recorded start | `apps/operations/src/components/runs/run-detail.test.tsx:28` |
+| functionality | shows the reason and the detail the artist saw | `apps/operations/src/components/runs/run-detail.test.tsx:53` |
+| functionality | lists every event in order, the failure with its reason | `apps/operations/src/components/runs/run-detail.test.tsx:59` |
+| functionality | says a run with no ledger has no cost yet | `apps/operations/src/components/runs/run-detail.test.tsx:67` |
+| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-detail.test.tsx:73` |
 | functionality | names each failure reason and the node it stopped in | `apps/operations/src/components/runs/run-health-panel.test.tsx:36` |
 | functionality | shows an unknown reason code as it is, and a stop between nodes in words | `apps/operations/src/components/runs/run-health-panel.test.tsx:41` |
 | functionality | lists stalled runs in their own table, tagged in words | `apps/operations/src/components/runs/run-health-panel.test.tsx:46` |
-| functionality | links each run to its drill-down | `apps/operations/src/components/runs/run-health-panel.test.tsx:53` |
-| functionality | says a finished run has no ledger yet rather than showing $0.00 | `apps/operations/src/components/runs/run-health-panel.test.tsx:62` |
-| functionality | formats durations in seconds and minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:71` |
-| functionality | states the stall rule in minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:77` |
-| functionality | says so when the window is quiet | `apps/operations/src/components/runs/run-health-panel.test.tsx:82` |
-| functionality | explains a failed read without a stall rule it does not have | `apps/operations/src/components/runs/run-health-panel.test.tsx:88` |
-| a11y | does not rely on color for status | `apps/operations/src/components/runs/run-health-panel.test.tsx:95` |
-| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-health-panel.test.tsx:104` |
+| functionality | counts every stalled run and says when the list is shortened | `apps/operations/src/components/runs/run-health-panel.test.tsx:53` |
+| functionality | links each run to its drill-down | `apps/operations/src/components/runs/run-health-panel.test.tsx:60` |
+| functionality | says a finished run has no ledger yet rather than showing $0.00 | `apps/operations/src/components/runs/run-health-panel.test.tsx:69` |
+| functionality | formats durations in seconds and minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:78` |
+| functionality | states the stall rule in minutes | `apps/operations/src/components/runs/run-health-panel.test.tsx:84` |
+| functionality | says so when the window is quiet | `apps/operations/src/components/runs/run-health-panel.test.tsx:89` |
+| functionality | explains a failed read without a stall rule it does not have | `apps/operations/src/components/runs/run-health-panel.test.tsx:95` |
+| a11y | does not rely on color for status | `apps/operations/src/components/runs/run-health-panel.test.tsx:102` |
+| a11y | has no accessibility violations | `apps/operations/src/components/runs/run-health-panel.test.tsx:111` |
 | functionality | marks the current window and links the others | `apps/operations/src/components/window-nav.test.tsx:32` |
 | a11y | has no accessibility violations | `apps/operations/src/components/window-nav.test.tsx:46` |
 | data | states a fully priced sum as the cost | `apps/operations/src/lib/costs/cost-figure.test.ts:13` |

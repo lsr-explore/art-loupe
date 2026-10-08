@@ -25,6 +25,31 @@ describe('RunDetailView', () => {
     expect(route).toHaveTextContent('1 s');
   });
 
+  it('says a step whose start was lost has no recorded start', () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages} timeZone="UTC">
+        <RunDetailView
+          detail={{
+            ...failedDetail,
+            steps: [
+              {
+                node: 'survey',
+                started_at: null,
+                finished_at: '2026-10-07T11:00:03Z',
+                duration_ms: null,
+              },
+            ],
+          }}
+        />
+      </NextIntlClientProvider>,
+    );
+    const steps = screen.getByRole('table', { name: 'Node steps' });
+    const survey = within(steps).getByRole('rowheader', { name: 'survey' }).closest('tr');
+    expect(survey).toHaveTextContent('Not recorded');
+    // It did finish; only its start is missing.
+    expect(survey).not.toHaveTextContent('Did not finish');
+  });
+
   it('shows the reason and the detail the artist saw', () => {
     renderDetail();
     expect(screen.getByText('Deadline exceeded', { selector: 'dd' })).toBeInTheDocument();

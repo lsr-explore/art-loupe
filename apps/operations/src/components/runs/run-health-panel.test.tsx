@@ -50,6 +50,13 @@ describe('RunHealthPanel', () => {
     expect(row).toHaveTextContent('Stalled');
   });
 
+  it('counts every stalled run and says when the list is shortened', () => {
+    renderPanel({ status: 'ok', data: { ...healthReport, stalled_count: 80 } });
+    const stat = screen.getByRole('heading', { name: 'Stalled' }).closest('[data-slot="card"]');
+    expect(stat).toHaveTextContent('80');
+    expect(screen.getByText('Showing the 1 oldest of 80 stalled runs.')).toBeInTheDocument();
+  });
+
   it('links each run to its drill-down', () => {
     renderPanel({ status: 'ok', data: healthReport });
     const table = screen.getByRole('table', { name: 'Recent runs' });

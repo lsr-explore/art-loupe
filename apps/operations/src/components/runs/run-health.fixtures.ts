@@ -55,6 +55,7 @@ export const healthReport: RunHealthReport = {
     { reason: 'deadline_exceeded', failed_node: 'plates', runs: 1 },
     { reason: 'brand_new_reason', failed_node: null, runs: 1 },
   ],
+  stalled_count: 1,
   stalled: [stuckRun],
   recent_runs: [failedRun, unknownReasonRun, succeededRun],
 };
@@ -66,6 +67,7 @@ export const quietReport: RunHealthReport = {
   queue_wait: { runs: 0, p50_ms: null, p95_ms: null },
   run_time: { runs: 0, p50_ms: null, p95_ms: null },
   failures: [],
+  stalled_count: 0,
   stalled: [],
   recent_runs: [],
 };

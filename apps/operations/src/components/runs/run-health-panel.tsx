@@ -195,7 +195,7 @@ export const RunHealthPanel = ({ result }: { result: OpsResult<RunHealthReport> 
 
       {result.status !== 'ok' ? (
         <OpsStateMessage status={result.status} />
-      ) : report && report.run_count === 0 && report.stalled.length === 0 ? (
+      ) : report && report.run_count === 0 && report.stalled_count === 0 ? (
         <p className="rounded-md border p-4 text-sm">{tr('empty')}</p>
       ) : report ? (
         <>
@@ -210,12 +210,22 @@ export const RunHealthPanel = ({ result }: { result: OpsResult<RunHealthReport> 
                 {format.number(report.status_counts.queued + report.status_counts.running)}
               </Stat>
               <Stat label={tr('stats.stalled')} hint={tr('stats.stalledHint')}>
-                {format.number(report.stalled.length)}
+                {format.number(report.stalled_count)}
               </Stat>
             </div>
           </section>
           {report.stalled.length > 0 ? (
-            <RunTable id="runs-stalled" caption={tr('tables.stalled')} runs={report.stalled} />
+            <div className="flex flex-col gap-2">
+              <RunTable id="runs-stalled" caption={tr('tables.stalled')} runs={report.stalled} />
+              {report.stalled_count > report.stalled.length ? (
+                <p className="text-sm text-muted-foreground">
+                  {tr('tables.stalledTruncated', {
+                    shown: report.stalled.length,
+                    total: report.stalled_count,
+                  })}
+                </p>
+              ) : null}
+            </div>
           ) : null}
           <Durations report={report} />
           {report.failures.length > 0 ? <Failures report={report} /> : null}

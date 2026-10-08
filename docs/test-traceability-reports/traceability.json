@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 448,
-      "vitest": 621,
+      "pytest": 449,
+      "vitest": 623,
       "playwright": 40,
-      "all": 1109
+      "all": 1112
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 448,
-      "vitest": 621,
+      "pytest": 449,
+      "vitest": 623,
       "playwright": 40,
-      "all": 1109
+      "all": 1112
     }
   },
   "by_flow": {
@@ -271,14 +271,14 @@
         "safety": 0,
         "data": 16,
         "performance": 0,
-        "functionality": 73
+        "functionality": 76
       },
       "runners": {
-        "pytest": 45,
-        "vitest": 65,
+        "pytest": 46,
+        "vitest": 67,
         "playwright": 0
       },
-      "total": 110,
+      "total": 113,
       "parametrized": 2
     },
     "palette.extraction": {
@@ -891,34 +891,48 @@
     },
     {
       "id": "apps/operations/src/components/runs/run-detail.test.tsx:28",
+      "name": "says a step whose start was lost has no recorded start",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/runs/run-detail.test.tsx:53",
       "name": "shows the reason and the detail the artist saw",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-detail.test.tsx:34",
+      "id": "apps/operations/src/components/runs/run-detail.test.tsx:59",
       "name": "lists every event in order, the failure with its reason",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-detail.test.tsx:42",
+      "id": "apps/operations/src/components/runs/run-detail.test.tsx:67",
       "name": "says a run with no ledger has no cost yet",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-detail.test.tsx:48",
+      "id": "apps/operations/src/components/runs/run-detail.test.tsx:73",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "a11y"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:104",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:102",
+      "name": "does not rely on color for status",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:111",
       "name": "has no accessibility violations",
       "runner": "vitest",
       "flow": "ops.observability",
@@ -947,52 +961,52 @@
     },
     {
       "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:53",
+      "name": "counts every stalled run and says when the list is shortened",
+      "runner": "vitest",
+      "flow": "ops.observability",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:60",
       "name": "links each run to its drill-down",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:62",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:69",
       "name": "says a finished run has no ledger yet rather than showing $0.00",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:71",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:78",
       "name": "formats durations in seconds and minutes",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:77",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:84",
       "name": "states the stall rule in minutes",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:82",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:89",
       "name": "says so when the window is quiet",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:88",
+      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:95",
       "name": "explains a failed read without a stall rule it does not have",
       "runner": "vitest",
       "flow": "ops.observability",
       "category": "functionality"
-    },
-    {
-      "id": "apps/operations/src/components/runs/run-health-panel.test.tsx:95",
-      "name": "does not rely on color for status",
-      "runner": "vitest",
-      "flow": "ops.observability",
-      "category": "a11y"
     },
     {
       "id": "apps/operations/src/components/ui/error-boundary.test.tsx:15",
@@ -7687,32 +7701,39 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_runs.py:300",
+      "id": "python/services/agent/tests/test_ops_runs.py:301",
       "name": "test_a_run_carries_its_ledger_once_it_has_one",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "data"
     },
     {
-      "id": "python/services/agent/tests/test_ops_runs.py:310",
+      "id": "python/services/agent/tests/test_ops_runs.py:311",
       "name": "test_the_drill_down_pairs_nodes_and_names_where_it_stopped",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_runs.py:328",
+      "id": "python/services/agent/tests/test_ops_runs.py:329",
       "name": "test_an_unknown_run_is_not_found",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_ops_runs.py:336",
+      "id": "python/services/agent/tests/test_ops_runs.py:337",
       "name": "test_the_reader_cannot_see_a_runs_result_or_its_owner",
       "runner": "pytest",
       "flow": "ops.observability",
       "category": "privacy"
+    },
+    {
+      "id": "python/services/agent/tests/test_ops_runs.py:361",
+      "name": "test_steps_pair_a_finish_only_with_its_own_node",
+      "runner": "pytest",
+      "flow": "ops.observability",
+      "category": "functionality"
     },
     {
       "id": "python/services/agent/tests/test_ops_runs.py:68",

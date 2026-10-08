@@ -78,6 +78,8 @@ class RunHealthReport(_Strict):
     queue_wait: DurationStats
     run_time: DurationStats
     failures: list[FailureGroup]
+    # Every stalled run, whatever the window. `stalled` lists at most RUN_LIST_LIMIT of them.
+    stalled_count: int = Field(ge=0)
     # Not limited to the window: a run stuck since last week still matters. Oldest first.
     stalled: list[RunSummary] = Field(max_length=RUN_LIST_LIMIT)
     # Newest first.
@@ -95,10 +97,15 @@ class RunEvent(_Strict):
 
 
 class NodeStep(_Strict):
-    """One node's execution, paired from its start and finish events."""
+    """One node's execution, paired from its start and finish events by node name.
+
+    Progress events are best-effort, so either end can be missing. A start with no finish is
+    the node that was running when the run stopped, or one whose finish was lost; a finish with
+    no start is one whose start was lost.
+    """
 
     node: str
-    started_at: AwareDatetime
+    started_at: AwareDatetime | None
     # Null for a node that never finished: the one that was running when the run stopped.
     finished_at: AwareDatetime | None
     duration_ms: int | None = Field(ge=0)

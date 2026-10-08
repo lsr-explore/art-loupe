@@ -90,15 +90,19 @@ export const RunDetailView = ({ detail }: { detail: RunDetail }) => {
                 {step.node}
               </TableHead>
               <TableCell className={NUMERIC}>
-                {duration(spanMs(run.created_at, step.started_at) ?? 0)}
+                {step.started_at === null
+                  ? td('notRecorded')
+                  : duration(spanMs(run.created_at, step.started_at) ?? 0)}
               </TableCell>
               <TableCell className={NUMERIC}>
-                {step.duration_ms === null ? (
+                {step.duration_ms !== null ? (
+                  duration(step.duration_ms)
+                ) : step.finished_at === null ? (
                   <span data-step="unfinished" className="font-semibold">
                     {td('didNotFinish')}
                   </span>
                 ) : (
-                  duration(step.duration_ms)
+                  td('notRecorded')
                 )}
               </TableCell>
             </TableRow>

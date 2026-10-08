@@ -155,6 +155,13 @@ async def build_run_health(
         stalled = [_summary(row) for row in await cur.fetchall()]
 
         await cur.execute(
+            "select count(*)::int as stalled from public.runs "
+            "where status in ('queued', 'running') and created_at < %(stall_before)s",
+            params,
+        )
+        stalled_count = (await cur.fetchone())["stalled"]
+
+        await cur.execute(
             f"{_SUMMARY} where r.created_at >= %(since)s "
             "order by r.created_at desc, r.id limit %(limit)s",
             params,
@@ -174,13 +181,19 @@ async def build_run_health(
         queue_wait=_duration(durations, "wait"),
         run_time=_duration(durations, "run"),
         failures=failures,
+        stalled_count=stalled_count,
         stalled=stalled,
         recent_runs=recent,
     )
 
 
 def _steps(events: list[RunEvent]) -> list[NodeStep]:
-    """Pair each node's start with its finish. Nodes run one at a time, so order pairs them."""
+    """Pair each node's start with its own finish. Nodes run one at a time, in event order.
+
+    A finish closes the open step only when it names the same node. Otherwise the open step is
+    recorded as unfinished and the finish becomes a step of its own, so a lost progress event
+    can never put one node's time on another.
+    """
     steps: list[NodeStep] = []
     open_step: RunEvent | None = None
     for event in events:
@@ -188,8 +201,20 @@ def _steps(events: list[RunEvent]) -> list[NodeStep]:
             if open_step is not None:
                 steps.append(_step(open_step, None))
             open_step = event
-        elif event.kind == "node_finished" and open_step is not None:
-            steps.append(_step(open_step, event))
+        elif event.kind == "node_finished":
+            if open_step is not None and open_step.node == event.node:
+                steps.append(_step(open_step, event))
+            else:
+                if open_step is not None:
+                    steps.append(_step(open_step, None))
+                steps.append(
+                    NodeStep(
+                        node=event.node or "unknown",
+                        started_at=None,
+                        finished_at=event.created_at,
+                        duration_ms=None,
+                    )
+                )
             open_step = None
     if open_step is not None:
         steps.append(_step(open_step, None))

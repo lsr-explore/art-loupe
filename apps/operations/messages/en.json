@@ -106,7 +106,8 @@
       "recentRuns": "Recent runs",
       "truncated": "Showing the {shown} most recent of {total} runs.",
       "betweenNodes": "Between nodes",
-      "noCost": "No ledger yet"
+      "noCost": "No ledger yet",
+      "stalledTruncated": "Showing the {shown} oldest of {total} stalled runs."
     },
     "columns": {
       "run": "Run",
@@ -168,7 +169,8 @@
         "node_finished": "Node finished",
         "succeeded": "Run succeeded",
         "failed": "Run failed"
-      }
+      },
+      "notRecorded": "Not recorded"
     },
     "stallRule": "A run still queued or running after {minutes} minutes is marked stalled, because the agent's own deadline would have stopped it by then."
   },

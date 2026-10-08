@@ -21,8 +21,8 @@ from psycopg.types.json import Jsonb
 
 from artloupe.agent import ops_routes
 from artloupe.agent.ops_db import OPS_ROLE, OpsDatabaseUnavailable
-from artloupe.agent.ops_runs import RunNotFound, build_run_detail, build_run_health
-from artloupe.agent.ops_runs_models import RunDetail, RunHealthReport
+from artloupe.agent.ops_runs import RunNotFound, _steps, build_run_detail, build_run_health
+from artloupe.agent.ops_runs_models import RunDetail, RunEvent, RunHealthReport
 from artloupe.auth.config import AuthSettings, get_settings
 from artloupe.auth.dependencies import get_http_client, require_token
 
@@ -292,6 +292,7 @@ async def test_a_run_past_its_deadline_is_stalled_whatever_the_window(
     report = await build_run_health(ledger, "24h", now=NOW)
 
     assert [r.run_id for r in report.stalled] == [seeded["stuck"]]
+    assert report.stalled_count == 1
     assert report.stalled[0].stalled
     assert not next(r for r in report.recent_runs if r.run_id == seeded["running"]).stalled
 
@@ -344,3 +345,33 @@ async def test_the_reader_cannot_see_a_runs_result_or_its_owner(
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
         async with ledger.transaction():
             await ledger.execute("select count(*) from public.projects")
+
+
+def _event(seq: int, kind: str, node: str | None = None) -> RunEvent:
+    return RunEvent(
+        seq=seq,
+        kind=kind,
+        node=node,
+        reason=None,
+        created_at=NOW + timedelta(seconds=seq),
+        offset_ms=seq * 1000,
+    )
+
+
+def test_steps_pair_a_finish_only_with_its_own_node() -> None:
+    """Route's finish and plates' start were lost; plates' finish must not close route."""
+    steps = _steps(
+        [
+            _event(1, "started"),
+            _event(2, "node_started", "route"),
+            _event(5, "node_finished", "plates"),
+            _event(6, "node_started", "direct"),
+            _event(8, "node_finished", "direct"),
+        ]
+    )
+
+    assert [(s.node, s.started_at is not None, s.duration_ms) for s in steps] == [
+        ("route", True, None),
+        ("plates", False, None),
+        ("direct", True, 2000),
+    ]

@@ -106,7 +106,8 @@
       "recentRuns": "Ejecuciones recientes",
       "truncated": "Se muestran las {shown} más recientes de {total} ejecuciones.",
       "betweenNodes": "Entre nodos",
-      "noCost": "Aún sin registro"
+      "noCost": "Aún sin registro",
+      "stalledTruncated": "Se muestran las {shown} más antiguas de {total} ejecuciones estancadas."
     },
     "columns": {
       "run": "Ejecución",
@@ -168,7 +169,8 @@
         "node_finished": "Nodo terminado",
         "succeeded": "Ejecución completada",
         "failed": "Ejecución fallida"
-      }
+      },
+      "notRecorded": "Sin registrar"
     },
     "stallRule": "Una ejecución que sigue en cola o en curso después de {minutes} minutos se marca como estancada, porque el propio límite del agente ya la habría detenido."
   },

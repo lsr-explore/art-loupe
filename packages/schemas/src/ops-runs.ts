@@ -62,6 +62,7 @@ export const runHealthReportSchema = z
         })
         .strict(),
     ),
+    stalled_count: count,
     stalled: z.array(runSummarySchema).max(50),
     recent_runs: z.array(runSummarySchema).max(50),
   })
@@ -87,7 +88,7 @@ export const runDetailSchema = z
       z
         .object({
           node: z.string(),
-          started_at: timestamp,
+          started_at: timestamp.nullable(),
           finished_at: timestamp.nullable(),
           duration_ms: count.nullable(),
         })
