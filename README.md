@@ -161,14 +161,132 @@ To run the studio **without Docker**, set `AUTH_PROVIDER=demo` in
 `apps/studio/.env.local` and sign in with the demo credentials instead. Everything except
 Supabase Auth works unchanged.
 
-The Python workspace bootstraps separately, and only if you're working in it:
+### The Python agent
+
+The apps run without the agent. The studio falls back to committed fixtures, and the
+operations panels say their data is unavailable. Real runs, run health, cost and the
+learning assistant all need the agent. These steps start it.
+
+#### 1. Install the workspace
 
 ```sh
-uv sync --all-packages --directory python   # install the workspace
+uv sync --all-packages --directory python
 uv run --directory python poe check         # ruff format --check + ruff check + pytest
 ```
 
-Its own tasks and conventions live in [`python/README.md`](./python/README.md).
+#### 2. Write `python/.env`
+
+```sh
+cp python/.env.example python/.env
+```
+
+Uncomment and set these lines:
+
+```sh
+APP_ENV=local
+ARTLOUPE_KEYCHAIN_SERVICE=<keychain service>
+ARTLOUPE_ANTHROPIC_KEYCHAIN_ACCOUNT=<account of the Anthropic item>
+ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT=<account of the OpenAI item>
+ARTLOUPE_RUN_LOG=postgres        # the studio streams runs from public.runs
+ARTLOUPE_METERING=postgres       # the cost panel reads public.run_node_metrics
+```
+
+The file holds keychain coordinates, never a key. A key written into it is ignored.
+
+Not every setting is read from this file. Each one has its own loader:
+
+| Setting | Where it must be set |
+| --- | --- |
+| Keychain coordinates and `APP_ENV` | `python/.env` or `python/.env.local`, read from a fixed path |
+| `ARTLOUPE_RUN_LOG`, `ARTLOUPE_METERING`, `DATABASE_URL`, auth settings | `python/.env` only, and only when the agent starts in `python/`, as `uv run --directory python` does |
+| `ARTLOUPE_OPS_DATABASE_URL`, `ARTLOUPE_LEARNING_CORPUS` | The shell environment only. Neither env file is read for these. |
+
+#### 3. Put the provider keys in the keychain
+
+Locally, the Anthropic and OpenAI keys come from the macOS login keychain. Both items share
+one service and differ by account. Store each one once:
+
+```sh
+security add-generic-password -s <service> -a <account> -w     # prompts for the key
+security add-generic-password -U -s <service> -a <account> -w  # -U replaces an existing item
+```
+
+Ending the command at `-w` makes `security` prompt for the key, so the key never lands in
+shell history.
+
+To check that an item exists without printing the key:
+
+```sh
+security find-generic-password -s <service> -a <account>
+```
+
+It prints the item's attributes, or "The specified item could not be found" and exit code 44.
+Adding `-w` prints the key itself, so use it only when you need the value.
+
+To list every account stored under a service, without printing any key:
+
+```sh
+security dump-keychain | grep -B15 '"svce"<blob>="<service>"' | grep '"acct"'
+```
+
+Exporting `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` in the shell overrides the keychain.
+Anthropic is required for runs and learning answers. OpenAI is needed only for learning
+embeddings. Without OpenAI, the learning assistant falls back to keyword search.
+
+To confirm both keys authenticate, without generating anything:
+
+```sh
+uv run --directory python --all-packages python -m artloupe.agent.learning.cli verify
+```
+
+#### 4. Build the learning corpus (once)
+
+The learning assistant answers from three books, which live outside the repo in
+`../../reference-docs/books`. The generated corpus is gitignored, so every checkout builds
+its own. Run these commands from `python/`:
+
+```sh
+uv run --all-packages python -m artloupe.agent.learning.cli ingest \
+  --books /absolute/path/to/reference-docs/books \
+  --manifest ../docs/learning/books.json --output learning-corpus
+
+# Optional, and it spends money: OpenAI embeddings for semantic and Spanish retrieval.
+uv run --all-packages python -m artloupe.agent.learning.cli embed \
+  --corpus learning-corpus --allow-paid
+```
+
+Skip this step if you don't need the learning assistant. The agent starts without a corpus.
+[`docs/learning/README.md`](./docs/learning/README.md) covers the design and the evals.
+
+#### 5. Start the agent
+
+Supabase must be running, as described under Setup. From the repository root:
+
+```sh
+ARTLOUPE_OPS_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+ARTLOUPE_LEARNING_CORPUS="$PWD/python/learning-corpus" \
+uv run --directory python python -m artloupe.agent.service      # 127.0.0.1:8080
+```
+
+Without `ARTLOUPE_OPS_DATABASE_URL`, the operations endpoints answer 503. Without
+`ARTLOUPE_LEARNING_CORPUS`, the agent still starts, and the learning endpoint answers 503.
+
+#### 6. Point the apps at it
+
+Set `ARTLOUPE_AGENT_URL="http://127.0.0.1:8080"` in `apps/studio/.env.local` and
+`apps/operations/.env.local`, then run `pnpm dev`.
+
+| Feature | Where |
+| --- | --- |
+| Start a run and watch it stream | studio, a project page, "Analyse this reference" |
+| Learning assistant | studio, `/en/learn` or `/es/learn` |
+| Cost and run health, with a per-run drill-down | operations home page |
+
+These actions spend money: a studio run (the Director calls Anthropic), each learning answer,
+the `embed` step, `learning.cli eval --live`, and `poe test-live`.
+
+The Python workspace's own tasks and conventions live in
+[`python/README.md`](./python/README.md).
 
 ## Quality
 

@@ -31,6 +31,9 @@ uv run --directory python python -m artloupe.agent.service   # 127.0.0.1:8080
 uv run --directory python poe test                           # the suite
 ```
 
+The full local setup, covering env, keychain, the learning corpus and which variables must be
+exported, is in the root [README's agent section](../../../README.md#the-python-agent).
+
 Binds loopback deliberately. Nothing here should be reachable off the machine in local
 development, and the deployed binding is a decision that does not exist yet.
 

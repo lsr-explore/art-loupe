@@ -41,6 +41,10 @@ For a complete clean setup, follow [ingestion from scratch](INGESTION.md).
 
 ## Prepare and run
 
+The complete local setup, including the keychain, `python/.env` and the variables that must be
+exported, is in the root [README's agent section](../../README.md#the-python-agent). This
+section keeps the learning-specific detail.
+
 Run these commands from the repository's `python/` directory, after `uv sync --all-packages`.
 Use the existing macOS keychain resolver. Set only lookup coordinates in the shell:
 
