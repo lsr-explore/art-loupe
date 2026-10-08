@@ -30,6 +30,8 @@ def env_files(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[tuple
     for name in (
         "APP_ENV",
         "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY",
+        "ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT",
         "ARTLOUPE_KEYCHAIN_SERVICE",
         "ARTLOUPE_ANTHROPIC_KEYCHAIN_ACCOUNT",
     ):
@@ -205,3 +207,33 @@ def test_the_keychain_lookup_is_bounded_in_time(monkeypatch: pytest.MonkeyPatch)
     monkeypatch.setattr(keys.subprocess, "run", fake_run)
     get_anthropic_api_key()
     assert seen["timeout"] == keys.KEYCHAIN_TIMEOUT_SECONDS
+
+
+def test_openai_reads_keychain_without_exporting(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ARTLOUPE_KEYCHAIN_SERVICE", "svc")
+    monkeypatch.setenv("ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT", "acct")
+    calls = _keychain_returns(monkeypatch, "synthetic-embedding-key\n")
+    assert keys.get_openai_api_key() == "synthetic-embedding-key"
+    assert calls == [KEYCHAIN_ARGS]
+    assert "OPENAI_API_KEY" not in os.environ
+
+
+def test_openai_ignores_keys_in_files(env_files: tuple[Path, Path]) -> None:
+    env_files[1].write_text("OPENAI_API_KEY=synthetic-file-key\n")
+    with pytest.raises(SecretUnavailable):
+        keys.get_openai_api_key()
+
+
+@pytest.mark.parametrize("environment", ["ci", "production"])
+def test_openai_deployed_never_uses_keychain(
+    monkeypatch: pytest.MonkeyPatch, environment: str
+) -> None:
+    monkeypatch.setenv("APP_ENV", environment)
+    monkeypatch.setenv("ARTLOUPE_KEYCHAIN_SERVICE", "svc")
+    monkeypatch.setenv("ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT", "acct")
+    calls = _keychain_returns(monkeypatch, "synthetic-key")
+    with pytest.raises(SecretUnavailable):
+        keys.get_openai_api_key()
+    monkeypatch.setenv("OPENAI_API_KEY", "synthetic-platform-key")
+    assert keys.get_openai_api_key() == "synthetic-platform-key"
+    assert calls == []

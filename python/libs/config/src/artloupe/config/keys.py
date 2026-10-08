@@ -65,6 +65,7 @@ class SecretSettings(BaseSettings):
         default=None,
         description="The keychain service shared by every provider key, e.g. `art-loupe`.",
     )
+    artloupe_openai_keychain_account: str | None = None
     artloupe_anthropic_keychain_account: str | None = Field(
         default=None,
         description="The account of the Anthropic key's keychain item, under that service.",
@@ -134,3 +135,25 @@ def _read_keychain(*, service: str, account: str, override_var: str) -> str:
             f"The keychain item for service {service!r}, account {account!r} is empty."
         )
     return key
+
+
+def get_openai_api_key() -> str:
+    """Embedding key: process environment or local keychain, never a file or exported value."""
+    settings = get_settings()
+    explicit = os.environ.get("OPENAI_API_KEY")
+    if explicit:
+        return explicit
+    if (
+        settings.app_env == "local"
+        and settings.artloupe_keychain_service
+        and settings.artloupe_openai_keychain_account
+    ):
+        return _read_keychain(
+            service=settings.artloupe_keychain_service,
+            account=settings.artloupe_openai_keychain_account,
+            override_var="OPENAI_API_KEY",
+        )
+    raise SecretUnavailable(
+        "Set OPENAI_API_KEY in the process environment or configure the local "
+        "OpenAI keychain account."
+    )

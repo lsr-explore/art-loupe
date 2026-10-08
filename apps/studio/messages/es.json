@@ -228,5 +228,33 @@
     "black": "Negro",
     "gray": "Gris",
     "white": "Blanco"
+  },
+  "learning": {
+    "title": "Aprende sobre arte",
+    "description": "Pregunta sobre dibujo, pintura o historia del arte. Las respuestas se basan en tres libros seleccionados y muestran los pasajes utilizados.",
+    "privacy": "Esta conversación permanece en esta pestaña. Tu pregunta y los turnos recientes se envían al proveedor de respuestas; la búsqueda vectorial también envía tu pregunta al proveedor de embeddings. Cerrar o recargar borra la conversación.",
+    "examples": "Preguntas de ejemplo",
+    "exampleValue": "¿Cuál es la diferencia entre valor y color?",
+    "exampleSpace": "¿Cómo ayuda el espacio negativo a una composición?",
+    "exampleImpressionism": "¿Qué caracteriza a la pintura impresionista?",
+    "conversation": "Conversación de aprendizaje",
+    "practice": "Ejercicio sugerido",
+    "sources": "Pasajes de apoyo",
+    "historical": "Este es un texto histórico. Los consejos sobre materiales pueden estar desactualizados.",
+    "openSource": "Abrir la publicación original",
+    "medium": "Tu medio (opcional)",
+    "anyMedium": "Pregunta general sobre arte",
+    "question": "Tu pregunta",
+    "hint": "Haz una pregunta concreta. Si los libros no ofrecen evidencia suficiente, el asistente lo indicará.",
+    "ask": "Preguntar",
+    "asking": "Leyendo las fuentes…",
+    "clear": "Borrar conversación",
+    "sessionEnded": "Tu sesión ha terminado. Inicia sesión para preguntar.",
+    "rateLimited": "Espera un momento antes de hacer otra pregunta.",
+    "unavailable": "El aprendizaje no está disponible temporalmente. Tu pregunta sigue aquí; inténtalo de nuevo.",
+    "citation": "Leer el pasaje de apoyo {number}",
+    "ready": "Respuesta lista.",
+    "link": "Pregunta al asistente de aprendizaje",
+    "tokenLimit": "Esta pregunta y su contexto superan el límite de aprendizaje. Borra la conversación o haz una pregunta más breve."
   }
 }

@@ -1,10 +1,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
+import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import messages from '../../../messages/en.json';
 import { InspirationSearch } from './inspiration-search';
+
+vi.mock('@/i18n/navigation', () => ({
+  Link: ({ children, ...props }: ComponentProps<'a'>) => <a {...props}>{children}</a>,
+}));
 
 const photo = {
   id: 'pexels:1',

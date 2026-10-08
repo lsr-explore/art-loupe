@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 449,
-      "vitest": 623,
-      "playwright": 40,
-      "all": 1112
+      "pytest": 485,
+      "vitest": 644,
+      "playwright": 41,
+      "all": 1170
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 449,
-      "vitest": 623,
-      "playwright": 40,
-      "all": 1112
+      "pytest": 485,
+      "vitest": 644,
+      "playwright": 41,
+      "all": 1170
     }
   },
   "by_flow": {
@@ -45,21 +45,21 @@
       "severity": "P0",
       "title": "Art-historical context is carried back to a real citation",
       "counts": {
-        "a11y": 0,
-        "security": 0,
+        "a11y": 2,
+        "security": 8,
         "privacy": 0,
-        "safety": 0,
-        "data": 0,
+        "safety": 33,
+        "data": 8,
         "performance": 0,
-        "functionality": 0
+        "functionality": 4
       },
       "runners": {
-        "pytest": 0,
-        "vitest": 0,
-        "playwright": 0
+        "pytest": 33,
+        "vitest": 21,
+        "playwright": 1
       },
-      "total": 0,
-      "parametrized": 0
+      "total": 55,
+      "parametrized": 8
     },
     "safety.untrusted-input": {
       "severity": "P0",
@@ -166,7 +166,7 @@
       "title": "Agent service transport, auth guard, and graph execution",
       "counts": {
         "a11y": 0,
-        "security": 63,
+        "security": 66,
         "privacy": 1,
         "safety": 0,
         "data": 3,
@@ -174,12 +174,12 @@
         "functionality": 68
       },
       "runners": {
-        "pytest": 136,
+        "pytest": 139,
         "vitest": 0,
         "playwright": 0
       },
-      "total": 136,
-      "parametrized": 14
+      "total": 139,
+      "parametrized": 15
     },
     "platform.auth": {
       "severity": "P1",
@@ -1380,6 +1380,13 @@
       "category": "a11y"
     },
     {
+      "id": "apps/studio/e2e/learning.spec.ts:16",
+      "name": "opens cited passages on mobile and desktop without layout overflow",
+      "runner": "playwright",
+      "flow": "retrieval.grounding",
+      "category": "a11y"
+    },
+    {
       "id": "apps/studio/e2e/metadata-routes.spec.ts:31",
       "name": "${route} is served directly",
       "runner": "playwright",
@@ -1671,6 +1678,62 @@
       "name": "reports a spent provider quota as an outage",
       "runner": "vitest",
       "flow": "inspiration.search",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:23",
+      "name": "authenticates before reading or forwarding a question",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:29",
+      "name": "rejects a cross-origin POST",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:31",
+      "name": "rejects oversized bodies even without Content-Length",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:33",
+      "name": "validates the request and its unknown fields",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:35",
+      "name": "forwards two identities separately and returns private evidence",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:46",
+      "name": "refuses a citation absent from the returned evidence",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:52",
+      "name": "does not expose provider errors",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "security"
+    },
+    {
+      "id": "apps/studio/src/app/api/learning/route.test.ts:60",
+      "name": "preserves a bounded retry delay",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
       "category": "security"
     },
     {
@@ -1968,49 +2031,49 @@
       "category": "security"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:108",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:113",
       "name": "cancels an obsolete request and does not let it overwrite current results",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:129",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:134",
       "name": "retains existing results when loading another batch fails",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:142",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:147",
       "name": "announces cached and partial data instead of claiming completeness",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:39",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:44",
       "name": "applies the chosen layout to the result list without a new request",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:55",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:60",
       "name": "names the artist when only a shortened Met artist is held back",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:71",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:76",
       "name": "labels loaded results when a short edit is held back from auto-search",
       "runner": "vitest",
       "flow": "inspiration.search",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:89",
+      "id": "apps/studio/src/components/inspiration/inspiration-search.test.tsx:94",
       "name": "loads metadata, filters locally, and displays only source-specific controls",
       "runner": "vitest",
       "flow": "inspiration.search",
@@ -2217,6 +2280,41 @@
       "name": "has no accessibility violations while showing errors",
       "runner": "vitest",
       "flow": "intake.project-intent",
+      "category": "a11y"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:25",
+      "name": "renders cited evidence and keeps follow-up context bounded",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:46",
+      "name": "does not announce a previous answer as ready after a failed follow-up",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:57",
+      "name": "retains the draft when the service fails",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:64",
+      "name": "shows an evidence gap without invented citations",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/learning/learning-chat.test.tsx:81",
+      "name": "has accessible question controls",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
       "category": "a11y"
     },
     {
@@ -4838,6 +4936,62 @@
       "category": "data"
     },
     {
+      "id": "packages/schemas/src/learning.test.ts:12",
+      "name": "rejects ${JSON.stringify(value)}",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:15",
+      "name": "accepts response ${index}",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:18",
+      "name": "rejects response ${value.name}",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:20",
+      "name": "accepts a server-resolved citation",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:22",
+      "name": "rejects citations absent from the evidence",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:26",
+      "name": "rejects an answer disguised as an evidence gap",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:31",
+      "name": "rejects unsafe source URLs",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
+      "id": "packages/schemas/src/learning.test.ts:9",
+      "name": "accepts ${JSON.stringify(value)}",
+      "runner": "vitest",
+      "flow": "retrieval.grounding",
+      "category": "data"
+    },
+    {
       "id": "packages/schemas/src/ops-cost.test.ts:12",
       "name": "rejects report ${index}",
       "runner": "vitest",
@@ -5069,105 +5223,126 @@
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:103",
+      "id": "python/libs/config/tests/test_keys.py:105",
       "name": "test_a_deployed_environment_never_reads_the_keychain",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:113",
+      "id": "python/libs/config/tests/test_keys.py:115",
       "name": "test_a_deployed_environment_reads_no_env_file",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:122",
+      "id": "python/libs/config/tests/test_keys.py:124",
       "name": "test_locally_an_exported_key_wins_over_the_keychain",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:130",
+      "id": "python/libs/config/tests/test_keys.py:132",
       "name": "test_locally_the_key_is_read_from_the_keychain",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:137",
+      "id": "python/libs/config/tests/test_keys.py:139",
       "name": "test_a_keychain_key_is_never_exported",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:143",
+      "id": "python/libs/config/tests/test_keys.py:145",
       "name": "test_coordinates_come_from_the_env_files_and_env_local_wins",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:159",
+      "id": "python/libs/config/tests/test_keys.py:161",
       "name": "test_a_key_written_into_an_env_file_is_not_read",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:165",
+      "id": "python/libs/config/tests/test_keys.py:167",
       "name": "test_missing_coordinates_name_both_variables",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:182",
+      "id": "python/libs/config/tests/test_keys.py:184",
       "name": "test_a_failed_keychain_lookup_is_named",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:191",
+      "id": "python/libs/config/tests/test_keys.py:193",
       "name": "test_an_empty_keychain_item_is_refused",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:198",
+      "id": "python/libs/config/tests/test_keys.py:200",
       "name": "test_the_keychain_lookup_is_bounded_in_time",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:67",
+      "id": "python/libs/config/tests/test_keys.py:212",
+      "name": "test_openai_reads_keychain_without_exporting",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:221",
+      "name": "test_openai_ignores_keys_in_files",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:228",
+      "name": "test_openai_deployed_never_uses_keychain",
+      "runner": "pytest",
+      "flow": "platform.agent-runtime",
+      "category": "security"
+    },
+    {
+      "id": "python/libs/config/tests/test_keys.py:69",
       "name": "test_app_env_defaults_to_local",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:71",
+      "id": "python/libs/config/tests/test_keys.py:73",
       "name": "test_an_unrecognised_app_env_fails_rather_than_falling_back_to_local",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:79",
+      "id": "python/libs/config/tests/test_keys.py:81",
       "name": "test_an_unrecognised_app_env_fails_even_with_an_exported_key",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "security"
     },
     {
-      "id": "python/libs/config/tests/test_keys.py:90",
+      "id": "python/libs/config/tests/test_keys.py:92",
       "name": "test_a_deployed_environment_needs_the_key_in_its_environment",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -7575,6 +7750,237 @@
       "category": "functionality"
     },
     {
+      "id": "python/services/agent/tests/test_learning.py:102",
+      "name": "test_real_sdk_request_escapes_injection_and_validates_citations",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:123",
+      "name": "test_model_refusal_and_truncation_are_not_answers",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:134",
+      "name": "test_no_evidence_abstains_without_a_model_call",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:151",
+      "name": "test_embedding_response_order_and_dimensions",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:184",
+      "name": "test_corpus_tampering_and_stale_embeddings_fail_closed",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:202",
+      "name": "test_eval_retrieval_metrics_fail_for_the_wrong_passage",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:221",
+      "name": "test_offline_eval_does_not_claim_to_measure_answers",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:245",
+      "name": "test_authenticated_endpoint_rejects_other_roles",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:260",
+      "name": "test_endpoint_returns_cited_answer_with_verified_artist",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:27",
+      "name": "test_shared_request_accepts",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:286",
+      "name": "test_provider_verification_reports_only_authentication_metadata",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:314",
+      "name": "test_gap_explanation_cannot_smuggle_uncited_model_facts",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:32",
+      "name": "test_shared_request_rejects",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:338",
+      "name": "test_live_eval_preserves_retrieval_when_judge_truncates",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:37",
+      "name": "test_citation_identity_and_metadata_are_resolved_from_evidence",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:387",
+      "name": "test_response_contract_rejects_shared_invalid_examples",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:394",
+      "name": "test_epub_nested_quote_is_extracted_once",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:415",
+      "name": "test_vector_rebuild_recovers_incomplete_previous_bundle",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:435",
+      "name": "test_followup_query_shares_retrieval_context",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:449",
+      "name": "test_slow_metrics_sink_does_not_block_an_answer",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:477",
+      "name": "test_response_contract_accepts_shared_defaults",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:48",
+      "name": "test_insufficient_evidence_cannot_contain_a_factual_answer",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:483",
+      "name": "test_budget_stop_returns_deliberate_limit_response",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:505",
+      "name": "test_short_explicit_topic_switch_does_not_carry_old_topic",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:516",
+      "name": "test_spanish_generic_followup_keeps_topic_without_diluting_a_new_topic",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:527",
+      "name": "test_spanish_vectors_avoid_accidental_english_keyword_hits",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:53",
+      "name": "test_epub_spine_order_preserves_headings_and_excludes_boilerplate",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:552",
+      "name": "test_repeated_followups_keep_latest_explicit_subject",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:576",
+      "name": "test_subject_bearing_followups_retain_the_comparison_and_its_context",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:61",
+      "name": "test_chunk_tail_survives_and_overlap_does_not_cross_sections",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:69",
+      "name": "test_retrieval_prefers_specific_evidence_and_returns_no_unknown_term",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:83",
+      "name": "test_semantic_retrieval_finds_a_paraphrase_without_keyword_overlap",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:98",
+      "name": "test_screened_document_never_reaches_synthesis",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
       "id": "python/services/agent/tests/test_no_image_generation.py:105",
       "name": "test_an_installed_generator_is_caught",
       "runner": "pytest",
@@ -8130,7 +8536,6 @@
   ],
   "gaps": {
     "uncovered": [
-      "retrieval.grounding",
       "critique.alignment",
       "critique.formal-analysis",
       "canvas.session-plan",

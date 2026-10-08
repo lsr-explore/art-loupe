@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "mode": "offline-retrieval",
+  "retrieval_mode": "keyword",
+  "corpus_version": "f89e50bd98c9e850c44b9be423c4d7369400061c53b3ca22aca5dd974dc20bcb",
+  "case_count": 32,
+  "positive_cases": 20,
+  "errors": 0,
+  "recall_at_6": 0.85,
+  "mrr_at_6": 0.7375,
+  "answer_metrics": null,
+  "limitations": "Offline eval does not measure answer quality or abstention. Live judgments are model-assisted and need human review.",
+  "misses": ["value", "color-mixing", "line-mass"]
+}

@@ -79,3 +79,8 @@ help = "Remove Python caches (pytest, ruff, dev AI cache, coverage, eval reports
 # Sweeps the DEFAULT locations only. Overridden ARTLOUPE_AI_CACHE_DIR / ARTLOUPE_EVAL_REPORTS_DIR
 # paths are self-managed — feeding an arbitrary env-var path into `rm -rf` would be a footgun.
 shell = "rm -rf .pytest_cache .ruff_cache .cache .coverage htmlcov eval-reports && find . -type d -name __pycache__ -not -path './.venv/*' -prune -exec rm -rf {} +"
+
+# Learning commands are explicit about the external source path and paid options.
+[tool.poe.tasks.learning]
+cmd = "python -m artloupe.agent.learning.cli"
+help = "Prepare the book corpus, embed it, or run learning evals (pass a subcommand)"
