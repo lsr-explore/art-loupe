@@ -205,12 +205,8 @@ def configured_index() -> Index:
     return load_index(directory)
 
 
-def retrieval_query(question) -> str:
-    """Use the last artist question as context for short follow-ups, identically in evals."""
-    previous = next(
-        (turn.content for turn in reversed(question.history) if turn.role == "user"), ""
-    )
-    words = set(re.findall(r"[a-záéíóúñ]+", question.question.lower()))
+def _is_followup(text: str) -> bool:
+    words = set(re.findall(r"[a-záéíóúñ]+", text.lower()))
     refers_back = bool(
         words
         & {
@@ -260,6 +256,19 @@ def retrieval_query(question) -> str:
         "yo",
         "hacer",
     }
-    if previous and len(question.question.split()) < 8 and (refers_back or generic_followup):
-        return previous + " " + question.question
-    return question.question
+    return len(text.split()) < 8 and (refers_back or generic_followup)
+
+
+def retrieval_query(question) -> str:
+    """Carry the latest explicit topic through consecutive follow-ups, identically in evals."""
+    if not _is_followup(question.question):
+        return question.question
+    previous = next(
+        (
+            turn.content
+            for turn in reversed(question.history)
+            if turn.role == "user" and not _is_followup(turn.content)
+        ),
+        "",
+    )
+    return previous + " " + question.question if previous else question.question

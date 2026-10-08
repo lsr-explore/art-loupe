@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 472,
+      "pytest": 473,
       "vitest": 613,
       "playwright": 41,
-      "all": 1126
+      "all": 1127
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 472,
+      "pytest": 473,
       "vitest": 613,
       "playwright": 41,
-      "all": 1126
+      "all": 1127
     }
   },
   "by_flow": {
@@ -48,18 +48,18 @@
         "a11y": 2,
         "security": 8,
         "privacy": 0,
-        "safety": 31,
+        "safety": 32,
         "data": 8,
         "performance": 0,
         "functionality": 4
       },
       "runners": {
-        "pytest": 31,
+        "pytest": 32,
         "vitest": 21,
         "playwright": 1
       },
-      "total": 53,
-      "parametrized": 6
+      "total": 54,
+      "parametrized": 7
     },
     "safety.untrusted-input": {
       "severity": "P0",
@@ -7717,6 +7717,13 @@
     {
       "id": "python/services/agent/tests/test_learning.py:53",
       "name": "test_epub_spine_order_preserves_headings_and_excludes_boilerplate",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning.py:552",
+      "name": "test_repeated_followups_keep_latest_explicit_subject",
       "runner": "pytest",
       "flow": "retrieval.grounding",
       "category": "safety"

@@ -535,3 +535,32 @@ def test_spanish_vectors_avoid_accidental_english_keyword_hits():
     query[0] = 1
     assert [p.id for p in index.search("¿Qué son?", query, locale="es")] == ["passage-value"]
     assert index.search("¿Qué son?", locale="es")[0].id == "unrelated"
+
+
+@pytest.mark.parametrize(
+    "topic,first_followup,second_followup,new_topic",
+    [
+        ("What is glazing?", "How can I practice?", "More examples please", "What is balance?"),
+        (
+            "¿Qué es el rayado?",
+            "¿Cómo puedo practicar?",
+            "Más ejemplos por favor",
+            "¿Qué es el equilibrio?",
+        ),
+    ],
+)
+def test_repeated_followups_keep_latest_explicit_subject(
+    topic, first_followup, second_followup, new_topic
+):
+    from artloupe.agent.learning.models import Turn
+    from artloupe.agent.learning.retrieval import retrieval_query
+
+    history = [Turn(role="user", content=topic), Turn(role="user", content=first_followup)]
+    question = Question(question=second_followup, history=history)
+    assert retrieval_query(question) == topic + " " + second_followup
+    history.extend(
+        [Turn(role="user", content=new_topic), Turn(role="user", content=first_followup)]
+    )
+    assert retrieval_query(Question(question=second_followup, history=history)) == (
+        new_topic + " " + second_followup
+    )

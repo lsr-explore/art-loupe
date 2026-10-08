@@ -77,6 +77,39 @@
         }
       ],
       "locale": "es"
+    },
+    {
+      "id": "repeated-hatching-followup",
+      "category": "technique",
+      "question": "More examples please",
+      "expected_status": "answered",
+      "medium": null,
+      "rubric": "Answer hatching/crosshatching practice using cited line/tone evidence; infer it from history, never use the assistant turn as evidence.",
+      "gold": [
+        {
+          "book_id": "introduction-art",
+          "locator_contains": "",
+          "text_contains": ["hatching"]
+        }
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "What are hatching and cross hatching?"
+        },
+        {
+          "role": "assistant",
+          "content": "We discussed hatching and crosshatching."
+        },
+        {
+          "role": "user",
+          "content": "How can I practice?"
+        },
+        {
+          "role": "assistant",
+          "content": "We discussed a hatching practice exercise."
+        }
+      ]
     }
   ]
 }

@@ -12,7 +12,7 @@ ignored by Git.
 - Vector indexing completed with `text-embedding-3-small`, 1,536 dimensions,
   and 344,042 embedding tokens.
 - Keyword retrieval: hit-at-six 85% (17/20), MRR 0.7375, zero execution errors.
-- Learning and keychain unit tests: 73 passing after review fixes.
+- Learning and keychain unit tests: 75 passing after review fixes.
 - All TypeScript workspace tests passed after updating the route-gate snapshot
   for the authenticated learning page and API.
 - TypeScript type checks, lint, translation checks, and Python lint passed.
@@ -56,7 +56,7 @@ with synthesis; review cited excerpts manually before broader rollout.
 
 ## PR review fixes
 
-Automatic and CLI Greptile review identified ten distinct issues. Fixes bound the
+Automatic and CLI Greptile review identified eleven distinct issues. Fixes bound the
 metrics flush, move keychain lookup off the request thread, support interrupted
 vector rebuilds, avoid duplicate nested quotations, align Python/Zod response
 validation and defaults, evaluate conversational retrieval, suppress stale success
@@ -94,8 +94,14 @@ gold anchor for this case. Its earlier failed report remains local.
 
 The branch also includes main’s `6c534cb` session-note update, merged without conflicts.
 
-The updated [follow-up baseline](followup-baseline.json) passes all three cases:
-3/3 gold retrieval hits, MRR 0.5278, zero errors, and 100% correctness, source
+The updated [follow-up baseline](followup-baseline.json) passes all four cases:
+4/4 gold retrieval hits, MRR 0.6458, zero errors, and 100% correctness, source
 support, and medium appropriateness. It has no expected evidence gaps, so
 abstention is unmeasured. The original 32 English queries and synthesis prompt
 are unchanged by this locale-specific correction.
+
+The final on-PR review also caught consecutive generic follow-ups losing the
+original subject. Retrieval now walks back to the latest explicit user topic,
+skipping generic follow-ups and preserving explicit topic switches. English and
+Spanish three-question regressions cover this path; the live suite includes a
+repeated hatching follow-up. The parallel final CLI review raised no findings.

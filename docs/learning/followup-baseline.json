@@ -3,11 +3,11 @@
   "mode": "live",
   "retrieval_mode": "hybrid",
   "corpus_version": "f89e50bd98c9e850c44b9be423c4d7369400061c53b3ca22aca5dd974dc20bcb",
-  "case_count": 3,
-  "positive_cases": 3,
+  "case_count": 4,
+  "positive_cases": 4,
   "errors": 0,
   "recall_at_6": 1.0,
-  "mrr_at_6": 0.5277777777777778,
+  "mrr_at_6": 0.6458333333333334,
   "answer_metrics": {
     "correct_rate": 1.0,
     "supported_rate": 1.0,
@@ -18,8 +18,8 @@
   "answer_model": "claude-opus-5",
   "judge_model": "claude-opus-5",
   "embedding_model": "text-embedding-3-small",
-  "cases_sha256": "b675b08b4d535e57207ffe149e294a38bc2bbc7cc906ec709f5f30697e3920af",
   "synced_main": "6c534cb",
+  "cases_sha256": "8f031b061489d1bf7f68262ba3f90fc92f46e6144e6690aa9270beebf86b2543",
   "cases": [
     {
       "id": "hatching-followup",
@@ -32,9 +32,9 @@
         "correct": true,
         "supported": true,
         "medium_appropriate": true,
-        "reason": "The answer addresses practising hatching/crosshatching and derives drills from the cited definitions: uniform intersecting lines following form (Sachant) and parallel lines of varying thickness that lighten/darken tone and aid intricate modelling (Speed). The practice exercise introduces no new factual or materials claims. Speed's brush context is generalised slightly, but the technique statements remain accurate to the excerpt, and no historical chemical advice is presented as current."
+        "reason": "The answer directly addresses how to practise crosshatching, grounding the core mechanic (uniform spacing, lines following form) in the Sachant excerpt and tonal control via line thickness/gradation in Speed, both accurately paraphrased, including the 'intricate modelling' correction point. The practice exercise is framed as a suggestion and introduces no new factual or material claims; no medium was selected, and the historical Speed source is cited as a technique description, not current chemical advice."
       },
-      "latency_ms": 24957
+      "latency_ms": 31865
     },
     {
       "id": "short-topic-switch",
@@ -47,9 +47,9 @@
         "correct": true,
         "supported": true,
         "medium_appropriate": true,
-        "reason": "Answers the balance question directly, not glazing. Each claim tracks its excerpt closely (visual weight, symmetrical/asymmetrical examples, Speed's opposing forces), with Speed attributed rather than stated as current fact. Practice is a generic composition exercise adding no new factual claims; no medium-specific or chemical advice issues."
+        "reason": "Answer addresses balance directly, matching expected answered status. All three claims track their excerpts closely (visual weight, symmetrical/asymmetrical, imbalance effects, Speed's opposing forces). Speed is attributed as a named historical author discussing aesthetics, not chemical advice. Practice suggestion is a thumbnail exercise consistent with cited concepts and adds no new factual claims; no medium specified and none presumed."
       },
-      "latency_ms": 13031
+      "latency_ms": 13147
     },
     {
       "id": "spanish-hatching-followup",
@@ -62,9 +62,24 @@
         "correct": true,
         "supported": true,
         "medium_appropriate": true,
-        "reason": "Responde en español con ejercicios concretos de sombreado con líneas, infiriendo el tema del hatching. Cada afirmación (líneas paralelas en dirección cómoda, variación de grosor, 'alimentar' la apreciación mirando buenos ejemplos, fijar puntos salientes con vertical/horizontales y plomada, bloquear con rectas antes de irregularidades y sombreado) se deriva de los extractos citados de Speed. La práctica solo recombina lo citado; no hay medio seleccionado ni consejos químicos/materiales problemáticos."
+        "reason": "Responde en español con un ejercicio de práctica sobre sombreado con líneas, inferido correctamente de la pregunta previa. Las tres afirmaciones (principio paralelo, variación de grosor, 'alimentarse' con buenos ejemplos) reflejan fielmente el fragmento de Speed y están atribuidas a él. La práctica no introduce materiales ni datos nuevos no respaldados, y no presenta consejo histórico como hecho actual."
       },
-      "latency_ms": 23696
+      "latency_ms": 25460
+    },
+    {
+      "id": "repeated-hatching-followup",
+      "retrieval": {
+        "hit_at_6": true,
+        "reciprocal_rank": 1.0
+      },
+      "status_correct": true,
+      "judgment": {
+        "correct": true,
+        "supported": true,
+        "medium_appropriate": true,
+        "reason": "The answer provides additional hatching/crosshatching examples drawn from the cited excerpts; each claim closely tracks its source (crosshatching definition, Speed's brush hatching, Parkhurst's juxtaposed complementaries). Attribution to historical authors is given by name without presenting advice as current fact. The practice exercise introduces no new factual or material claims and is medium-neutral."
+      },
+      "latency_ms": 18045
     }
   ]
 }
