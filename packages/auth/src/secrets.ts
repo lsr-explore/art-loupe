@@ -11,15 +11,15 @@ import { join } from 'node:path';
  *    deliver secrets.
  * 2. **The process environment, outside production only.** A developer's
  *    `.env.local` and the e2e config hold throwaway values that protect nothing, so
- *    `local` and `ci` may read them. `APP_ENV=production` never does.
+ *    `local`, `docker` and `ci` may read them. `APP_ENV=production` never does.
  *
  * There is no keychain step: the Node secrets are local-only values on a developer
  * machine. Paid provider keys live on the Python side, which has one.
  */
 
-export type AppEnv = 'local' | 'ci' | 'production';
+export type AppEnv = 'local' | 'docker' | 'ci' | 'production';
 
-const APP_ENVS: readonly AppEnv[] = ['local', 'ci', 'production'];
+const APP_ENVS: readonly AppEnv[] = ['local', 'docker', 'ci', 'production'];
 
 /** Docker Compose mounts its secrets here; other platforms set `<NAME>_FILE` instead. */
 export const SECRETS_DIR = '/run/secrets';

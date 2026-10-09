@@ -267,15 +267,20 @@ async def run_events(
 def main() -> None:
     """Development entrypoint: `uv run python -m artloupe.agent.service`.
 
-    Binds loopback deliberately. Nothing about this service should be reachable off the
-    machine during local development, and the deployed binding is a deployment decision that
-    does not exist yet.
+    Binds loopback by default. Nothing about this service should be reachable off the machine
+    during local development. Inside a container, loopback is unreachable from the other
+    services, so Compose sets `ARTLOUPE_AGENT_HOST=0.0.0.0` and publishes the port to the host's
+    loopback only. The deployed binding is a deployment decision that does not exist yet.
     """
     import os
 
     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=int(os.environ.get("ARTLOUPE_AGENT_PORT", "8080")))
+    uvicorn.run(
+        app,
+        host=os.environ.get("ARTLOUPE_AGENT_HOST", "127.0.0.1"),
+        port=int(os.environ.get("ARTLOUPE_AGENT_PORT", "8080")),
+    )
 
 
 if __name__ == "__main__":

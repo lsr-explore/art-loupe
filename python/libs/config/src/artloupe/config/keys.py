@@ -15,7 +15,7 @@ Every secret resolves the same way, first match wins:
    otherwise. This is how Docker, Kubernetes and Cloud Run deliver secrets.
 3. **A throwaway value, outside production only.** Some secrets have local defaults that protect
    nothing, such as the local Supabase `postgres:postgres` URL. Their callers may pass that value
-   in, and it is used in `local` and `ci`. A provider key has no such value.
+   in, and it is used in `local`, `docker` and `ci`. A provider key has no such value.
 
 Nothing else. **A secret is never read from the process environment**, so it is never visible to
 every child process, and **a key is never exported**: it is returned to the caller, which hands
@@ -35,7 +35,7 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-AppEnv = Literal["local", "ci", "production"]
+AppEnv = Literal["local", "docker", "ci", "production"]
 
 # keys.py -> config -> artloupe -> src -> config (the lib) -> libs -> python
 PYTHON_ROOT = Path(__file__).resolve().parents[5]
@@ -69,9 +69,11 @@ class SecretSettings(BaseSettings):
     app_env: AppEnv = Field(
         default="local",
         description=(
-            "`local` may read the keychain. `ci` and `production` read only mounted files. Any "
-            "other value fails validation rather than falling back to `local`, where a typo "
-            "would send a server looking for a keychain."
+            "`local` may read the keychain. `docker`, `ci` and `production` read only mounted "
+            "files. `docker` is `local` inside a container: no keychain and no env file, but "
+            "throwaway values and paid keys are allowed. Any other value fails validation "
+            "rather than falling back to `local`, where a typo would send a server looking for "
+            "a keychain."
         ),
     )
     artloupe_keychain_service: str | None = Field(

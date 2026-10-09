@@ -4,8 +4,9 @@
 # directly: a Next.js route handler forwards the artist's Supabase access token, and this
 # service verifies it through `artloupe-auth` rather than re-deriving token handling.
 #
-# Deliberately not a Dockerfile yet. Nothing is deployed, so container packaging is deferred
-# with the deployment decision rather than guessed at now — see docs/design/slice-1-build-plan.md.
+# The Dockerfile beside this file builds the development image that compose.yaml runs. The
+# deployed image is still deferred with the deployment decision — see
+# docs/design/slice-1-build-plan.md.
 [project]
 name = "artloupe-agent"
 version = "0.1.0"

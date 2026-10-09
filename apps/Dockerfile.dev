@@ -1,0 +1,20 @@
+# syntax=docker/dockerfile:1
+#
+# The development image for every Next.js app. It holds only the toolchain: compose.yaml
+# bind-mounts the repository, installs dependencies into named volumes once, and runs
+# `next dev` per app. Production images (`output: 'standalone'`) are a separate, later file.
+#
+# Keep NODE_VERSION in step with .nvmrc and PNPM_VERSION with `packageManager`.
+
+ARG NODE_VERSION=24
+FROM node:${NODE_VERSION}-bookworm-slim
+
+ARG PNPM_VERSION=10.0.0
+RUN npm install --global pnpm@${PNPM_VERSION}
+
+# Husky would rewrite the host repository's git hook config through the bind mount.
+ENV HUSKY=0 \
+  NEXT_TELEMETRY_DISABLED=1 \
+  npm_config_store_dir=/pnpm-store
+
+WORKDIR /workspace

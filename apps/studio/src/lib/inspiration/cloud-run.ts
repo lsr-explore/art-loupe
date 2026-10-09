@@ -81,12 +81,9 @@ export const cloudRunHeaders = async (
   signal: AbortSignal,
 ): Promise<Record<string, string>> => {
   const url = new URL(origin);
-  if (
-    env.NODE_ENV !== 'production' &&
-    url.protocol === 'http:' &&
-    ['localhost', '127.0.0.1'].includes(url.hostname)
-  )
-    return {};
+  // Outside production, plain HTTP to any host is a development agent with no identity to
+  // mint: `127.0.0.1` on the host, `agent` inside the Compose network.
+  if (env.NODE_ENV !== 'production' && url.protocol === 'http:') return {};
   if (
     url.protocol !== 'https:' ||
     !url.hostname.endsWith('.run.app') ||

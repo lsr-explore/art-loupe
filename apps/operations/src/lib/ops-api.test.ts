@@ -85,6 +85,13 @@ describe('readFromAgent, through fetchCostReport', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('reaches a plain-HTTP agent on a Compose service name outside production', async () => {
+    env.ARTLOUPE_AGENT_URL = 'http://agent:8080';
+    const fetchSpy = respond(200, mixedReport);
+    expect(await fetchCostReport('7d')).toEqual({ status: 'ok', data: mixedReport });
+    expect(String(fetchSpy.mock.calls[0]?.[0])).toBe('http://agent:8080/ops/costs?window=7d');
+  });
+
   // @trace category=security
   it('will not send a token over plain HTTP in production', async () => {
     env.NODE_ENV = 'production';
