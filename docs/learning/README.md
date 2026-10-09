@@ -15,11 +15,12 @@ six passages, and asks the existing Anthropic client for a structured answer.
 The server resolves citation IDs against retrieved passages rather than trusting
 model-generated bibliographic data. Zod validates responses again at the web boundary.
 
-For this three-book POC, a portable file index is enough: BM25 keywords plus optional
-OpenAI `text-embedding-3-small` vectors, combined by reciprocal rank fusion. The
-963-passage corpus uses roughly 350-word chunks with 50-word overlap. Running the
-same index in the agent and eval CLI keeps retrieval reproducible without a new
-Supabase schema or database reset. Its replacement seam is `Index.search`.
+The assistant supports a portable file index (BM25 keywords plus optional OpenAI vectors)
+and a PostgreSQL backend (full-text search plus pgvector cosine search). Both combine ranks
+with reciprocal rank fusion and use `text-embedding-3-small` at 1536 dimensions. Docker
+selects PostgreSQL; existing file workflows remain available explicitly. The 963-passage
+corpus uses roughly 350-word chunks with 50-word overlap. The evaluation CLI accepts
+`--backend pgvector` to measure the database path against the same corpus and gold cases.
 
 Questions, history, and book passages are untrusted model input. Retrieved text is
 screened, the prompt isolates data, unknown citation IDs fail closed, and responses
@@ -153,3 +154,8 @@ quotations may need further review. Keep original license notices with any hoste
 or redistributed bundle and review third-party content before public distribution.
 Historical materials advice is labeled and should not become current chemical or
 studio-safety guidance. The eval set includes this boundary.
+
+## Database backend
+
+See [PostgreSQL ingestion and retrieval](./pgvector.md) for publishing saved embeddings,
+Docker configuration, access roles, and Cloud Run / Cloud SQL setup.
