@@ -333,7 +333,8 @@ minutes.
   feature reports itself unavailable.
 - **Keys are never written to a file on the host.** Compose copies each one into the agent
   container's filesystem, where it stays until `docker compose down` removes the container.
-- **Each start signs you out.** The apps' session passwords are generated fresh every time.
+- **Each start signs you out.** The apps share one session password, generated fresh every
+  time. On `localhost` both apps share one session cookie, so a single sign-in counts for both.
 - **The agent runs under emulation on Apple silicon.** `mediapipe` publishes no Linux arm64
   wheel, so the agent image is `linux/amd64`, and analysis is slower than on the host.
 - **The containers run with `APP_ENV=docker`.** That behaves like `local`, except it never
