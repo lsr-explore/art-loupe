@@ -6,6 +6,11 @@
 - **Related:** [`requirements.md`](./requirements.md) · [`agents.md`](./agents.md) ·
   [`e2e-walkthrough.md`](./e2e-walkthrough.md)
 
+Implementation update (2026-10-09): the learning assistant now has an offline PostgreSQL
+publisher and a pgvector/full-text/RRF backend. See [the operational guide](../learning/pgvector.md).
+The sections below remain the broader design proposal: metadata pre-filters, custom vocabulary,
+the operations ingestion UI, and expanded benchmarks are not all implemented by this change.
+
 The proposal listed eight design documents and folded retrieval into `architecture.md`. That
 was wrong. Retrieval is not a subsystem of the architecture here — it is one of the three
 evidence classes the entire product rests on, and with the Week 9 fine-tune cut it is the

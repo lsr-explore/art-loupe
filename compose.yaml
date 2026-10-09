@@ -110,6 +110,8 @@ services:
       # The local Supabase superuser: a throwaway value, which `docker` accepts like `local`.
       DATABASE_URL: ${ARTLOUPE_DOCKER_DATABASE_URL:-}
       ARTLOUPE_OPS_DATABASE_URL: ${ARTLOUPE_DOCKER_DATABASE_URL:-}
+      ARTLOUPE_RETRIEVAL_BACKEND: pgvector
+      ARTLOUPE_LEARNING_DATABASE_URL: ${ARTLOUPE_DOCKER_DATABASE_URL:-}
       ARTLOUPE_RUN_LOG: postgres
       ARTLOUPE_METERING: postgres
     # Live sources over the copies baked into the image. Read-only: the agent writes nothing

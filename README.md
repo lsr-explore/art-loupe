@@ -204,7 +204,7 @@ Not every setting is read from this file. Each one has its own loader:
 | --- | --- |
 | Keychain coordinates and `APP_ENV` | `python/.env` or `python/.env.local`, read from a fixed path |
 | `ARTLOUPE_RUN_LOG`, `ARTLOUPE_METERING`, `DATABASE_URL`, auth settings | `python/.env` only, and only when the agent starts in `python/`, as `uv run --directory python` does |
-| `ARTLOUPE_OPS_DATABASE_URL`, `ARTLOUPE_LEARNING_CORPUS` | The shell environment only. Neither env file is read for these. |
+| `ARTLOUPE_OPS_DATABASE_URL`, `ARTLOUPE_LEARNING_CORPUS`, `ARTLOUPE_RETRIEVAL_BACKEND`, `ARTLOUPE_LEARNING_DATABASE_URL`, `ARTLOUPE_LEARNING_INGEST_DATABASE_URL` | The shell environment only. Neither env file is read for these. |
 
 #### 3. Put the provider keys in the keychain
 
@@ -256,6 +256,9 @@ uv run --directory python --all-packages python -m artloupe.agent.learning.cli v
 
 #### 4. Build the learning corpus (once)
 
+For PostgreSQL publication, Docker setup, and Cloud Run configuration, see
+[`PostgreSQL ingestion and retrieval`](./docs/learning/pgvector.md).
+
 The learning assistant answers from three books, which live outside the repo in
 `../../reference-docs/books`. The generated corpus is gitignored, so every checkout builds
 its own. Run these commands from `python/`:
@@ -283,8 +286,9 @@ ARTLOUPE_LEARNING_CORPUS="$PWD/python/learning-corpus" \
 uv run --directory python python -m artloupe.agent.service      # 127.0.0.1:8080
 ```
 
-Without `ARTLOUPE_OPS_DATABASE_URL`, the operations endpoints answer 503. Without
-`ARTLOUPE_LEARNING_CORPUS`, the agent still starts, and the learning endpoint answers 503.
+Without `ARTLOUPE_OPS_DATABASE_URL`, the operations endpoints answer 503. With the file backend, omitting
+`ARTLOUPE_LEARNING_CORPUS` leaves the learning endpoint unavailable (503). With pgvector,
+configure its database connection and publish a corpus; no corpus filesystem setting is needed.
 
 #### 6. Point the apps at it
 
@@ -336,7 +340,9 @@ minutes.
   reads the keychain or `python/.env`.
 - **Containers reach Supabase at `host.docker.internal`.** Tokens still name `127.0.0.1` as
   their issuer, so the agent is given that issuer explicitly through `SUPABASE_ISSUER`.
-- **The learning assistant answers 503.** No corpus is mounted into the agent.
+- **The learning assistant answers 503.** The selected retrieval backend has no corpus.
+  Docker uses pgvector: migrate and publish the prepared corpus as described in
+  [`docs/learning/pgvector.md`](./docs/learning/pgvector.md).
 
 ## Quality
 

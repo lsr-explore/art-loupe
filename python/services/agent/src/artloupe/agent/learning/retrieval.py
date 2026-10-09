@@ -198,7 +198,14 @@ def load_index(directory: str) -> Index:
     return Index.load(Path(directory))
 
 
-def configured_index() -> Index:
+def configured_index():
+    backend = os.environ.get("ARTLOUPE_RETRIEVAL_BACKEND", "files")
+    if backend == "pgvector":
+        from artloupe.agent.learning.postgres import PostgresIndex
+
+        return PostgresIndex.load()
+    if backend != "files":
+        raise CorpusUnavailable("Unknown retrieval backend")
     directory = os.environ.get("ARTLOUPE_LEARNING_CORPUS")
     if not directory:
         raise CorpusUnavailable("Learning corpus not configured")
