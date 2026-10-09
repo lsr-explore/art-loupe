@@ -11,8 +11,10 @@ vi.mock('@/i18n/navigation', () => ({
     href,
     children,
     ...rest
-  }: Omit<ComponentProps<'a'>, 'href'> & { href: { query: { window: string } } }) => (
-    <a href={`/home?window=${href.query.window}`} {...rest}>
+  }: Omit<ComponentProps<'a'>, 'href'> & {
+    href: { query: { window: string; view?: string } };
+  }) => (
+    <a href={`/home?${new URLSearchParams(href.query as Record<string, string>)}`} {...rest}>
       {children}
     </a>
   ),
@@ -20,10 +22,10 @@ vi.mock('@/i18n/navigation', () => ({
 
 import { WindowNav } from './window-nav';
 
-const renderNav = () =>
+const renderNav = (view?: 'overview' | 'runs' | 'costs') =>
   render(
     <NextIntlClientProvider locale="en" messages={messages}>
-      <WindowNav current="7d" />
+      <WindowNav current="7d" view={view} />
     </NextIntlClientProvider>,
   );
 
@@ -39,6 +41,14 @@ describe('WindowNav', () => {
     expect(within(nav).getByRole('link', { name: 'Last 30 days' })).toHaveAttribute(
       'href',
       '/home?window=30d',
+    );
+  });
+
+  it('preserves the detail view when changing windows', () => {
+    renderNav('runs');
+    expect(screen.getByRole('link', { name: 'Last 30 days' })).toHaveAttribute(
+      'href',
+      '/home?window=30d&view=runs',
     );
   });
 
