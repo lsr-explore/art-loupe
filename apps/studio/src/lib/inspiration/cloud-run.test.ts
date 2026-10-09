@@ -64,6 +64,16 @@ describe('Cloud Run federation', () => {
     ).rejects.toThrow();
     expect(fetch).not.toHaveBeenCalled();
   });
+  it('sends no identity to a plain-HTTP development agent on any host', async () => {
+    settings.NODE_ENV = 'development';
+    const fetch = vi.spyOn(globalThis, 'fetch');
+    try {
+      expect(await cloudRunHeaders('http://agent:8080', AbortSignal.timeout(1000))).toEqual({});
+      expect(fetch).not.toHaveBeenCalled();
+    } finally {
+      settings.NODE_ENV = 'production';
+    }
+  });
   it('does not return an identity header when the exchange fails', async () => {
     oidc.mockResolvedValue('vercel-jwt');
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 403 }));

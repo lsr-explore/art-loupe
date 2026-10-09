@@ -117,6 +117,26 @@ async def test_rejects_a_token_from_another_issuer(settings, signing_key, jwks):
 
 
 @respx.mock
+async def test_a_configured_issuer_decouples_the_issuer_from_the_reach_url(signing_key, jwks):
+    """Inside Docker, Supabase is reached by one host while its tokens name another."""
+    reached = "http://host.docker.internal:54321"
+    settings = AuthSettings(
+        supabase_url=reached, supabase_issuer=ISSUER, supabase_anon_key="anon-key"
+    )
+    respx.get(f"{reached}/auth/v1/.well-known/jwks.json").mock(
+        return_value=httpx.Response(200, json=jwks)
+    )
+
+    async with httpx.AsyncClient() as client:
+        verified = await verify_access_token(make_token(signing_key), client, settings)
+        assert verified.subject == "3f1a0c6e-0000-4000-8000-000000000001"
+        with pytest.raises(InvalidTokenError):
+            await verify_access_token(
+                make_token(signing_key, iss=f"{reached}/auth/v1"), client, settings
+            )
+
+
+@respx.mock
 async def test_rejects_a_token_with_the_wrong_audience(settings, signing_key, jwks):
     respx.get(JWKS_URL).mock(return_value=httpx.Response(200, json=jwks))
     wrong_audience = make_token(signing_key, aud="some-other-audience")
