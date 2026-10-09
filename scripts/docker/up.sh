@@ -61,20 +61,41 @@ export ARTLOUPE_DOCKER_OPERATIONS_SESSION_PASSWORD="$(openssl rand -base64 36)"
 # --- Provider keys from the keychain -------------------------------------------------------
 # The same precedence as the Python settings: the process environment, then
 # python/.env.local, then python/.env.
+
+# One dotenv value, read the way python-dotenv reads it for the forms these settings use: a
+# single- or double-quoted value is taken verbatim up to its closing quote, and an unquoted
+# value ends at a ` #` comment, with surrounding whitespace trimmed.
+dotenv_value() {
+  local raw="$1"
+  raw="${raw#"${raw%%[![:space:]]*}"}"
+  case "$raw" in
+    \'*)
+      raw="${raw#\'}"
+      printf '%s' "${raw%%\'*}"
+      ;;
+    \"*)
+      raw="${raw#\"}"
+      printf '%s' "${raw%%\"*}"
+      ;;
+    *)
+      raw="${raw%%[[:space:]]#*}"
+      printf '%s' "${raw%"${raw##*[![:space:]]}"}"
+      ;;
+  esac
+}
+
 setting() {
-  local name="$1" file line value=""
+  local name="$1" file line
   if [[ -n "${!name:-}" ]]; then
     printf '%s' "${!name}"
     return
   fi
   for file in python/.env.local python/.env; do
     [[ -f "$file" ]] || continue
-    line="$(grep -E "^[[:space:]]*${name}=" "$file" | tail -n 1 || true)"
+    line="$(grep -E "^[[:space:]]*(export[[:space:]]+)?${name}[[:space:]]*=" "$file" |
+      tail -n 1 || true)"
     if [[ -n "$line" ]]; then
-      value="${line#*=}"
-      value="${value%\"}"
-      value="${value#\"}"
-      printf '%s' "$value"
+      dotenv_value "${line#*=}"
       return
     fi
   done
@@ -85,6 +106,7 @@ upper() {
   tr "[:lower:]" "[:upper:]" <<<"$1"
 }
 
+KEYCHAIN_TIMEOUT_SECONDS=30
 service="$(setting ARTLOUPE_KEYCHAIN_SERVICE)"
 attached=()
 
@@ -103,10 +125,14 @@ for entry in \
     echo "error: ${entry#*|} is set but ARTLOUPE_KEYCHAIN_SERVICE is not." >&2
     exit 1
   fi
-  if ! value="$(security find-generic-password -s "$service" -a "$account" -w 2>/dev/null)" ||
+  # A locked keychain can raise a password dialog, and `security` waits on it. The bound turns
+  # a hang into a named error, matching the Python lookup's 30 seconds.
+  if ! value="$(perl -e 'alarm shift; exec @ARGV' "$KEYCHAIN_TIMEOUT_SECONDS" \
+    security find-generic-password -s "$service" -a "$account" -w 2>/dev/null)" ||
     [[ -z "$value" ]]; then
     echo "error: the keychain item for ${secret} (service '${service}', account '${account}')" \
-      "could not be read." >&2
+      "could not be read within ${KEYCHAIN_TIMEOUT_SECONDS}s. The keychain may be locked, or" \
+      "the item may not exist." >&2
     exit 1
   fi
   export "ARTLOUPE_DOCKER_SECRET_$(upper "$secret")=$value"
