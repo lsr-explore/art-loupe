@@ -74,7 +74,7 @@ services:
       # Plain HTTP to a Compose service name is accepted outside production.
       ARTLOUPE_AGENT_URL: http://agent:8080
     secrets:
-      - source: studio_session_password
+      - source: session_password
         target: auth_session_password
     ports:
       - 127.0.0.1:3001:3001
@@ -87,7 +87,7 @@ services:
       ARTLOUPE_AGENT_URL: http://agent:8080
       AUTH_SESSION_TTL: '3600'
     secrets:
-      - source: operations_session_password
+      - source: session_password
         target: auth_session_password
     ports:
       - 127.0.0.1:3000:3000
@@ -123,10 +123,9 @@ services:
       - 127.0.0.1:8080:8080
 
 secrets:
-  studio_session_password:
-    environment: ARTLOUPE_DOCKER_STUDIO_SESSION_PASSWORD
-  operations_session_password:
-    environment: ARTLOUPE_DOCKER_OPERATIONS_SESSION_PASSWORD
+  # Shared by both apps, which share the session cookie on localhost. See scripts/docker/up.sh.
+  session_password:
+    environment: ARTLOUPE_DOCKER_SESSION_PASSWORD
 
 volumes:
   pnpm-store:

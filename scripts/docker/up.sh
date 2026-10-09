@@ -15,7 +15,7 @@
 # /run/secrets/<name>. A key whose keychain account is not configured is not attached, so
 # that feature reports itself unavailable, exactly as it does on the host.
 #
-# The apps' session passwords are generated fresh on every run, so a restart signs you out.
+# The apps' session password is generated fresh on every run, so a restart signs you out.
 
 set -euo pipefail
 
@@ -55,8 +55,10 @@ export ARTLOUPE_DOCKER_DATABASE_URL="$(
   sed -E 's#@(127\.0\.0\.1|localhost):#@host.docker.internal:#' <<<"$db_url"
 )"
 
-export ARTLOUPE_DOCKER_STUDIO_SESSION_PASSWORD="$(openssl rand -base64 36)"
-export ARTLOUPE_DOCKER_OPERATIONS_SESSION_PASSWORD="$(openssl rand -base64 36)"
+# One password for both apps. They share the host-only `artloupe_session` cookie on localhost,
+# which ignores the port, so distinct passwords would make each sign-in overwrite the other
+# app's cookie. This matches the host setup; production separates the apps by subdomain.
+export ARTLOUPE_DOCKER_SESSION_PASSWORD="$(openssl rand -base64 36)"
 
 # --- Provider keys from the keychain -------------------------------------------------------
 # The same precedence as the Python settings: the process environment, then
