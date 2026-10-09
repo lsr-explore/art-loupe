@@ -117,7 +117,7 @@ export const OverviewPanel = ({
               <p className="mt-3 text-xs text-muted-foreground">{to('stalledHint')}</p>
             </>
           )}
-          <div className="mt-4 border-to pt-2">{link('runs', to('viewRuns'))}</div>
+          <div className="mt-4 border-t pt-2">{link('runs', to('viewRuns'))}</div>
         </section>
         <section aria-labelledby="cost-summary-heading" className="rounded-lg border bg-card p-5">
           <h3 id="cost-summary-heading" className="font-semibold">
@@ -149,7 +149,7 @@ export const OverviewPanel = ({
               </div>
             </dl>
           ) : null}
-          <div className="mt-4 border-to pt-2">{link('costs', to('viewCosts'))}</div>
+          <div className="mt-4 border-t pt-2">{link('costs', to('viewCosts'))}</div>
         </section>
       </div>
       {health && health.recent_runs.length > 0 ? (
