@@ -29,12 +29,15 @@ const readToken = async (): Promise<string | null> => {
   }
 };
 
-/** Local plain HTTP is allowed outside production; anything else must be HTTPS. */
+/**
+ * Plain HTTP is allowed outside production, to any host: the agent is `127.0.0.1` on the
+ * host and `agent` inside the Compose network. Production must be HTTPS.
+ */
 const agentOrigin = (): URL | null => {
   if (!env.ARTLOUPE_AGENT_URL) return null;
   const url = new URL(env.ARTLOUPE_AGENT_URL);
-  const local = env.NODE_ENV !== 'production' && ['localhost', '127.0.0.1'].includes(url.hostname);
-  return url.protocol === 'https:' || (local && url.protocol === 'http:') ? url : null;
+  const development = env.NODE_ENV !== 'production' && url.protocol === 'http:';
+  return url.protocol === 'https:' || development ? url : null;
 };
 
 const FAILURES: Record<number, OpsFailure> = {

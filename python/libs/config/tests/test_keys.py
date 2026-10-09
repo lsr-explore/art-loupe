@@ -122,18 +122,19 @@ def test_an_unrecognised_app_env_fails_even_with_a_mounted_key(
         get_anthropic_api_key()
 
 
+@pytest.mark.parametrize("app_env", ["docker", "production"])
 def test_a_deployed_environment_reads_no_env_file(
-    monkeypatch: pytest.MonkeyPatch, env_files: tuple[Path, Path]
+    monkeypatch: pytest.MonkeyPatch, env_files: tuple[Path, Path], app_env: str
 ) -> None:
     env_files[1].write_text("ARTLOUPE_KEYCHAIN_SERVICE=svc\n")
-    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("APP_ENV", app_env)
     assert get_settings().artloupe_keychain_service is None
 
 
 # --- The process environment is never a source ----------------------------------------------
 
 
-@pytest.mark.parametrize("app_env", ["local", "production"])
+@pytest.mark.parametrize("app_env", ["local", "docker", "production"])
 def test_an_exported_key_is_never_read(monkeypatch: pytest.MonkeyPatch, app_env: str) -> None:
     monkeypatch.setenv("APP_ENV", app_env)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-exported")
@@ -173,7 +174,7 @@ def test_a_keychain_key_is_never_exported(monkeypatch: pytest.MonkeyPatch) -> No
     assert "ANTHROPIC_API_KEY" not in os.environ
 
 
-@pytest.mark.parametrize("app_env", ["ci", "production"])
+@pytest.mark.parametrize("app_env", ["docker", "ci", "production"])
 @pytest.mark.usefixtures("coordinates")
 def test_a_deployed_environment_never_reads_the_keychain(
     monkeypatch: pytest.MonkeyPatch, secrets_dir: Path, app_env: str
@@ -267,7 +268,7 @@ def test_openai_reads_its_own_keychain_account(monkeypatch: pytest.MonkeyPatch) 
 # --- Mounted files ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("app_env", ["local", "production"])
+@pytest.mark.parametrize("app_env", ["local", "docker", "production"])
 def test_a_key_mounted_at_the_default_path_is_read(
     monkeypatch: pytest.MonkeyPatch, secrets_dir: Path, app_env: str
 ) -> None:
@@ -315,7 +316,7 @@ def test_a_rotated_file_is_read_on_the_next_request(secrets_dir: Path) -> None:
 # --- Throwaway values outside production ----------------------------------------------------
 
 
-@pytest.mark.parametrize("app_env", ["local", "ci"])
+@pytest.mark.parametrize("app_env", ["local", "docker", "ci"])
 def test_a_throwaway_value_is_used_outside_production(
     monkeypatch: pytest.MonkeyPatch, app_env: str
 ) -> None:

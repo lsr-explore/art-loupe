@@ -81,7 +81,7 @@ docs/          ADRs, traceability, contrast, session metrics
 | --- | --- | --- | --- |
 | **Node.js** | 24 | everything TypeScript | Pinned in [`.nvmrc`](./.nvmrc), which CI reads via `node-version-file` — one source of truth. `nvm use` picks it up. Next.js 16 requires >=20.9. |
 | **pnpm** | 10.0.0 | the TS workspace | Pinned in `packageManager` — `corepack enable` picks up the right one, so don't install it globally. |
-| **Docker** | any current | `pnpm supabase start` | Runs local Postgres 17 + pgvector and Supabase Auth. **Optional** — see the demo-provider escape hatch below. |
+| **Docker** | any current, Compose v2+ | `pnpm supabase start`, and [Running in Docker](#running-in-docker) | Runs local Postgres 17 + pgvector and Supabase Auth. **Optional** — see the demo-provider escape hatch below. |
 | **uv** | current | the Python workspace | [astral.sh/uv](https://docs.astral.sh/uv/). Always invoke Python tools through it (`uv run pytest`), never bare, so they use the workspace interpreter. |
 | **Python** | 3.12 | the Python workspace | Pinned in `python/.python-version`. **uv installs it for you** — a separate system Python is not required. |
 
@@ -302,6 +302,41 @@ the `embed` step, `learning.cli eval --live`, and `poe test-live`.
 
 The Python workspace's own tasks and conventions live in
 [`python/README.md`](./python/README.md).
+
+### Running in Docker
+
+Docker Compose can run the agent and all three apps in one step. Supabase stays on its own
+CLI, outside Compose. Running without Docker, as described above, keeps working unchanged.
+
+You need Docker Desktop, a host `pnpm install` (for the Supabase CLI), and `python/.env`
+written as in step 2. Then, from the repository root:
+
+```sh
+./scripts/docker/up.sh          # extra arguments go to `docker compose up`, e.g. --build
+docker compose logs -f          # follow the logs
+docker compose restart agent    # after a Python change
+docker compose down             # stop; Supabase keeps running
+```
+
+The script starts Supabase if it isn't running and seeds the demo accounts. It then starts
+the containers in the background. The apps are at the usual addresses, and the agent is at
+`127.0.0.1:8080`. The first start installs dependencies into Docker volumes and takes a few
+minutes.
+
+- **Provider keys come from the keychain.** The script reads each key at the coordinates
+  `python/.env` names, as the host agent does. Compose gives each key to the agent as a file
+  under `/run/secrets`. A key whose keychain account isn't configured is skipped, and that
+  feature reports itself unavailable.
+- **Keys are never written to a file on the host.** Compose copies each one into the agent
+  container's filesystem, where it stays until `docker compose down` removes the container.
+- **Each start signs you out.** The apps' session passwords are generated fresh every time.
+- **The agent runs under emulation on Apple silicon.** `mediapipe` publishes no Linux arm64
+  wheel, so the agent image is `linux/amd64`, and analysis is slower than on the host.
+- **The containers run with `APP_ENV=docker`.** That behaves like `local`, except it never
+  reads the keychain or `python/.env`.
+- **Containers reach Supabase at `host.docker.internal`.** Tokens still name `127.0.0.1` as
+  their issuer, so the agent is given that issuer explicitly through `SUPABASE_ISSUER`.
+- **The learning assistant answers 503.** No corpus is mounted into the agent.
 
 ## Quality
 

@@ -1,11 +1,34 @@
-node_modules
-.next
-out
-dist
-coverage
-test-results
-test-output
-playwright-report
-storybook-static
-.git
+# The build context is the repository root. Only the agent image copies from it; the app
+# images bind-mount the tree instead. Anything listed here never reaches an image layer.
+
+# Environment files hold local coordinates and throwaway values. A container gets its
+# configuration from compose.yaml and its secrets from /run/secrets, never from these.
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and build output are rebuilt inside the image for its own platform.
+**/node_modules
+**/.next
+**/out
+**/dist
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+python/.cache
+
+# Test and report output.
+**/coverage
+**/test-results
+**/test-output
+**/playwright-report
+**/storybook-static
 *.lcov
+
+# Repository and editor state.
+.git
+.husky/_
+**/.DS_Store

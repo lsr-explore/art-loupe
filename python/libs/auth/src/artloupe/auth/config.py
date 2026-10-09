@@ -22,6 +22,15 @@ class AuthSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=False)
 
     supabase_url: str = Field(description="Supabase project URL, e.g. http://127.0.0.1:54321")
+    supabase_issuer: str | None = Field(
+        default=None,
+        description=(
+            "Expected `iss` claim, when it differs from `<SUPABASE_URL>/auth/v1`. Supabase names "
+            "itself by its own configured URL, not by the address a caller used. Inside Docker "
+            "the agent reaches it as `host.docker.internal`, while tokens still name "
+            "`127.0.0.1`. Unset, the issuer is derived from `SUPABASE_URL`."
+        ),
+    )
     supabase_anon_key: str = Field(
         description=(
             "Public anon key. Verification needs no secret, but the JWKS endpoint is served "
@@ -70,7 +79,7 @@ class AuthSettings(BaseSettings):
     @property
     def issuer(self) -> str:
         """Expected `iss` claim on tokens this project issues."""
-        return self.gotrue_base_url
+        return self.supabase_issuer or self.gotrue_base_url
 
 
 @lru_cache(maxsize=1)

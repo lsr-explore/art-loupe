@@ -48,7 +48,7 @@ describe('resolveSecret', () => {
     expect(resolveSecret('EXAMPLE_SECRET', { secretsDir })).toBe('from-mount');
   });
 
-  it.each(['local', 'ci'])('reads the environment under APP_ENV=%s', (appEnv) => {
+  it.each(['local', 'docker', 'ci'])('reads the environment under APP_ENV=%s', (appEnv) => {
     process.env.APP_ENV = appEnv;
     process.env.EXAMPLE_SECRET = 'from-env';
 

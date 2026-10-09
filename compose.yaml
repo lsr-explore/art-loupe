@@ -1,0 +1,142 @@
+# The development loop in containers: the agent and the three Next.js apps.
+#
+# Start it with `scripts/docker/up.sh`, not `docker compose up`. The script starts Supabase,
+# seeds the demo accounts, reads Supabase's coordinates and the provider keys, and passes
+# them here. Every `${ARTLOUPE_DOCKER_*}` value below comes from that script. They default to
+# empty rather than being required, so `docker compose ps`, `logs` and `down` work without
+# it. A bare `docker compose up` stops on the session-password secrets instead.
+#
+# Supabase stays on its own CLI, outside this file. Containers reach it through the host at
+# host.docker.internal; the browser still reaches it at 127.0.0.1, so tokens keep naming
+# 127.0.0.1 as their issuer.
+#
+# Running without Docker is unchanged: `pnpm dev` plus the agent on the host.
+
+name: art-loupe
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: apps/Dockerfile.dev
+  image: artloupe-app-dev
+  depends_on:
+    install:
+      condition: service_completed_successfully
+  # Built into Docker Desktop; spelled out so Linux engines resolve it too.
+  extra_hosts:
+    - host.docker.internal:host-gateway
+  # The repository is mounted live. Every node_modules and .next directory sits in a named
+  # volume over it, so the host's macOS builds and the container's Linux builds never mix.
+  volumes:
+    - .:/workspace
+    - pnpm-store:/pnpm-store
+    - nm-root:/workspace/node_modules
+    - nm-entry:/workspace/apps/entry/node_modules
+    - nm-studio:/workspace/apps/studio/node_modules
+    - nm-operations:/workspace/apps/operations/node_modules
+    - nm-auth:/workspace/packages/auth/node_modules
+    - nm-fascia:/workspace/packages/fascia/node_modules
+    - nm-schemas:/workspace/packages/schemas/node_modules
+    - next-entry:/workspace/apps/entry/.next
+    - next-studio:/workspace/apps/studio/.next
+    - next-operations:/workspace/apps/operations/.next
+
+x-supabase-env: &supabase-env
+  APP_ENV: docker
+  AUTH_PROVIDER: supabase
+  SUPABASE_URL: http://host.docker.internal:54321
+  SUPABASE_ANON_KEY: ${ARTLOUPE_DOCKER_SUPABASE_ANON_KEY:-}
+
+services:
+  # Installs the workspace once into the shared volumes, then exits. The apps wait for it,
+  # so three `next dev` processes never race one install.
+  install:
+    <<: *app
+    depends_on: {}
+    command: ['pnpm', 'install', '--frozen-lockfile', '--config.confirmModulesPurge=false']
+
+  # No `--hostname 0.0.0.0` on `next dev`. It already listens on every interface, and the flag
+  # makes Next report its own origin as http://0.0.0.0, which fails the same-origin checks
+  # against the browser's http://localhost.
+  entry:
+    <<: *app
+    command: ['pnpm', '--filter', '@artloupe/entry', 'dev']
+    environment:
+      APP_ENV: docker
+    ports:
+      - 127.0.0.1:3003:3003
+
+  studio:
+    <<: *app
+    command: ['pnpm', '--filter', '@artloupe/studio', 'dev']
+    environment:
+      <<: *supabase-env
+      # Plain HTTP to a Compose service name is accepted outside production.
+      ARTLOUPE_AGENT_URL: http://agent:8080
+    secrets:
+      - source: studio_session_password
+        target: auth_session_password
+    ports:
+      - 127.0.0.1:3001:3001
+
+  operations:
+    <<: *app
+    command: ['pnpm', '--filter', '@artloupe/operations', 'dev']
+    environment:
+      <<: *supabase-env
+      ARTLOUPE_AGENT_URL: http://agent:8080
+      AUTH_SESSION_TTL: '3600'
+    secrets:
+      - source: operations_session_password
+        target: auth_session_password
+    ports:
+      - 127.0.0.1:3000:3000
+
+  agent:
+    build:
+      context: .
+      dockerfile: python/services/agent/Dockerfile
+    image: artloupe-agent-dev
+    # mediapipe 0.10.35 has no linux/arm64 wheel; Apple silicon runs this under emulation.
+    platform: linux/amd64
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      APP_ENV: docker
+      SUPABASE_URL: http://host.docker.internal:54321
+      # Tokens name the address the browser used, not the one this container uses.
+      SUPABASE_ISSUER: ${ARTLOUPE_DOCKER_SUPABASE_ISSUER:-}
+      SUPABASE_ANON_KEY: ${ARTLOUPE_DOCKER_SUPABASE_ANON_KEY:-}
+      # The local Supabase superuser: a throwaway value, which `docker` accepts like `local`.
+      DATABASE_URL: ${ARTLOUPE_DOCKER_DATABASE_URL:-}
+      ARTLOUPE_OPS_DATABASE_URL: ${ARTLOUPE_DOCKER_DATABASE_URL:-}
+      ARTLOUPE_RUN_LOG: postgres
+      ARTLOUPE_METERING: postgres
+    # Live sources over the copies baked into the image. Read-only: the agent writes nothing
+    # into the tree.
+    volumes:
+      - ./python/libs:/workspace/python/libs:ro
+      - ./python/services:/workspace/python/services:ro
+      - ./packages/schemas/fixtures:/workspace/packages/schemas/fixtures:ro
+    # Provider keys are attached by scripts/docker/up.sh, only for the keys that exist.
+    ports:
+      - 127.0.0.1:8080:8080
+
+secrets:
+  studio_session_password:
+    environment: ARTLOUPE_DOCKER_STUDIO_SESSION_PASSWORD
+  operations_session_password:
+    environment: ARTLOUPE_DOCKER_OPERATIONS_SESSION_PASSWORD
+
+volumes:
+  pnpm-store:
+  nm-root:
+  nm-entry:
+  nm-studio:
+  nm-operations:
+  nm-auth:
+  nm-fascia:
+  nm-schemas:
+  next-entry:
+  next-studio:
+  next-operations:
