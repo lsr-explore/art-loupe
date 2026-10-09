@@ -69,7 +69,13 @@ test.describe(
       // Assert each dashboard panel here as it lands, or this only proves the gate opened.
       // The demo provider carries no Supabase token, so each panel can only explain that it
       // has no data. Their data states are covered by their own component suites.
+      await expect(page.getByRole('heading', { level: 2, name: 'At a glance' })).toBeVisible();
+      await page.getByRole('link', { name: 'Costs', exact: true }).click();
       await expect(page.getByRole('heading', { level: 2, name: 'Agent cost' })).toBeVisible();
+      await page.getByRole('link', { name: 'Last 30 days', exact: true }).click();
+      await expect(page).toHaveURL(/window=30d.*view=costs/);
+      await page.getByRole('link', { name: 'Run health', exact: true }).click();
+      await expect(page).toHaveURL(/window=30d.*view=runs/);
       await expect(page.getByRole('heading', { level: 2, name: 'Run health' })).toBeVisible();
       await expect(page.getByRole('navigation', { name: 'Time window' })).toBeVisible();
     });
