@@ -13,9 +13,9 @@ The working plan: findings and lessons reconciled into time-boxed stages
 | **Severity** | P1 |
 | **Why** | FR-600. A plan claim that is not carried forward from a finding, a lesson or a labelled choice is a confident statement nobody measured or cited. |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 24 (3 parametrized) |
-| **Covered** | a11y 1 · data 1 · functionality 22 |
-| **Not covered** | security · privacy · safety · performance |
+| **Tests** | 26 (3 parametrized) |
+| **Covered** | a11y 1 · safety 1 · data 1 · functionality 23 |
+| **Not covered** | security · privacy · performance |
 
 ## pytest — 17
 
@@ -39,15 +39,17 @@ The working plan: findings and lessons reconciled into time-boxed stages
 | functionality | test_a_revision_is_shown_the_previous_plan_and_its_verdict | `python/services/agent/tests/test_planner.py:85` |
 | functionality | test_a_first_plan_is_written_without_a_revision_block | `python/services/agent/tests/test_planner.py:118` |
 
-## Vitest — 7
+## Vitest — 9
 
 | Category | Test | Location |
 | --- | --- | --- |
 | functionality | leads with the materials list, before the assessment and the stages (FR-607) | `apps/studio/src/components/project/plan-summary.test.tsx:24` |
 | functionality | labels every claim with its evidence class in words, not colour | `apps/studio/src/components/project/plan-summary.test.tsx:34` |
 | functionality | shows the stages in order, with their minutes and the materials they use | `apps/studio/src/components/project/plan-summary.test.tsx:49` |
-| functionality | says plainly when a stage rests on nothing | `apps/studio/src/components/project/plan-summary.test.tsx:61` |
-| a11y | has no accessibility violations | `apps/studio/src/components/project/plan-summary.test.tsx:94` |
+| safety | says what the analysis set aside, and why, rather than omitting it (FR-406) | `apps/studio/src/components/project/plan-summary.test.tsx:62` |
+| functionality | shows no set-aside section when every measurement was used | `apps/studio/src/components/project/plan-summary.test.tsx:70` |
+| functionality | says plainly when a stage rests on nothing | `apps/studio/src/components/project/plan-summary.test.tsx:75` |
+| a11y | has no accessibility violations | `apps/studio/src/components/project/plan-summary.test.tsx:108` |
 | functionality | shows the working plan once a run that wrote one has finished | `apps/studio/src/components/project/run-panel.test.tsx:73` |
 | data | relays a finished run that carries its plan, unchanged | `apps/studio/src/lib/runs/relay-run-events.test.ts:53` |
 

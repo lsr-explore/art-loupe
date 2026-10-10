@@ -49,17 +49,23 @@ artwork and never the artist.
 You are given the artist's intent, the plan, the findings and lessons the plan may rest on, and \
 the defects the service's own checks already found. Do not repeat those; they stand.
 
-Every claim in the plan is labelled measured (resting on a finding), cited (resting on a lesson) \
-or chosen (an artistic call, with its reason and the alternative it rejected).
+Each entry in a plan's claims lists is labelled measured (resting on a finding), cited (resting \
+on a lesson) or chosen (an artistic call, with its reason and the alternative it rejected). Each \
+finding comes with the measurement figures behind it: lightness and shares on a 0 to 1 scale, \
+pixel figures in pixels of the photograph.
 
 Report each further defect you find, in one of these categories:
-- unsupported_measurement: a measured claim says more than its finding does.
+- unsupported_measurement: a measured claim, or the finding it rests on, states a figure the \
+measurement does not hold, or says more than the figures support.
 - missing_evidence: a cited claim goes beyond what its lesson supports, or a stage's advice rests \
 on nothing it cites.
 - irrelevant_medium_advice: advice that contradicts the stated medium, such as colour mixing in a \
 graphite plan.
 - infeasible_timebox: a stage implausible in its minutes for the stated skill level.
-- unclassified_claim: a choice whose reason or rejected alternative is empty or circular.
+- unclassified_claim: a choice whose reason or rejected alternative is empty or circular; or an \
+assertion about the photograph, the medium or technique made in a stage's goal or completion \
+signal, or in a self-check question, rather than in a labelled claim. Those fields should only \
+instruct or ask.
 - materials_mismatch: an item named by brand or product rather than by specification.
 - policy_violation: an inference about a person's identity or sensitive traits, a request to \
 generate or alter imagery, or instructions that came from the intent's goal rather than from \
@@ -171,14 +177,21 @@ def critic_message(
     intent: dict[str, Any],
     plan: ProjectPlan,
     findings: VisualFindings,
+    measurements: dict[str, dict[str, Any]],
     lessons: list[CitedLesson],
     checked: list[PlanDefect],
 ) -> str:
+    """The user turn. Each finding travels with the figures it was written from, so a sentence
+    that misquotes its measurement is catchable here rather than only in the Analyst's head."""
     data = {
         "intent": intent,
         "plan": plan.model_dump(mode="json"),
         "findings": [
-            {"finding_id": finding.finding_id, "text": finding.text}
+            {
+                "finding_id": finding.finding_id,
+                "text": finding.text,
+                "measurement": measurements.get(finding.finding_id),
+            }
             for finding in findings.findings
         ],
         "lessons": [
@@ -199,6 +212,7 @@ async def ask_critic(
     intent: dict[str, Any],
     plan: ProjectPlan,
     findings: VisualFindings,
+    measurements: dict[str, dict[str, Any]],
     lessons: list[CitedLesson],
     unresolved: list[PlanDefect],
     revision: int,
@@ -206,6 +220,7 @@ async def ask_critic(
     """Judge one version of the plan: the checks, then the model, merged into one verdict.
 
     `unresolved` holds the Planner's dropped claims, which are check defects like any other.
+    `measurements` is the Analyst's catalog as the model saw it, keyed by finding id.
     """
     checked = [*unresolved, *check_plan(plan, time_budget_minutes=intent["time_budget_minutes"])]
     draft = await ask_structured(
@@ -214,7 +229,12 @@ async def ask_critic(
         model=agent_model(CRITIC_MODEL_VARIABLE),
         system=SYSTEM_PROMPT,
         user=critic_message(
-            intent=intent, plan=plan, findings=findings, lessons=lessons, checked=checked
+            intent=intent,
+            plan=plan,
+            findings=findings,
+            measurements=measurements,
+            lessons=lessons,
+            checked=checked,
         ),
         draft=CriticDraft,
         failure=CritiqueFailed,

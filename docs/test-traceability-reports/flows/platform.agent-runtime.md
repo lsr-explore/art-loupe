@@ -140,7 +140,7 @@ Agent service transport, auth guard, and graph execution
 | functionality | test_a_final_event_that_fails_transiently_is_retried | `python/services/agent/tests/test_jobs.py:165` |
 | functionality | test_a_final_event_already_recorded_is_not_retried | `python/services/agent/tests/test_jobs.py:187` |
 | functionality | test_a_slow_progress_write_is_abandoned_and_the_run_continues | `python/services/agent/tests/test_jobs.py:201` |
-| security | test_the_plan_state_holds_no_credential | `python/services/agent/tests/test_plan_graph.py:190` |
+| security | test_the_plan_state_holds_no_credential | `python/services/agent/tests/test_plan_graph.py:203` |
 | data | test_bytes_that_do_not_match_the_checksum_are_refused | `python/services/agent/tests/test_resources.py:22` |
 | functionality | test_bytes_that_are_not_an_image_are_refused | `python/services/agent/tests/test_resources.py:28` |
 | functionality | test_decoding_applies_exif_orientation | `python/services/agent/tests/test_resources.py:35` |

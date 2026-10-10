@@ -16,6 +16,17 @@ from artloupe.agent.critic import ask_critic, check_plan, settle_verdict
 from artloupe.agent.planner import PlanDraft, resolve_plan
 from artloupe.schemas import PlanDefect, ProjectPlan
 
+# The Analyst's catalog entry behind `FINDINGS`, as the model saw it.
+MEASUREMENTS = {
+    "value_map": {
+        "finding_id": "value_map",
+        "tool": "value_map",
+        "figures": {"darkest_share": 0.31},
+        "confidence": None,
+        "limitations": [],
+    }
+}
+
 pytestmark = pytest.mark.trace(flow="plan.critique", category="functionality")
 
 
@@ -111,6 +122,7 @@ async def test_the_checks_and_the_model_merge_into_one_verdict() -> None:
         intent={"medium": "oil", "time_budget_minutes": 60},
         plan=plan(),
         findings=FINDINGS,
+        measurements=MEASUREMENTS,
         lessons=LESSONS,
         unresolved=[],
         revision=0,
@@ -126,6 +138,25 @@ async def test_the_checks_and_the_model_merge_into_one_verdict() -> None:
     assert [entry["category"] for entry in shown] == ["infeasible_timebox"]
 
 
+async def test_each_finding_reaches_the_critic_with_the_figures_it_was_written_from() -> None:
+    """A sentence that misquotes its measurement is only catchable beside the measurement."""
+    recorded = RecordedDirector(critic_reply("READY"))
+
+    await ask_critic(
+        recorded.client,
+        intent={"medium": "oil", "time_budget_minutes": 90},
+        plan=plan(),
+        findings=FINDINGS,
+        measurements=MEASUREMENTS,
+        lessons=LESSONS,
+        unresolved=[],
+        revision=0,
+    )
+
+    (finding,) = project_data(recorded.bodies[0])["findings"]
+    assert finding["measurement"]["figures"] == {"darkest_share": 0.31}
+
+
 async def test_the_planners_dropped_claims_reach_the_verdict() -> None:
     dropped = PlanDefect(
         category="unsupported_measurement", detail="dropped", location="stage-1", origin="check"
@@ -137,6 +168,7 @@ async def test_the_planners_dropped_claims_reach_the_verdict() -> None:
         intent={"medium": "oil", "time_budget_minutes": 90},
         plan=plan(),
         findings=FINDINGS,
+        measurements=MEASUREMENTS,
         lessons=LESSONS,
         unresolved=[dropped],
         revision=1,

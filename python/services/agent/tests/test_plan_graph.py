@@ -72,6 +72,19 @@ async def test_a_ready_plan_ends_the_run_with_one_verdict(
     assert measured.evidence.source_checksum == outcome.state["source_checksum"]
 
 
+async def test_the_critic_is_shown_the_figures_behind_every_finding(
+    api: FakeArtistApi, detector: Detector
+) -> None:
+    director = RecordedDirector(*whole_run(EVERY_OFFERED_WITHOUT_A_FACE))
+
+    outcome = await run(api, director)
+
+    critic_findings = project_data(director.bodies[3])["findings"]
+    value_map = next(entry for entry in critic_findings if entry["finding_id"] == "value_map")
+    shares = outcome.state["survey"]["values"]["shares"]
+    assert value_map["measurement"]["figures"]["shares_darkest_first"] == shares
+
+
 async def test_a_revise_without_an_evidence_defect_goes_straight_back_to_the_planner(
     api: FakeArtistApi, detector: Detector
 ) -> None:

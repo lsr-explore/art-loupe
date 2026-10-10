@@ -173,6 +173,8 @@
         "workable": "Viable",
         "poor_fit": "Poco adecuada"
       },
+      "setAsideTitle": "Lo que el análisis dejó de lado",
+      "setAsideIntro": "Estas mediciones eran demasiado inciertas, o estaban demasiado lejos de tu objetivo, para basar el plan en ellas. El plan no afirma nada a partir de ellas.",
       "stagesTitle": "Etapas",
       "totalMinutes": "{minutes, plural, one {# minuto} other {# minutos}} en total",
       "minutes": "{minutes, plural, one {# minuto} other {# minutos}}",

@@ -36,9 +36,9 @@ exists, the detail tells you what it covers.
 | **ops** | | 11 | 10 | 1 | – | 16 | – | 85 | **123** |
 | `palette.extraction` | P2 | – | – | – | – | – | – | – | **none** |
 | **palette** | | – | – | – | – | – | – | – | **0** |
-| [`plan.critique`](flows/plan.critique.md) | P1 | – | – | – | 1 | – | – | 13 | 14 |
-| [`plan.synthesis`](flows/plan.synthesis.md) | P1 | 1 | – | – | – | 1 | – | 22 | 24 |
-| **plan** | | 1 | – | – | 1 | 1 | – | 35 | **38** |
+| [`plan.critique`](flows/plan.critique.md) | P1 | – | – | – | 1 | – | – | 15 | 16 |
+| [`plan.synthesis`](flows/plan.synthesis.md) | P1 | 1 | – | – | 1 | 1 | – | 23 | 26 |
+| **plan** | | 1 | – | – | 2 | 1 | – | 38 | **42** |
 | [`platform.agent-runtime`](flows/platform.agent-runtime.md) | P1 | – | 80 | 1 | – | 3 | 1 | 68 | 153 |
 | [`platform.auth`](flows/platform.auth.md) | P1 | 5 | 121 | – | – | – | – | 13 | 139 |
 | [`platform.contracts`](flows/platform.contracts.md) | P2 | – | – | – | – | 30 | – | – | 30 |
@@ -48,7 +48,7 @@ exists, the detail tells you what it covers.
 | **retrieval** | | 2 | 8 | – | 38 | 8 | – | 4 | **60** |
 | [`safety.untrusted-input`](flows/safety.untrusted-input.md) | P0 | – | 18 | – | 55 | – | – | – | 73 |
 | **safety** | | – | 18 | – | 55 | – | – | – | **73** |
-| **all flows** | | **75** | **318** | **2** | **105** | **125** | **5** | **630** | **1260** |
+| **all flows** | | **75** | **318** | **2** | **106** | **125** | **5** | **633** | **1264** |
 
 ## Gaps
 
@@ -86,7 +86,7 @@ Three specific limits:
 
 | Runner | Tagged | Untagged | Total |
 | --- | --- | --- | --- |
-| pytest | 540 | 0 | 540 |
-| Vitest | 679 | 0 | 679 |
+| pytest | 542 | 0 | 542 |
+| Vitest | 681 | 0 | 681 |
 | Playwright | 41 | 0 | 41 |
-| **All** | **1260** | **0** | **1260** |
+| **All** | **1264** | **0** | **1264** |

@@ -173,6 +173,8 @@
         "workable": "Workable",
         "poor_fit": "A poor fit"
       },
+      "setAsideTitle": "What the analysis set aside",
+      "setAsideIntro": "These measurements were too uncertain, or too far from your goal, to rest the plan on. The plan makes no claim from them.",
       "stagesTitle": "Stages",
       "totalMinutes": "{minutes, plural, one {# minute} other {# minutes}} in all",
       "minutes": "{minutes, plural, one {# minute} other {# minutes}}",

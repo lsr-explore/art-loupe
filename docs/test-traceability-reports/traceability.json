@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 540,
-      "vitest": 679,
+      "pytest": 542,
+      "vitest": 681,
       "playwright": 41,
-      "all": 1260
+      "all": 1264
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 540,
-      "vitest": 679,
+      "pytest": 542,
+      "vitest": 681,
       "playwright": 41,
-      "all": 1260
+      "all": 1264
     }
   },
   "by_flow": {
@@ -171,14 +171,14 @@
         "safety": 1,
         "data": 0,
         "performance": 0,
-        "functionality": 13
+        "functionality": 15
       },
       "runners": {
-        "pytest": 11,
+        "pytest": 13,
         "vitest": 3,
         "playwright": 0
       },
-      "total": 14,
+      "total": 16,
       "parametrized": 2
     },
     "plan.synthesis": {
@@ -188,17 +188,17 @@
         "a11y": 1,
         "security": 0,
         "privacy": 0,
-        "safety": 0,
+        "safety": 1,
         "data": 1,
         "performance": 0,
-        "functionality": 22
+        "functionality": 23
       },
       "runners": {
         "pytest": 17,
-        "vitest": 7,
+        "vitest": 9,
         "playwright": 0
       },
-      "total": 24,
+      "total": 26,
       "parametrized": 3
     },
     "platform.agent-runtime": {
@@ -2428,6 +2428,13 @@
       "category": "a11y"
     },
     {
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:108",
+      "name": "has no accessibility violations",
+      "runner": "vitest",
+      "flow": "plan.synthesis",
+      "category": "a11y"
+    },
+    {
       "id": "apps/studio/src/components/project/plan-summary.test.tsx:24",
       "name": "leads with the materials list, before the assessment and the stages (FR-607)",
       "runner": "vitest",
@@ -2449,32 +2456,39 @@
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/project/plan-summary.test.tsx:61",
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:62",
+      "name": "says what the analysis set aside, and why, rather than omitting it (FR-406)",
+      "runner": "vitest",
+      "flow": "plan.synthesis",
+      "category": "safety"
+    },
+    {
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:70",
+      "name": "shows no set-aside section when every measurement was used",
+      "runner": "vitest",
+      "flow": "plan.synthesis",
+      "category": "functionality"
+    },
+    {
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:75",
       "name": "says plainly when a stage rests on nothing",
       "runner": "vitest",
       "flow": "plan.synthesis",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/project/plan-summary.test.tsx:67",
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:81",
       "name": "shows the final verdict with its open defects, and what the first review found",
       "runner": "vitest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "apps/studio/src/components/project/plan-summary.test.tsx:83",
+      "id": "apps/studio/src/components/project/plan-summary.test.tsx:97",
       "name": "says the Plan Critic found nothing when a first plan is ready",
       "runner": "vitest",
       "flow": "plan.critique",
       "category": "functionality"
-    },
-    {
-      "id": "apps/studio/src/components/project/plan-summary.test.tsx:94",
-      "name": "has no accessibility violations",
-      "runner": "vitest",
-      "flow": "plan.synthesis",
-      "category": "a11y"
     },
     {
       "id": "apps/studio/src/components/project/routing-summary.test.tsx:20",
@@ -7930,50 +7944,57 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:129",
+      "id": "python/services/agent/tests/test_critic.py:106",
+      "name": "test_the_checks_and_the_model_merge_into_one_verdict",
+      "runner": "pytest",
+      "flow": "plan.critique",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_critic.py:141",
+      "name": "test_each_finding_reaches_the_critic_with_the_figures_it_was_written_from",
+      "runner": "pytest",
+      "flow": "plan.critique",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_critic.py:160",
       "name": "test_the_planners_dropped_claims_reach_the_verdict",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:33",
+      "id": "python/services/agent/tests/test_critic.py:44",
       "name": "test_a_plan_that_agrees_with_itself_and_its_budget_passes_every_check",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:42",
+      "id": "python/services/agent/tests/test_critic.py:53",
       "name": "test_the_timebox_allows_ten_percent_either_way",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:50",
+      "id": "python/services/agent/tests/test_critic.py:61",
       "name": "test_materials_and_stages_must_agree_in_both_directions",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:62",
+      "id": "python/services/agent/tests/test_critic.py:73",
       "name": "test_a_stage_resting_on_nothing_and_an_unmeasured_assessment_are_missing_evidence",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_critic.py:84",
-      "name": "test_the_verdict_is_held_inside_fr_704s_bounds",
-      "runner": "pytest",
-      "flow": "plan.critique",
-      "category": "functionality"
-    },
-    {
       "id": "python/services/agent/tests/test_critic.py:95",
-      "name": "test_the_checks_and_the_model_merge_into_one_verdict",
+      "name": "test_the_verdict_is_held_inside_fr_704s_bounds",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
@@ -8749,28 +8770,28 @@
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_plan_graph.py:108",
+      "id": "python/services/agent/tests/test_plan_graph.py:121",
       "name": "test_an_evidence_defect_gathers_lessons_again_before_the_revision",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_plan_graph.py:146",
+      "id": "python/services/agent/tests/test_plan_graph.py:159",
       "name": "test_a_second_revise_ships_with_caution_and_never_plans_a_third_time",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_plan_graph.py:169",
+      "id": "python/services/agent/tests/test_plan_graph.py:182",
       "name": "test_a_planner_draft_that_is_no_plan_fails_the_run",
       "runner": "pytest",
       "flow": "plan.critique",
       "category": "functionality"
     },
     {
-      "id": "python/services/agent/tests/test_plan_graph.py:190",
+      "id": "python/services/agent/tests/test_plan_graph.py:203",
       "name": "test_the_plan_state_holds_no_credential",
       "runner": "pytest",
       "flow": "platform.agent-runtime",
@@ -8785,6 +8806,13 @@
     },
     {
       "id": "python/services/agent/tests/test_plan_graph.py:75",
+      "name": "test_the_critic_is_shown_the_figures_behind_every_finding",
+      "runner": "pytest",
+      "flow": "plan.critique",
+      "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_plan_graph.py:88",
       "name": "test_a_revise_without_an_evidence_defect_goes_straight_back_to_the_planner",
       "runner": "pytest",
       "flow": "plan.critique",

@@ -76,6 +76,9 @@ nothing a stage does not use. Each item carries one claim saying why.
 checks by eye, the item ids it uses, and the claims it rests on. The minutes must sum to the \
 time budget, within ten percent. Size the stages for the artist's skill level.
 - self_check: three to five short questions the artist asks of their own work at the end.
+A stage's goal and completion signal instruct, and a self-check question asks. None of them \
+asserts a fact about the photograph, the medium or technique: put every such assertion in a \
+labelled claim, where its basis is stated.
 
 Ids are lowercase letters, digits, hyphens and underscores, starting with a letter.
 

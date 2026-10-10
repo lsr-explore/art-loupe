@@ -58,6 +58,20 @@ describe('PlanSummary', () => {
     expect(within(stages).getAllByText('a medium hog-bristle filbert')).toHaveLength(2);
   });
 
+  // @trace category=safety
+  it('says what the analysis set aside, and why, rather than omitting it (FR-406)', () => {
+    renderSummary();
+
+    const setAside = section(/^What the analysis set aside$/);
+    expect(within(setAside).getByText('Perspective:')).toBeInTheDocument();
+    expect(within(setAside).getByText(/no horizon is claimed/)).toBeInTheDocument();
+  });
+
+  it('shows no set-aside section when every measurement was used', () => {
+    renderSummary({ ...PLAN_OUTCOME, findings: { ...PLAN_OUTCOME.findings, set_aside: [] } });
+    expect(screen.queryByText('What the analysis set aside')).not.toBeInTheDocument();
+  });
+
   it('says plainly when a stage rests on nothing', () => {
     renderSummary();
     expect(screen.getByText('Nothing yet. The Plan Critic flags this.')).toBeInTheDocument();

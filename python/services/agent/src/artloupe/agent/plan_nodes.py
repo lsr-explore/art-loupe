@@ -52,7 +52,12 @@ async def interpret(state: RunState) -> dict[str, Any]:
         survey=state["survey"], gate=state["gate"], artifacts=state["artifacts"]
     )
     findings = await ask_analyst(_model_client(), intent=state["intent"], catalog=catalog)
-    return {"findings": findings.model_dump(mode="json"), "node_trail": ["interpret"]}
+    return {
+        "findings": findings.model_dump(mode="json"),
+        # Kept so the Plan Critic can hold each finding's sentence against its figures.
+        "measurements": {entry.finding_id: entry.shown() for entry in catalog},
+        "node_trail": ["interpret"],
+    }
 
 
 async def gather_lessons(state: RunState) -> dict[str, Any]:
@@ -112,6 +117,7 @@ async def critique(state: RunState) -> dict[str, Any]:
         intent=state["intent"],
         plan=ProjectPlan.model_validate(state["plan"]),
         findings=VisualFindings.model_validate(state["findings"]),
+        measurements=state["measurements"],
         lessons=[CitedLesson.model_validate(entry) for entry in state["lessons"]],
         unresolved=[PlanDefect.model_validate(entry) for entry in state["unresolved"]],
         revision=state["revision"],

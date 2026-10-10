@@ -77,7 +77,12 @@ export const PLAN_OUTCOME: PlanOutcome = {
         evidence: MEASURED,
       },
     ],
-    set_aside: [],
+    set_aside: [
+      {
+        finding_id: 'perspective',
+        reason: 'No vanishing point cleared the confidence floor, so no horizon is claimed.',
+      },
+    ],
   },
   lessons: [],
   plan: {

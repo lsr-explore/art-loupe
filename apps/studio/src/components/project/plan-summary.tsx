@@ -9,6 +9,8 @@ import type { PlanClaim, PlanOutcome } from '@/lib/runs/run-contract';
  * - **Materials come first** (FR-607): they are what the artist has to act on before starting.
  * - **Every claim shows its evidence class in words**, never by colour alone, so the artist can
  *   tell a measured fact from a cited lesson from an artistic choice they are free to overrule.
+ * - **What the analysis set aside is shown with its reason** (FR-406). A measurement too weak to
+ *   rest a plan on is an abstention the artist is told about, not a silent gap.
  * - **Open defects are shown, not hidden** (FR-704). A plan that shipped with caution says what
  *   the caution is, and a revised plan says what the first review found (FR-705).
  *
@@ -70,7 +72,9 @@ const DefectList = ({ defects }: { defects: PlanOutcome['verdicts'][number]['def
 
 export const PlanSummary = ({ outcome }: PlanSummaryProps) => {
   const tp = useTranslations('project.plan');
+  const tt = useTranslations('project.tools');
   const { plan, verdicts } = outcome;
+  const { set_aside: setAside } = outcome.findings;
   const final = verdicts[verdicts.length - 1];
   const first = verdicts.length > 1 ? verdicts[0] : null;
   const itemName = new Map(plan.materials.map((item) => [item.item_id, item.specification]));
@@ -134,6 +138,25 @@ export const PlanSummary = ({ outcome }: PlanSummaryProps) => {
         </h3>
         <ClaimList claims={plan.assessment.claims} />
       </section>
+
+      {setAside.length > 0 ? (
+        <section aria-labelledby="set-aside-heading" className="flex flex-col gap-2">
+          <h3 id="set-aside-heading" className="text-base font-medium">
+            {tp('setAsideTitle')}
+          </h3>
+          <p className="text-sm text-muted-foreground">{tp('setAsideIntro')}</p>
+          <ul className="flex flex-col gap-1 text-sm">
+            {setAside.map((entry) => (
+              <li key={entry.finding_id}>
+                <span className="font-medium">
+                  {tt.has(entry.finding_id) ? tt(entry.finding_id) : entry.finding_id}:
+                </span>{' '}
+                {entry.reason}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section aria-labelledby="stages-heading" className="flex flex-col gap-2">
         <h3 id="stages-heading" className="text-base font-medium">

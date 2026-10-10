@@ -58,8 +58,10 @@ class RunState(TypedDict):
     routing: NotRequired[dict[str, Any]]
     # `analyse`: the FR-305 `ArtifactMetadata` of every selected tool, in `TOOLS` order.
     artifacts: NotRequired[list[dict[str, Any]]]
-    # `interpret`: the Visual Analyst's `VisualFindings`.
+    # `interpret`: the Visual Analyst's `VisualFindings`, and the catalog it judged, keyed by
+    # finding id, so the Plan Critic can check each sentence against the figures behind it.
     findings: NotRequired[dict[str, Any]]
+    measurements: NotRequired[dict[str, dict[str, Any]]]
     # `gather_lessons`: every `CitedLesson` gathered so far. A revision's lessons are added to
     # the first plan's, never swapped for them.
     lessons: NotRequired[list[dict[str, Any]]]
