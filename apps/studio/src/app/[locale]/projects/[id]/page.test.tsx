@@ -87,9 +87,9 @@ describe('Project page', () => {
     expect(photo).toHaveAttribute('height', '1200');
   });
 
-  it('says plainly that the plan is not built yet', async () => {
+  it('says what analysing the reference will produce', async () => {
     await renderFor(PROJECT_ID);
-    expect(screen.getByText(/working plan is not built yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Analyse the reference to get a working plan/)).toBeInTheDocument();
   });
 
   it('hands the run panel the project and no run when there is none', async () => {

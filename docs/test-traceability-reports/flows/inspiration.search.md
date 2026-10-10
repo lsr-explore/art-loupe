@@ -13,36 +13,37 @@ Inspiration search, provider eligibility, caching, and result controls
 | **Severity** | P2 |
 | **Why** | Artists can browse available photographs and paintings despite provider outages. |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 67 (2 parametrized) |
-| **Covered** | a11y 3 · security 12 · data 6 · performance 4 · functionality 42 |
+| **Tests** | 69 (2 parametrized) |
+| **Covered** | a11y 3 · security 13 · data 6 · performance 4 · functionality 43 |
 | **Not covered** | privacy · safety |
 
-## pytest — 20
+## pytest — 21
 
 | Category | Test | Location |
 | --- | --- | --- |
-| functionality | test_met_excludes_ineligible_images | `python/services/agent/tests/test_inspiration.py:53` |
-| functionality | test_artist_is_checked_against_actual_artist_not_culture | `python/services/agent/tests/test_inspiration.py:57` |
-| functionality | test_request_rejects_invalid_filters | `python/services/agent/tests/test_inspiration.py:73` |
-| functionality | test_met_uses_paginated_endpoint_and_preserves_partial_success | `python/services/agent/tests/test_inspiration.py:78` |
-| functionality | test_pexels_sends_only_supported_filters | `python/services/agent/tests/test_inspiration.py:107` |
-| functionality | test_provider_rate_limit_is_an_outage_not_an_empty_result | `python/services/agent/tests/test_inspiration.py:146` |
-| functionality | test_met_detail_rate_limit_is_an_outage_not_a_partial_page | `python/services/agent/tests/test_inspiration.py:157` |
-| functionality | test_met_detail_rate_limit_serves_stale_cache | `python/services/agent/tests/test_inspiration.py:170` |
-| functionality | test_met_detail_deadline_returns_the_details_that_arrived | `python/services/agent/tests/test_inspiration.py:185` |
-| functionality | test_fresh_cache_avoids_provider_calls | `python/services/agent/tests/test_inspiration.py:220` |
-| functionality | test_stale_cache_survives_outage_but_not_beyond_seven_days | `python/services/agent/tests/test_inspiration.py:226` |
-| functionality | test_cache_write_failure_does_not_fail_provider_result | `python/services/agent/tests/test_inspiration.py:235` |
-| functionality | test_success_is_cached_and_partial_success_is_not | `python/services/agent/tests/test_inspiration.py:252` |
-| functionality | test_cache_key_normalizes_whitespace_and_separates_filters_and_sources | `python/services/agent/tests/test_inspiration.py:269` |
-| functionality | test_http_route_requires_auth_and_rejects_operator | `python/services/agent/tests/test_inspiration.py:278` |
-| functionality | test_http_route_maps_outage | `python/services/agent/tests/test_inspiration.py:301` |
-| functionality | test_http_route_limits_each_artist_separately | `python/services/agent/tests/test_inspiration.py:322` |
-| functionality | test_rate_limiter_refills_and_reports_wait | `python/services/agent/tests/test_inspiration.py:350` |
-| functionality | test_rate_limiter_stays_bounded_by_evicting_the_least_recent | `python/services/agent/tests/test_inspiration.py:359` |
-| functionality | test_shared_typescript_python_request_fixture | `python/services/agent/tests/test_inspiration.py:369` |
+| functionality | test_met_excludes_ineligible_images | `python/services/agent/tests/test_inspiration.py:54` |
+| functionality | test_artist_is_checked_against_actual_artist_not_culture | `python/services/agent/tests/test_inspiration.py:58` |
+| functionality | test_request_rejects_invalid_filters | `python/services/agent/tests/test_inspiration.py:74` |
+| functionality | test_met_uses_paginated_endpoint_and_preserves_partial_success | `python/services/agent/tests/test_inspiration.py:79` |
+| functionality | test_pexels_sends_only_supported_filters | `python/services/agent/tests/test_inspiration.py:108` |
+| functionality | test_provider_rate_limit_is_an_outage_not_an_empty_result | `python/services/agent/tests/test_inspiration.py:147` |
+| functionality | test_met_detail_rate_limit_is_an_outage_not_a_partial_page | `python/services/agent/tests/test_inspiration.py:158` |
+| functionality | test_met_detail_rate_limit_serves_stale_cache | `python/services/agent/tests/test_inspiration.py:171` |
+| functionality | test_met_detail_deadline_returns_the_details_that_arrived | `python/services/agent/tests/test_inspiration.py:186` |
+| functionality | test_fresh_cache_avoids_provider_calls | `python/services/agent/tests/test_inspiration.py:221` |
+| functionality | test_stale_cache_survives_outage_but_not_beyond_seven_days | `python/services/agent/tests/test_inspiration.py:227` |
+| functionality | test_an_unreadable_pexels_key_is_an_outage_so_stale_results_survive | `python/services/agent/tests/test_inspiration.py:236` |
+| functionality | test_cache_write_failure_does_not_fail_provider_result | `python/services/agent/tests/test_inspiration.py:246` |
+| functionality | test_success_is_cached_and_partial_success_is_not | `python/services/agent/tests/test_inspiration.py:263` |
+| functionality | test_cache_key_normalizes_whitespace_and_separates_filters_and_sources | `python/services/agent/tests/test_inspiration.py:280` |
+| functionality | test_http_route_requires_auth_and_rejects_operator | `python/services/agent/tests/test_inspiration.py:289` |
+| functionality | test_http_route_maps_outage | `python/services/agent/tests/test_inspiration.py:312` |
+| functionality | test_http_route_limits_each_artist_separately | `python/services/agent/tests/test_inspiration.py:333` |
+| functionality | test_rate_limiter_refills_and_reports_wait | `python/services/agent/tests/test_inspiration.py:361` |
+| functionality | test_rate_limiter_stays_bounded_by_evicting_the_least_recent | `python/services/agent/tests/test_inspiration.py:370` |
+| functionality | test_shared_typescript_python_request_fixture | `python/services/agent/tests/test_inspiration.py:380` |
 
-## Vitest — 44
+## Vitest — 45
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -66,9 +67,10 @@ Inspiration search, provider eligibility, caching, and result controls
 | performance | source changes replace both values immediately | `apps/studio/src/components/inspiration/use-search-input.test.tsx:38` |
 | security | exchanges a request-scoped Vercel JWT and requests the backend audience | `apps/studio/src/lib/inspiration/cloud-run.test.ts:44` |
 | security | refuses unapproved production endpoints before requesting tokens | `apps/studio/src/lib/inspiration/cloud-run.test.ts:60` |
-| security | does not return an identity header when the exchange fails | `apps/studio/src/lib/inspiration/cloud-run.test.ts:67` |
-| performance | reuses one ID token across requests until shortly before it expires | `apps/studio/src/lib/inspiration/cloud-run.test.ts:75` |
-| security | does not cache a failed exchange | `apps/studio/src/lib/inspiration/cloud-run.test.ts:90` |
+| security | sends no identity to a plain-HTTP development agent on any host | `apps/studio/src/lib/inspiration/cloud-run.test.ts:67` |
+| security | does not return an identity header when the exchange fails | `apps/studio/src/lib/inspiration/cloud-run.test.ts:77` |
+| performance | reuses one ID token across requests until shortly before it expires | `apps/studio/src/lib/inspiration/cloud-run.test.ts:85` |
+| security | does not cache a failed exchange | `apps/studio/src/lib/inspiration/cloud-run.test.ts:100` |
 | data | deduplicates loaded pages and preserves provider order | `apps/studio/src/lib/inspiration/results.test.ts:21` |
 | data | sorts without mutating the query cache and keeps unknown years last | `apps/studio/src/lib/inspiration/results.test.ts:23` |
 | data | filters title or creator case-insensitively | `apps/studio/src/lib/inspiration/results.test.ts:28` |

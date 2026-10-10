@@ -130,6 +130,9 @@
       "credential_rejected": "Credential rejected",
       "data_service_refused": "Data service refused",
       "routing_failed": "Routing failed",
+      "analysis_failed": "Analysis failed",
+      "planning_failed": "Planning failed",
+      "critique_failed": "Plan review failed",
       "interrupted": "Service stopped mid-run",
       "internal_error": "Internal error"
     },

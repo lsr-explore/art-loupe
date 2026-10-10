@@ -17,7 +17,7 @@ from the API, and `test_director_live.py` is the one test that calls it.
 
 import hashlib
 import json
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 
 import cv2
@@ -40,7 +40,7 @@ from artloupe.persistence import (
     SourceImage,
     ToolResultKey,
 )
-from artloupe.schemas import TOOLS
+from artloupe.schemas import TOOLS, CitedLesson, VisualFindings
 
 PROJECT_ID = "aaaaaaaa-3333-4333-8333-aaaaaaaaaaaa"
 OWNER = "4a1f0e2c-0000-4000-8000-000000000001"
@@ -196,14 +196,23 @@ def director_reply(
     }
 
 
+# A reply computed from the request body, for an agent whose answer must name what it was sent.
+Responder = Callable[[dict[str, Any]], dict[str, Any]]
+
+
 class RecordedDirector:
     """A real `AsyncAnthropic` client whose transport answers from recorded replies, in order.
 
     Everything but the network is real: the SDK serialises the request and parses the reply as it
     would against the API. `requests` holds each request as it would have left this process.
+
+    The Visual Analyst, the Studio Planner and the Plan Critic share the run's client with the
+    Director, so a whole run's replies are queued here in call order (`whole_run`). A reply may be
+    a `Responder`, called with the request body, when the answer has to name ids the request
+    carried.
     """
 
-    def __init__(self, *replies: dict[str, Any]) -> None:
+    def __init__(self, *replies: dict[str, Any] | Responder) -> None:
         self.replies = list(replies)
         self.requests: list[httpx2.Request] = []
         self.client = AsyncAnthropic(
@@ -216,11 +225,228 @@ class RecordedDirector:
         self.requests.append(request)
         if not self.replies:
             return httpx2.Response(500, json={"error": "the test recorded no reply for this call"})
-        return httpx2.Response(200, json=self.replies.pop(0))
+        reply = self.replies.pop(0)
+        if callable(reply):
+            reply = reply(json.loads(request.content))
+        return httpx2.Response(200, json=reply)
 
     @property
     def bodies(self) -> list[dict[str, Any]]:
         return [json.loads(request.content) for request in self.requests]
+
+
+def project_data(body: dict[str, Any]) -> dict[str, Any]:
+    """The `<project_data>` JSON block of a request's user turn, decoded."""
+    text = body["messages"][0]["content"]
+    start = text.index("<project_data>") + len("<project_data>")
+    return json.loads(text[start : text.index("</project_data>")])
+
+
+def analyst_uses_everything(body: dict[str, Any]) -> dict[str, Any]:
+    """The Visual Analyst's answer: every catalog entry used, quoting its tool."""
+    catalog = project_data(body)["catalog"]
+    return director_reply(
+        {
+            "findings": [
+                {"finding_id": entry["finding_id"], "text": f"The {entry['tool']} measurement."}
+                for entry in catalog
+            ],
+            "set_aside": [],
+        }
+    )
+
+
+def claim(basis: str, source: str | None = None) -> dict[str, Any]:
+    """A draft claim the Planner might write, resting on `basis`."""
+    if basis == "choice":
+        return {
+            "text": "Start from the darkest shapes.",
+            "basis": "choice",
+            "source": None,
+            "reason": "the darks carry the composition",
+            "rejected_alternative": "starting from the outline",
+        }
+    return {
+        "text": f"A claim resting on {source}.",
+        "basis": basis,
+        "source": source,
+        "reason": None,
+        "rejected_alternative": None,
+    }
+
+
+def plan_draft(*, finding: str, lesson: str, minutes: tuple[int, ...] = (60, 30)) -> dict[str, Any]:
+    """A Planner's draft: one material, a stage per entry in `minutes`, every basis used once."""
+    return {
+        "assessment": {"suitability": "workable", "claims": [claim("finding", finding)]},
+        "materials": [
+            {
+                "item_id": "brush",
+                "category": "brush",
+                "specification": "a medium hog-bristle filbert",
+                "claim": claim("lesson", lesson),
+            }
+        ],
+        "stages": [
+            {
+                "stage_id": f"stage-{index}",
+                "title": f"Stage {index}",
+                "minutes": length,
+                "goal": "Mass the darks.",
+                "completion_signal": "Every dark on the value plate has a mass.",
+                "materials": ["brush"],
+                "claims": [claim("choice")],
+            }
+            for index, length in enumerate(minutes, start=1)
+        ],
+        "self_check": ["Do the darks match the value plate?"],
+    }
+
+
+def planner_writes(minutes: tuple[int, ...] = (60, 30)) -> Responder:
+    """The Planner's answer, citing the first finding and the first lesson it was sent."""
+
+    def respond(body: dict[str, Any]) -> dict[str, Any]:
+        data = project_data(body)
+        return director_reply(
+            plan_draft(
+                finding=data["findings"][0]["finding_id"],
+                lesson=data["lessons"][0]["lesson_id"],
+                minutes=minutes,
+            )
+        )
+
+    return respond
+
+
+def critic_reply(
+    verdict: str = "READY", defects: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
+    """The Plan Critic's answer."""
+    return director_reply(
+        {"defects": defects or [], "verdict": verdict, "summary": "The plan fits the budget."}
+    )
+
+
+def whole_run(decision: dict[str, Any], *after: dict[str, Any] | Responder) -> tuple:
+    """Every model reply one run needs, in call order: Director, Analyst, Planner, Critic.
+
+    `after` replaces the Planner's and the Critic's replies, for a run that revises its plan.
+    """
+    tail = after or (planner_writes(), critic_reply())
+    return (director_reply(decision), analyst_uses_everything, *tail)
+
+
+# One used finding, as the Visual Analyst reports it.
+FINDINGS = VisualFindings.model_validate(
+    {
+        "findings": [
+            {
+                "finding_id": "value_map",
+                "text": "A third of the photograph sits in the darkest value.",
+                "evidence": {
+                    "kind": "measured",
+                    "tool": "value_map",
+                    "tool_version": "test",
+                    "parameters": {},
+                    "source_checksum": CHECKSUM,
+                    "units": "normalized",
+                },
+            }
+        ],
+        "set_aside": [],
+    }
+)
+# One oil materials lesson, as the fixture source returns it.
+LESSONS = [
+    CitedLesson.model_validate(
+        {
+            "lesson_id": "fx-oil-materials",
+            "topic": "materials",
+            "title": "Oil",
+            "text": "A limited palette covers most subjects.",
+            "evidence": {
+                "kind": "cited",
+                "chunk_id": "fx-oil-materials",
+                "institution": "Art Loupe fixture lessons",
+                "url": "https://example.invalid/fixture-lessons/fx-oil-materials",
+                "licence": "Fixture text written for development. Not a published source.",
+                "retrieved_at": "2026-10-09T00:00:00Z",
+                "passage_span": {"start": 0, "end": 40},
+            },
+        }
+    )
+]
+
+
+# The plan half of a finished run's state, for suites that stub the graph rather than run it.
+PLAN_STATE: dict[str, Any] = {
+    "findings": {
+        "findings": [
+            {
+                "finding_id": "value_map",
+                "text": "Nearly a third of the photograph sits in the darkest value.",
+                "evidence": {
+                    "kind": "measured",
+                    "tool": "value_map",
+                    "tool_version": "test",
+                    "parameters": {},
+                    "source_checksum": CHECKSUM,
+                    "units": "normalized",
+                },
+            }
+        ],
+        "set_aside": [],
+    },
+    "lessons": [],
+    "plan": {
+        "assessment": {
+            "suitability": "workable",
+            "claims": [
+                {
+                    "text": "The darkest value covers nearly a third of the frame.",
+                    "evidence": {
+                        "kind": "measured",
+                        "tool": "value_map",
+                        "tool_version": "test",
+                        "parameters": {},
+                        "source_checksum": CHECKSUM,
+                        "units": "normalized",
+                    },
+                    "source": "value_map",
+                }
+            ],
+        },
+        "materials": [],
+        "stages": [
+            {
+                "stage_id": "block-in",
+                "title": "Block in the darks",
+                "minutes": 90,
+                "goal": "Mass the darkest value as one shape.",
+                "completion_signal": "Every dark on the value plate has a mass.",
+                "materials": [],
+                "claims": [],
+            }
+        ],
+        "self_check": ["Do the darks match the value plate?"],
+    },
+    "verdicts": [
+        {
+            "verdict": "READY_WITH_CAUTION",
+            "defects": [
+                {
+                    "category": "missing_evidence",
+                    "detail": "The stage rests on no finding, lesson or choice.",
+                    "location": "block-in",
+                    "origin": "check",
+                }
+            ],
+            "summary": "Usable, with one stage resting on nothing.",
+            "revision": 0,
+        }
+    ],
+}
 
 
 class Detector:

@@ -84,7 +84,7 @@
   },
   "project": {
     "referenceLabel": "Project reference",
-    "planPending": "The working plan is not built yet. Routing comes first; the reference assessment, the plates and the plan follow in later work.",
+    "planPending": "Analyse the reference to get a working plan: a materials list, time-boxed stages, and the Plan Critic's verdict on them.",
     "startAnother": "Start another project",
     "title": "Your project",
     "photoAlt": "The reference photograph for this project",
@@ -115,7 +115,11 @@
       "face_gate": "Looking for a face",
       "survey": "Surveying the photograph",
       "direct": "Choosing the studies",
-      "analyse": "Running the studies"
+      "analyse": "Running the studies",
+      "interpret": "Reading the measurements",
+      "gather_lessons": "Gathering lessons",
+      "plan": "Writing the plan",
+      "critique": "Reviewing the plan"
     },
     "tools": {
       "grayscale": "Grayscale",
@@ -132,6 +136,61 @@
       "noneDeclined": "Nothing was declined.",
       "directorsWords": "The reasons above are the Studio Director's own words, and are shown in English."
     },
+    "plan": {
+      "title": "Your working plan",
+      "agentsWords": "The plan's wording is the agents' own, and is shown in English.",
+      "verdictTitle": "The Plan Critic's verdict",
+      "verdict": {
+        "READY": "Ready",
+        "READY_WITH_CAUTION": "Ready, with cautions",
+        "REVISE": "Needs revision"
+      },
+      "revised": "The Studio Planner revised this plan once, after the Plan Critic's first review.",
+      "firstReview": "What the first review found",
+      "openIssues": "Open issues",
+      "noIssues": "The Plan Critic found nothing to change.",
+      "defect": {
+        "unsupported_measurement": "Unsupported measurement",
+        "missing_evidence": "Missing evidence",
+        "irrelevant_medium_advice": "Advice that does not fit the medium",
+        "infeasible_timebox": "Time box",
+        "unclassified_claim": "Unlabelled claim",
+        "materials_mismatch": "Materials",
+        "policy_violation": "Policy"
+      },
+      "materialsTitle": "Materials",
+      "noMaterials": "The plan lists no materials.",
+      "category": {
+        "surface": "Surface",
+        "drawing": "Drawing",
+        "paint": "Paint",
+        "brush": "Brush",
+        "tool": "Tool"
+      },
+      "assessmentTitle": "How well the reference suits your plan",
+      "suitability": {
+        "good_fit": "A good fit",
+        "workable": "Workable",
+        "poor_fit": "A poor fit"
+      },
+      "stagesTitle": "Stages",
+      "totalMinutes": "{minutes, plural, one {# minute} other {# minutes}} in all",
+      "minutes": "{minutes, plural, one {# minute} other {# minutes}}",
+      "goal": "Goal",
+      "doneWhen": "Done when",
+      "uses": "Uses",
+      "restsOn": "Rests on",
+      "restsOnNothing": "Nothing yet. The Plan Critic flags this.",
+      "selfCheckTitle": "Check your own work",
+      "evidence": {
+        "measured": "Measured",
+        "cited": "Cited",
+        "chosen": "Chosen"
+      },
+      "measuredBy": "measured by the {tool} study",
+      "citedFrom": "from {institution}",
+      "chosenBecause": "because {reason}, rather than {alternative}"
+    },
     "failure": {
       "budget_exceeded": "This project has used its analysis budget.",
       "deadline_exceeded": "The analysis took too long and was stopped.",
@@ -142,6 +201,9 @@
       "credential_rejected": "Your session expired during the analysis. Sign in again and retry.",
       "data_service_refused": "The data service refused a request during the analysis.",
       "routing_failed": "The Studio Director could not decide which studies to run.",
+      "analysis_failed": "The Visual Analyst could not interpret the measurements.",
+      "planning_failed": "The Studio Planner could not write a plan.",
+      "critique_failed": "The Plan Critic could not review the plan.",
       "interrupted": "The analysis service stopped before the analysis finished.",
       "internal_error": "Something went wrong inside the analysis service.",
       "invalid_stream": "The analysis service sent an update that could not be read."

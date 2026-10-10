@@ -16,6 +16,7 @@ import { claimSchema } from './evidence';
 import { imageRefSchema } from './image';
 import { projectIntentSchema } from './intent';
 import { toolManifestSchema } from './manifest';
+import { planOutcomeSchema } from './plan';
 import { routingDecisionSchema } from './routing';
 import { runFailureSchema, runResultSchema } from './run';
 
@@ -30,6 +31,7 @@ interface ParityFixture {
     budget_ledgers: { stopped: boolean }[];
     run_results: { run_id: string }[];
     run_failures: { reason: string }[];
+    plan_outcomes: unknown[];
   };
   rejects: Record<string, { schema: string; value: unknown }>;
 }
@@ -68,6 +70,7 @@ const SCHEMAS: Record<string, ZodType> = {
   budget_ledger: budgetLedgerSchema,
   run_result: runResultSchema,
   run_failure: runFailureSchema,
+  plan_outcome: planOutcomeSchema,
 };
 
 // @trace flow=platform.contracts category=data
@@ -129,6 +132,18 @@ describe('contract parity fixture — accepted values', () => {
       expect(() => runResultSchema.parse(result)).not.toThrow();
     });
   }
+
+  accepts.plan_outcomes.forEach((outcome, index) => {
+    it(`parses plan outcome ${index}`, () => {
+      expect(() => planOutcomeSchema.parse(outcome)).not.toThrow();
+    });
+  });
+
+  it('still parses a run recorded before plans existed', () => {
+    const planless = accepts.run_results.find((result) => !('plan' in result));
+    expect(planless).toBeDefined();
+    expect(runResultSchema.parse(planless).plan).toBeUndefined();
+  });
 
   for (const failure of accepts.run_failures) {
     it(`parses a ${failure.reason} run failure`, () => {

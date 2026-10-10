@@ -1,8 +1,9 @@
 """The object the graph carries between nodes.
 
 `agents.md` §3 sketches the finished `RunState` — intent, findings, lessons, plan, verdict,
-corrections, transcript, budget. This holds only what the routing slice produces, so no field
-is invented ahead of the contract that defines it.
+corrections, transcript, budget. This holds what the routing and plan slices produce, so no field
+is invented ahead of the contract that defines it. Corrections and the chat transcript are not
+here yet.
 
 What is fixed here, and later slices cannot cheaply change:
 
@@ -57,3 +58,16 @@ class RunState(TypedDict):
     routing: NotRequired[dict[str, Any]]
     # `analyse`: the FR-305 `ArtifactMetadata` of every selected tool, in `TOOLS` order.
     artifacts: NotRequired[list[dict[str, Any]]]
+    # `interpret`: the Visual Analyst's `VisualFindings`.
+    findings: NotRequired[dict[str, Any]]
+    # `gather_lessons`: every `CitedLesson` gathered so far. A revision's lessons are added to
+    # the first plan's, never swapped for them.
+    lessons: NotRequired[list[dict[str, Any]]]
+    # `plan`: the current `ProjectPlan`, the claims its draft could not resolve as `PlanDefect`s,
+    # and which version it is: 0 for the first plan, 1 for the revision.
+    plan: NotRequired[dict[str, Any]]
+    unresolved: NotRequired[list[dict[str, Any]]]
+    revision: NotRequired[int]
+    # `critique`: one `CriticVerdict` per plan version. Accumulates like `node_trail`, so the
+    # verdict that sent the plan back is kept beside the one that let it through (FR-705).
+    verdicts: NotRequired[Annotated[list[dict[str, Any]], operator.add]]

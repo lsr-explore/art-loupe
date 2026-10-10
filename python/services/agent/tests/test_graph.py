@@ -5,8 +5,9 @@ graph and a node that runs but returns nothing look identical from the outside, 
 first is caught by checking the compiled graph.
 
 The runs use the real plate and perspective tools on a drawn photograph. The face detector and
-the Loomis construction are stubbed (`conftest.py`), so no test here sends Google anything. The
-Director is a recorded responder, so no test here calls Anthropic either.
+the Loomis construction are stubbed (`conftest.py`), so no test here sends Google anything. Every
+model call — the Director, the Visual Analyst, the Studio Planner and the Plan Critic — is a
+recorded responder, so no test here calls Anthropic either.
 """
 
 import json
@@ -22,8 +23,8 @@ from agent_support import (
     Detector,
     FakeArtistApi,
     RecordedDirector,
-    director_reply,
     synthetic_face,
+    whole_run,
 )
 
 from artloupe.agent.graph import build_graph
@@ -36,7 +37,19 @@ from artloupe.schemas import TOOLS
 
 pytestmark = pytest.mark.trace(flow="platform.agent-runtime", category="functionality")
 
-IN_ORDER = ["load_project", "face_gate", "survey", "direct", "analyse"]
+IN_ORDER = [
+    "load_project",
+    "face_gate",
+    "survey",
+    "direct",
+    "analyse",
+    "interpret",
+    "gather_lessons",
+    "plan",
+    "critique",
+]
+# The nodes that call a model. Every other node records a real zero.
+SPENDING = ("direct", "interpret", "plan", "critique")
 
 GENEROUS = RunGuards(
     recursion_limit=25, node_visit_limit=10, wall_clock_seconds=60.0, token_ceiling=1_000_000
@@ -45,8 +58,8 @@ GENEROUS = RunGuards(
 
 @pytest.fixture
 def director() -> RecordedDirector:
-    """A Director for a run without a face, selecting every tool it is offered."""
-    return RecordedDirector(director_reply(EVERY_OFFERED_WITHOUT_A_FACE))
+    """A whole run without a face: the Director selects every tool it is offered."""
+    return RecordedDirector(*whole_run(EVERY_OFFERED_WITHOUT_A_FACE))
 
 
 async def run(
@@ -64,11 +77,14 @@ async def run(
     )
 
 
-def test_the_graph_is_the_five_nodes_in_order() -> None:
+def test_the_graph_runs_in_order_and_branches_only_after_the_critique() -> None:
     edges = {(edge.source, edge.target) for edge in build_graph().get_graph().edges}
 
-    path = ["__start__", *IN_ORDER, "__end__"]
-    assert edges == set(zip(path, path[1:], strict=False))
+    path = ["__start__", *IN_ORDER]
+    straight = set(zip(path, path[1:], strict=False))
+    # FR-703's two ways back, and the way out.
+    branches = {("critique", "plan"), ("critique", "gather_lessons"), ("critique", "__end__")}
+    assert edges == straight | branches
 
 
 def test_graph_accepts_an_injected_checkpointer_slot() -> None:
@@ -76,7 +92,7 @@ def test_graph_accepts_an_injected_checkpointer_slot() -> None:
     assert build_graph(checkpointer=None) is not None
 
 
-async def test_a_run_visits_every_node_once_and_only_the_director_spends(
+async def test_a_run_visits_every_node_once_and_only_the_agents_spend(
     api: FakeArtistApi, detector: Detector, director: RecordedDirector
 ) -> None:
     """Every other node is deterministic, so its zero is a measurement rather than an absence."""
@@ -85,8 +101,9 @@ async def test_a_run_visits_every_node_once_and_only_the_director_spends(
     assert outcome.state["node_trail"] == IN_ORDER
     assert [metric.node for metric in outcome.metrics] == IN_ORDER
     spent = {metric.node: metric.input_tokens + metric.output_tokens for metric in outcome.metrics}
-    assert spent == {**dict.fromkeys(IN_ORDER, 0), "direct": 1800 + 240}
-    assert {metric.node: metric.model for metric in outcome.metrics}["direct"] == "claude-opus-5"
+    assert spent == {**dict.fromkeys(IN_ORDER, 0), **dict.fromkeys(SPENDING, 1800 + 240)}
+    models = {metric.node: metric.model for metric in outcome.metrics}
+    assert {models[node] for node in SPENDING} == {"claude-opus-5"}
     assert outcome.cost_usd > 0
 
 
@@ -121,7 +138,7 @@ async def test_a_face_brings_head_construction_in_on_the_cached_face(
 ) -> None:
     detector.face = synthetic_face()
 
-    outcome = await run(api, RecordedDirector(director_reply(PORTRAIT_DECISION)))
+    outcome = await run(api, RecordedDirector(*whole_run(PORTRAIT_DECISION)))
 
     assert outcome.state["gate"]["face_found"] is True
     assert [entry["tool"] for entry in outcome.state["routing"]["manifest"]["declined"]] == [
@@ -158,8 +175,9 @@ async def test_a_second_run_rests_on_the_first_runs_cache(
     api: FakeArtistApi, detector: Detector
 ) -> None:
     """Reopening a study must not detect again — the #43 promise the cache exists to keep."""
-    reply = director_reply(EVERY_OFFERED_WITHOUT_A_FACE)
-    director = RecordedDirector(reply, reply)
+    director = RecordedDirector(
+        *whole_run(EVERY_OFFERED_WITHOUT_A_FACE), *whole_run(EVERY_OFFERED_WITHOUT_A_FACE)
+    )
     await run(api, director)
     stored_after_first = list(api.stores)
 

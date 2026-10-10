@@ -9,7 +9,7 @@
     "perf": "performance",
     "sec": "security"
   },
-  "$expectations": "Categories a flow is expected to carry, by severity and by surface. Reported as gaps, never failed \u2014 a missing safety test is a conversation, not a broken build.",
+  "$expectations": "Categories a flow is expected to carry, by severity and by surface. Reported as gaps, never failed — a missing safety test is a conversation, not a broken build.",
   "expect": {
     "bySeverity": {
       "P0": ["safety"]
@@ -32,7 +32,7 @@
       "id": "platform.auth",
       "title": "Acknowledgement gate, sign-in, and the route guard",
       "severity": "P1",
-      "rationale": "Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently \u2014 the gate chain is snapshot-tested for exactly that reason.",
+      "rationale": "Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason.",
       "surfaces": [
         "apps/entry",
         "apps/studio",
@@ -61,7 +61,7 @@
       "id": "platform.agent-runtime",
       "title": "Agent service transport, auth guard, and graph execution",
       "severity": "P1",
-      "rationale": "The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone \u2014 a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable.",
+      "rationale": "The seam every studio feature runs through: a forwarded Supabase token verified at the edge, and a compiled LangGraph behind it. Two failures live here and are invisible from either side alone — a run whose owner comes from the request body rather than the verified token, and a graph whose accumulating state silently overwrites instead of appending, which is what makes a resumed run unreadable.",
       "surfaces": [
         "python/services/agent",
         "python/libs/auth",
@@ -75,7 +75,7 @@
       "id": "safety.untrusted-input",
       "title": "Injection screening on every untrusted surface",
       "severity": "P0",
-      "rationale": "Five surfaces carry text nobody in this system wrote \u2014 a filename, an uploaded photograph's EXIF block, whatever is legible in its pixels, the artist's own free-text goal, and the documents retrieval brings back. The screener is a hand-authored mirror across two regex engines, which fails quietly: both sides compile the same rule and match differently, and nothing says so until a real detection is missed. The shared rules fixture and its case corpus are what make that loud, so the tests here are the boundary itself rather than a check on it.",
+      "rationale": "Five surfaces carry text nobody in this system wrote — a filename, an uploaded photograph's EXIF block, whatever is legible in its pixels, the artist's own free-text goal, and the documents retrieval brings back. The screener is a hand-authored mirror across two regex engines, which fails quietly: both sides compile the same rule and match differently, and nothing says so until a real detection is missed. The shared rules fixture and its case corpus are what make that loud, so the tests here are the boundary itself rather than a check on it.",
       "surfaces": [
         "apps/studio",
         "packages/schemas",
@@ -88,7 +88,7 @@
       "id": "intake.project-intent",
       "title": "Upload, intake, and the typed ProjectIntent",
       "severity": "P2",
-      "rationale": "Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows \u2014 but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106).",
+      "rationale": "Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106).",
       "surfaces": [
         "apps/studio",
         "packages/schemas",
@@ -115,7 +115,7 @@
       "id": "analysis.deterministic-studies",
       "title": "Grayscale, value maps, and value-contour outlines from one pipeline",
       "severity": "P1",
-      "rationale": "Deterministic image processing, not model output: every plate reproduces exactly from its FR-305 recipe or it has broken. Two failures look alike from outside \u2014 a value map whose thresholds silently moved with a library version, and an outline that no longer traces the value map it claims to come from. Each is wrong analysis handed to the artist as a measurement.",
+      "rationale": "Deterministic image processing, not model output: every plate reproduces exactly from its FR-305 recipe or it has broken. Two failures look alike from outside — a value map whose thresholds silently moved with a library version, and an outline that no longer traces the value map it claims to come from. Each is wrong analysis handed to the artist as a measurement.",
       "surfaces": ["python/libs/image-tools", "python/services/agent"]
     },
     {
@@ -152,6 +152,30 @@
       "severity": "P2",
       "rationale": "Deterministic CV, not model output. It either reproduces exactly or it has broken.",
       "surfaces": ["apps/studio", "python/services/agent"]
+    },
+    {
+      "id": "plan.synthesis",
+      "title": "The working plan: findings and lessons reconciled into time-boxed stages",
+      "severity": "P1",
+      "rationale": "FR-600. A plan claim that is not carried forward from a finding, a lesson or a labelled choice is a confident statement nobody measured or cited.",
+      "surfaces": [
+        "apps/studio",
+        "packages/schemas",
+        "python/libs/schemas",
+        "python/services/agent"
+      ]
+    },
+    {
+      "id": "plan.critique",
+      "title": "The Plan Critic judges the plan, never the artwork",
+      "severity": "P1",
+      "rationale": "FR-700. The quality gate between a draft plan and the artist: a verdict that waves through a timebox that misses the budget, or a materials list that disagrees with its stages, ships a plan the artist cannot follow.",
+      "surfaces": [
+        "apps/studio",
+        "packages/schemas",
+        "python/libs/schemas",
+        "python/services/agent"
+      ]
     },
     {
       "id": "canvas.session-plan",

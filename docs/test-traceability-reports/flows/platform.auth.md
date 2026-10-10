@@ -13,36 +13,39 @@ Acknowledgement gate, sign-in, and the route guard
 | **Severity** | P1 |
 | **Why** | Two independent gates in a fixed order. Reorder them and every visitor lands somewhere wrong, silently — the gate chain is snapshot-tested for exactly that reason. |
 | **Surfaces** | `apps/entry` · `apps/studio` · `apps/operations` · `packages/auth` · `packages/fascia` · `python/libs/auth` · `python/services/agent` |
-| **Tests** | 125 (3 parametrized) |
-| **Covered** | a11y 5 · security 107 · functionality 13 |
+| **Tests** | 139 (4 parametrized) |
+| **Covered** | a11y 5 · security 121 · functionality 13 |
 | **Not covered** | privacy · safety · data · performance |
 
-## pytest — 20
+## pytest — 23
 
 | Category | Test | Location |
 | --- | --- | --- |
 | security | test_accepts_a_well_formed_token | `python/libs/auth/tests/test_tokens.py:83` |
 | security | test_rejects_an_expired_token | `python/libs/auth/tests/test_tokens.py:99` |
 | security | test_rejects_a_token_from_another_issuer | `python/libs/auth/tests/test_tokens.py:109` |
-| security | test_rejects_a_token_with_the_wrong_audience | `python/libs/auth/tests/test_tokens.py:120` |
-| security | test_rejects_algorithm_confusion | `python/libs/auth/tests/test_tokens.py:135` |
-| security | test_rejects_an_unknown_signing_key | `python/libs/auth/tests/test_tokens.py:176` |
-| security | test_unreachable_keys_are_an_outage_not_a_rejection | `python/libs/auth/tests/test_tokens.py:191` |
-| security | test_role_defaults_to_artist_without_app_metadata | `python/libs/auth/tests/test_tokens.py:201` |
-| security | test_ignores_a_role_claimed_in_user_metadata | `python/libs/auth/tests/test_tokens.py:212` |
-| security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:228` |
-| security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:239` |
-| security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:246` |
-| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:196` |
-| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:283` |
-| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:296` |
-| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:309` |
-| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:322` |
-| security | test_a_project_that_is_not_the_artists_is_a_404_before_any_work | `python/services/agent/tests/test_service.py:339` |
-| security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:445` |
-| security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:489` |
+| security | test_a_configured_issuer_decouples_the_issuer_from_the_reach_url | `python/libs/auth/tests/test_tokens.py:120` |
+| security | test_rejects_a_token_with_the_wrong_audience | `python/libs/auth/tests/test_tokens.py:140` |
+| security | test_rejects_algorithm_confusion | `python/libs/auth/tests/test_tokens.py:155` |
+| security | test_rejects_an_unknown_signing_key | `python/libs/auth/tests/test_tokens.py:196` |
+| security | test_unreachable_keys_are_an_outage_not_a_rejection | `python/libs/auth/tests/test_tokens.py:211` |
+| security | test_role_defaults_to_artist_without_app_metadata | `python/libs/auth/tests/test_tokens.py:221` |
+| security | test_ignores_a_role_claimed_in_user_metadata | `python/libs/auth/tests/test_tokens.py:232` |
+| security | test_reuses_the_cached_key_set | `python/libs/auth/tests/test_tokens.py:248` |
+| security | test_rejects_an_empty_token | `python/libs/auth/tests/test_tokens.py:259` |
+| security | test_asymmetric_mode_excludes_hmac | `python/libs/auth/tests/test_tokens.py:266` |
+| security | test_a_mounted_legacy_secret_switches_to_symmetric_verification | `python/libs/auth/tests/test_tokens.py:299` |
+| security | test_an_exported_legacy_secret_is_never_read | `python/libs/auth/tests/test_tokens.py:308` |
+| security | test_creating_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:201` |
+| security | test_owner_comes_from_the_token | `python/services/agent/tests/test_service.py:290` |
+| security | test_a_body_that_names_an_owner_is_refused | `python/services/agent/tests/test_service.py:303` |
+| security | test_the_run_reads_the_project_as_the_artist | `python/services/agent/tests/test_service.py:316` |
+| security | test_a_token_expiring_before_the_deadline_is_refused_before_any_work | `python/services/agent/tests/test_service.py:329` |
+| security | test_a_project_that_is_not_the_artists_is_a_404_before_any_work | `python/services/agent/tests/test_service.py:346` |
+| security | test_following_a_run_without_a_token_is_refused | `python/services/agent/tests/test_service.py:455` |
+| security | test_another_artists_run_is_not_found | `python/services/agent/tests/test_service.py:499` |
 
-## Vitest — 88
+## Vitest — 99
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -86,13 +89,15 @@ Acknowledgement gate, sign-in, and the route guard
 | security | survives multi-byte claims alongside the subject | `packages/auth/src/claims.test.ts:26` |
 | security | answers null for a %s | `packages/auth/src/claims.test.ts:32` |
 | security | never throws, whatever it is handed | `packages/auth/src/claims.test.ts:36` |
-| security | returns options with the cookie name and provided password | `packages/auth/src/options.test.ts:13` |
-| security | throws when the password is missing | `packages/auth/src/options.test.ts:24` |
-| security | throws when the password is too short | `packages/auth/src/options.test.ts:30` |
-| security | defaults to an eight-hour session rather than iron-session | `packages/auth/src/options.test.ts:35` |
-| security | lets an app shorten the session via AUTH_SESSION_TTL | `packages/auth/src/options.test.ts:42` |
-| security | refuses a zero TTL, which iron-session reads as  | `packages/auth/src/options.test.ts:49` |
-| security | refuses a non-numeric TTL rather than silently falling back | `packages/auth/src/options.test.ts:56` |
+| security | returns options with the cookie name and provided password | `packages/auth/src/options.test.ts:17` |
+| security | throws when the password is missing | `packages/auth/src/options.test.ts:28` |
+| security | throws when the password is too short | `packages/auth/src/options.test.ts:34` |
+| security | reads the password from a mounted secret file | `packages/auth/src/options.test.ts:40` |
+| security | ignores an exported password in production | `packages/auth/src/options.test.ts:54` |
+| security | defaults to an eight-hour session rather than iron-session | `packages/auth/src/options.test.ts:60` |
+| security | lets an app shorten the session via AUTH_SESSION_TTL | `packages/auth/src/options.test.ts:67` |
+| security | refuses a zero TTL, which iron-session reads as  | `packages/auth/src/options.test.ts:74` |
+| security | refuses a non-numeric TTL rather than silently falling back | `packages/auth/src/options.test.ts:81` |
 | security | resolves an artist session for valid credentials | `packages/auth/src/provider-supabase.test.ts:29` |
 | security | relays Supabase | `packages/auth/src/provider-supabase.test.ts:47` |
 | security | reads the role from app_metadata | `packages/auth/src/provider-supabase.test.ts:65` |
@@ -110,6 +115,15 @@ Acknowledgement gate, sign-in, and the route guard
 | security | returns null for an unknown username | `packages/auth/src/provider.test.ts:45` |
 | security | rejects a password sharing a long prefix with the real one | `packages/auth/src/provider.test.ts:54` |
 | security | throws when the demo credentials are not configured | `packages/auth/src/provider.test.ts:66` |
+| security | reads a secret mounted at the default path | `packages/auth/src/secrets.test.ts:30` |
+| security | reads the file named by <NAME>_FILE | `packages/auth/src/secrets.test.ts:36` |
+| security | prefers a mounted file over the environment | `packages/auth/src/secrets.test.ts:44` |
+| security | reads the environment under APP_ENV=%s | `packages/auth/src/secrets.test.ts:51` |
+| security | never reads the environment in production | `packages/auth/src/secrets.test.ts:58` |
+| security | throws when a configured path cannot be read | `packages/auth/src/secrets.test.ts:65` |
+| security | throws on an empty secret file | `packages/auth/src/secrets.test.ts:71` |
+| security | reads a rotated file on the next call | `packages/auth/src/secrets.test.ts:77` |
+| security | rejects an unrecognised APP_ENV rather than treating it as local | `packages/auth/src/secrets.test.ts:86` |
 | security | persists the session for an accepted principal | `packages/auth/src/server.test.ts:44` |
 | security | refuses invalid credentials without writing a session | `packages/auth/src/server.test.ts:55` |
 | security | admits a principal whose role is on the allow list | `packages/auth/src/server.test.ts:65` |
@@ -144,7 +158,7 @@ Acknowledgement gate, sign-in, and the route guard
 | security | redirects the gated home to the landing when unauthenticated | `apps/operations/e2e/auth.spec.ts:44` |
 | security | labels the console credentials for an operator and carries no secondary links | `apps/operations/e2e/auth.spec.ts:49` |
 | security | signs in and reaches the gated operations home | `apps/operations/e2e/auth.spec.ts:65` |
-| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:77` |
+| a11y | the authenticated operations home has no accessibility violations | `apps/operations/e2e/auth.spec.ts:83` |
 | a11y | renders the public landing with no accessibility violations | `apps/studio/e2e/auth.spec.ts:31` |
 | security | redirects the gated home to the landing when unauthenticated | `apps/studio/e2e/auth.spec.ts:44` |
 | security | carries no acknowledgement checkbox and enables sign-in immediately | `apps/studio/e2e/auth.spec.ts:56` |

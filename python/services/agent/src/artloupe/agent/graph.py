@@ -1,12 +1,17 @@
-"""The studio graph: load the project, gate on a face, survey, route, analyse.
+"""The studio graph: route and analyse the photograph, then plan and critique.
 
 ```text
-START → load_project → face_gate → survey → direct → analyse → END
+START → load_project → face_gate → survey → direct → analyse
+      → interpret → gather_lessons → plan → critique ─┬─→ END
+                          ▲            ▲              │
+                          └────────────┴── REVISE ────┘  (at most once, FR-704)
 ```
 
-`direct` is the Studio Director's seat, and the only node that spends tokens. The face gate
-decides head construction, and the model decides every other tool (`artloupe.agent.routing`).
-`docs/design/routing-plan.md` is the design this follows.
+`direct` is the Studio Director's seat. The face gate decides head construction, and the model
+decides every other tool (`artloupe.agent.routing`, `docs/design/routing-plan.md`). The four
+nodes after `analyse` are the Visual Analyst's judgement, the lesson source, the Studio Planner
+and the Plan Critic (`artloupe.agent.plan_nodes`). `direct`, `interpret`, `plan` and `critique`
+spend tokens; every other node records a real zero.
 
 The shape that matters and will not change:
 
@@ -31,18 +36,23 @@ which is the only thing that should ever call `ainvoke` on this graph.
 from langgraph.graph import END, START, StateGraph
 
 from artloupe.agent.nodes import analyse, face_gate, load_project, survey
+from artloupe.agent.plan_nodes import after_critique, critique, gather_lessons, interpret, plan
 from artloupe.agent.progress import reported
 from artloupe.agent.routing import direct
 from artloupe.agent.state import RunState
 from artloupe.metering import instrumented
 
-# In execution order. The graph is a straight line in this slice; the order is the topology.
+# In execution order. Each runs into the next, and the last one branches (`after_critique`).
 NODES = (
     ("load_project", load_project),
     ("face_gate", face_gate),
     ("survey", survey),
     ("direct", direct),
     ("analyse", analyse),
+    ("interpret", interpret),
+    ("gather_lessons", gather_lessons),
+    ("plan", plan),
+    ("critique", critique),
 )
 
 
@@ -59,5 +69,9 @@ def build_graph(checkpointer=None):
     builder.add_edge(START, NODES[0][0])
     for (earlier, _), (later, _) in zip(NODES, NODES[1:], strict=False):
         builder.add_edge(earlier, later)
-    builder.add_edge(NODES[-1][0], END)
+    builder.add_conditional_edges(
+        "critique",
+        after_critique,
+        {"gather_lessons": "gather_lessons", "plan": "plan", "__end__": END},
+    )
     return builder.compile(checkpointer=checkpointer)

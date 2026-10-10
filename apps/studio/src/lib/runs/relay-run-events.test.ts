@@ -5,6 +5,7 @@ vi.mock('server-only', () => ({}));
 
 import {
   agentFrame,
+  PLANNED_RUN_RESULT,
   RUN_ID,
   RUN_RESULT,
   streamOf,
@@ -46,6 +47,36 @@ describe('relaying a run stream', () => {
     ]);
     const succeeded = frames.find((frame) => frame.event === 'succeeded');
     expect(JSON.parse(succeeded?.data ?? '')).toEqual(RUN_RESULT);
+  });
+
+  // @trace flow=plan.synthesis category=data
+  it('relays a finished run that carries its plan, unchanged', async () => {
+    const frames = await relayed([agentFrame(1, 'succeeded', PLANNED_RUN_RESULT)]);
+
+    const succeeded = frames.find((frame) => frame.event === 'succeeded');
+    expect(JSON.parse(succeeded?.data ?? '')).toEqual(PLANNED_RUN_RESULT);
+  });
+
+  // @trace flow=plan.critique category=safety
+  it('refuses a plan the contract refuses, such as a measured claim with no finding', async () => {
+    const plan = PLANNED_RUN_RESULT.plan!;
+    const forged = {
+      ...PLANNED_RUN_RESULT,
+      plan: {
+        ...plan,
+        plan: {
+          ...plan.plan,
+          assessment: {
+            ...plan.plan.assessment,
+            claims: [{ ...plan.plan.assessment.claims[0], source: null }],
+          },
+        },
+      },
+    };
+
+    const frames = await relayed([agentFrame(1, 'succeeded', forged)]);
+
+    expect(frames.map((frame) => frame.event)).toEqual(['failed']);
   });
 
   it('starts with its own retry interval', async () => {

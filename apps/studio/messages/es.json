@@ -84,7 +84,7 @@
   },
   "project": {
     "referenceLabel": "Referencia del proyecto",
-    "planPending": "El plan de trabajo aún no está construido. Primero llega el enrutamiento; la evaluación de la referencia, las láminas y el plan llegarán más adelante.",
+    "planPending": "Analiza la referencia para obtener un plan de trabajo: una lista de materiales, etapas con tiempo asignado y el veredicto del Crítico del Plan sobre ellas.",
     "startAnother": "Iniciar otro proyecto",
     "title": "Tu proyecto",
     "photoAlt": "La fotografía de referencia de este proyecto",
@@ -115,7 +115,11 @@
       "face_gate": "Buscando un rostro",
       "survey": "Examinando la fotografía",
       "direct": "Eligiendo los estudios",
-      "analyse": "Ejecutando los estudios"
+      "analyse": "Ejecutando los estudios",
+      "interpret": "Leyendo las mediciones",
+      "gather_lessons": "Reuniendo lecciones",
+      "plan": "Escribiendo el plan",
+      "critique": "Revisando el plan"
     },
     "tools": {
       "grayscale": "Escala de grises",
@@ -132,6 +136,61 @@
       "noneDeclined": "No se descartó nada.",
       "directorsWords": "Los motivos anteriores son palabras del propio Director de Estudio y se muestran en inglés."
     },
+    "plan": {
+      "title": "Tu plan de trabajo",
+      "agentsWords": "La redacción del plan es de los propios agentes y se muestra en inglés.",
+      "verdictTitle": "El veredicto del Crítico del Plan",
+      "verdict": {
+        "READY": "Listo",
+        "READY_WITH_CAUTION": "Listo, con advertencias",
+        "REVISE": "Necesita revisión"
+      },
+      "revised": "El Planificador de Estudio revisó este plan una vez, después de la primera revisión del Crítico del Plan.",
+      "firstReview": "Lo que encontró la primera revisión",
+      "openIssues": "Problemas abiertos",
+      "noIssues": "El Crítico del Plan no encontró nada que cambiar.",
+      "defect": {
+        "unsupported_measurement": "Medición sin respaldo",
+        "missing_evidence": "Falta de evidencia",
+        "irrelevant_medium_advice": "Consejo que no corresponde al medio",
+        "infeasible_timebox": "Tiempo asignado",
+        "unclassified_claim": "Afirmación sin clasificar",
+        "materials_mismatch": "Materiales",
+        "policy_violation": "Política"
+      },
+      "materialsTitle": "Materiales",
+      "noMaterials": "El plan no incluye materiales.",
+      "category": {
+        "surface": "Superficie",
+        "drawing": "Dibujo",
+        "paint": "Pintura",
+        "brush": "Pincel",
+        "tool": "Herramienta"
+      },
+      "assessmentTitle": "Qué tan bien se adapta la referencia a tu plan",
+      "suitability": {
+        "good_fit": "Muy adecuada",
+        "workable": "Viable",
+        "poor_fit": "Poco adecuada"
+      },
+      "stagesTitle": "Etapas",
+      "totalMinutes": "{minutes, plural, one {# minuto} other {# minutos}} en total",
+      "minutes": "{minutes, plural, one {# minuto} other {# minutos}}",
+      "goal": "Objetivo",
+      "doneWhen": "Terminada cuando",
+      "uses": "Usa",
+      "restsOn": "Se basa en",
+      "restsOnNothing": "Nada todavía. El Crítico del Plan lo señala.",
+      "selfCheckTitle": "Revisa tu propio trabajo",
+      "evidence": {
+        "measured": "Medido",
+        "cited": "Citado",
+        "chosen": "Elegido"
+      },
+      "measuredBy": "medido por el estudio {tool}",
+      "citedFrom": "de {institution}",
+      "chosenBecause": "porque {reason}, en lugar de {alternative}"
+    },
     "failure": {
       "budget_exceeded": "Este proyecto ha agotado su presupuesto de análisis.",
       "deadline_exceeded": "El análisis tardó demasiado y se detuvo.",
@@ -142,6 +201,9 @@
       "credential_rejected": "Tu sesión caducó durante el análisis. Vuelve a iniciar sesión e inténtalo de nuevo.",
       "data_service_refused": "El servicio de datos rechazó una solicitud durante el análisis.",
       "routing_failed": "El Director de Estudio no pudo decidir qué estudios ejecutar.",
+      "analysis_failed": "El Analista Visual no pudo interpretar las mediciones.",
+      "planning_failed": "El Planificador de Estudio no pudo escribir un plan.",
+      "critique_failed": "El Crítico del Plan no pudo revisar el plan.",
       "interrupted": "El servicio de análisis se detuvo antes de que terminara el análisis.",
       "internal_error": "Algo falló dentro del servicio de análisis.",
       "invalid_stream": "El servicio de análisis envió una actualización que no se pudo leer."
