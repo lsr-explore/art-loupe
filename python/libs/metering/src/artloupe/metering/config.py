@@ -66,12 +66,13 @@ class MeteringSettings(BaseSettings):
     )
 
     artloupe_run_wall_clock_seconds: float = Field(
-        default=120.0,
+        default=300.0,
         gt=0,
         description=(
-            "Deadline for one graph run. NFR-03 budgets p95 45-60s cold for a full plan "
-            "graph, so this is roughly double the slow case: headroom for a cold run, and a "
-            "stop for a hung one."
+            "Deadline for one graph run. A run makes four model calls, or six with the one "
+            "revision FR-704 allows, and the Planner's call alone may wait 90s. NFR-03's p95 "
+            "target of 45-60s for a full plan graph is a latency to measure, not this guard: "
+            "this is a stop for a hung run."
         ),
     )
 

@@ -13,14 +13,18 @@ Art-historical context is carried back to a real citation
 | **Severity** | P0 |
 | **Why** | A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent. |
 | **Surfaces** | `apps/studio` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 55 (8 parametrized) |
-| **Covered** | a11y 2 · security 8 · safety 33 · data 8 · functionality 4 |
+| **Tests** | 60 (8 parametrized) |
+| **Covered** | a11y 2 · security 8 · safety 38 · data 8 · functionality 4 |
 | **Not covered** | privacy · performance |
 
-## pytest — 33
+## pytest — 38
 
 | Category | Test | Location |
 | --- | --- | --- |
+| safety | test_real_publication_hybrid_retrieval_and_immutable_snapshots | `python/services/agent/tests/test_learning_postgres.py:55` |
+| safety | test_failed_publication_preserves_active_corpus_and_records_failure | `python/services/agent/tests/test_learning_postgres.py:83` |
+| safety | test_database_role_failure_is_explicit | `python/services/agent/tests/test_learning_postgres.py:98` |
+| safety | test_database_write_failure_rolls_back_partial_publication | `python/services/agent/tests/test_learning_postgres.py:106` |
 | safety | test_shared_request_accepts | `python/services/agent/tests/test_learning.py:27` |
 | safety | test_shared_request_rejects | `python/services/agent/tests/test_learning.py:32` |
 | safety | test_citation_identity_and_metadata_are_resolved_from_evidence | `python/services/agent/tests/test_learning.py:37` |
@@ -54,6 +58,7 @@ Art-historical context is carried back to a real citation
 | safety | test_spanish_vectors_avoid_accidental_english_keyword_hits | `python/services/agent/tests/test_learning.py:527` |
 | safety | test_repeated_followups_keep_latest_explicit_subject | `python/services/agent/tests/test_learning.py:552` |
 | safety | test_subject_bearing_followups_retain_the_comparison_and_its_context | `python/services/agent/tests/test_learning.py:576` |
+| safety | test_a_fixture_lesson_announces_itself_wherever_it_is_cited | `python/services/agent/tests/test_lessons.py:49` |
 
 ## Vitest — 21
 

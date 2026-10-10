@@ -14,6 +14,7 @@
 import { z } from 'zod';
 
 import { artifactMetadataSchema } from './artifact';
+import { planOutcomeSchema } from './plan';
 import { routingDecisionSchema } from './routing';
 
 /** Closed, because the studio localizes it. Widening it is a contract change on both sides. */
@@ -27,6 +28,9 @@ export const RUN_FAILURE_REASONS = [
   'credential_rejected',
   'data_service_refused',
   'routing_failed',
+  'analysis_failed',
+  'planning_failed',
+  'critique_failed',
   'interrupted',
   'internal_error',
 ] as const;
@@ -45,6 +49,11 @@ export const runResultSchema = z.strictObject({
   gate: z.record(z.string(), z.unknown()),
   routing: routingDecisionSchema,
   artifacts: z.array(artifactMetadataSchema),
+  /**
+   * The findings, lessons, plan and verdicts. Absent or `null` only on a run recorded before the
+   * plan half of the graph existed, whose stored `succeeded` event must still validate on replay.
+   */
+  plan: planOutcomeSchema.nullable().optional(),
 });
 
 const nodePayloadSchema = z.strictObject({ node: z.string().min(1) });

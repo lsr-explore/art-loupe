@@ -7,9 +7,15 @@
  * erased at build.
  */
 
-import type { RunEvent, RunFailureReason, RunResult } from '@artloupe/schemas';
+import type {
+  PlanClaim,
+  PlanOutcome,
+  RunEvent,
+  RunFailureReason,
+  RunResult,
+} from '@artloupe/schemas';
 
-export type { RunEvent, RunFailureReason, RunResult };
+export type { PlanClaim, PlanOutcome, RunEvent, RunFailureReason, RunResult };
 
 /** Starts a run of one project. Not locale-prefixed: route handlers never are. */
 export const runsEndpoint = (projectId: string): string =>
@@ -37,9 +43,20 @@ export const RUN_EVENT_KINDS = [
  * The graph's nodes, in execution order (`python/services/agent/.../graph.py`).
  *
  * The panel shows each as a step. A node it does not know is still shown, after these, so a
- * node added in Python appears rather than vanishing.
+ * node added in Python appears rather than vanishing. A revised plan runs `plan` and `critique`
+ * twice; the panel shows each step once, with its latest status.
  */
-export const RUN_NODES = ['load_project', 'face_gate', 'survey', 'direct', 'analyse'] as const;
+export const RUN_NODES = [
+  'load_project',
+  'face_gate',
+  'survey',
+  'direct',
+  'analyse',
+  'interpret',
+  'gather_lessons',
+  'plan',
+  'critique',
+] as const;
 
 /**
  * Sent by the studio, never by the agent, when the agent's stream carried something the

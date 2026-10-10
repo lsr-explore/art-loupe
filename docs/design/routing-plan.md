@@ -201,7 +201,7 @@ reason over what the nodes hand it.
   names it as "the Python that will read them." It uses `httpx` with `SUPABASE_URL`, the anon key
   as the `apikey` header, and the artist's bearer token. It mirrors
   `apps/studio/src/lib/intake/ingest-upload.ts` rather than inventing a second request shape.
-- **A run refuses to start with a nearly expired token.** The run's wall-clock ceiling is 120 s.
+- **A run refuses to start with a nearly expired token.** The run's wall-clock ceiling is 300 s.
   A token that expires inside that window would fail partway through, so `execute_run` checks
   `expires_at` against the ceiling before the first node.
 

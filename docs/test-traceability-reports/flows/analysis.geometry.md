@@ -13,11 +13,11 @@ Head construction, perspective, confidence, and artist correction
 | **Severity** | P1 |
 | **Why** | The two Tier B tools carry per-feature confidence, and below threshold the graph interrupts rather than guessing (FR-401/402). Two failures live here and look alike from outside: a low-confidence landmark asserted anyway, and a stale study surviving a correction that should have recomputed it (FR-404). |
 | **Surfaces** | `apps/studio` · `packages/fascia` · `packages/schemas` · `python/libs/image-tools` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 111 (8 parametrized) |
-| **Covered** | a11y 9 · functionality 102 |
+| **Tests** | 112 (8 parametrized) |
+| **Covered** | a11y 9 · functionality 103 |
 | **Not covered** | security · privacy · safety · data · performance |
 
-## pytest — 68
+## pytest — 69
 
 | Category | Test | Location |
 | --- | --- | --- |
@@ -88,7 +88,8 @@ Head construction, perspective, confidence, and artist correction
 | functionality | test_an_invalid_checksum_is_refused | `python/libs/image-tools/tests/test_perspective.py:360` |
 | functionality | test_unknown_parameters_are_refused | `python/libs/image-tools/tests/test_perspective.py:365` |
 | functionality | test_unsupported_images_are_refused | `python/libs/image-tools/tests/test_perspective.py:378` |
-| functionality | test_a_face_brings_head_construction_in_on_the_cached_face | `python/services/agent/tests/test_graph.py:119` |
+| functionality | test_head_construction_carries_the_detectors_figures_in_pixels | `python/services/agent/tests/test_analyst.py:72` |
+| functionality | test_a_face_brings_head_construction_in_on_the_cached_face | `python/services/agent/tests/test_graph.py:136` |
 
 ## Vitest — 43
 

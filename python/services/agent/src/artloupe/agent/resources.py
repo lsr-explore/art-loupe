@@ -24,13 +24,14 @@ import hashlib
 from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import cv2
 import numpy as np
 from anthropic import AsyncAnthropic
 from numpy.typing import NDArray
 
+from artloupe.agent.lessons import FixtureLessonSource, LessonSource
 from artloupe.image_tools import PlateSuite
 from artloupe.persistence import ArtistApi, RunEventKind
 
@@ -50,7 +51,12 @@ class RunResources:
     and the survey's plates are reused by `analyse` rather than computed twice.
 
     `director` is shared across runs, since it is one connection pool per process. It travels here
-    rather than in the state because it holds the provider key.
+    rather than in the state because it holds the provider key. The Visual Analyst, the Studio
+    Planner and the Plan Critic use the same client; the name is the Director's because it was
+    the first.
+
+    `lessons` is where the Planner's lessons come from. The fixture stands in until the Art Tutor
+    joins the graph (`artloupe.agent.lessons`).
 
     `progress` is where each node's start and finish are reported. `None` reports nothing, which
     is what a test that drives the graph directly wants.
@@ -58,6 +64,7 @@ class RunResources:
 
     api: ArtistApi
     director: AsyncAnthropic | None = None
+    lessons: LessonSource = field(default_factory=FixtureLessonSource)
     progress: ProgressReporter | None = None
     image: NDArray[np.uint8] | None = None
     plates: PlateSuite | None = None

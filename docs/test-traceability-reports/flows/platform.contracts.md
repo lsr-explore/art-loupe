@@ -13,45 +13,49 @@ Shared schemas and the TS/Python contract boundary
 | **Severity** | P2 |
 | **Why** | A drifted contract fails at the seam between the apps and the agent layer, where neither side's tests look. |
 | **Surfaces** | `packages/schemas` · `python/libs/schemas` |
-| **Tests** | 26 (10 parametrized) |
-| **Covered** | data 26 |
+| **Tests** | 30 (11 parametrized) |
+| **Covered** | data 30 |
 | **Not covered** | a11y · security · privacy · safety · performance · functionality |
 
-## pytest — 13
+## pytest — 15
 
 | Category | Test | Location |
 | --- | --- | --- |
-| data | test_accepts_every_evidence_class | `python/libs/schemas/tests/test_parity.py:80` |
-| data | test_fixture_covers_the_whole_taxonomy | `python/libs/schemas/tests/test_parity.py:84` |
-| data | test_accepts_image_refs | `python/libs/schemas/tests/test_parity.py:90` |
-| data | test_project_intent_defaults_match_the_mirror | `python/libs/schemas/tests/test_parity.py:97` |
-| data | test_accepts_tool_manifests | `python/libs/schemas/tests/test_parity.py:104` |
-| data | test_accepts_routing_decisions | `python/libs/schemas/tests/test_parity.py:109` |
-| data | test_accepts_artifact_metadata | `python/libs/schemas/tests/test_parity.py:114` |
-| data | test_null_confidence_is_not_collapsed_to_zero | `python/libs/schemas/tests/test_parity.py:118` |
-| data | test_accepts_budget_ledgers | `python/libs/schemas/tests/test_parity.py:128` |
-| data | test_accepts_run_results | `python/libs/schemas/tests/test_parity.py:133` |
-| data | test_accepts_run_failures | `python/libs/schemas/tests/test_parity.py:138` |
-| data | test_rejects | `python/libs/schemas/tests/test_parity.py:143` |
-| data | test_reject_entries_name_only_known_schemas | `python/libs/schemas/tests/test_parity.py:150` |
+| data | test_accepts_every_evidence_class | `python/libs/schemas/tests/test_parity.py:82` |
+| data | test_fixture_covers_the_whole_taxonomy | `python/libs/schemas/tests/test_parity.py:86` |
+| data | test_accepts_image_refs | `python/libs/schemas/tests/test_parity.py:92` |
+| data | test_project_intent_defaults_match_the_mirror | `python/libs/schemas/tests/test_parity.py:99` |
+| data | test_accepts_tool_manifests | `python/libs/schemas/tests/test_parity.py:106` |
+| data | test_accepts_routing_decisions | `python/libs/schemas/tests/test_parity.py:111` |
+| data | test_accepts_artifact_metadata | `python/libs/schemas/tests/test_parity.py:116` |
+| data | test_null_confidence_is_not_collapsed_to_zero | `python/libs/schemas/tests/test_parity.py:120` |
+| data | test_accepts_budget_ledgers | `python/libs/schemas/tests/test_parity.py:130` |
+| data | test_accepts_run_results | `python/libs/schemas/tests/test_parity.py:135` |
+| data | test_accepts_plan_outcomes | `python/libs/schemas/tests/test_parity.py:140` |
+| data | test_a_run_recorded_before_plans_existed_still_validates | `python/libs/schemas/tests/test_parity.py:144` |
+| data | test_accepts_run_failures | `python/libs/schemas/tests/test_parity.py:152` |
+| data | test_rejects | `python/libs/schemas/tests/test_parity.py:157` |
+| data | test_reject_entries_name_only_known_schemas | `python/libs/schemas/tests/test_parity.py:164` |
 
-## Vitest — 13
+## Vitest — 15
 
 | Category | Test | Location |
 | --- | --- | --- |
-| data | parses a ${claim.evidence.kind} claim | `packages/schemas/src/contract-parity.test.ts:76` |
-| data | covers every evidence class the taxonomy defines | `packages/schemas/src/contract-parity.test.ts:81` |
-| data | parses image ref ${index} | `packages/schemas/src/contract-parity.test.ts:87` |
-| data | parses the ${name} project intent and fills the documented defaults | `packages/schemas/src/contract-parity.test.ts:93` |
-| data | parses tool manifest ${index} | `packages/schemas/src/contract-parity.test.ts:99` |
-| data | parses routing decision ${index} | `packages/schemas/src/contract-parity.test.ts:105` |
-| data | parses ${metadata.tool} artifact metadata | `packages/schemas/src/contract-parity.test.ts:111` |
-| data | keeps a null confidence distinct from a zero one | `packages/schemas/src/contract-parity.test.ts:116` |
-| data | parses a ledger with stopped=${ledger.stopped} | `packages/schemas/src/contract-parity.test.ts:122` |
-| data | parses run result ${result.run_id} | `packages/schemas/src/contract-parity.test.ts:128` |
-| data | parses a ${failure.reason} run failure | `packages/schemas/src/contract-parity.test.ts:134` |
-| data | rejects ${name} | `packages/schemas/src/contract-parity.test.ts:143` |
-| data | names only schemas this suite knows how to validate | `packages/schemas/src/contract-parity.test.ts:150` |
+| data | parses a ${claim.evidence.kind} claim | `packages/schemas/src/contract-parity.test.ts:79` |
+| data | covers every evidence class the taxonomy defines | `packages/schemas/src/contract-parity.test.ts:84` |
+| data | parses image ref ${index} | `packages/schemas/src/contract-parity.test.ts:90` |
+| data | parses the ${name} project intent and fills the documented defaults | `packages/schemas/src/contract-parity.test.ts:96` |
+| data | parses tool manifest ${index} | `packages/schemas/src/contract-parity.test.ts:102` |
+| data | parses routing decision ${index} | `packages/schemas/src/contract-parity.test.ts:108` |
+| data | parses ${metadata.tool} artifact metadata | `packages/schemas/src/contract-parity.test.ts:114` |
+| data | keeps a null confidence distinct from a zero one | `packages/schemas/src/contract-parity.test.ts:119` |
+| data | parses a ledger with stopped=${ledger.stopped} | `packages/schemas/src/contract-parity.test.ts:125` |
+| data | parses run result ${result.run_id} | `packages/schemas/src/contract-parity.test.ts:131` |
+| data | parses plan outcome ${index} | `packages/schemas/src/contract-parity.test.ts:137` |
+| data | still parses a run recorded before plans existed | `packages/schemas/src/contract-parity.test.ts:142` |
+| data | parses a ${failure.reason} run failure | `packages/schemas/src/contract-parity.test.ts:149` |
+| data | rejects ${name} | `packages/schemas/src/contract-parity.test.ts:158` |
+| data | names only schemas this suite knows how to validate | `packages/schemas/src/contract-parity.test.ts:165` |
 
 ---
 

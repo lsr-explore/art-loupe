@@ -24,6 +24,7 @@ import {
   type StartRunResponse,
 } from '@/lib/runs/run-contract';
 
+import { PlanSummary } from './plan-summary';
 import { RoutingSummary } from './routing-summary';
 import { IDLE, applyInvalidStream, applyRunEvent, following, type RunView } from './run-view';
 
@@ -217,6 +218,9 @@ export const RunPanel = ({ projectId, initialRunId }: RunPanelProps) => {
       ) : null}
 
       {view.result ? <RoutingSummary routing={view.result.routing} /> : null}
+
+      {/* A run recorded before plans existed has none; it still shows its routing. */}
+      {view.result?.plan ? <PlanSummary outcome={view.result.plan} /> : null}
     </section>
   );
 };

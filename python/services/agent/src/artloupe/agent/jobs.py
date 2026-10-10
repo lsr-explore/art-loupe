@@ -21,8 +21,11 @@ import logging
 from collections.abc import Coroutine
 from typing import Any
 
+from artloupe.agent.analyst import AnalysisFailed
+from artloupe.agent.critic import CritiqueFailed
 from artloupe.agent.director import RoutingFailed
 from artloupe.agent.nodes import ProjectNotReady
+from artloupe.agent.planner import PlanningFailed
 from artloupe.agent.resources import PhotographUnavailable, RunResources
 from artloupe.agent.runtime import execute_run
 from artloupe.agent.state import RunState
@@ -35,7 +38,17 @@ from artloupe.persistence import (
     RunLog,
     RunTransitionRefused,
 )
-from artloupe.schemas import ArtifactMetadata, RoutingDecision, RunFailure, RunResult
+from artloupe.schemas import (
+    ArtifactMetadata,
+    CitedLesson,
+    CriticVerdict,
+    PlanOutcome,
+    ProjectPlan,
+    RoutingDecision,
+    RunFailure,
+    RunResult,
+    VisualFindings,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +91,24 @@ def describe_failure(error: BaseException) -> RunFailure:
             )
         case RoutingFailed():
             return RunFailure(reason="routing_failed", detail=str(error))
+        case AnalysisFailed():
+            return RunFailure(reason="analysis_failed", detail=str(error))
+        case PlanningFailed():
+            return RunFailure(reason="planning_failed", detail=str(error))
+        case CritiqueFailed():
+            return RunFailure(reason="critique_failed", detail=str(error))
         case _:
             return INTERNAL_FAILURE
+
+
+def plan_outcome(state: dict[str, Any]) -> PlanOutcome:
+    """The plan half of a finished run's state, as the `succeeded` event carries it."""
+    return PlanOutcome(
+        findings=VisualFindings.model_validate(state["findings"]),
+        lessons=[CitedLesson.model_validate(entry) for entry in state["lessons"]],
+        plan=ProjectPlan.model_validate(state["plan"]),
+        verdicts=[CriticVerdict.model_validate(entry) for entry in state["verdicts"]],
+    )
 
 
 def progress_reporter(log: RunLog, run_id: str):
@@ -121,6 +150,7 @@ async def run_job(
             gate=state["gate"],
             routing=RoutingDecision.model_validate(state["routing"]),
             artifacts=[ArtifactMetadata.model_validate(entry) for entry in state["artifacts"]],
+            plan=plan_outcome(state),
         )
         await record_terminal(log, run_id, "succeeded", result.model_dump(mode="json"))
     except asyncio.CancelledError:

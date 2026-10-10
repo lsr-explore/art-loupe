@@ -19,10 +19,14 @@ from typing import Any
 
 import httpx
 import pytest
+from agent_support import PLAN_STATE
 
 from artloupe.agent import jobs
+from artloupe.agent.analyst import AnalysisFailed
+from artloupe.agent.critic import CritiqueFailed
 from artloupe.agent.director import DirectorRefused, RoutingFailed
 from artloupe.agent.nodes import ProjectNotReady
+from artloupe.agent.planner import PlanningFailed
 from artloupe.agent.resources import PhotographUnavailable
 from artloupe.agent.runtime import RunOutcome
 from artloupe.agent.service import app
@@ -158,6 +162,7 @@ class RecordedRun:
             "gate": {"face_found": False, "reason": NO_FACE},
             "routing": ROUTING,
             "artifacts": [],
+            **PLAN_STATE,
         }
         return RunOutcome(
             state=state, ledger=BudgetLedger(token_ceiling=1), metrics=[], cost_usd=Decimal(0)
@@ -221,7 +226,7 @@ async def test_creating_a_run_answers_at_once_with_where_to_follow_it(
     await settle()
 
 
-async def test_a_finished_run_records_its_routing_and_artifacts(
+async def test_a_finished_run_records_its_routing_artifacts_and_plan(
     client: httpx.AsyncClient, authenticated: None, recorded: RecordedRun, run_log: InMemoryRunLog
 ) -> None:
     run_id = await start_run(client)
@@ -233,6 +238,8 @@ async def test_a_finished_run_records_its_routing_and_artifacts(
     assert succeeded.payload["project_id"] == PROJECT
     assert succeeded.payload["routing"] == ROUTING
     assert succeeded.payload["artifacts"] == []
+    assert succeeded.payload["plan"]["plan"] == PLAN_STATE["plan"]
+    assert succeeded.payload["plan"]["verdicts"] == PLAN_STATE["verdicts"]
 
 
 async def test_the_run_is_handed_the_director_client(
@@ -386,6 +393,9 @@ async def test_a_project_that_is_not_the_artists_is_a_404_before_any_work(
             None,
         ),
         (DirectorRefused("cyber"), "routing_failed", None),
+        (AnalysisFailed("the Visual Analyst returned no answer"), "analysis_failed", None),
+        (PlanningFailed("the Studio Planner's plan is not a usable plan"), "planning_failed", None),
+        (CritiqueFailed("the Plan Critic's answer did not match"), "critique_failed", None),
         (
             RuntimeError("a bug, with internals"),
             "internal_error",

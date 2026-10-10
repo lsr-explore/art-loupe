@@ -307,6 +307,210 @@
             "limitations": []
           }
         ]
+      },
+      {
+        "$comment": "A finished run carrying its plan.",
+        "run_id": "8e2f4b3d-6c7f-4d9e-8f10-2b3c4d5e6f70",
+        "owner": "4a1f0e2c-0000-4000-8000-000000000001",
+        "project_id": "aaaaaaaa-3333-4333-8333-aaaaaaaaaaaa",
+        "node_trail": [
+          "load_project",
+          "face_gate",
+          "survey",
+          "direct",
+          "analyse",
+          "interpret",
+          "gather_lessons",
+          "plan",
+          "critique"
+        ],
+        "gate": {
+          "face_found": true,
+          "reason": null
+        },
+        "routing": {
+          "manifest": {
+            "selected": [
+              {
+                "tool": "grayscale",
+                "reason": null
+              },
+              {
+                "tool": "value_map",
+                "reason": "low-key reference; the value design is the whole problem"
+              },
+              {
+                "tool": "value_shapes",
+                "reason": null
+              },
+              {
+                "tool": "outline",
+                "reason": null
+              },
+              {
+                "tool": "head_construction",
+                "reason": "one face, with a facial landmark reliability of 0.8"
+              }
+            ],
+            "declined": [
+              {
+                "tool": "perspective",
+                "reason": "no vanishing point cleared the 0.35 confidence floor, so a horizon here would be invented"
+              }
+            ]
+          },
+          "rationale": "This is a portrait with one clearly detected face, so the head construction is worth building. No vanishing point cleared the confidence floor, so perspective would only draw coincidental lines.",
+          "gate": {
+            "face_found": true,
+            "reason": null
+          }
+        },
+        "artifacts": [
+          {
+            "tool": "grayscale",
+            "tool_version": "0.1.0",
+            "parameters": {
+              "weights": "rec709"
+            },
+            "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+            "duration_ms": 41,
+            "confidence": null,
+            "limitations": []
+          }
+        ],
+        "plan": {
+          "findings": {
+            "findings": [
+              {
+                "finding_id": "values",
+                "text": "Nearly a third of the photograph sits in the darkest value.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                }
+              }
+            ],
+            "set_aside": [
+              {
+                "finding_id": "perspective",
+                "reason": "no vanishing point cleared the confidence floor"
+              }
+            ]
+          },
+          "lessons": [
+            {
+              "lesson_id": "graphite-grades",
+              "topic": "materials",
+              "title": "Choosing pencil grades",
+              "text": "A soft grade reaches the darkest values without burnishing.",
+              "evidence": {
+                "kind": "cited",
+                "chunk_id": "fixture-graphite-001",
+                "institution": "Art Loupe fixture lessons",
+                "url": "https://example.invalid/lessons/graphite-001",
+                "licence": "fixture text, not a published source",
+                "retrieved_at": "2026-10-09T12:00:00Z",
+                "passage_span": {
+                  "start": 0,
+                  "end": 120
+                }
+              }
+            }
+          ],
+          "plan": {
+            "assessment": {
+              "suitability": "workable",
+              "claims": [
+                {
+                  "text": "The darkest value covers nearly a third of the frame.",
+                  "evidence": {
+                    "kind": "measured",
+                    "tool": "value_map",
+                    "tool_version": "0.1.0",
+                    "parameters": {
+                      "values": 5
+                    },
+                    "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                    "units": "normalized"
+                  },
+                  "source": "values"
+                }
+              ]
+            },
+            "materials": [
+              {
+                "item_id": "soft-pencil",
+                "category": "drawing",
+                "specification": "a soft graphite pencil, 4B to 6B",
+                "claim": {
+                  "text": "A soft grade reaches the darkest values.",
+                  "evidence": {
+                    "kind": "cited",
+                    "chunk_id": "fixture-graphite-001",
+                    "institution": "Art Loupe fixture lessons",
+                    "url": "https://example.invalid/lessons/graphite-001",
+                    "licence": "fixture text, not a published source",
+                    "retrieved_at": "2026-10-09T12:00:00Z",
+                    "passage_span": {
+                      "start": 0,
+                      "end": 120
+                    }
+                  },
+                  "source": "graphite-grades"
+                }
+              }
+            ],
+            "stages": [
+              {
+                "stage_id": "block-in",
+                "title": "Block in the darks",
+                "minutes": 45,
+                "goal": "Mass the darkest value as one shape.",
+                "completion_signal": "Every dark shape on the value plate has a matching mass.",
+                "materials": ["soft-pencil"],
+                "claims": [
+                  {
+                    "text": "Start from the darkest shapes.",
+                    "evidence": {
+                      "kind": "chosen",
+                      "reason": "the darkest values carry the composition",
+                      "rejected_alternative": "starting from the outline"
+                    },
+                    "source": null
+                  }
+                ]
+              }
+            ],
+            "self_check": ["Do the darkest shapes match the value plate?"]
+          },
+          "verdicts": [
+            {
+              "verdict": "REVISE",
+              "defects": [
+                {
+                  "category": "infeasible_timebox",
+                  "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                  "location": null,
+                  "origin": "check"
+                }
+              ],
+              "summary": "The time boxes miss the budget.",
+              "revision": 0
+            },
+            {
+              "verdict": "READY",
+              "defects": [],
+              "summary": "The plan fits the budget and the medium.",
+              "revision": 1
+            }
+          ]
+        }
       }
     ],
     "run_failures": [
@@ -318,6 +522,142 @@
       {
         "reason": "interrupted",
         "detail": "The service stopped before the run could finish."
+      }
+    ],
+    "plan_outcomes": [
+      {
+        "$comment": "A graphite plan that passed on its revision: the first verdict asked for a revision, the second shipped it.",
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
       }
     ]
   },
@@ -558,6 +898,1407 @@
         "node_trail": [],
         "gate": {},
         "artifacts": []
+      }
+    },
+    "plan_measured_claim_without_a_source": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "x",
+                  "evidence": {
+                    "kind": "measured",
+                    "tool": "value_map",
+                    "tool_version": "0.1.0",
+                    "parameters": {
+                      "values": 5
+                    },
+                    "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                    "units": "normalized"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_chosen_claim_with_a_source": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "x",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": "values"
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_with_duplicate_stage_ids": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            },
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_ready_with_open_defects": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "s",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_revise_after_the_last_revision": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "REVISE",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_defect_outside_the_closed_set": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "style_quibble",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_finding_that_is_not_measured": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "cited",
+                "chunk_id": "fixture-graphite-001",
+                "institution": "Art Loupe fixture lessons",
+                "url": "https://example.invalid/lessons/graphite-001",
+                "licence": "fixture text, not a published source",
+                "retrieved_at": "2026-10-09T12:00:00Z",
+                "passage_span": {
+                  "start": 0,
+                  "end": 120
+                }
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_finding_both_used_and_set_aside": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "values",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_reference_id_carrying_prose": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["Soft Pencil <b>"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ]
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "plan_stage_with_an_unknown_field": {
+      "schema": "plan_outcome",
+      "value": {
+        "findings": {
+          "findings": [
+            {
+              "finding_id": "values",
+              "text": "Nearly a third of the photograph sits in the darkest value.",
+              "evidence": {
+                "kind": "measured",
+                "tool": "value_map",
+                "tool_version": "0.1.0",
+                "parameters": {
+                  "values": 5
+                },
+                "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                "units": "normalized"
+              }
+            }
+          ],
+          "set_aside": [
+            {
+              "finding_id": "perspective",
+              "reason": "no vanishing point cleared the confidence floor"
+            }
+          ]
+        },
+        "lessons": [
+          {
+            "lesson_id": "graphite-grades",
+            "topic": "materials",
+            "title": "Choosing pencil grades",
+            "text": "A soft grade reaches the darkest values without burnishing.",
+            "evidence": {
+              "kind": "cited",
+              "chunk_id": "fixture-graphite-001",
+              "institution": "Art Loupe fixture lessons",
+              "url": "https://example.invalid/lessons/graphite-001",
+              "licence": "fixture text, not a published source",
+              "retrieved_at": "2026-10-09T12:00:00Z",
+              "passage_span": {
+                "start": 0,
+                "end": 120
+              }
+            }
+          }
+        ],
+        "plan": {
+          "assessment": {
+            "suitability": "workable",
+            "claims": [
+              {
+                "text": "The darkest value covers nearly a third of the frame.",
+                "evidence": {
+                  "kind": "measured",
+                  "tool": "value_map",
+                  "tool_version": "0.1.0",
+                  "parameters": {
+                    "values": 5
+                  },
+                  "source_checksum": "9f2c4a1b7e6d5038c9b2a1f4e7d60359a8b1c2d3e4f5061728394a5b6c7d8e9f",
+                  "units": "normalized"
+                },
+                "source": "values"
+              }
+            ]
+          },
+          "materials": [
+            {
+              "item_id": "soft-pencil",
+              "category": "drawing",
+              "specification": "a soft graphite pencil, 4B to 6B",
+              "claim": {
+                "text": "A soft grade reaches the darkest values.",
+                "evidence": {
+                  "kind": "cited",
+                  "chunk_id": "fixture-graphite-001",
+                  "institution": "Art Loupe fixture lessons",
+                  "url": "https://example.invalid/lessons/graphite-001",
+                  "licence": "fixture text, not a published source",
+                  "retrieved_at": "2026-10-09T12:00:00Z",
+                  "passage_span": {
+                    "start": 0,
+                    "end": 120
+                  }
+                },
+                "source": "graphite-grades"
+              }
+            }
+          ],
+          "stages": [
+            {
+              "stage_id": "block-in",
+              "title": "Block in the darks",
+              "minutes": 45,
+              "goal": "Mass the darkest value as one shape.",
+              "completion_signal": "Every dark shape on the value plate has a matching mass.",
+              "materials": ["soft-pencil"],
+              "claims": [
+                {
+                  "text": "Start from the darkest shapes.",
+                  "evidence": {
+                    "kind": "chosen",
+                    "reason": "the darkest values carry the composition",
+                    "rejected_alternative": "starting from the outline"
+                  },
+                  "source": null
+                }
+              ],
+              "extra": 1
+            }
+          ],
+          "self_check": ["Do the darkest shapes match the value plate?"]
+        },
+        "verdicts": [
+          {
+            "verdict": "REVISE",
+            "defects": [
+              {
+                "category": "infeasible_timebox",
+                "detail": "The stages sum to 30 minutes against a 45-minute budget.",
+                "location": null,
+                "origin": "check"
+              }
+            ],
+            "summary": "The time boxes miss the budget.",
+            "revision": 0
+          },
+          {
+            "verdict": "READY",
+            "defects": [],
+            "summary": "The plan fits the budget and the medium.",
+            "revision": 1
+          }
+        ]
+      }
+    },
+    "run_failure_with_a_plan_reason_misspelt": {
+      "schema": "run_failure",
+      "value": {
+        "reason": "plan_failed",
+        "detail": "x"
       }
     }
   }

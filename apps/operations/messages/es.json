@@ -130,6 +130,9 @@
       "credential_rejected": "Credencial rechazada",
       "data_service_refused": "El servicio de datos rechazó la llamada",
       "routing_failed": "Fallo de enrutamiento",
+      "analysis_failed": "Fallo del análisis",
+      "planning_failed": "Fallo de la planificación",
+      "critique_failed": "Fallo de la revisión del plan",
       "interrupted": "El servicio se detuvo durante la ejecución",
       "internal_error": "Error interno"
     },

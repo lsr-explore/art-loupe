@@ -13,8 +13,8 @@ Upload, intake, and the typed ProjectIntent
 | **Severity** | P2 |
 | **Why** | Medium and time budget drive tool selection, so a mis-parsed intent misroutes the whole run. The artist stated these values and can see them, which keeps it below the analysis flows — but the untrusted surfaces arrive here too: EXIF, filename, and the free-text goal are screened at ingest, never interpreted as instruction (FR-106). |
 | **Surfaces** | `apps/studio` · `packages/schemas` · `python/libs/persistence` · `python/libs/schemas` · `python/services/agent` |
-| **Tests** | 267 (21 parametrized) |
-| **Covered** | a11y 10 · security 68 · safety 5 · data 61 · functionality 123 |
+| **Tests** | 268 (21 parametrized) |
+| **Covered** | a11y 10 · security 68 · safety 5 · data 61 · functionality 124 |
 | **Not covered** | privacy · performance |
 
 ## pytest — 61
@@ -69,8 +69,8 @@ Upload, intake, and the typed ProjectIntent
 | functionality | test_a_tool_named_twice_is_refused | `python/libs/schemas/tests/test_manifest_completeness.py:46` |
 | functionality | test_a_tool_that_was_not_offered_is_refused | `python/libs/schemas/tests/test_manifest_completeness.py:53` |
 | functionality | test_every_problem_is_reported_together | `python/libs/schemas/tests/test_manifest_completeness.py:60` |
-| functionality | test_the_director_routes_a_portrait_for_real | `python/services/agent/tests/test_director_live.py:26` |
-| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_graph.py:103` |
+| functionality | test_the_director_routes_a_portrait_for_real | `python/services/agent/tests/test_director_live.py:29` |
+| functionality | test_no_face_declines_head_construction_with_the_gates_reason | `python/services/agent/tests/test_graph.py:120` |
 | functionality | test_the_model_decides_every_tool_the_gate_left_open | `python/services/agent/tests/test_routing.py:70` |
 | functionality | test_every_tool_is_accounted_for_exactly_once | `python/services/agent/tests/test_routing.py:89` |
 | functionality | test_no_face_pre_declines_head_construction_and_never_offers_it | `python/services/agent/tests/test_routing.py:100` |
@@ -83,12 +83,12 @@ Upload, intake, and the typed ProjectIntent
 | functionality | test_the_model_id_is_configuration | `python/services/agent/tests/test_routing.py:214` |
 | functionality | test_no_pixels_reach_the_model | `python/services/agent/tests/test_routing.py:225` |
 
-## Vitest — 194
+## Vitest — 195
 
 | Category | Test | Location |
 | --- | --- | --- |
 | functionality | shows the reference photograph through the image route, with its dimensions | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:81` |
-| functionality | says plainly that the plan is not built yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:90` |
+| functionality | says what analysing the reference will produce | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:90` |
 | functionality | hands the run panel the project and no run when there is none | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:95` |
 | functionality | hands the run panel the latest run, so a reload follows it | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:100` |
 | functionality | says so when the project has no photograph yet | `apps/studio/src/app/[locale]/projects/[id]/page.test.tsx:106` |
@@ -170,13 +170,14 @@ Upload, intake, and the typed ProjectIntent
 | functionality | starts nothing until the artist asks | `apps/studio/src/components/project/run-panel.test.tsx:41` |
 | functionality | starts a run on request and follows its stream | `apps/studio/src/components/project/run-panel.test.tsx:47` |
 | functionality | announces the current step, then the routing decision | `apps/studio/src/components/project/run-panel.test.tsx:56` |
-| functionality | follows an existing run at once, without starting another | `apps/studio/src/components/project/run-panel.test.tsx:72` |
-| functionality | shows a failed run in the artist language, and offers to try again | `apps/studio/src/components/project/run-panel.test.tsx:78` |
-| functionality | treats the studio | `apps/studio/src/components/project/run-panel.test.tsx:89` |
-| functionality | says contact was lost when the stream is refused before the run ends | `apps/studio/src/components/project/run-panel.test.tsx:99` |
-| functionality | says the run could not start when the studio refuses | `apps/studio/src/components/project/run-panel.test.tsx:105` |
-| functionality | closes its stream when it unmounts | `apps/studio/src/components/project/run-panel.test.tsx:114` |
-| a11y | has no accessibility violations once a run has finished | `apps/studio/src/components/project/run-panel.test.tsx:121` |
+| functionality | shows only the routing for a run recorded before plans existed | `apps/studio/src/components/project/run-panel.test.tsx:80` |
+| functionality | follows an existing run at once, without starting another | `apps/studio/src/components/project/run-panel.test.tsx:87` |
+| functionality | shows a failed run in the artist language, and offers to try again | `apps/studio/src/components/project/run-panel.test.tsx:93` |
+| functionality | treats the studio | `apps/studio/src/components/project/run-panel.test.tsx:104` |
+| functionality | says contact was lost when the stream is refused before the run ends | `apps/studio/src/components/project/run-panel.test.tsx:114` |
+| functionality | says the run could not start when the studio refuses | `apps/studio/src/components/project/run-panel.test.tsx:120` |
+| functionality | closes its stream when it unmounts | `apps/studio/src/components/project/run-panel.test.tsx:129` |
+| a11y | has no accessibility violations once a run has finished | `apps/studio/src/components/project/run-panel.test.tsx:136` |
 | functionality | tracks each node from running to done | `apps/studio/src/components/project/run-view.test.ts:13` |
 | functionality | keeps the result of a run that succeeded | `apps/studio/src/components/project/run-view.test.ts:27` |
 | functionality | keeps only the reason of a run that failed, never its English detail | `apps/studio/src/components/project/run-view.test.ts:36` |
@@ -223,13 +224,13 @@ Upload, intake, and the typed ProjectIntent
 | security | reads with the artist token and the anon key, never anything else | `apps/studio/src/lib/projects/read-project.test.ts:94` |
 | security | answers not-found when RLS hides the project | `apps/studio/src/lib/projects/read-project.test.ts:102` |
 | security | answers not-found, not unavailable, for a token Supabase refuses | `apps/studio/src/lib/projects/read-project.test.ts:107` |
-| functionality | relays every valid event with its id, and passes heartbeats on | `apps/studio/src/lib/runs/relay-run-events.test.ts:35` |
-| functionality | starts with its own retry interval | `apps/studio/src/lib/runs/relay-run-events.test.ts:51` |
-| functionality | stops after the terminal event even if more arrives | `apps/studio/src/lib/runs/relay-run-events.test.ts:56` |
-| safety | an unknown kind | `apps/studio/src/lib/runs/relay-run-events.test.ts:67` |
-| safety | cancels the upstream stream, so the agent stops polling for a closed reader | `apps/studio/src/lib/runs/relay-run-events.test.ts:92` |
-| safety | cancels the upstream stream after the terminal event too | `apps/studio/src/lib/runs/relay-run-events.test.ts:112` |
-| safety | never relays the refused payload itself | `apps/studio/src/lib/runs/relay-run-events.test.ts:131` |
+| functionality | relays every valid event with its id, and passes heartbeats on | `apps/studio/src/lib/runs/relay-run-events.test.ts:36` |
+| functionality | starts with its own retry interval | `apps/studio/src/lib/runs/relay-run-events.test.ts:82` |
+| functionality | stops after the terminal event even if more arrives | `apps/studio/src/lib/runs/relay-run-events.test.ts:87` |
+| safety | an unknown kind | `apps/studio/src/lib/runs/relay-run-events.test.ts:98` |
+| safety | cancels the upstream stream, so the agent stops polling for a closed reader | `apps/studio/src/lib/runs/relay-run-events.test.ts:123` |
+| safety | cancels the upstream stream after the terminal event too | `apps/studio/src/lib/runs/relay-run-events.test.ts:143` |
+| safety | never relays the refused payload itself | `apps/studio/src/lib/runs/relay-run-events.test.ts:162` |
 | functionality | reads id, event and data, and joins multi-line data | `apps/studio/src/lib/runs/sse.test.ts:15` |
 | functionality | reassembles a frame split across network chunks | `apps/studio/src/lib/runs/sse.test.ts:22` |
 | functionality | keeps a comment-only frame as a heartbeat and drops retry lines | `apps/studio/src/lib/runs/sse.test.ts:28` |

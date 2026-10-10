@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 
-import { PROJECT_ID, RUN_ID, RUN_RESULT } from '@/lib/runs/run-events.fixtures';
+import { PLANNED_RUN_RESULT, PROJECT_ID, RUN_ID, RUN_RESULT } from '@/lib/runs/run-events.fixtures';
 
 import messages from '../../../messages/en.json';
 import { RunPanel } from './run-panel';
@@ -67,6 +67,21 @@ describe('RunPanel', () => {
     expect(screen.getByRole('status')).toHaveTextContent('The analysis has finished.');
     expect(screen.getByText(RUN_RESULT.routing.rationale)).toBeInTheDocument();
     expect(source.readyState).toBe(FakeEventSource.CLOSED);
+  });
+
+  // @trace flow=plan.synthesis
+  it('shows the working plan once a run that wrote one has finished', () => {
+    renderPanel(RUN_ID);
+    act(() => FakeEventSource.latest().emit('succeeded', PLANNED_RUN_RESULT, '1'));
+
+    expect(screen.getByRole('heading', { name: 'Your working plan' })).toBeInTheDocument();
+  });
+
+  it('shows only the routing for a run recorded before plans existed', () => {
+    renderPanel(RUN_ID);
+    act(() => FakeEventSource.latest().emit('succeeded', RUN_RESULT, '1'));
+
+    expect(screen.queryByRole('heading', { name: 'Your working plan' })).not.toBeInTheDocument();
   });
 
   it('follows an existing run at once, without starting another', () => {

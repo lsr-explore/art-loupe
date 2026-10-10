@@ -14,6 +14,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 from artloupe.schemas.artifact import ArtifactMetadata
+from artloupe.schemas.plan import PlanOutcome
 from artloupe.schemas.routing import RoutingDecision
 
 RunFailureReason = Literal[
@@ -26,6 +27,9 @@ RunFailureReason = Literal[
     "credential_rejected",
     "data_service_refused",
     "routing_failed",
+    "analysis_failed",
+    "planning_failed",
+    "critique_failed",
     "interrupted",
     "internal_error",
 ]
@@ -47,6 +51,10 @@ class RunResult(BaseModel):
     gate: dict[str, Any]
     routing: RoutingDecision
     artifacts: list[ArtifactMetadata]
+    # The findings, lessons, plan and verdicts. `None` only on a run recorded before the plan half
+    # of the graph existed: its `succeeded` event is replayed as stored, so the field must be
+    # optional for those events to keep validating.
+    plan: PlanOutcome | None = None
 
 
 class RunFailure(BaseModel):

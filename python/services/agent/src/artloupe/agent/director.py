@@ -50,8 +50,8 @@ FALLBACK_BETA = "server-side-fallback-2026-07-01"
 # Room for adaptive thinking as well as the decision, which is itself well under a thousand tokens.
 MAX_TOKENS = 16_000
 
-# Two attempts at 45 s fit inside the run's 120 s wall clock, with room left for the deterministic
-# nodes. The wall-clock guard stays the backstop.
+# Two attempts at 45 s fit inside the run's 300 s wall clock, with room left for the other
+# agents' calls. The wall-clock guard stays the backstop.
 REQUEST_TIMEOUT_SECONDS = 45.0
 MAX_RETRIES = 1
 

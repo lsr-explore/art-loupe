@@ -20,6 +20,7 @@ from artloupe.schemas import (
     BudgetLedger,
     Claim,
     ImageRef,
+    PlanOutcome,
     ProjectIntent,
     RoutingDecision,
     RunFailure,
@@ -73,6 +74,7 @@ SCHEMAS: dict[str, type[BaseModel]] = {
     "budget_ledger": BudgetLedger,
     "run_result": RunResult,
     "run_failure": RunFailure,
+    "plan_outcome": PlanOutcome,
 }
 
 
@@ -132,6 +134,18 @@ def test_accepts_budget_ledgers(ledger: dict[str, Any]) -> None:
 @pytest.mark.parametrize("result", ACCEPTS["run_results"], ids=lambda entry: entry["run_id"])
 def test_accepts_run_results(result: dict[str, Any]) -> None:
     RunResult.model_validate(result)
+
+
+@pytest.mark.parametrize("outcome", ACCEPTS["plan_outcomes"])
+def test_accepts_plan_outcomes(outcome: dict[str, Any]) -> None:
+    PlanOutcome.model_validate(outcome)
+
+
+def test_a_run_recorded_before_plans_existed_still_validates() -> None:
+    """A stored `succeeded` event is replayed as written, so `plan` must stay optional."""
+    planless = [result for result in ACCEPTS["run_results"] if "plan" not in result]
+    assert planless, "the fixture must keep a run result recorded without a plan"
+    assert RunResult.model_validate(planless[0]).plan is None
 
 
 @pytest.mark.parametrize("failure", ACCEPTS["run_failures"], ids=lambda entry: entry["reason"])
