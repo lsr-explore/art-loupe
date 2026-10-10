@@ -92,8 +92,19 @@ for unsupported factual assertions too. Return a reason under 80 words.""",
     return Judgment.model_validate_json(text)
 
 
-async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool = False) -> dict:
-    index = Index.load(corpus)
+async def evaluate(
+    corpus: Path, cases_path: Path, output: Path, *, live: bool = False, backend: str = "files"
+) -> dict:
+    reference = Index.load(corpus)
+    index = reference
+    if backend == "pgvector":
+        from artloupe.agent.learning.postgres import PostgresIndex
+
+        index = PostgresIndex.load()
+        if index.version != reference.version:
+            raise ValueError("Published corpus differs from the evaluation corpus")
+    elif backend != "files":
+        raise ValueError("Unknown evaluation backend")
     cases = [Case.model_validate(item) for item in json.loads(cases_path.read_text())["cases"]]
     if not cases or len({case.id for case in cases}) != len(cases):
         raise ValueError("Eval cases must be nonempty with unique IDs")
@@ -101,7 +112,7 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
         if case.expected_status == "answered" and not case.gold:
             raise ValueError(f"Answered case has no gold evidence: {case.id}")
         if case.gold and not any(
-            any(matches(part, gold) for part in index.passages) for gold in case.gold
+            any(matches(part, gold) for part in reference.passages) for gold in case.gold
         ):
             raise ValueError(f"Gold evidence missing from this corpus: {case.id}")
     rows = []
@@ -218,6 +229,7 @@ async def evaluate(corpus: Path, cases_path: Path, output: Path, *, live: bool =
         "passed": passed,
         "mode": "live" if live else "offline-retrieval",
         "retrieval_mode": mode,
+        "backend": backend,
         "corpus_version": index.version,
         "case_count": len(cases),
         "positive_cases": positives,
