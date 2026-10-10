@@ -2,10 +2,10 @@
   "generated_by": "scripts/reports/traceability-report.mjs",
   "totals": {
     "tagged": {
-      "pytest": 536,
+      "pytest": 540,
       "vitest": 679,
       "playwright": 41,
-      "all": 1256
+      "all": 1260
     },
     "untagged": {
       "pytest": 0,
@@ -14,10 +14,10 @@
       "all": 0
     },
     "all": {
-      "pytest": 536,
+      "pytest": 540,
       "vitest": 679,
       "playwright": 41,
-      "all": 1256
+      "all": 1260
     }
   },
   "by_flow": {
@@ -48,17 +48,17 @@
         "a11y": 2,
         "security": 8,
         "privacy": 0,
-        "safety": 34,
+        "safety": 38,
         "data": 8,
         "performance": 0,
         "functionality": 4
       },
       "runners": {
-        "pytest": 34,
+        "pytest": 38,
         "vitest": 21,
         "playwright": 1
       },
-      "total": 56,
+      "total": 60,
       "parametrized": 8
     },
     "safety.untrusted-input": {
@@ -8271,6 +8271,34 @@
       "runner": "pytest",
       "flow": "platform.agent-runtime",
       "category": "functionality"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning_postgres.py:106",
+      "name": "test_database_write_failure_rolls_back_partial_publication",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning_postgres.py:55",
+      "name": "test_real_publication_hybrid_retrieval_and_immutable_snapshots",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning_postgres.py:83",
+      "name": "test_failed_publication_preserves_active_corpus_and_records_failure",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
+    },
+    {
+      "id": "python/services/agent/tests/test_learning_postgres.py:98",
+      "name": "test_database_role_failure_is_explicit",
+      "runner": "pytest",
+      "flow": "retrieval.grounding",
+      "category": "safety"
     },
     {
       "id": "python/services/agent/tests/test_learning.py:102",

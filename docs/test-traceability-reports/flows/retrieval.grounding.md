@@ -13,14 +13,18 @@ Art-historical context is carried back to a real citation
 | **Severity** | P0 |
 | **Why** | A confident, ungrounded attribution is the confabulation failure mode this project exists to prevent. |
 | **Surfaces** | `apps/studio` · `python/services/agent` · `packages/schemas` |
-| **Tests** | 56 (8 parametrized) |
-| **Covered** | a11y 2 · security 8 · safety 34 · data 8 · functionality 4 |
+| **Tests** | 60 (8 parametrized) |
+| **Covered** | a11y 2 · security 8 · safety 38 · data 8 · functionality 4 |
 | **Not covered** | privacy · performance |
 
-## pytest — 34
+## pytest — 38
 
 | Category | Test | Location |
 | --- | --- | --- |
+| safety | test_real_publication_hybrid_retrieval_and_immutable_snapshots | `python/services/agent/tests/test_learning_postgres.py:55` |
+| safety | test_failed_publication_preserves_active_corpus_and_records_failure | `python/services/agent/tests/test_learning_postgres.py:83` |
+| safety | test_database_role_failure_is_explicit | `python/services/agent/tests/test_learning_postgres.py:98` |
+| safety | test_database_write_failure_rolls_back_partial_publication | `python/services/agent/tests/test_learning_postgres.py:106` |
 | safety | test_shared_request_accepts | `python/services/agent/tests/test_learning.py:27` |
 | safety | test_shared_request_rejects | `python/services/agent/tests/test_learning.py:32` |
 | safety | test_citation_identity_and_metadata_are_resolved_from_evidence | `python/services/agent/tests/test_learning.py:37` |
