@@ -90,6 +90,7 @@ class NodeSpan:
         self.cache_read_tokens = 0
         self.cache_write_tokens = 0
         self.tool_calls = 0
+        self.inference: list[dict[str, Any]] = []
         self._started = monotonic()
 
     def record_usage(
@@ -309,6 +310,7 @@ class RunRecorder:
                 cache_write_tokens=span.cache_write_tokens,
             ),
             error=error,
+            inference=span.inference,
         )
         self.metrics.append(metric)
         self._accumulate(metric)

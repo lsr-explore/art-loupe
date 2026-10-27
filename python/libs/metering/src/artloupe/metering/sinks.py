@@ -35,11 +35,11 @@ _INSERT = f"""
 insert into {METRICS_TABLE} (
     run_id, owner, node, attempt, started_at, duration_ms, status, model,
     input_tokens, output_tokens, cache_read_tokens, cache_write_tokens,
-    tool_calls, cost_usd, error
+    tool_calls, cost_usd, error, inference
 ) values (
     %(run_id)s, %(owner)s, %(node)s, %(attempt)s, %(started_at)s, %(duration_ms)s,
     %(status)s, %(model)s, %(input_tokens)s, %(output_tokens)s, %(cache_read_tokens)s,
-    %(cache_write_tokens)s, %(tool_calls)s, %(cost_usd)s, %(error)s
+    %(cache_write_tokens)s, %(tool_calls)s, %(cost_usd)s, %(error)s, %(inference)s
 )
 """
 
@@ -71,8 +71,9 @@ class PostgresMetricsSink:
             return
 
         from psycopg import AsyncConnection
+        from psycopg.types.json import Jsonb
 
-        rows = [metric.model_dump() for metric in metrics]
+        rows = [{**metric.model_dump(), "inference": Jsonb(metric.inference)} for metric in metrics]
         async with await AsyncConnection.connect(self._database_url) as conn:
             # One transaction for the whole run: a half-written ledger is a worse artifact
             # than a missing one, because it looks complete.

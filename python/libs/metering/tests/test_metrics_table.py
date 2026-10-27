@@ -146,6 +146,18 @@ async def test_a_flushed_run_is_readable_afterwards() -> None:
         cache_read_tokens=200,
         tool_calls=1,
         cost_usd=Decimal("0.0176"),
+        inference=[
+            {
+                "task": "director",
+                "provider": "anthropic",
+                "model_id": "anthropic-current",
+                "requested_model": "claude-opus-5",
+                "actual_model": "claude-opus-5",
+                "prompt_id": "director.v1",
+                "prompt_version": 1,
+                "prompt_sha256": "a" * 64,
+            }
+        ],
     )
 
     try:
@@ -153,7 +165,7 @@ async def test_a_flushed_run_is_readable_afterwards() -> None:
         with _connect() as conn:
             row = conn.execute(
                 "select node, attempt, duration_ms, status, model, input_tokens, "
-                f"output_tokens, cache_read_tokens, tool_calls, cost_usd from {TABLE} "
+                f"output_tokens, cache_read_tokens, tool_calls, cost_usd, inference from {TABLE} "
                 "where run_id = %s",
                 (run_id,),
             ).fetchall()
@@ -163,5 +175,17 @@ async def test_a_flushed_run_is_readable_afterwards() -> None:
             conn.commit()
 
     assert row == [
-        ("analyse", 1, 42, "ok", "claude-opus-5", 1_000, 500, 200, 1, Decimal("0.017600"))
+        (
+            "analyse",
+            1,
+            42,
+            "ok",
+            "claude-opus-5",
+            1_000,
+            500,
+            200,
+            1,
+            Decimal("0.017600"),
+            metric.inference,
+        )
     ]

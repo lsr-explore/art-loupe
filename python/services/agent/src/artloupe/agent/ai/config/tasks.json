@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "tasks": {
+    "director": {
+      "model": "anthropic-current",
+      "prompt": "director.v1",
+      "capability": "structured-text",
+      "transport": "beta",
+      "max_output_tokens": 16000,
+      "timeout_seconds": 45
+    },
+    "analyst": {
+      "model": "anthropic-current",
+      "prompt": "analyst.v1",
+      "capability": "structured-text",
+      "transport": "beta-stream",
+      "max_output_tokens": 16000,
+      "timeout_seconds": 45
+    },
+    "planner": {
+      "model": "anthropic-current",
+      "prompt": "planner.v1",
+      "capability": "structured-text",
+      "transport": "beta-stream",
+      "max_output_tokens": 16000,
+      "timeout_seconds": 90
+    },
+    "critic": {
+      "model": "anthropic-current",
+      "prompt": "critic.v1",
+      "capability": "structured-text",
+      "transport": "beta-stream",
+      "max_output_tokens": 16000,
+      "timeout_seconds": 60
+    },
+    "learning-answer": {
+      "model": "anthropic-current",
+      "prompt": "learning-answer.v1",
+      "capability": "structured-text",
+      "transport": "plain",
+      "max_output_tokens": 2500,
+      "timeout_seconds": 45
+    },
+    "learning-judge": {
+      "model": "anthropic-current",
+      "prompt": "learning-judge.v1",
+      "capability": "structured-text",
+      "transport": "plain",
+      "max_output_tokens": 1400,
+      "timeout_seconds": 45
+    },
+    "learning-embeddings": {
+      "model": "openai-embeddings",
+      "capability": "embeddings",
+      "timeout_seconds": 25
+    }
+  }
+}

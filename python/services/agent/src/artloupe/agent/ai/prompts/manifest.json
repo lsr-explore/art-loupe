@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "prompts": {
+    "director.v1": {
+      "task": "director",
+      "version": 1,
+      "system_file": "director/v1/system.txt",
+      "input_contract": "director-input.v1",
+      "inputs": [
+        "intent",
+        "gate",
+        "survey",
+        "offered"
+      ],
+      "output_schema": "DirectorDecision",
+      "sha256": "d09efa32a2a2293666d1b5c8fb0f7afe46b3684b562640aea6d361dc6c6a22d5"
+    },
+    "analyst.v1": {
+      "task": "analyst",
+      "version": 1,
+      "system_file": "analyst/v1/system.txt",
+      "input_contract": "analyst-input.v1",
+      "inputs": [
+        "intent",
+        "catalog"
+      ],
+      "output_schema": "AnalystDraft",
+      "sha256": "b7daf7d3952e6d0c3c6588af7bb262fc7638704d4f43e362aae056a933aa76b4"
+    },
+    "planner.v1": {
+      "task": "planner",
+      "version": 1,
+      "system_file": "planner/v1/system.txt",
+      "input_contract": "planner-input.v1",
+      "inputs": [
+        "intent",
+        "findings",
+        "set_aside",
+        "lessons"
+      ],
+      "output_schema": "PlanDraft",
+      "sha256": "20ffcd9ca4e372b5b682b28d05452a955f4980bb9346dcc57cba21b5fb9623ef"
+    },
+    "critic.v1": {
+      "task": "critic",
+      "version": 1,
+      "system_file": "critic/v1/system.txt",
+      "input_contract": "critic-input.v1",
+      "inputs": [
+        "intent",
+        "plan",
+        "findings",
+        "lessons",
+        "defects_already_found"
+      ],
+      "output_schema": "CriticDraft",
+      "sha256": "6ff8c86e0ef36df936cf840526753e3194bee8afcf29177424340f6d3f53e47b"
+    },
+    "learning-answer.v1": {
+      "task": "learning-answer",
+      "version": 1,
+      "system_file": "learning-answer/v1/system.txt",
+      "input_contract": "learning-input.v1",
+      "inputs": [
+        "question",
+        "passages"
+      ],
+      "output_schema": "Draft",
+      "sha256": "fd7011aef020949769aef79f5b5e2688332a8927e80601f8c885eddb09ca5143"
+    },
+    "learning-judge.v1": {
+      "task": "learning-judge",
+      "version": 1,
+      "system_file": "learning-judge/v1/system.txt",
+      "input_contract": "learning-judge-input.v1",
+      "inputs": [
+        "question",
+        "medium",
+        "expected_status",
+        "rubric",
+        "answer"
+      ],
+      "output_schema": "Judgment",
+      "sha256": "84e9866f2143e8cb1ea1ff5e2a745cee0723fc0a8a51d02e5c44a0f4fd543d74"
+    }
+  }
+}

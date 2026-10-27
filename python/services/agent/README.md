@@ -57,3 +57,12 @@ development, and the deployed binding is a decision that does not exist yet.
   but nothing here should grow a second edge before they exist.
 - **No `artloupe-schemas` dependency.** The skeleton has no contract to carry; it arrives
   with intake in PR 7.
+
+## Model selection and prompt manifests
+
+Model configuration and provider adapters live in `src/artloupe/agent/ai/`. System prompts are
+versioned files with a validated manifest. The default provider behavior is unchanged.
+Set `LLM_MODE=mock` for credential-free deterministic model responses.
+
+See [the registry and prompt guide](../../../docs/design/model-registry.md) for selectors,
+mixed-provider development, validation commands, prompt versioning, provenance and CI behavior.

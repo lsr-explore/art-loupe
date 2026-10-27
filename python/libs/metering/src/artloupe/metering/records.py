@@ -24,7 +24,7 @@ reasons that are not all obvious:
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -56,6 +56,7 @@ class NodeMetric(BaseModel):
     tool_calls: int = Field(default=0, ge=0)
     cost_usd: Decimal | None = None
     error: str | None = None
+    inference: list[dict[str, Any]] = Field(default_factory=list)
 
     @property
     def total_tokens(self) -> int:

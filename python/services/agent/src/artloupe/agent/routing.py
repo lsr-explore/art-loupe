@@ -42,8 +42,6 @@ async def direct(state: RunState) -> dict[str, Any]:
     )
 
     director = run_resources().director
-    if director is None:
-        raise RuntimeError("this run has no Director client; the service supplies one per run")
     decision = await ask_director(
         director, intent=state["intent"], gate=gate, survey=state["survey"], offered=offered
     )

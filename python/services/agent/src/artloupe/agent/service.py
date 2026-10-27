@@ -36,6 +36,7 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
+from artloupe.agent.ai.registry import ConfigurationError
 from artloupe.agent.artifact_routes import router as artifact_router
 from artloupe.agent.director import close_director_client, director_client
 from artloupe.agent.graph import build_graph
@@ -130,6 +131,12 @@ async def credential_rejected(_request: Request, _error: CredentialRejected) -> 
         content={"detail": "Supabase rejected the access token. Refresh it and retry."},
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+
+@app.exception_handler(ConfigurationError)
+async def ai_configuration_error(_request: Request, error: ConfigurationError) -> JSONResponse:
+    logger.error("AI configuration is invalid: %s", error)
+    return JSONResponse(status_code=503, content={"detail": "The AI configuration is unavailable."})
 
 
 @app.exception_handler(SecretUnavailable)

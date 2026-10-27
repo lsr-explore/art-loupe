@@ -1,0 +1,29 @@
+{
+  "assessment": {
+    "suitability": "workable",
+    "claims": []
+  },
+  "materials": [],
+  "stages": [
+    {
+      "stage_id": "mock-study",
+      "title": "Mock reference study",
+      "minutes": 30,
+      "goal": "Development fixture: practice reading the reference.",
+      "completion_signal": "The mock study is complete.",
+      "materials": [],
+      "claims": [
+        {
+          "text": "Mock suggestion: begin with broad shapes.",
+          "basis": "choice",
+          "source": null,
+          "reason": "This deterministic fixture exercises the plan interface.",
+          "rejected_alternative": "Generating live model advice."
+        }
+      ]
+    }
+  ],
+  "self_check": [
+    "Mock check: can you identify the largest shapes?"
+  ]
+}
