@@ -211,7 +211,13 @@ def test_an_artist_cannot_delete_another_artists_project(two_artists: psycopg.Co
 def test_only_the_owning_artist_sees_the_uploaded_original(
     two_artists: psycopg.Connection,
 ) -> None:
-    assert count(two_artists, f"select count(*) from {SOURCE_IMAGES_TABLE}") == 1, (
+    # Scoped to the fixture projects: a local database that has been used holds other rows.
+    fixture_uploads = count(
+        two_artists,
+        f"select count(*) from {SOURCE_IMAGES_TABLE} where project_id = any(%s)",
+        ([PROJECT_A, PROJECT_B],),
+    )
+    assert fixture_uploads == 1, (
         "the fixture upload is missing; both counts below would be zero for the wrong reason"
     )
 
@@ -345,8 +351,14 @@ def test_an_artist_sees_only_objects_under_their_own_prefix(
 
     both = count(
         two_artists,
-        "select count(*) from storage.objects where bucket_id = %s",
-        (REFERENCE_IMAGE_BUCKET,),
+        "select count(*) from storage.objects where bucket_id = %s and name = any(%s)",
+        (
+            REFERENCE_IMAGE_BUCKET,
+            [
+                storage_key(ARTIST_A, PROJECT_A, CHECKSUM_A),
+                storage_key(ARTIST_B, PROJECT_B, CHECKSUM_B),
+            ],
+        ),
     )
 
     with acting_as(two_artists, AUTHENTICATED, ARTIST_A) as conn:

@@ -200,6 +200,52 @@ def director_reply(
 Responder = Callable[[dict[str, Any]], dict[str, Any]]
 
 
+def streamed(reply: dict[str, Any]) -> str:
+    """`reply` as the server-sent events a streamed request receives, in the API's event order.
+
+    The analyst, planner and critic stream; the Director does not. One recorded reply serves
+    either, so a test does not need to know which way the agent it queues for asks.
+    """
+    events: list[dict[str, Any]] = [
+        {
+            "type": "message_start",
+            "message": {**reply, "content": [], "stop_reason": None, "stop_details": None},
+        }
+    ]
+    for index, block in enumerate(reply["content"]):
+        if block["type"] == "text":
+            events.append(
+                {
+                    "type": "content_block_start",
+                    "index": index,
+                    "content_block": {**block, "text": ""},
+                }
+            )
+            events.append(
+                {
+                    "type": "content_block_delta",
+                    "index": index,
+                    "delta": {"type": "text_delta", "text": block["text"]},
+                }
+            )
+        else:
+            events.append({"type": "content_block_start", "index": index, "content_block": block})
+        events.append({"type": "content_block_stop", "index": index})
+    events.append(
+        {
+            "type": "message_delta",
+            "delta": {
+                "stop_reason": reply["stop_reason"],
+                "stop_sequence": reply.get("stop_sequence"),
+                "stop_details": reply.get("stop_details"),
+            },
+            "usage": {"output_tokens": reply["usage"]["output_tokens"]},
+        }
+    )
+    events.append({"type": "message_stop"})
+    return "".join(f"event: {event['type']}\ndata: {json.dumps(event)}\n\n" for event in events)
+
+
 class RecordedDirector:
     """A real `AsyncAnthropic` client whose transport answers from recorded replies, in order.
 
@@ -226,8 +272,13 @@ class RecordedDirector:
         if not self.replies:
             return httpx2.Response(500, json={"error": "the test recorded no reply for this call"})
         reply = self.replies.pop(0)
+        body = json.loads(request.content)
         if callable(reply):
-            reply = reply(json.loads(request.content))
+            reply = reply(body)
+        if body.get("stream"):
+            return httpx2.Response(
+                200, text=streamed(reply), headers={"content-type": "text/event-stream"}
+            )
         return httpx2.Response(200, json=reply)
 
     @property

@@ -43,7 +43,8 @@ from artloupe.schemas import (
 )
 
 PLANNER_MODEL_VARIABLE = "ARTLOUPE_PLANNER_MODEL"
-# A plan is the longest answer any agent writes, so it gets the longest wait.
+# The longest the planner's stream may go silent. The plan is the longest answer any agent
+# writes, and the most it thinks before writing, so it gets the longest wait.
 PLANNER_TIMEOUT_SECONDS = 90.0
 
 SYSTEM_PROMPT = """\

@@ -130,3 +130,19 @@ async def test_a_first_plan_is_written_without_a_revision_block() -> None:
     assert "<revision>" not in recorded.bodies[0]["messages"][0]["content"]
     assert [stage.minutes for stage in plan.stages] == [60, 30]
     assert defects == []
+
+
+async def test_the_plan_is_streamed_so_its_length_is_not_bound_by_one_read() -> None:
+    """Unstreamed, a long plan has to arrive inside one 90-second read, and a real one did not."""
+    recorded = RecordedDirector(
+        director_reply(plan_draft(finding="value_map", lesson="fx-oil-materials"))
+    )
+
+    await ask_planner(
+        recorded.client,
+        intent={"medium": "oil", "time_budget_minutes": 90},
+        findings=FINDINGS,
+        lessons=LESSONS,
+    )
+
+    assert recorded.bodies[0]["stream"] is True

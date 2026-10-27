@@ -259,13 +259,26 @@ uv run --directory python --all-packages python -m artloupe.agent.learning.cli v
 For PostgreSQL publication, Docker setup, and Cloud Run configuration, see
 [`PostgreSQL ingestion and retrieval`](./docs/learning/pgvector.md).
 
-The learning assistant answers from three books, which live outside the repo in
-`../../reference-docs/books`. The generated corpus is gitignored, so every checkout builds
-its own. Run these commands from `python/`:
+The learning assistant answers from three open-access books. The books are not in the repo,
+so download them first. Put all three in one directory outside the checkout, and save each
+one under the filename shown. Ingestion looks up each book by its exact filename in
+[`docs/learning/books.json`](./docs/learning/books.json).
+
+| Book | Source | Save as |
+| --- | --- | --- |
+| *Introduction to Art: Design, Context, and Meaning* | [University of North Georgia Press](https://ungpressbooks.com/store/introduction-to-art/) (PDF) | `Introduction to Art.pdf` |
+| *The Practice and Science of Drawing*, Harold Speed | [Project Gutenberg #14264](https://www.gutenberg.org/ebooks/14264) (EPUB3) | `The_Practice_and_Science_of_Drawing_by_Harold_Speed.3.epub` |
+| *The Painter in Oil*, Daniel Burleigh Parkhurst | [Project Gutenberg #30877](https://www.gutenberg.org/ebooks/30877) (EPUB3) | `The_Painter_in_Oil_by_Daniel_Burleigh_Parkhurst.3.epub` |
+
+The generated corpus is gitignored, so every checkout builds its own. Run these commands
+from `python/`, and set `BOOKS_DIR` to the absolute path of the directory you downloaded
+the books into:
 
 ```sh
+BOOKS_DIR=/absolute/path/to/your/books
+
 uv run --all-packages python -m artloupe.agent.learning.cli ingest \
-  --books /absolute/path/to/reference-docs/books \
+  --books "$BOOKS_DIR" \
   --manifest ../docs/learning/books.json --output learning-corpus
 
 # Optional, and it spends money: OpenAI embeddings for semantic and Spanish retrieval.

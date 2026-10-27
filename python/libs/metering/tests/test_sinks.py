@@ -33,8 +33,16 @@ def clean_settings() -> None:
     get_settings.cache_clear()
 
 
-def test_defaults_to_memory_so_tests_stay_hermetic() -> None:
-    """A unit test must not need a database to run a graph."""
+def test_defaults_to_memory_so_tests_stay_hermetic(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A unit test must not need a database to run a graph.
+
+    Run from an empty directory with the variable cleared, because settings read `.env` from
+    the working directory -- and a developer's `python/.env` legitimately sets `postgres`.
+    """
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("ARTLOUPE_METERING", raising=False)
     assert isinstance(get_metrics_sink(), InMemoryMetricsSink)
 
 

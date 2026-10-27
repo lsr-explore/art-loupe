@@ -10,6 +10,11 @@ The Director's call (`artloupe.agent.director`) set the pattern, and this follow
 - **The ledger prices the model that answered**, from `response.model`.
 - **Untrusted text travels as escaped JSON data**, never as prompt. The artist's goal is in every
   one of these requests.
+- **The reply is streamed**, and only the final message is read. A plan can run to thousands of
+  tokens, and an unstreamed request has to finish inside one read timeout: the planner's 90
+  seconds held about 5,000 tokens at the speed Opus wrote them, and a real plan timed out twice.
+  Streamed, the timeout bounds the silence between events instead, and the run's wall-clock
+  guard bounds the whole.
 
 The Director keeps its own copy of this sequence for now. Folding it onto this helper changes the
 requests its recorded tests assert on, and belongs in its own change.
@@ -58,10 +63,11 @@ async def ask_structured[Draft: BaseModel](
 ) -> Draft:
     """Ask `model` for one `draft`, record what asking cost, and validate what came back.
 
-    `agent` names the agent in the error the run fails with. `timeout` is per request, because a
-    plan takes longer to write than a routing decision does.
+    `agent` names the agent in the error the run fails with. `timeout` is the longest the stream
+    may go silent, set per agent, because an agent that thinks longer before writing is quiet for
+    longer.
     """
-    response = await client.beta.messages.create(
+    async with client.beta.messages.stream(
         model=model,
         max_tokens=MAX_TOKENS,
         betas=[FALLBACK_BETA],
@@ -70,7 +76,8 @@ async def ask_structured[Draft: BaseModel](
         messages=[{"role": "user", "content": user}],
         output_config={"format": {"type": "json_schema", "schema": transform_schema(draft)}},
         timeout=timeout,
-    )
+    ) as stream:
+        response = await stream.get_final_message()
     usage = response.usage
     record_usage(
         model=response.model,
