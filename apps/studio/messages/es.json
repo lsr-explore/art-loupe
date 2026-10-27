@@ -108,7 +108,8 @@
       "startFailedHint": "El servicio de análisis no está disponible ahora. Inténtalo de nuevo en un momento.",
       "stepsLabel": "Pasos del análisis",
       "stepRunning": "en curso",
-      "stepDone": "hecho"
+      "stepDone": "hecho",
+      "routingDetails": "Decisiones del análisis"
     },
     "nodes": {
       "load_project": "Leyendo tu proyecto",
@@ -211,7 +212,19 @@
       "invalid_stream": "El servicio de análisis envió una actualización que no se pudo leer."
     },
     "sessionExpired": "Tu sesión ha caducado, así que no se puede leer este proyecto.",
-    "signInAgain": "Volver a iniciar sesión"
+    "signInAgain": "Volver a iniciar sesión",
+    "artifacts": {
+      "title": "Estudios de tu referencia",
+      "description": "Estudios medidos de tu fotografía. Abre una imagen completa o guarda un PNG para tu plan de trabajo.",
+      "loading": "Preparando imagen…",
+      "failed": "No se pudo cargar este estudio. Tu análisis sigue disponible.",
+      "retry": "Reintentar",
+      "alt": "Estudio de {tool} de tu fotografía de referencia",
+      "open": "Abrir tamaño completo",
+      "download": "Descargar PNG",
+      "confidence": "Fiabilidad de la herramienta: {value}%",
+      "legend": "El cian muestra geometría medida; el dorado muestra la construcción o el horizonte. Consulta las limitaciones para conocer las suposiciones."
+    }
   },
   "nav": {
     "label": "Secciones del estudio"

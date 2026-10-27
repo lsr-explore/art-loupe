@@ -87,14 +87,14 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
   const { project } = read;
 
   return (
-    <div className="flex flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('title')}</h1>
         <p className="text-sm text-muted-foreground">{tp('planPending')}</p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <figure className="flex flex-col gap-2">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:items-start">
+        <figure className="flex flex-col gap-2 lg:sticky lg:top-6">
           {project.original ? (
             // A plain <img>: the bytes come from the app's own image route, already private and
             // cached, and `next/image` would add a second, public cache in front of them.
@@ -104,14 +104,12 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
               alt={tp('photoAlt')}
               width={project.original.widthPx}
               height={project.original.heightPx}
-              className="h-auto w-full rounded-md border"
+              className="max-h-[65vh] w-full rounded-md border bg-muted/30 object-contain"
             />
           ) : (
             <p className="text-sm text-muted-foreground">{tp('noOriginal')}</p>
           )}
-          <figcaption className="text-xs text-muted-foreground">
-            {tp('referenceLabel')}: <span className="font-mono">{project.projectId}</span>
-          </figcaption>
+          <figcaption className="text-xs text-muted-foreground">{tp('referenceLabel')}</figcaption>
         </figure>
 
         <RunPanel projectId={project.projectId} initialRunId={project.latestRun?.runId ?? null} />

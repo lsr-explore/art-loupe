@@ -108,7 +108,8 @@
       "startFailedHint": "The analysis service is not available right now. Try again in a moment.",
       "stepsLabel": "Analysis steps",
       "stepRunning": "in progress",
-      "stepDone": "done"
+      "stepDone": "done",
+      "routingDetails": "Analysis decisions"
     },
     "nodes": {
       "load_project": "Reading your project",
@@ -211,7 +212,19 @@
       "invalid_stream": "The analysis service sent an update that could not be read."
     },
     "sessionExpired": "Your session has expired, so this project cannot be read.",
-    "signInAgain": "Sign in again"
+    "signInAgain": "Sign in again",
+    "artifacts": {
+      "title": "Your reference studies",
+      "description": "Measured studies from your photograph. Open a full-size image or save a PNG for your working plan.",
+      "loading": "Preparing image…",
+      "failed": "This study could not be loaded. Your analysis is still available.",
+      "retry": "Try again",
+      "alt": "{tool} study of your reference photograph",
+      "open": "Open full size",
+      "download": "Download PNG",
+      "confidence": "Tool reliability: {value}%",
+      "legend": "Cyan shows measured geometry; gold shows the construction scaffold or horizon. See limitations for assumptions."
+    }
   },
   "nav": {
     "label": "Studio sections"

@@ -24,6 +24,7 @@ import {
   type StartRunResponse,
 } from '@/lib/runs/run-contract';
 
+import { ArtifactGallery } from './artifact-gallery';
 import { PlanSummary } from './plan-summary';
 import { RoutingSummary } from './routing-summary';
 import { IDLE, applyInvalidStream, applyRunEvent, following, type RunView } from './run-view';
@@ -164,7 +165,7 @@ export const RunPanel = ({ projectId, initialRunId }: RunPanelProps) => {
   })();
 
   return (
-    <section aria-labelledby="run-heading" className="flex flex-col gap-4">
+    <section aria-labelledby="run-heading" className="flex min-w-0 flex-col gap-6">
       <h2 id="run-heading" className="text-lg font-semibold">
         {tr('title')}
       </h2>
@@ -217,7 +218,18 @@ export const RunPanel = ({ projectId, initialRunId }: RunPanelProps) => {
         </Alert>
       ) : null}
 
-      {view.result ? <RoutingSummary routing={view.result.routing} /> : null}
+      {view.result ? (
+        <ArtifactGallery projectId={projectId} artifacts={view.result.artifacts} />
+      ) : null}
+
+      {view.result ? (
+        <details className="rounded-lg border p-4">
+          <summary className="cursor-pointer font-medium">{tr('routingDetails')}</summary>
+          <div className="pt-4">
+            <RoutingSummary routing={view.result.routing} />
+          </div>
+        </details>
+      ) : null}
 
       {/* A run recorded before plans existed has none; it still shows its routing. */}
       {view.result?.plan ? <PlanSummary outcome={view.result.plan} /> : null}

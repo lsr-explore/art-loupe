@@ -16,5 +16,6 @@ A new row means a new route joined the app: check its columns before accepting t
 | `/api/learning` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/projects` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/projects/[id]` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
+| `/api/projects/[id]/artifacts/[tool]` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/projects/[id]/runs` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |
 | `/api/runs/[id]/events` | 401 unauthenticated | pass → handler | 401 unauthenticated | pass → handler | pass → handler | 401 unauthenticated |

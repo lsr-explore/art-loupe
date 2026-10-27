@@ -36,6 +36,7 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
+from artloupe.agent.artifact_routes import router as artifact_router
 from artloupe.agent.director import close_director_client, director_client
 from artloupe.agent.graph import build_graph
 from artloupe.agent.inspiration_cache import close_cache_pool
@@ -88,6 +89,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title=SERVICE_NAME, version=SERVICE_VERSION, lifespan=lifespan)
 
+app.include_router(artifact_router)
 app.include_router(inspiration_router)
 app.include_router(ops_router)
 app.include_router(learning_router)
