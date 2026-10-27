@@ -37,7 +37,7 @@ describe('PlanSummary', () => {
     expect(screen.getAllByText('Measured:').length).toBeGreaterThan(0);
     expect(screen.getByText('Cited:')).toBeInTheDocument();
     expect(screen.getByText('Chosen:')).toBeInTheDocument();
-    expect(screen.getByText(/measured by the Value map study/)).toBeInTheDocument();
+    expect(screen.getAllByText(/measured by the Value map study/).length).toBeGreaterThan(0);
     expect(screen.getByText(/from Art Loupe fixture lessons/)).toBeInTheDocument();
     expect(
       screen.getByText(
@@ -108,5 +108,28 @@ describe('PlanSummary', () => {
   it('has no accessibility violations', async () => {
     const { container } = renderSummary();
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+// @trace flow=plan.synthesis category=functionality
+describe('saved analysis details', () => {
+  it('shows findings and complete lesson text with its source', () => {
+    const citation = PLAN_OUTCOME.plan.materials[0].claim.evidence;
+    if (citation.kind !== 'cited') throw new Error('fixture needs a citation');
+    renderSummary({
+      ...PLAN_OUTCOME,
+      lessons: [
+        {
+          lesson_id: 'saved-lesson',
+          topic: 'technique',
+          title: 'Saved lesson',
+          text: 'Complete saved lesson text.',
+          evidence: citation,
+        },
+      ],
+    });
+    expect(screen.getByText(PLAN_OUTCOME.findings.findings[0].text)).toBeInTheDocument();
+    expect(screen.getByText('Complete saved lesson text.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View source' })).toHaveAttribute('href', citation.url);
   });
 });

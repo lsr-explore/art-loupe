@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 
+import { PLANNED_RUN_RESULT } from '@/lib/runs/run-events.fixtures';
+
 vi.mock('server-only', () => ({}));
 
 const { readProject } = await import('./read-project');
@@ -107,5 +109,26 @@ describe('the ownership boundary', () => {
   it('answers not-found, not unavailable, for a token Supabase refuses', async () => {
     const { fetchImpl } = postgrest({}, 401);
     expect(await read(fetchImpl)).toEqual({ ok: false, reason: 'not-found' });
+  });
+});
+
+// @trace flow=intake.project-intent category=functionality
+describe('saved analysis restoration', () => {
+  it('returns the validated completed result directly from Postgres', async () => {
+    const { fetchImpl } = postgrest({
+      projects: [{ id: PROJECT_ID, intent: null }],
+      runs: [{ id: RUN_ID, status: 'succeeded', result: PLANNED_RUN_RESULT }],
+    });
+    const result = await read(fetchImpl);
+    expect(result.ok && result.project.latestRun?.result).toEqual(PLANNED_RUN_RESULT);
+  });
+  it('refuses an invalid saved result or a result from another project', async () => {
+    for (const result of [{ bad: true }, { ...PLANNED_RUN_RESULT, project_id: 'other' }]) {
+      const { fetchImpl } = postgrest({
+        projects: [{ id: PROJECT_ID, intent: null }],
+        runs: [{ id: RUN_ID, status: 'succeeded', result }],
+      });
+      expect(await read(fetchImpl)).toEqual({ ok: false, reason: 'unavailable' });
+    }
   });
 });

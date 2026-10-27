@@ -204,6 +204,46 @@ export const PlanSummary = ({ outcome }: PlanSummaryProps) => {
         </ul>
       </section>
 
+      {outcome.findings.findings.length > 0 ? (
+        <section aria-labelledby="findings-heading" className="flex flex-col gap-3">
+          <h3 id="findings-heading" className="text-base font-medium">
+            {tp('findingsTitle')}
+          </h3>
+          <ClaimList
+            claims={outcome.findings.findings.map((finding) => ({
+              text: finding.text,
+              evidence: finding.evidence,
+              source: finding.finding_id,
+            }))}
+          />
+        </section>
+      ) : null}
+      {outcome.lessons.length > 0 ? (
+        <section aria-labelledby="lessons-heading" className="flex flex-col gap-3">
+          <h3 id="lessons-heading" className="text-base font-medium">
+            {tp('lessonsTitle')}
+          </h3>
+          {outcome.lessons.map((lesson) => (
+            <article key={lesson.lesson_id} className="flex flex-col gap-2 rounded-md border p-4">
+              <h4 className="text-sm font-semibold">{lesson.title}</h4>
+              <p className="whitespace-pre-wrap text-sm">{lesson.text}</p>
+              <p className="text-xs text-muted-foreground">
+                {lesson.evidence.institution} · {lesson.evidence.licence}
+              </p>
+              {/^https?:\/\//i.test(lesson.evidence.url) ? (
+                <a
+                  href={lesson.evidence.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center text-sm underline"
+                >
+                  {tp('lessonSource')}
+                </a>
+              ) : null}
+            </article>
+          ))}
+        </section>
+      ) : null}
       <p className="text-xs text-muted-foreground">{tp('agentsWords')}</p>
     </section>
   );

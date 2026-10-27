@@ -21,6 +21,7 @@ import {
   runEventsEndpoint,
   runsEndpoint,
   type RunEvent,
+  type RunResult,
   type StartRunResponse,
 } from '@/lib/runs/run-contract';
 
@@ -67,16 +68,24 @@ interface RunPanelProps {
   projectId: string;
   /** The project's latest run, if the page found one. */
   initialRunId: string | null;
+  initialResult?: RunResult;
 }
 
-export const RunPanel = ({ projectId, initialRunId }: RunPanelProps) => {
+export const RunPanel = ({ projectId, initialRunId, initialResult }: RunPanelProps) => {
   const tr = useTranslations('project.run');
   const tn = useTranslations('project.nodes');
   const tf = useTranslations('project.failure');
-  const [view, dispatch] = useReducer(reduce, initialRunId, (runId) =>
-    runId === null ? IDLE : following(runId),
-  );
-  const [runId, setRunId] = useState(initialRunId);
+  const [view, dispatch] = useReducer(reduce, { initialRunId, initialResult }, (saved): RunView => {
+    if (saved.initialResult)
+      return {
+        ...IDLE,
+        phase: 'succeeded',
+        runId: saved.initialRunId,
+        result: saved.initialResult,
+      };
+    return saved.initialRunId === null ? IDLE : following(saved.initialRunId);
+  });
+  const [runId, setRunId] = useState(initialResult ? null : initialRunId);
 
   useEffect(() => {
     if (runId === null) return undefined;

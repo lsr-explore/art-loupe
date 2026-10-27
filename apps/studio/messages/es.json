@@ -14,9 +14,28 @@
   },
   "home": {
     "title": "Estudio",
-    "description": "Tu espacio de trabajo. Sube una obra para comenzar una crítica o inicia un plan de sesión.",
+    "description": "Elige un proyecto guardado o sube una referencia para crear un plan de trabajo.",
     "startProject": "Iniciar un proyecto",
-    "getInspired": "Inspírate"
+    "getInspired": "Inspírate",
+    "savedTitle": "Tus proyectos",
+    "savedDescription": "Abre un proyecto para ver sus estudios de referencia, análisis y plan de trabajo.",
+    "noProjects": "Tus proyectos guardados aparecerán aquí cuando subas una referencia.",
+    "noMoreProjects": "No hay proyectos en esta página.",
+    "savedUnavailable": "No se pudieron cargar tus proyectos. Inténtalo de nuevo o vuelve a iniciar sesión.",
+    "untitled": "Proyecto sin título",
+    "openProject": "Abrir proyecto",
+    "minutes": "{minutes} minutos",
+    "pagination": "Páginas de proyectos",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "status": {
+      "notStarted": "Sin analizar",
+      "queued": "Análisis en cola",
+      "running": "Análisis en curso",
+      "succeeded": "Análisis guardado",
+      "failed": "Análisis detenido"
+    },
+    "created": "Creado el {date} (UTC)"
   },
   "intake": {
     "title": "Iniciar un proyecto",
@@ -192,7 +211,10 @@
       },
       "measuredBy": "medido por el estudio {tool}",
       "citedFrom": "de {institution}",
-      "chosenBecause": "porque {reason}, en lugar de {alternative}"
+      "chosenBecause": "porque {reason}, en lugar de {alternative}",
+      "findingsTitle": "Hallazgos del análisis",
+      "lessonsTitle": "Lecciones y fuentes",
+      "lessonSource": "Ver fuente"
     },
     "failure": {
       "budget_exceeded": "Este proyecto ha agotado su presupuesto de análisis.",
@@ -224,7 +246,8 @@
       "download": "Descargar PNG",
       "confidence": "Fiabilidad de la herramienta: {value}%",
       "legend": "El cian muestra geometría medida; el dorado muestra la construcción o el horizonte. Consulta las limitaciones para conocer las suposiciones."
-    }
+    },
+    "backToProjects": "Volver a tus proyectos"
   },
   "nav": {
     "label": "Secciones del estudio"

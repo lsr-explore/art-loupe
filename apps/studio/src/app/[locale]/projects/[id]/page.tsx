@@ -88,6 +88,9 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">
+      <Link href="/home" className="inline-flex min-h-11 items-center text-sm underline">
+        {tp('backToProjects')}
+      </Link>
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{tp('title')}</h1>
         <p className="text-sm text-muted-foreground">{tp('planPending')}</p>
@@ -112,7 +115,12 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
           <figcaption className="text-xs text-muted-foreground">{tp('referenceLabel')}</figcaption>
         </figure>
 
-        <RunPanel projectId={project.projectId} initialRunId={project.latestRun?.runId ?? null} />
+        <RunPanel
+          key={project.latestRun?.runId ?? project.projectId}
+          projectId={project.projectId}
+          initialRunId={project.latestRun?.runId ?? null}
+          {...(project.latestRun?.result ? { initialResult: project.latestRun.result } : {})}
+        />
       </div>
 
       <Link href="/learn" className="inline-flex min-h-11 items-center underline">

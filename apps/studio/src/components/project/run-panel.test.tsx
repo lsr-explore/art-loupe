@@ -139,3 +139,18 @@ describe('RunPanel', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+// @trace flow=intake.project-intent category=functionality
+describe('reopened completed projects', () => {
+  it('renders saved text without an event stream or a new model run', () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <RunPanel projectId={PROJECT_ID} initialRunId={RUN_ID} initialResult={PLANNED_RUN_RESULT} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByRole('heading', { name: 'Your working plan' })).toBeInTheDocument();
+    expect(screen.getByText(PLANNED_RUN_RESULT.routing.rationale)).toBeInTheDocument();
+    expect(FakeEventSource.instances).toHaveLength(0);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

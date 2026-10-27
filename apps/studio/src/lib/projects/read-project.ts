@@ -7,9 +7,10 @@ import 'server-only';
  * somebody else are one answer: `null`, which the page turns into a 404.
  *
  * The latest run is read so that a reload reconnects to a run already in progress rather than
- * offering to start another. Only its id and status are needed here; everything else arrives on
- * the run's event stream, which replays from the start.
+ * offering to start another. A completed result is validated and read directly from Postgres; active runs still use
+ * the event stream. Reopening a completed project does not require a live agent stream.
  */
+import { runResultSchema, type RunResult } from '@artloupe/schemas';
 
 export type ProjectRunStatus = 'queued' | 'running' | 'succeeded' | 'failed';
 
@@ -19,7 +20,7 @@ export interface ProjectView {
   intent: Record<string, unknown> | null;
   /** `null` until a photograph has been uploaded. */
   original: { storageKey: string; widthPx: number; heightPx: number } | null;
-  latestRun: { runId: string; status: ProjectRunStatus } | null;
+  latestRun: { runId: string; status: ProjectRunStatus; result?: RunResult } | null;
 }
 
 export interface ReadProjectRequest {
@@ -69,7 +70,7 @@ export const readProject = async ({
   const [projects, originals, runs] = await Promise.all([
     select(`projects?id=eq.${id}&select=id,intent`),
     select(`source_images?project_id=eq.${id}&select=storage_key,width_px,height_px`),
-    select(`runs?project_id=eq.${id}&select=id,status&order=created_at.desc&limit=1`),
+    select(`runs?project_id=eq.${id}&select=id,status,result&order=created_at.desc&limit=1`),
   ]);
 
   if (refused) {
@@ -87,6 +88,15 @@ export const readProject = async ({
   const [run] = runs;
   const status = run?.status as ProjectRunStatus | undefined;
 
+  const saved =
+    status === 'succeeded' && run?.result != null ? runResultSchema.safeParse(run.result) : null;
+  if (
+    saved &&
+    (!saved.success || saved.data.project_id !== projectId || saved.data.run_id !== String(run?.id))
+  ) {
+    return { ok: false, reason: 'unavailable' };
+  }
+
   return {
     ok: true,
     project: {
@@ -103,7 +113,7 @@ export const readProject = async ({
       latestRun:
         run === undefined || status === undefined || !RUN_STATUSES.includes(status)
           ? null
-          : { runId: String(run.id), status },
+          : { runId: String(run.id), status, ...(saved?.success ? { result: saved.data } : {}) },
     },
   };
 };

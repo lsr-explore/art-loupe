@@ -14,9 +14,28 @@
   },
   "home": {
     "title": "Studio",
-    "description": "Your workspace. Upload a piece to begin a critique, or start a session plan.",
+    "description": "Choose a saved project or upload a reference to build a working plan.",
     "startProject": "Start a project",
-    "getInspired": "Get inspired"
+    "getInspired": "Get inspired",
+    "savedTitle": "Your projects",
+    "savedDescription": "Reopen a project to view its reference studies, analysis and working plan.",
+    "noProjects": "Your saved projects will appear here after you upload a reference.",
+    "noMoreProjects": "There are no projects on this page.",
+    "savedUnavailable": "Your saved projects could not be loaded. Try again or sign in again.",
+    "untitled": "Untitled project",
+    "openProject": "Open project",
+    "minutes": "{minutes} minutes",
+    "pagination": "Project pages",
+    "previous": "Previous",
+    "next": "Next",
+    "status": {
+      "notStarted": "Not analysed yet",
+      "queued": "Analysis queued",
+      "running": "Analysis in progress",
+      "succeeded": "Analysis saved",
+      "failed": "Analysis stopped"
+    },
+    "created": "Created {date} (UTC)"
   },
   "intake": {
     "title": "Start a project",
@@ -192,7 +211,10 @@
       },
       "measuredBy": "measured by the {tool} study",
       "citedFrom": "from {institution}",
-      "chosenBecause": "because {reason}, rather than {alternative}"
+      "chosenBecause": "because {reason}, rather than {alternative}",
+      "findingsTitle": "Analysis findings",
+      "lessonsTitle": "Lessons and sources",
+      "lessonSource": "View source"
     },
     "failure": {
       "budget_exceeded": "This project has used its analysis budget.",
@@ -224,7 +246,8 @@
       "download": "Download PNG",
       "confidence": "Tool reliability: {value}%",
       "legend": "Cyan shows measured geometry; gold shows the construction scaffold or horizon. See limitations for assumptions."
-    }
+    },
+    "backToProjects": "Back to your projects"
   },
   "nav": {
     "label": "Studio sections"
