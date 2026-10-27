@@ -10,6 +10,8 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from artloupe.agent.ai.factory import generate, task_client
+from artloupe.agent.ai.registry import ConfigurationError
+from artloupe.agent.ai.resolver import resolve_task
 from artloupe.agent.director import close_director_client
 from artloupe.agent.learning.answering import synthesize
 from artloupe.agent.learning.embeddings import embed
@@ -98,6 +100,16 @@ async def evaluate(
             raise ValueError("Published corpus differs from the evaluation corpus")
     elif backend != "files":
         raise ValueError("Unknown evaluation backend")
+    if (
+        live
+        and index.vectors is not None
+        and resolve_task("learning-embeddings").model.provider == "mock"
+    ):
+        raise ConfigurationError(
+            "Live evaluation cannot compare mock embeddings with a real vector index. "
+            "Disable mock embeddings using LLM_MODE and AI_MODEL_LEARNING_EMBEDDINGS, "
+            "or run without --live."
+        )
     cases = [Case.model_validate(item) for item in json.loads(cases_path.read_text())["cases"]]
     if not cases or len({case.id for case in cases}) != len(cases):
         raise ValueError("Eval cases must be nonempty with unique IDs")

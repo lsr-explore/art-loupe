@@ -218,8 +218,10 @@ def test_eval_retrieval_metrics_fail_for_the_wrong_passage():
     }
 
 
-async def test_offline_eval_does_not_claim_to_measure_answers(tmp_path, monkeypatch):
-    monkeypatch.setattr(Index, "load", lambda path: Index([passage()], "fixture"))
+@pytest.mark.parametrize("has_vectors", [False, True])
+async def test_offline_eval_does_not_claim_to_measure_answers(tmp_path, monkeypatch, has_vectors):
+    vectors = np.ones((1, 1536)) if has_vectors else None
+    monkeypatch.setattr(Index, "load", lambda path: Index([passage()], "fixture", vectors))
     cases = tmp_path / "cases.json"
     cases.write_text(
         json.dumps(
@@ -335,10 +337,19 @@ async def test_gap_explanation_cannot_smuggle_uncited_model_facts(locale):
         await model.client.close()
 
 
-async def test_live_eval_preserves_retrieval_when_judge_truncates(tmp_path, monkeypatch):
+@pytest.mark.parametrize("has_vectors", [False, True])
+async def test_live_eval_preserves_retrieval_when_judge_truncates(
+    tmp_path, monkeypatch, has_vectors
+):
     from artloupe.agent.learning import evaluation
 
-    monkeypatch.setattr(Index, "load", lambda path: Index([passage()], "fixture"))
+    vectors = np.ones((1, 1536)) if has_vectors else None
+    monkeypatch.setattr(Index, "load", lambda path: Index([passage()], "fixture", vectors))
+
+    async def recorded_embedding(*args):
+        return [np.ones(1536).tolist()], 0
+
+    monkeypatch.setattr(evaluation, "embed", recorded_embedding)
     monkeypatch.setattr(evaluation, "task_client", lambda _task: object())
 
     async def answer(*args, **kwargs):
@@ -376,6 +387,7 @@ async def test_live_eval_preserves_retrieval_when_judge_truncates(tmp_path, monk
     output = tmp_path / "report.json"
     summary = await evaluation.evaluate(tmp_path, cases, output, live=True)
     row = json.loads(output.read_text())["cases"][0]
+    assert summary["retrieval_mode"] == ("hybrid" if has_vectors else "keyword")
     assert not summary["passed"] and summary["errors"] == 1
     assert summary["recall_at_6"] == 1
     assert row["retrieval"]["hit_at_6"]
@@ -582,3 +594,49 @@ def test_subject_bearing_followups_retain_the_comparison_and_its_context(
     history = [Turn(role="user", content=topic), Turn(role="user", content=comparison)]
     question = Question(question=followup, history=history)
     assert retrieval_query(question) == " ".join([topic, comparison, followup])
+
+
+@pytest.mark.parametrize("backend", ["files", "pgvector"])
+@pytest.mark.parametrize("mock_selection", ["feature", "global"])
+async def test_live_eval_rejects_mock_embeddings_before_any_model_call(
+    tmp_path, monkeypatch, backend, mock_selection
+):
+    from artloupe.agent.ai.registry import ConfigurationError
+    from artloupe.agent.learning import evaluation
+    from artloupe.agent.learning.postgres import PostgresIndex
+
+    if mock_selection == "global":
+        monkeypatch.setenv("LLM_MODE", "mock")
+    else:
+        monkeypatch.setenv("AI_MODEL_LEARNING_EMBEDDINGS", "mock-embeddings")
+    index = Index([passage()], "fixture", np.ones((1, 1536)))
+    monkeypatch.setattr(Index, "load", lambda path: index)
+    monkeypatch.setattr(PostgresIndex, "load", lambda: index)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Rejected evaluation must not search or construct/call a model client")
+
+    for name in ["embed", "task_client", "synthesize", "judge"]:
+        monkeypatch.setattr(evaluation, name, forbidden)
+    monkeypatch.setattr(index, "search", forbidden)
+    cases = tmp_path / "cases.json"
+    cases.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "id": "value",
+                        "category": "technique",
+                        "question": "What is value?",
+                        "expected_status": "answered",
+                        "rubric": "Explain lightness",
+                        "gold": [{"book_id": "test-book", "text_contains": ["lightness"]}],
+                    }
+                ]
+            }
+        )
+    )
+    output = tmp_path / "report.json"
+    with pytest.raises(ConfigurationError, match="mock embeddings"):
+        await evaluate(tmp_path, cases, output, live=True, backend=backend)
+    assert not output.exists()

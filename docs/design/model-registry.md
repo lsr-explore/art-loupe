@@ -1,7 +1,7 @@
 # AI model registry and prompt manifests
 
 AI inference stays in the Python service. The Next.js applications continue to relay the artist's
-authenticated requests, and no provider SDK or credential enters a browser bundle.
+authenticated requests, and no provider SDK or Wocredential enters a browser bundle.
 
 ## Organization
 
