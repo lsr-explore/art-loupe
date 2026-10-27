@@ -47,6 +47,7 @@ class ModelPrice:
 # Keyed by the exact model id sent on the wire. No date suffixes: current Claude model ids
 # are complete as written, and a suffixed key would simply never match.
 MODEL_PRICES: dict[str, ModelPrice] = {
+    "mock:fixture-v1": ModelPrice(Decimal("0"), Decimal("0")),
     "claude-opus-5": ModelPrice(Decimal("5.00"), Decimal("25.00")),
     # Not assigned to any node. It is here because a server-side refusal fallback can answer a
     # request made to `claude-opus-5`, and the ledger prices the model that actually answered.

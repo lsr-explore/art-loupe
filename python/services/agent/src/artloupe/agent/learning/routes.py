@@ -5,10 +5,13 @@ import logging
 from uuid import uuid4
 
 import httpx
-from anthropic import APIError
 from fastapi import APIRouter, HTTPException
 
-from artloupe.agent.director import director_client
+from artloupe.agent.ai.contracts import ProviderUnavailable
+from artloupe.agent.ai.factory import task_client
+from artloupe.agent.ai.mock_learning import mock_index
+from artloupe.agent.ai.registry import ConfigurationError
+from artloupe.agent.ai.resolver import resolve_task
 from artloupe.agent.inspiration_rate_limit import RateLimiter
 from artloupe.agent.inspiration_routes import Searcher
 from artloupe.agent.learning.answering import AnswerUnavailable, evidence_gap, synthesize, usable
@@ -45,8 +48,14 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
     try:
         async with asyncio.timeout(WORK_TIMEOUT_SECONDS):
             with use_recorder(recorder):
-                index = await asyncio.to_thread(configured_index)
-                mode = "hybrid" if index.vectors is not None else "keyword"
+                mocked_answer = resolve_task("learning-answer").model.provider == "mock"
+                index = mock_index() if mocked_answer else await asyncio.to_thread(configured_index)
+                mode = (
+                    "hybrid"
+                    if index.vectors is not None
+                    and resolve_task("learning-embeddings").model.provider != "mock"
+                    else "keyword"
+                )
                 embedding_tokens = 0
                 query = retrieval_query(question)
                 async with recorder.node("learning-retrieval"):
@@ -65,7 +74,7 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
                     return result
                 async with recorder.node("learning-answer"):
                     result = await synthesize(
-                        await asyncio.to_thread(director_client),
+                        await asyncio.to_thread(task_client, "learning-answer"),
                         question,
                         passages,
                         mode,
@@ -75,10 +84,10 @@ async def ask(question: Question, user: Searcher, client: HttpClient) -> Answer:
                 return result
     except BudgetExceeded as error:
         raise HTTPException(413, "Learning question exceeded its token limit.") from error
-    except (CorpusUnavailable, SecretUnavailable) as error:
+    except (CorpusUnavailable, SecretUnavailable, ConfigurationError) as error:
         logger.warning("Learning is not configured: %s", type(error).__name__)
         raise HTTPException(503, "Learning is not configured.") from error
-    except (APIError, httpx.HTTPError, AnswerUnavailable, ValueError) as error:
+    except (ProviderUnavailable, httpx.HTTPError, AnswerUnavailable, ValueError) as error:
         logger.warning("Learning upstream failed: %s", type(error).__name__)
         raise HTTPException(502, "Learning is temporarily unavailable.") from error
     except TimeoutError as error:

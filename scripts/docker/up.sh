@@ -118,6 +118,10 @@ for entry in \
   "openai_api_key|ARTLOUPE_OPENAI_KEYCHAIN_ACCOUNT" \
   "pexels_api_key|ARTLOUPE_PEXELS_KEYCHAIN_ACCOUNT"; do
   secret="${entry%%|*}"
+  if [[ "${LLM_MODE:-live}" == "mock" && "$secret" != "pexels_api_key" ]]; then
+    echo "  skipped  ${secret} (LLM_MODE=mock)"
+    continue
+  fi
   account="$(setting "${entry#*|}")"
   if [[ -z "$account" ]]; then
     echo "  skipped  ${secret} (no ${entry#*|} configured)"

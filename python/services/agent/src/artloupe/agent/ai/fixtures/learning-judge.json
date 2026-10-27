@@ -1,0 +1,6 @@
+{
+  "correct": false,
+  "supported": false,
+  "medium_appropriate": false,
+  "reason": "Mock evaluator: fixture output does not establish live answer quality."
+}

@@ -28,9 +28,9 @@ from dataclasses import dataclass, field
 
 import cv2
 import numpy as np
-from anthropic import AsyncAnthropic
 from numpy.typing import NDArray
 
+from artloupe.agent.ai.contracts import TextProvider
 from artloupe.agent.lessons import FixtureLessonSource, LessonSource
 from artloupe.image_tools import PlateSuite
 from artloupe.persistence import ArtistApi, RunEventKind
@@ -63,7 +63,7 @@ class RunResources:
     """
 
     api: ArtistApi
-    director: AsyncAnthropic | None = None
+    director: TextProvider | None = None
     lessons: LessonSource = field(default_factory=FixtureLessonSource)
     progress: ProgressReporter | None = None
     image: NDArray[np.uint8] | None = None

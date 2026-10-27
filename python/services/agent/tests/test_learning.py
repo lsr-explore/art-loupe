@@ -157,7 +157,7 @@ async def test_embedding_response_order_and_dimensions(monkeypatch):
         assert threading.get_ident() != request_thread
         return "test-only"
 
-    monkeypatch.setattr("artloupe.agent.learning.embeddings.get_openai_api_key", key)
+    monkeypatch.setattr("artloupe.agent.ai.adapters.openai_embeddings.get_openai_api_key", key)
     vector = [1.0] + [0.0] * 1535
     async with httpx.AsyncClient(
         transport=httpx.MockTransport(
@@ -269,7 +269,7 @@ async def test_endpoint_returns_cited_answer_with_verified_artist(monkeypatch):
         )
     )
     monkeypatch.setattr(routes, "configured_index", lambda: Index([passage()], "fixture"))
-    monkeypatch.setattr(routes, "director_client", lambda: model.client)
+    monkeypatch.setattr(routes, "task_client", lambda _task: model.client)
     try:
         async with httpx.AsyncClient() as upstream:
             app.dependency_overrides[get_http_client] = lambda: upstream
@@ -339,7 +339,7 @@ async def test_live_eval_preserves_retrieval_when_judge_truncates(tmp_path, monk
     from artloupe.agent.learning import evaluation
 
     monkeypatch.setattr(Index, "load", lambda path: Index([passage()], "fixture"))
-    monkeypatch.setattr(evaluation, "director_client", lambda: object())
+    monkeypatch.setattr(evaluation, "task_client", lambda _task: object())
 
     async def answer(*args, **kwargs):
         draft = Draft.model_validate(

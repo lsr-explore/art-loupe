@@ -38,3 +38,21 @@ Supabase documents private delivery in its
 Persisted derivatives become useful for expensive rendering, stable historical exports and
 high traffic. On-demand PNGs are sufficient for the current deterministic tools and avoid
 introducing a second storage lifecycle before those requirements exist.
+
+## Reopening saved projects
+
+The signed-in Studio home page lists the artist's projects with reference thumbnails, creation
+times and the latest analysis status. The list is read as the artist through PostgREST and is
+paginated, 24 projects per page. Embedded source images and runs obey their own row policies.
+
+A completed project's `runs.result` is validated against the shared run schema and checked
+against both project and run IDs before rendering. The page initializes the panel with this
+saved result; it does not start another analysis or need an agent event stream to restore text.
+Queued and active runs still follow their event streams. Saved findings and complete lesson
+text are shown alongside routing, material choices, stages, self-checks and critic verdicts.
+
+Persistence requires `ARTLOUPE_RUN_LOG=postgres`, as configured by the Docker setup. The memory
+run log is only suitable for tests. Project data and completed outputs survive service restarts
+in Postgres and private Supabase Storage. Generated PNG bytes remain on-demand derivatives,
+subject to the version checks described above; this change adds no derivative storage bucket.
+The separate learning chat does not currently save conversation history against a project.

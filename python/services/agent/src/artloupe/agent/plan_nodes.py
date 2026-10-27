@@ -19,8 +19,7 @@ supplies as `RunResources.director` because the Director was its first user.
 
 from typing import Any, Literal
 
-from anthropic import AsyncAnthropic
-
+from artloupe.agent.ai.contracts import TextProvider
 from artloupe.agent.analyst import ask_analyst, measurement_catalog
 from artloupe.agent.critic import ask_critic
 from artloupe.agent.lessons import LessonQuery
@@ -39,10 +38,8 @@ from artloupe.schemas import (
 )
 
 
-def _model_client() -> AsyncAnthropic:
+def _model_client() -> TextProvider | None:
     client = run_resources().director
-    if client is None:
-        raise RuntimeError("this run has no model client; the service supplies one per run")
     return client
 
 
